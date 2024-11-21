@@ -1,14 +1,61 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* colors */
+    /* font colors */
+    --logo-font-color:#E5E5E5;
+    --primary-font-color-light:#FFFFFF;
+    --primary-font-color-dark:#252525;
+    --secondary-font-color-light:#F4F4F4;
+    --secondary-font-color-dark:#6A6A6D;
+    --disabled-font-color:#C1C1C1;
+    --danger-primary-font-color:#E21E26;
+    --danger-secondary-font-color:#CE9D9D;
+    --success-font-color:#159117;
+
+    
+    /* background */
+    --page-background:#F4F4F4;
+    --container-color:#FFFFFF;
+    --golden-background-color:#FFEAC9;
+    --scrollbar-background:#E9E9E9;
+    --button-background-dark:#242424;
+    --nav-bar-background-color:#242424;
+    --disabled-button-background-dark:#6A6A6D;
+    --button-background-light:#FFFFFF;
+    --disabled-table-column-background:#ECECEC;
+    --danger-background-light-color:#F6E6E7;
+    --danger-background-dark-color:#E21E26;
+    --success-background-light-color:#F0FFE4;
+    --success-background-dark-color:#40A813;
+    --searchbar-background:#DBDDED;
+
+    /* others */
+    --primary-golden-color-light:#FFE3B8;
+    --primary-golden-color-medium:#FDB853;
+    --primary-golden-color-dark:#D4983F;
+
+    --secondary-golden-color-light:#F1EDE6;
+    --secondary-golden-color-medium:#E9D6B9;
+
+    --scrollbar:#DBDBDB;
+    --navigation-arrow:#C1C1C1;
+    --input-box-outline:#AFABAC;
+
+  /* --------- */
+
+  /* font weights */
+  --main-heading-font-weight:600;
+  --sub-heading-font-weight:500;
+  --default-font-weight:400;
+  --thin-font-weight:300;
+
+  /* fontsizes */
+  --heading-1-size:26px;
+  --heading-2-size:18px;
+  --heading-3-size:16px;
+  --default-font-size:14px;
+  --small-font-size:12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 html,
 body {
@@ -35,8 +82,3 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
