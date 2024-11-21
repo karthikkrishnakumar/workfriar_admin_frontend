@@ -1,28 +1,56 @@
 .button {
-    font-size: 16px;
-    padding: 12px 24px;
-    height: 42px;
-    border: none;
-    cursor: pointer;
-    border-radius: 24px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 16px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  border-radius: 24px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .black {
-    background-color: black;
-    color: white;
+  background-color: black;
+  color: white;
+  border: 1px solid black;
 }
 
 .white {
-    background-color: white;
-    color: black;
-    border: 1px solid black;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.red {
+  background-color: red;
+  color: white;
+  border: 1px solid red;
 }
 
-.flagged {
-    border: 2px dashed red; /* Styling for flagged buttons */
+.default {
+  background-color: gray; // Fallback theme
+  color: white;
+  border: 1px solid gray;
+}
+.black:hover {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid black !important;
+}
+
+.white:hover {
+  background-color: black !important;
+  color: white !important;
+  border: 1px solid black !important;
+}
+.default:hover {
+  background-color: white !important;
+  color: gray !important;
+  border: 1px solid gray !important;
+}
+.red:hover {
+  background-color: white !important;
+  color: red !important;
+  border: 1px solid red !important;
 }
 
 .button:hover {
-    opacity: 0.8;
+  opacity: 0.8;
 }
