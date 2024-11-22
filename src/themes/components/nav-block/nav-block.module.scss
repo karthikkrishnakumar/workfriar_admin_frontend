@@ -1,0 +1,49 @@
+.navBlockWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 229px;
+    height: 44px;
+    border-radius: 8px;
+    background-color: transparent;
+    color: var(--primary-font-color-light);
+    padding: 12px 8px 12px 8px;
+    cursor: pointer;
+
+    // Hover effect
+    &:hover {
+        background-color: var(--primary-golden-color-medium);
+        /* Add your hover background color */
+        color: #000;
+        /* Add your hover text color */
+    }
+
+    // Active state styles
+    &.active {
+        background-color: var(--primary-golden-color-medium);
+        color: var(--primary-font-color-dark);
+        /* Add your active text color */
+    }
+
+    .titleAndIcon {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+
+        span {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+
+
+    h3 {
+        font-size: var(--heading-3-size);
+        font-weight: var(--default-font-weight);
+    }
+}

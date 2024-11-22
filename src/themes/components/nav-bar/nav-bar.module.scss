@@ -1,0 +1,37 @@
+.navBarWrapper{
+    width: 293px;
+    height: 100dvh;
+    background-color: var(--nav-bar-background-color);
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+
+    // logo
+    .logo{
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        column-gap: 12px;
+
+        span{
+            width: 26px;
+            height: 26px;
+        }
+
+        h2{
+            font-size: var(--heading-1-size);
+            font-weight: var(--sub-heading-font-weight);
+            color: var(--logo-font-color);
+        }
+    }
+
+    // nav list
+    .navList{
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+    }
+}
