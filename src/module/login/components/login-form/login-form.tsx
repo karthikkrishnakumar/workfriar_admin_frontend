@@ -1,4 +1,4 @@
-import styles from "./LoginForm.module.scss";
+import styles from "./login-form.module.scss";
 
 
 const LoginForm = () => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Input } from "antd"; // Import Input from Ant Design
-import styles from "./InputField.module.scss"; // SCSS module
+import styles from "./input-field.module.scss"; // SCSS module
 
 // Define the interface for the props passed to the CustomInputField component
 interface CustomInputProps {

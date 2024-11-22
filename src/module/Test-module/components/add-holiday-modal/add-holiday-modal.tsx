@@ -1,7 +1,8 @@
 import React from "react";
-import ModalSelectContent from "../ModalInputContent/ModalInputContent";
-import styles from "./AddHolidayModal.module.scss";
-import ModalComponent from "@/themes/components/Modal/Modal";
+import styles from "./add-holiday-modal.module.scss";
+import ModalSelectContent from "../modal-input-content/modal-input-content";
+import ModalComponent from "@/themes/components/modal/modal";
+;
 
 const AddHolidayModal = () => {
   const inputField = {

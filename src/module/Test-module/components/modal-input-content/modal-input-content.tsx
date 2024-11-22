@@ -1,18 +1,19 @@
 "use client";
 import React, { useState } from "react";
-import CustomInputField from "@/themes/components/InputField/InputField";
-import CustomSelect from "@/themes/components/SelectField/SelectField";
-import styles from "./ModalInputContent.module.scss";
+
+import styles from "./modal-input-content.module.scss";
+import CustomInputField from "@/themes/components/input-field/input-field";
+import CustomSelect from "@/themes/components/select-field/select-field";
 
 interface FieldConfig {
   label: string;
   value: string | number | undefined;
-  options?: { label: string; value: string | number }[]; // For select fields
+  options?: { label: string; value: string | number }[];
 }
 
 interface ModalSelectContentProps {
-  inputField: FieldConfig; // Config for the input field
-  selectFields: FieldConfig[]; // Array of configs for select fields
+  inputField: FieldConfig;
+  selectFields: FieldConfig[];
 }
 
 type FormDataType = {
@@ -34,18 +35,15 @@ const ModalSelectContent: React.FC<ModalSelectContentProps> = ({
   const [formData, setFormData] = useState<FormDataType>(initialState);
 
   const handleInputChange = (label: string, value: string) => {
-    console.log(`${label} input:`, value);
     setFormData((prev) => ({ ...prev, [label]: value }));
   };
 
   const handleSelectChange = (label: string, value: string | number) => {
-    console.log(`${label} selected:`, value);
     setFormData((prev) => ({ ...prev, [label]: value }));
   };
 
   return (
     <div className={styles.gridContainer}>
-      {/* Render input field */}
       <div className={styles.gridItem}>
         <label htmlFor={inputField.label} className={styles.label}>
           {inputField.label}
@@ -54,11 +52,9 @@ const ModalSelectContent: React.FC<ModalSelectContentProps> = ({
           value={formData[inputField.label] as string}
           onChange={(value) => handleInputChange(inputField.label, value)}
           placeholder={`Enter ${inputField.label}`}
-         
         />
       </div>
 
-      {/* Render select fields */}
       {selectFields.map((field, index) => (
         <div key={index} className={styles.gridItem}>
           <label htmlFor={field.label} className={styles.label}>

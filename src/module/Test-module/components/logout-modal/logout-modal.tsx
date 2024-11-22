@@ -1,5 +1,5 @@
-import styles from "./LogoutModal.module.scss";
-import ModalComponent from "@/themes/components/Modal/Modal";
+import ModalComponent from "@/themes/components/modal/modal";
+import styles from "./logout-modal.module.scss";
 
 const LogoutModal = () => {
   return (
@@ -11,9 +11,8 @@ const LogoutModal = () => {
           content={
             <div>You are about to logout . Are you sure you want to logout</div>
           }
-          primaryButtonLabel={"cancel"}
-          secondaryButtonLabel={"logout"}
-      
+          primaryButtonLabel={"Cancel"}
+          secondaryButtonLabel={"Logout"}
         />
       </div>
     </div>

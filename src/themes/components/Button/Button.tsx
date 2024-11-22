@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Button.module.scss"; // SCSS module for styles
+import styles from "./button.module.scss"; // SCSS module for styles
 import { Button } from "antd";
 
 interface ButtonProps {
@@ -23,7 +23,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
       case "black":
         return styles.black;
       default:
-        return styles.default; // Fallback if theme doesn't match
+        return styles.default; 
     }
   };
 

@@ -1,7 +1,7 @@
 import { Modal } from "antd";
-import ButtonComponent from "../Button/Button";
 import { ReactNode } from "react";
-import styles from "./Modal.module.scss";
+import styles from "./modal.module.scss";
+import ButtonComponent from "../button/button";
 
 interface ModalProps {
   isVisible: boolean;

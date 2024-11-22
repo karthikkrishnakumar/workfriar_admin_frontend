@@ -1,0 +1,29 @@
+.card {
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.topRight {
+  font-size: 0.9rem;
+}
+
+.centerContent {
+  margin-bottom: 16px;
+}
+
+.bottomContent {
+  text-align: right;
+}
+

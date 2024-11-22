@@ -1,4 +1,4 @@
-import LogoutModal from "@/module/Test-module/components/LogoutModal/LogoutModal";
+import LogoutModal from "@/module/Test-module/components/logout-modal/logout-modal";
 
 export default function page () {
   return (

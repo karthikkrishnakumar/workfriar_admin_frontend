@@ -1,6 +1,6 @@
 import React from "react";
 import { Select } from "antd";
-import styles from "./SelectField.module.scss"; // Import the SCSS module
+import styles from "./select-field.module.scss"; // Import the SCSS module
 
 const { Option } = Select;
 
