@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./dashboard.module.scss";
 import CardSection from "../card-section/card-section";
-import ButtonComponent from "@/themes/components/button/button";
 import DynamicChart from "../project-time-chart/project-time-chart";
+import ButtonComponent from "@/themes/components/button/Button";
 
 const Dashboard: React.FC = () => {
   return (
