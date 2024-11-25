@@ -1,12 +1,11 @@
 .button {
-    font-size: 16px;
-    padding: 12px 24px;
-    height: 42px;
-    border: none;
-    cursor: pointer;
-    border-radius: 24px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    
+  font-size: 16px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  border-radius: 24px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-left: 10px;
 }
 
 .black {

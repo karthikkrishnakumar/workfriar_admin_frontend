@@ -1,0 +1,29 @@
+/* ModalInputContent.module.scss */
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns layout */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.gridItem {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.label {
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px; /* Space between the label and the select */
+  color: #333;
+}
+
+.gridItem select {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Ensures padding does not affect width */
+  margin-top: 5px; /* Slight margin from the label */
+}

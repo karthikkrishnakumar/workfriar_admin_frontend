@@ -1,0 +1,40 @@
+.chartContainer {
+  padding: 20px;
+  background-color: var(--primary-background-color);
+  border-radius: 10px;
+  height: 200px !important;
+}
+
+.column {
+  color: red !important;
+  fill: red !important;
+}
+
+.column canvas {
+  fill: red !important;
+  color: red !important;
+}
+.chartTitle {
+  text-align: center;
+  color: var(--primary-font-color-dark);
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.axisLabel {
+  font-size: 12px;
+  color: var(--secondary-font-color-light);
+}
+
+.axisLine {
+  stroke: var(--secondary-border-color);
+  stroke-width: 1;
+}
+
+.loader,
+.noData {
+  text-align: center;
+  color: var(--secondary-font-color-dark);
+  font-size: 16px;
+  margin-top: 20px;
+}
