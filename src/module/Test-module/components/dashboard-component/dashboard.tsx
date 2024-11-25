@@ -1,10 +1,72 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import styles from "./dashboard.module.scss";
 import CardSection from "../card-section/card-section";
-import DynamicChart from "../project-time-chart/project-time-chart";
-import ButtonComponent from "@/themes/components/button/Button";
+import ButtonComponent from "@/themes/components/button/button";
+import { StatusGauge } from "../timesheet-snap-shot-chart/snap-shot-chart";
+import ProjectTimeChart from "../project-time-chart/project-time-chart";
+import {
+  DashboardData,
+  DashboardService,
+} from "../../services/dashboard-services/dashboard-services";
+import Timesheet from "../timesheet-due/timesheet-due";
+
+export interface TimesheetDay {
+  date: string;
+  hours: string;
+  dayOfWeek: string;
+}
+
+export interface TimesheetData {
+  days: TimesheetDay[];
+  total: string;
+}
 
 const Dashboard: React.FC = () => {
+  // Type the state variables using the interfaces
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const timesheetData: TimesheetData = {
+    days: [
+      { dayOfWeek: "MON", date: "14/10", hours: "07:30" },
+      { dayOfWeek: "TUE", date: "15/10", hours: "08:00" },
+      { dayOfWeek: "WED", date: "16/10", hours: "08:00" },
+      { dayOfWeek: "THUR", date: "17/10", hours: "08:00" },
+      { dayOfWeek: "FRI", date: "18/10", hours: "08:00" },
+      { dayOfWeek: "SAT", date: "19/10", hours: "00:00" },
+      { dayOfWeek: "SUN", date: "20/10", hours: "00:00" },
+      { dayOfWeek: "TOTAL", date: "", hours: "35:30" },
+    ],
+    total: "35:30",
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await DashboardService.fetchProjectTimeChart();
+        setDashboardData(data);
+      } catch (error) {
+        setError("Error fetching dashboard data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading Dashboard...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div className={styles.dashboard}>
       <div className={styles.leftMainDiv}>
@@ -15,7 +77,10 @@ const Dashboard: React.FC = () => {
             <ButtonComponent label={"Add Entry"} theme={"black"} />
           }
           centerContent={
-            <DynamicChart />
+            <ProjectTimeChart
+              data={dashboardData?.projectTimeChart ?? []}
+              loading={loading}
+            />
           }
           className={styles.projectChartCard}
         />
@@ -24,32 +89,12 @@ const Dashboard: React.FC = () => {
         <CardSection
           title="Timesheet due"
           topRightContent={<span>Oct 14 - Oct 18, 2024</span>}
-          centerContent={
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Task</th>
-                  <th>Hours</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>UI/UX Design</td>
-                  <td>10:00</td>
-                </tr>
-                <tr>
-                  <td>Bug Analysis</td>
-                  <td>08:00</td>
-                </tr>
-              </tbody>
-            </table>
-          }
+          centerContent={<Timesheet data={timesheetData} />}
           bottomContent={
             <div>
-                <ButtonComponent label={"Review"} theme={"white"} />
-                <ButtonComponent label={"Submit"} theme={"black"} />
+              <ButtonComponent label={"Review"} theme={"white"} />
+              <ButtonComponent label={"Submit"} theme={"black"} />
             </div>
-          
           }
           className={styles.timesheetCard}
         />
@@ -65,9 +110,11 @@ const Dashboard: React.FC = () => {
           }
           bottomContent={
             <div className={styles.snapshotDetails}>
-              <div>Saved: 03</div>
-              <div>Approved: 03</div>
-              <div>Rejected: 03</div>
+              <StatusGauge
+                saved={dashboardData?.stats?.saved ?? 0}
+                approved={dashboardData?.stats?.approved ?? 0}
+                rejected={dashboardData?.stats?.rejected ?? 0}
+              />
             </div>
           }
           className={styles.snapshotCard}

@@ -30,6 +30,8 @@
   max-width: 717px;
   max-height: 301px;
   border-radius: 12px;
+  padding: 24px!important;
+  padding-top: 32px !important;
 }
 
 .timesheetCard {
@@ -39,6 +41,8 @@
   max-width: 717px;
   max-height: 435px;
   border-radius: 12px;
+  padding: 24px!important;
+  
 }
 
 .snapshotCard {
@@ -48,6 +52,8 @@
   max-width: 334px;
   max-height: 301px;
   border-radius: 12px;
+  padding: 24px!important;
+  padding-top: 32px !important;
 }
 
 // merging .notification and  holiday div
@@ -58,6 +64,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  
 }
 
 .notificationCard {
@@ -67,6 +74,8 @@
   max-width: 334px;
   max-height: 217px;
   border-radius: 12px;
+  padding: 24px!important;
+  
 }
 .holidaysCard {
   width: 100%;
@@ -75,5 +84,6 @@
   max-width: 334px;
   max-height: 197px;
   border-radius: 12px;
+  padding: 24px!important;
 }
 
