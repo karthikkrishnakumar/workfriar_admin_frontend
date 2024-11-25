@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./dashboard.module.scss";
 import CardSection from "../card-section/card-section";
 import DynamicChart from "../project-time-chart/project-time-chart";
-import ButtonComponent from "@/themes/components/button/Button";
+import ButtonComponent from "@/themes/components/button/dfc";
 
 const Dashboard: React.FC = () => {
   return (

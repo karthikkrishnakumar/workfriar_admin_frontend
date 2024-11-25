@@ -1,3 +1,5 @@
+import NavBar from "@/themes/components/nav-bar/nav-bar";
+import './global.scss'
 
 
 export default function Layout({
@@ -7,7 +9,7 @@ export default function Layout({
 }>) {
   return (
       <div>
-        home page
+        <NavBar />
         {children}
       </div>
   );

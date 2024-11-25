@@ -1,0 +1,23 @@
+.modalWrapper {
+  position: absolute; // Absolute positioning to place near the parent
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 160px; // Adjust based on your design
+  width: max-content;
+}
+
+.blackTheme .modalContent {
+  background-color: var(--nav-bar-background-color);
+  color: white;
+}
+
+.whiteTheme .modalContent {
+  background-color: var(--container-color);
+  color: black;
+}
