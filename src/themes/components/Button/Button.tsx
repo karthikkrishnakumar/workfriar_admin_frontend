@@ -3,9 +3,10 @@ import styles from "./button.module.scss"; // SCSS module for styles
 import { Button } from "antd";
 
 interface ButtonProps {
-  label: string;
-  theme?: "black" | "white" | "danger"; // Add more themes as needed
-  onClick?: () => void;
+    label: string; 
+    theme?: "black" | "white"; 
+    onClick?: () => void; 
+    flag?: boolean;
 }
 
 const ButtonComponent: React.FC<ButtonProps> = ({
@@ -37,4 +38,4 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   );
 };
 
-export default ButtonComponent;
+export default Button;
