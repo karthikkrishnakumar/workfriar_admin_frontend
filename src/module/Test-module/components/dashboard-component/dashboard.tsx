@@ -15,9 +15,7 @@ const Dashboard: React.FC = () => {
             <ButtonComponent label={"Add Entry"} theme={"black"} />
           }
           centerContent={
-    
             <DynamicChart />
-        
           }
           className={styles.projectChartCard}
         />

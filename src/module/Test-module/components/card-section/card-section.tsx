@@ -14,11 +14,11 @@ const CardSection: React.FC<CardSectionProps> = ({
   topRightContent,
   centerContent,
   bottomContent,
-  className, // Accepting additional className
+  className,
 }) => {
   return (
     <div
-      className={`${styles.card} ${className || ''}`} // Apply custom class if passed
+      className={`${styles.card} ${className || ''}`} 
     >
       {/* Top Section */}
      

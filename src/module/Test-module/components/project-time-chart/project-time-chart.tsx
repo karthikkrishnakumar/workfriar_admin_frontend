@@ -1,12 +1,13 @@
-"use client"
-import React, { useEffect, useState } from 'react';
-import { Column } from '@ant-design/charts';
-import axios from 'axios';
-import styles from './project-time-chart.module.scss';
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { Column } from "@ant-design/charts";
+import axios from "axios";
+import styles from "./project-time-chart.module.scss";
 
 interface ChartData {
-  project: string; // Project names for the x-axis (bottom)
-  hours: number;   // Hours spent for the y-axis (vertical)
+  project: string;
+  hours: number;
 }
 
 const DynamicChart: React.FC = () => {
@@ -16,10 +17,10 @@ const DynamicChart: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/dashboard/project-time-chart');
+        const response = await axios.get("/api/dashboard/project-time-chart");
         setData(response.data);
       } catch (error) {
-        console.error('Error fetching chart data:', error);
+        console.error("Error fetching chart data:", error);
       } finally {
         setLoading(false);
       }
@@ -28,50 +29,62 @@ const DynamicChart: React.FC = () => {
     fetchData();
   }, []);
 
-  // Column chart configuration
   const config = {
     data,
-    xField: 'project',  
-    yField: 'hours',    
+    xField: "project",
+    yField: "hours",
     columnWidthRatio: 0.5,
+    // Apply golden theme color directly to the column
+    color: "#FFD700",
+    // Add style configurations
+    style: {
+      fill: "#FFD700",
+    },
     xAxis: {
       title: {
-        text: 'Projects',
-        style: { fontSize: 12, color: 'var(--secondary-font-color-dark)' },
+        text: "Projects",
+        style: { fontSize: 12, color: "var(--secondary-font-color-dark)" },
       },
       label: {
-        className: styles.axisLabel,
-        autoHide: false, // Ensure all project names are visible
-      },
-      line: {
-        className: styles.axisLine,
+        style: {
+          fill: "var(--secondary-font-color-dark)",
+        },
+        autoHide: false,
       },
     },
     yAxis: {
       title: {
-        text: 'Time Spent (hours)',
-        style: { fontSize: 12, color: 'var(--secondary-font-color-dark)' },
+        text: "Time Spent (hours)",
+        style: { fontSize: 12, color: "var(--secondary-font-color-dark)" },
       },
       label: {
-        className: styles.axisLabel,
-        formatter: (value: number) => `${value} hr`, // Append "hr" to hours
-      },
-      line: {
-        className: styles.axisLine,
+        formatter: (value: number) => `${value} hr`,
+        style: {
+          fill: "var(--secondary-font-color-dark)",
+        },
       },
     },
-    legend: false,
-    interactions: [{ type: 'active-region' }],
+    // Configure column appearance
+    columnStyle: {
+      fill: "#FFD700",
+      radius: [4, 4, 0, 0],
+    },
+    // Add hover state color
+    state: {
+      active: {
+        style: {
+          fill: "#DAA520", // Darker golden color for hover state
+        },
+      },
+    },
+    // Animation configuration
     animation: {
       appear: {
-        animation: 'scale-in-y', // Grow bars from bottom to top
+        animation: "scale-in-y",
         duration: 800,
       },
     },
-    columnStyle: {
-      fill: '#FFD700',
-      radius: [4, 4, 0, 0], // Rounded top edges of the columns
-    },
+    interactions: [{ type: "active-region" }],
   };
 
   if (loading) {
@@ -84,7 +97,7 @@ const DynamicChart: React.FC = () => {
 
   return (
     <div className={styles.chartContainer}>
-      <Column {...config} className={styles.column}/>
+      <Column {...config} />
     </div>
   );
 };
