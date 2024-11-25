@@ -4,9 +4,9 @@ import { Button } from "antd";
 
 interface ButtonProps {
     label: string; 
-    theme?: "black" | "white"; 
+    theme?: "black" | "white" | "danger"; 
     onClick?: () => void; 
-    flag?: boolean;
+  
 }
 
 const ButtonComponent: React.FC<ButtonProps> = ({
@@ -38,4 +38,4 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   );
 };
 
-export default Button;
+export default ButtonComponent;
