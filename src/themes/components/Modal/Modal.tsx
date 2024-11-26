@@ -1,7 +1,7 @@
 import { Modal } from "antd";
 import { ReactNode } from "react";
 import styles from "./modal.module.scss";
-import ButtonComponent from "../Button/Button"; 
+import ButtonComponent from "../button/button"; 
 
 
 interface ModalProps {

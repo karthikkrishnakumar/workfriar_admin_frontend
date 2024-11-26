@@ -2,7 +2,7 @@
 import { useState } from "react";
 import styles from "./login-form.module.scss";
 import InputComponent from "@/themes/components/Input/Input";
-import Button from "@/themes/components/Button/Button";
+import ButtonComponent from "@/themes/components/button/button";
 import OtpForm from "../otp-form/otp-form";
 
 const LoginForm = () => {
@@ -26,7 +26,7 @@ const LoginForm = () => {
           alt="Icon"
           className={styles.icon}
         />
-        <Button label="Continue with Google"/>
+        <ButtonComponent label="Continue with Google"/>
         <div className={styles.divider}>
         <div className={styles.hr}></div>
           <p>or</p>
