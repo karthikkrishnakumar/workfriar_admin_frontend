@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./dashboard.module.scss";
 import CardSection from "../card-section/card-section";
-import ButtonComponent from "@/themes/components/button/button";
+import ButtonComponent from "@/themes/components/Button/Button";
 import DateRangePicker from "@/themes/components/date-picker/date-picker";
 import {
   DashboardData,

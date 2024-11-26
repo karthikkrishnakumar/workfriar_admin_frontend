@@ -1,6 +1,10 @@
 .moduleHeaderwrpper{
+    position: fixed;
+    top: 0 !important;
+    left: 293px !important;
+    background-color: transparent;
     padding: 25px 40px;
-    width: 100%;
+    width: calc(100vw - 293px);
     display: flex;
     flex-direction: row;
     align-items: center;

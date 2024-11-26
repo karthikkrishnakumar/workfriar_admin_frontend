@@ -1,6 +1,8 @@
 import React from "react";
 import TabComponent from "@/themes/components/tabs/tabs";
 import TableWrapper from "@/themes/components/custom-table-wrapper/custom-table-wrapper";
+import IconButton from "@/themes/components/icon-button/icon-button";
+import Icons from "@/themes/images/icons/icons";
 
 export default function Page() {
   const tabs = [
@@ -34,6 +36,7 @@ export default function Page() {
     <div style={{ display: "flex", flexDirection: "row" }}>
       <TabComponent headings={tabs} />
       <TableWrapper data={data} columns={columns} />
+      <IconButton icon={Icons.calender} />
     </div>
   );
 }
