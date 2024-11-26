@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "stage": "next start -p 5001"
   },
   "dependencies": {
-    "@ant-design/charts": "^2.2.3",
+    "@ant-design/charts": "2.2.3",
+    "@types/chart.js": "2.9.41",
     "antd": "5.22.2",
     "axios": "1.7.7",
     "chart.js": "4.4.6",

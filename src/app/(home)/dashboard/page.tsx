@@ -1,11 +1,8 @@
-import ModuleHeader from "@/themes/components/module-header/module-header";
+import DashboardView from "@/module/dashboard/views/dashboard-view";
 
 export default function page () {
-    return (
-      <div>
-        <ModuleHeader title="Dashboard" isBackButtonNeeded={false}/>
-      </div>
-    )
-  }
-  
-  
+  return (
+    <div><DashboardView/></div>
+  )
+}
+

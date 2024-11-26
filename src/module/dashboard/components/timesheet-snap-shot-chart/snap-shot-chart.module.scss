@@ -1,0 +1,94 @@
+.statusGauge {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0px;
+
+  .gaugeContainer {
+    position: relative;
+
+    .chartWrapper {
+      width: 100% !important;
+      height: 100% !important;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      top: 18px;
+
+      .halfDonutChart {
+        max-width: 196px;
+        max-height: 98px;
+      }
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 44px;
+      padding: 0 0px;
+      max-width: 266px;
+
+      .statItem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+
+        .label {
+          font-size: 14px;
+          color: #666;
+        }
+
+        .valueWrapper {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 5px 10px;
+          border-radius: 5px;
+          border-width: 2px;
+          border-style: solid;
+
+          .value {
+            font-size: 24px;
+            font-weight: bold;
+          }
+
+          &.saved {
+            border-color: var(--primary-golden-color-light);
+          }
+
+          &.approved {
+            border-color: var(--primary-golden-color-medium);
+          }
+
+          &.rejected {
+            border-color: var(--primary-golden-color-dark);
+          }
+        }
+
+        &.saved .value {
+          color: var(--primary-golden-color-light);
+        }
+
+        &.approved .value {
+          color: var(--primary-golden-color-medium);
+        }
+
+        &.rejected .value {
+          color: var(--primary-golden-color-dark);
+        }
+      }
+    }
+
+    .saved,
+    .approved,
+    .rejected {
+      border-left: 2px solid;
+      padding-left: 4px;
+      &.saved { border-color: var(--primary-golden-color-light); }
+      &.approved { border-color: var(--primary-golden-color-medium); }
+      &.rejected { border-color: var(--primary-golden-color-dark); }
+    }
+  }
+}
