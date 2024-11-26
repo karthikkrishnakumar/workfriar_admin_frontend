@@ -1,0 +1,26 @@
+.otpContainer {
+    display: flex;
+    gap: 12px; 
+    justify-content: center;
+    align-items: center;
+
+  }
+  
+  .otpBox {
+    text-align: center; 
+    font-size: 18px; 
+    border: 1px solid #ccc; 
+    border-radius: 8px;
+    width: 63.83px;
+    height: 58px;
+    text-align: left;
+    background-color:transparent;
+    font-family:  var(--font-rubik);
+  }
+
+  
+  .otpBox:hover, .otpBox:focus{
+    background-color:transparent;
+    border: 1px solid var(--Text-grey, #6A6A6D);
+  }
+  

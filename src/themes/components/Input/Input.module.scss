@@ -1,0 +1,39 @@
+.inputContainer {
+    position: relative;
+
+    input , input:hover, input:focus{
+        padding-top: 25px;
+        background-color:transparent;
+        border: 1px solid var(--Light-grey, #C1C1C1);
+      }
+
+      .label {
+        position: absolute;
+        z-index: 2;
+        top: 8px;
+        left: 16px;
+        color:var(--primary-font-color-dark);
+        padding: 0 5px;
+font-size: 13px;
+font-weight: 400;
+line-height: 15.41px;
+font-family:  var(--font-rubik);
+      }
+
+      input::placeholder {
+        top:20px;
+        padding-left: 10px;  
+        padding-top: 5px; 
+font-size: 16px;
+font-weight: 400;
+line-height: 18.96px;
+text-align: left;
+color:  #6A6A6D;
+font-family:  var(--font-rubik);
+      }
+  }
+  
+
+  
+  
+  
