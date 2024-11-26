@@ -5,7 +5,6 @@ import styles from "./timesheet-due.module.scss";
 interface TimesheetProps {
   data: TimesheetData;
 }
-
 // types.ts
 interface TimesheetDay {
   date: string;

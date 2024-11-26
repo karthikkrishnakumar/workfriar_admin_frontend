@@ -10,31 +10,34 @@ interface CardSectionProps {
 }
 
 // Use forwardRef to correctly type the ref prop
-const CardSection = forwardRef<HTMLDivElement, CardSectionProps>(({
-  title,
-  topRightContent,
-  centerContent,
-  bottomContent,
-  className,
-}, ref) => {
-  return (
-    <div
-      ref={ref} // forward the ref to the div element
-      className={`${styles.card} ${className || ''}`}
-    >
-      {/* Top Section */}
-      <div className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
-        {topRightContent && <div className={styles.topRight}>{topRightContent}</div>}
+const CardSection = forwardRef<HTMLDivElement, CardSectionProps>(
+  (
+    { title, topRightContent, centerContent, bottomContent, className },
+    ref
+  ) => {
+    return (
+      <div
+        ref={ref} // forward the ref to the div element
+        className={`${styles.card} ${className ?? ""}`}
+      >
+        {/* Top Section */}
+        <div className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+          {topRightContent && (
+            <div className={styles.topRight}>{topRightContent}</div>
+          )}
+        </div>
+
+        {/* Center Content */}
+        <div className={styles.centerContent}>{centerContent}</div>
+
+        {/* Bottom Content */}
+        {bottomContent && (
+          <div className={styles.bottomContent}>{bottomContent}</div>
+        )}
       </div>
-
-      {/* Center Content */}
-      <div className={styles.centerContent}>{centerContent}</div>
-
-      {/* Bottom Content */}
-      {bottomContent && <div className={styles.bottomContent}>{bottomContent}</div>}
-    </div>
-  );
-});
+    );
+  }
+);
 
 export default CardSection;
