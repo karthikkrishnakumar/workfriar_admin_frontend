@@ -1,3 +1,6 @@
+import NavBar from "@/themes/components/nav-bar/nav-bar";
+import './global.scss'
+import ModuleHeaderWrapper from "@/themes/components/module-header-wrapper/module-header-wrapper";
 
 
 export default function Layout({
@@ -7,7 +10,8 @@ export default function Layout({
 }>) {
   return (
       <div>
-        home page
+        <NavBar />
+        <ModuleHeaderWrapper />
         {children}
       </div>
   );

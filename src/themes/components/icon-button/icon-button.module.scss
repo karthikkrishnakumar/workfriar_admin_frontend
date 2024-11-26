@@ -1,0 +1,19 @@
+.IconButtonWrapper {
+    padding: 0;
+}
+
+.customButton{
+    outline: none;
+    border: none;
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span{
+        width: 24px;
+        height: 24px;
+    }
+}

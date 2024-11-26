@@ -10,7 +10,7 @@ interface NavBlockProps {
   activeStatus: boolean; // Active status of the block
   defaultIcon: ReactNode; // Default icon for the block
   activeIcon: ReactNode;  // Icon while active
-  collapsaible: boolean;  // Whether the block is collaps
+  collapsible: boolean;  // Whether the block is collaps
   onClickFunction?: () => void;  // function for onclick
 }
 
@@ -25,7 +25,7 @@ const NavBlock: React.FC<NavBlockProps> = ({
   activeStatus,
   defaultIcon,
   activeIcon,
-  collapsaible,
+  collapsible,
   onClickFunction,
 }) => {
   const [isHovered, setIsHovered] = useState(false); // Tracks hover state
@@ -54,7 +54,7 @@ const NavBlock: React.FC<NavBlockProps> = ({
         <h3>{title}</h3>
       </div>
       <span>
-        {collapsaible
+        {collapsible
           ? isHovered || activeStatus
             ? Icons.arrowRightDark
             : Icons.arrowRightLight

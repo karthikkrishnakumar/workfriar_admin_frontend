@@ -1,0 +1,20 @@
+.customTable :global {
+    width: 100%;
+    .ant-table-thead {
+        border-radius: 8px;
+        & .ant-table-cell {
+            background: var(--secondary-golden-color-light) !important;
+            justify-content: space-between;
+            height: 60px;
+            font-family: var(--font-rubik);
+            font-size: var(--default-font-size);
+            font-weight: var(--default-font-weight);
+            line-height: 16.59px;
+            text-align: left;
+            color: var(--Text-text_grey_1, #686869);
+
+        }
+    }
+
+
+}

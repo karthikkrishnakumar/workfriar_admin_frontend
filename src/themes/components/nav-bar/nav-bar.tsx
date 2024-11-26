@@ -1,7 +1,11 @@
+"use client";
 import React from "react";
+import { useRouter } from "next/navigation"; // Using useRouter from next/navigation
+import { usePathname } from "next/navigation"; // To get the current pathname
 import styles from "./nav-bar.module.scss";
-import Icons from "@/themes/images/icons/icons";
+import Icons from "@/themes/images/icons/icons"; // Importing icons
 import NavBlock from "../nav-block/nav-block";
+import { NavBarNavigationClass } from "@/utils/navigation-util/page-navigation-router"; // Import the navigation class
 
 /**
  * A navigation bar component that includes a logo and a list of navigation blocks.
@@ -9,6 +13,14 @@ import NavBlock from "../nav-block/nav-block";
  * @returns {JSX.Element} The rendered NavBar component.
  */
 const NavBar = () => {
+  const router = useRouter(); // Get router instance for navigation from next/navigation
+  const pathname = usePathname(); // Get the current path to determine active status
+  const navBarNavigation = new NavBarNavigationClass(); // Create an instance of the navigation class
+
+  const handleNavClick = (path: string) => {
+    navBarNavigation.navigateTo(path, router.push); // Call navigateTo and pass the router.push method
+  };
+
   return (
     <div className={styles.navBarWrapper}>
       {/* Logo Section */}
@@ -19,59 +31,22 @@ const NavBar = () => {
 
       {/* Navigation List Section */}
       <div className={styles.navList}>
-        {/* Dashboard Navigation Block */}
-        <NavBlock
-          title="DashBoard" // Title of the navigation block
-          defaultIcon={Icons.dashboardOutline} // Default icon for dashboard
-          activeIcon={Icons.dashboardFilled} // Active icon for dashboard
-          activeStatus={false} // Active status of the block
-          collapsaible={false} // Whether the block supports collapsing
-        />
+        {navBarNavigation.navigationLinks.map((link) => {
+          const DefaultIcon = Icons[link.defaultIcon]; // Get the default icon based on the icon name
+          const ActiveIcon = Icons[link.activeIcon]; // Get the active icon based on the icon name
 
-        {/* TimeSheet Navigation Block */}
-        <NavBlock
-          title="TimeSheet"
-          defaultIcon={Icons.timeSheetOutline}
-          activeIcon={Icons.timeSheetFilled}
-          activeStatus={true}
-          collapsaible={true}
-        />
-
-        {/* Projects Navigation Block */}
-        <NavBlock
-          title="Projects"
-          defaultIcon={Icons.projectsOutline}
-          activeIcon={Icons.projectsFilled}
-          activeStatus={false}
-          collapsaible={true}
-        />
-
-        {/* Organization Navigation Block */}
-        <NavBlock
-          title="Organization"
-          defaultIcon={Icons.organizationOutline}
-          activeIcon={Icons.organizationFilled}
-          activeStatus={false}
-          collapsaible={false}
-        />
-
-        {/* Project Forecast Navigation Block */}
-        <NavBlock
-          title="Project Forecast"
-          defaultIcon={Icons.projectForeCastOutline}
-          activeIcon={Icons.projectForeCastFilled}
-          activeStatus={false}
-          collapsaible={false}
-        />
-
-        {/* Reports Navigation Block */}
-        <NavBlock
-          title="Reports"
-          defaultIcon={Icons.reportsOutline}
-          activeIcon={Icons.reportsFilled}
-          activeStatus={false}
-          collapsaible={true}
-        />
+          return (
+            <NavBlock
+              key={link.label}
+              title={link.label}
+              defaultIcon={DefaultIcon} // Pass the corresponding default icon to the NavBlock
+              activeIcon={ActiveIcon} // Pass the corresponding active icon to the NavBlock
+              activeStatus={navBarNavigation.getActiveStatus(link.path, pathname)} // Set active status based on the current pathname
+              collapsible={link.collapsible}
+              onClickFunction={() => handleNavClick(link.path)} // Call handleNavClick when a nav block is clicked
+            />
+          );
+        })}
       </div>
     </div>
   );

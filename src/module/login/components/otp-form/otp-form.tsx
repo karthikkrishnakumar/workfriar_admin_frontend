@@ -1,7 +1,7 @@
 "use client";
 import styles from "./otp-form.module.scss";
 import OtpInput from "@/themes/components/otp-input/otp-input";
-import Button from "@/themes/components/Button/Button";
+import Button from "@/themes/components/button/button";
 
 const OtpForm: React.FC<{ email: string }> = ({ email }) =>{
   return (
