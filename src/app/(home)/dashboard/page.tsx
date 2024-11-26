@@ -1,8 +1,8 @@
+import DashboardView from "@/module/dashboard/views/dashboard-view";
 
 export default function page () {
-    return (
-      <div>page</div>
-    )
-  }
-  
-  
+  return (
+    <div><DashboardView/></div>
+  )
+}
+

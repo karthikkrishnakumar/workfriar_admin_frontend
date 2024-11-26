@@ -1,0 +1,38 @@
+.dateRangePicker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0px;
+  border: none !important;
+}
+
+.navigationButtonRight,
+.navigationButtonLeft {
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.navigationButtonLeft {
+  transform: rotate(180deg);
+}
+
+.weekDisplay {
+  font-size: 14px;
+  font-weight: 400;
+  color: #333;
+  border: 0px;
+  border-radius: 5px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 145px;
+}

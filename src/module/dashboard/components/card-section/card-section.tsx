@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import styles from "./card-section.module.scss";
 
 interface CardSectionProps {
@@ -6,22 +6,23 @@ interface CardSectionProps {
   topRightContent?: React.ReactNode;
   centerContent: React.ReactNode;
   bottomContent?: React.ReactNode;
-  className?: string; 
+  className?: string;
 }
 
-const CardSection: React.FC<CardSectionProps> = ({
+// Use forwardRef to correctly type the ref prop
+const CardSection = forwardRef<HTMLDivElement, CardSectionProps>(({
   title,
   topRightContent,
   centerContent,
   bottomContent,
   className,
-}) => {
+}, ref) => {
   return (
     <div
-      className={`${styles.card} ${className || ''}`} 
+      ref={ref} // forward the ref to the div element
+      className={`${styles.card} ${className || ''}`}
     >
       {/* Top Section */}
-     
       <div className={styles.header}>
         <h2 className={styles.title}>{title}</h2>
         {topRightContent && <div className={styles.topRight}>{topRightContent}</div>}
@@ -34,6 +35,6 @@ const CardSection: React.FC<CardSectionProps> = ({
       {bottomContent && <div className={styles.bottomContent}>{bottomContent}</div>}
     </div>
   );
-};
+});
 
 export default CardSection;
