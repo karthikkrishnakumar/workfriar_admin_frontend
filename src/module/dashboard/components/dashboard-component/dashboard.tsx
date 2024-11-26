@@ -1,15 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useRef } from "react";
 import styles from "./dashboard.module.scss";
 import CardSection from "../card-section/card-section";
 import ButtonComponent from "@/themes/components/button/button";
-import { StatusGauge } from "../timesheet-snap-shot-chart/snap-shot-chart";
-import ProjectTimeChart from "../project-time-chart/project-time-chart";
+import DateRangePicker from "@/themes/components/date-picker/date-picker";
 import {
   DashboardData,
   DashboardService,
 } from "../../services/dashboard-services/dashboard-services";
+import ProjectTimeChart from "../project-time-chart/project-time-chart";
 import Timesheet from "../timesheet-due/timesheet-due";
+import { StatusGauge } from "../timesheet-snap-shot-chart/snap-shot-chart";
 
 export interface TimesheetDay {
   date: string;
@@ -23,6 +25,8 @@ export interface TimesheetData {
 }
 
 const Dashboard: React.FC = () => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   // Type the state variables using the interfaces
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
@@ -30,24 +34,24 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const timesheetData: TimesheetData = {
-    days: [
-      { dayOfWeek: "MON", date: "14/10", hours: "07:30" },
-      { dayOfWeek: "TUE", date: "15/10", hours: "08:00" },
-      { dayOfWeek: "WED", date: "16/10", hours: "08:00" },
-      { dayOfWeek: "THUR", date: "17/10", hours: "08:00" },
-      { dayOfWeek: "FRI", date: "18/10", hours: "08:00" },
-      { dayOfWeek: "SAT", date: "19/10", hours: "00:00" },
-      { dayOfWeek: "SUN", date: "20/10", hours: "00:00" },
-      { dayOfWeek: "TOTAL", date: "", hours: "35:30" },
-    ],
-    total: "35:30",
+  const [selectedStartDate, setSelectedStartDate] = useState(
+    new Date(2024, 9, 14)
+  ); // Oct 14, 2024
+  const [selectedEndDate, setSelectedEndDate] = useState(new Date(2024, 9, 18));
+
+  const handleDateChange = (startDate: Date, endDate: Date) => {
+    setSelectedStartDate(startDate);
+    setSelectedEndDate(endDate);
+    console.log("Updated Dates:", { startDate, endDate });
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await DashboardService.fetchProjectTimeChart();
+        const data = await DashboardService.fetchProjectTimeChart(
+          selectedStartDate,
+          selectedEndDate
+        );
         setDashboardData(data);
       } catch (error) {
         setError("Error fetching dashboard data.");
@@ -57,7 +61,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [selectedStartDate, selectedEndDate]);
 
   if (loading) {
     return <div>Loading Dashboard...</div>;
@@ -72,6 +76,7 @@ const Dashboard: React.FC = () => {
       <div className={styles.leftMainDiv}>
         {/* Project Time Today */}
         <CardSection
+          ref={cardRef}
           title="Project time today"
           topRightContent={
             <ButtonComponent label={"Add Entry"} theme={"black"} />
@@ -87,9 +92,20 @@ const Dashboard: React.FC = () => {
 
         {/* Timesheet Due */}
         <CardSection
+          ref={cardRef}
           title="Timesheet due"
-          topRightContent={<span>Oct 14 - Oct 18, 2024</span>}
-          centerContent={<Timesheet data={timesheetData} />}
+          topRightContent={
+            <DateRangePicker
+              initialStartDate={selectedStartDate}
+              initialEndDate={selectedEndDate}
+              onDateChange={handleDateChange}
+            />
+          }
+          centerContent={
+            <Timesheet
+              data={dashboardData?.timesheetData || { days: [], total: "0" }}
+            />
+          }
           bottomContent={
             <div>
               <ButtonComponent label={"Review"} theme={"white"} />
@@ -99,9 +115,11 @@ const Dashboard: React.FC = () => {
           className={styles.timesheetCard}
         />
       </div>
+
       <div className={styles.rightMainDiv}>
         {/* Project Snapshot */}
         <CardSection
+          ref={cardRef}
           title="Timesheet snapshot"
           centerContent={
             <div className={styles.donutChart}>
@@ -123,6 +141,7 @@ const Dashboard: React.FC = () => {
         <div className={styles.additionalDiv}>
           {/* Notifications */}
           <CardSection
+            ref={cardRef}
             title="Notifications"
             centerContent={
               <ul>
@@ -135,6 +154,7 @@ const Dashboard: React.FC = () => {
 
           {/* Holidays */}
           <CardSection
+            ref={cardRef}
             title="Holidays"
             centerContent={
               <div className={styles.holidays}>

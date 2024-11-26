@@ -15,7 +15,7 @@ interface TimesheetDay {
 
 interface TimesheetData {
   days: TimesheetDay[];
-  total: string;
+  total?: string;
 }
 
 const Timesheet: React.FC<TimesheetProps> = ({ data }) => {
