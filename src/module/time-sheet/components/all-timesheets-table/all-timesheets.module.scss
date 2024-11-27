@@ -1,0 +1,107 @@
+.tableWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.tableContainer {
+  width: 100%;
+  max-width: 1200px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.tableHeader {
+  display: flex;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.headerCell {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+}
+
+.tableRow {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px;
+}
+
+.rowCell {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+}
+
+.timeInput {
+  width: 60px;
+  height: 30px;
+  font-size: 1rem;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+  background-color: #fafafa;
+}
+
+.timeInput:focus {
+  border-color: #000;
+}
+
+.addRow {
+  background-color: #f9f9f9;
+}
+
+.addRow .rowCell {
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.addRow input {
+  background-color: #fff;
+  border: 1px dashed #ccc;
+}
+
+.addRow .rowCell:last-child {
+  font-weight: bold;
+}
+
+.addButton{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  border: none;
+  gap: 10px;
+  background-color: transparent;
+  color: var(--primary-golden-color-dark);
+  font-size: var(--default-font-size);
+  font-weight: var(--sub-heading-font-weight);
+  position: relative;
+
+  span{
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.addButtonWrapper{
+  position: relative;
+}
+
+.rowWiseTotal{
+  border-left: 1px solid var(--primary-golden-color-dark);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  p{
+    width: 100%;
+    text-align: center;
+  }
+}

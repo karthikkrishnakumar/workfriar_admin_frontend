@@ -1,0 +1,26 @@
+.timeInputContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+}
+
+.timeInput {
+  width: 75px;
+  height: 48px;
+  font-size: var(--default-font-size); /* Makes the font appear like a digital clock */
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  background-color: #fff;
+  color: #333;
+}
+
+.timeInput:focus {
+  border-color: #000;
+}
+
+.timeInput::placeholder {
+  color: #aaa;
+}

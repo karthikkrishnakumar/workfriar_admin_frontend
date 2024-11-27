@@ -1,6 +1,7 @@
 .modalWrapper {
   position: absolute; // Absolute positioning to place near the parent
   z-index: 1000;
+  height: max-content;
 }
 
 .modalContent {
@@ -10,6 +11,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   min-width: 160px; // Adjust based on your design
   width: max-content;
+  height: max-content;
 }
 
 .blackTheme .modalContent {

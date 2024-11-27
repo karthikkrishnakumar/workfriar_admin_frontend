@@ -2,7 +2,8 @@
     position: fixed;
     top: 0 !important;
     left: 293px !important;
-    background-color: transparent;
+    background-color: var(--page-background);
+    z-index: 999;
     padding: 25px 40px;
     width: calc(100vw - 293px);
     display: flex;

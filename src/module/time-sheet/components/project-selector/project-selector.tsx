@@ -1,0 +1,32 @@
+import React from 'react';
+import styles from './project-selector.module.scss';
+import SearchBar from '@/themes/components/search-bar/search-bar';
+import Icons from '@/themes/images/icons/icons';
+
+const ProjectSelector = () => {
+    const projects = [
+        { id: 1, name: 'Danti' },
+        { id: 2, name: 'One View' },
+        { id: 3, name: 'Soezy' },
+        { id: 4, name: 'Overhead' },
+        { id: 5, name: 'Unutilized' },
+    ];
+
+    return (
+        <div className={styles.projectSelectorWrapper}>
+            <h2>Projects</h2>
+            <SearchBar placeholder="Search" />
+            <ul>
+                {projects.map((project) => (
+                    <li key={project.id}>
+                        {project.name}
+                        <span>{Icons.arrowRightGrey}</span>
+                    </li>
+                ))}
+            </ul>
+            <button className={styles.addProjectButton}><span>{Icons.plusGold}</span> Add Project</button>
+        </div>
+    );
+};
+
+export default ProjectSelector;
