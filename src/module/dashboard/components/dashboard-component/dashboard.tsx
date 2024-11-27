@@ -52,9 +52,8 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, [selectedStartDate, selectedEndDate]);
 
-
   const handleClickReview = () => {
-    window.location.href="/time-sheet"
+    window.location.href = "/time-sheet";
   };
 
   if (loading) {
@@ -102,7 +101,11 @@ const Dashboard: React.FC = () => {
           }
           bottomContent={
             <div>
-              <ButtonComponent label={"Review"} theme={"white"} onClick={handleClickReview}/>{" "}
+              <ButtonComponent
+                label={"Review"}
+                theme={"white"}
+                onClick={handleClickReview}
+              />{" "}
               <ButtonComponent label={"Submit"} theme={"black"} />
             </div>
           }
