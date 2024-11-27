@@ -1,0 +1,68 @@
+/* 
+  Styling for the notification list and items. The list is displayed as a column 
+  with space between each item, while the items themselves are flex containers.
+*/
+.notificationList {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+/* 
+    Notification item styling, ensuring it is a flex container with space between elements.
+  */
+.notificationItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 
+    Label styling for the radio button with flexbox to ensure proper alignment.
+  */
+.radioLabel {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* 
+    Hides the actual radio button input, as we are using custom styles for it.
+  */
+.radioInput {
+  display: none;
+}
+
+/* 
+    Styling for the content section of the notification, arranged using flexbox.
+  */
+.notificationContent {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* 
+    Notification message style with flexible growth, making it expand to fill available space.
+  */
+.notificationMessage {
+  flex-grow: 1;
+  font-size: 14px;
+  color: var(--primary-font-color-dark);
+}
+
+/* 
+    Custom radio button appearance, using a circle before the content for a styled effect.
+  */
+.radioInput + .notificationContent::before {
+  content: ""; // Creates a pseudo-element
+  display: inline-block;
+  width: 8px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--primary-golden-color-medium);
+  margin-right: 1rem;
+}

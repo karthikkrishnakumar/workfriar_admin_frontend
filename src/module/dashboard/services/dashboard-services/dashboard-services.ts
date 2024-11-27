@@ -11,6 +11,13 @@ export interface ProjectTimeChartType {
   hours: number;
 }
 
+export interface Notification {
+  id: string;
+  message: string;
+  time: string;
+  origin: string;
+}
+
 export interface TimesheetDay {
   date: string;
   hours: string;
@@ -19,29 +26,29 @@ export interface TimesheetDay {
 
 export interface TimesheetData {
   days: TimesheetDay[];
-  total?: string; 
+  total?: string;
 }
 
 export interface DashboardData {
   projectTimeChart: ProjectTimeChartType[];
   stats: Stats;
   timesheetData: TimesheetData;
+  notifications: Notification[];
 }
 
 export class DashboardService {
-  static async fetchProjectTimeChart(
-    startDate: Date,
-    endDate: Date
+  static async fetchDashboardData(
+    startDate: Date | null,
+    endDate: Date | null
   ): Promise<DashboardData> {
     try {
       const response = await axios.get("/api/dashboard/dashboard-api", {
         params: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
+          startDate: startDate?.toISOString(),
+          endDate: endDate?.toISOString(),
         },
       });
 
-      console.log(startDate,endDate)
       return response.data;
     } catch (error) {
       console.error("Error fetching project time chart data:", error);
