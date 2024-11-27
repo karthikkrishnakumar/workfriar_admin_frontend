@@ -209,7 +209,7 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
     <div className={styles.chartContainer}>
       <div className={styles.chartWrapper}>
         {/* Render the Bar chart */}
-        <Bar data={chartData} options={options || null} />
+        <Bar  data={chartData} options={options || null} />
       </div>
 
       <div className={styles.scrollTrackParentDiv}>

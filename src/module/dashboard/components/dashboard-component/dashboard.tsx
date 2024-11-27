@@ -12,17 +12,8 @@ import {
 import ProjectTimeChart from "../project-time-chart/project-time-chart";
 import Timesheet from "../timesheet-due/timesheet-due";
 import { StatusGauge } from "../timesheet-snap-shot-chart/snap-shot-chart";
-
-export interface TimesheetDay {
-  date: string;
-  hours: string;
-  dayOfWeek: string;
-}
-
-export interface TimesheetData {
-  days: TimesheetDay[];
-  total: string;
-}
+import Loader from "@/themes/components/loader/loader";
+import DashboardNotifications from "../notifications-component/dashboard-notiffications";
 
 const Dashboard: React.FC = () => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -34,11 +25,9 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedStartDate, setSelectedStartDate] = useState(
-    new Date(2024, 9, 14)
-  ); // Oct 14, 2024
-  const [selectedEndDate, setSelectedEndDate] = useState(new Date(2024, 9, 18));
-
+  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
+  // Handle the date change from the DateRangePicker
   const handleDateChange = (startDate: Date, endDate: Date) => {
     setSelectedStartDate(startDate);
     setSelectedEndDate(endDate);
@@ -48,7 +37,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await DashboardService.fetchProjectTimeChart(
+        const data = await DashboardService.fetchDashboardData(
           selectedStartDate,
           selectedEndDate
         );
@@ -63,8 +52,12 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, [selectedStartDate, selectedEndDate]);
 
+  const handleClickReview = () => {
+    window.location.href = "/time-sheet";
+  };
+
   if (loading) {
-    return <div>Loading Dashboard...</div>;
+    return <Loader />;
   }
 
   if (error) {
@@ -96,8 +89,8 @@ const Dashboard: React.FC = () => {
           title="Timesheet due"
           topRightContent={
             <DateRangePicker
-              initialStartDate={selectedStartDate}
-              initialEndDate={selectedEndDate}
+              initialStartDate={selectedStartDate ?? undefined}
+              initialEndDate={selectedEndDate ?? undefined}
               onDateChange={handleDateChange}
             />
           }
@@ -108,7 +101,11 @@ const Dashboard: React.FC = () => {
           }
           bottomContent={
             <div>
-              <ButtonComponent label={"Review"} theme={"white"} />
+              <ButtonComponent
+                label={"Review"}
+                theme={"white"}
+                onClick={handleClickReview}
+              />{" "}
               <ButtonComponent label={"Submit"} theme={"black"} />
             </div>
           }
@@ -144,10 +141,9 @@ const Dashboard: React.FC = () => {
             ref={cardRef}
             title="Notifications"
             centerContent={
-              <ul>
-                <li>Your timesheet is due for last week.</li>
-                <li>Your timesheet is approved by Maddy.</li>
-              </ul>
+              <DashboardNotifications
+                notifications={dashboardData?.notifications || []}
+              />
             }
             className={styles.notificationCard}
           />
@@ -158,8 +154,9 @@ const Dashboard: React.FC = () => {
             title="Holidays"
             centerContent={
               <div className={styles.holidays}>
-                <h3 className={styles.holidayTitle}>Diwali</h3>
-                <p>Thu, 31 October, 2024</p>
+                {" "}
+                <h3 className={styles.holidayTitle}>Diwali</h3>{" "}
+                <p>Thu, 31 October, 2024</p>{" "}
               </div>
             }
             className={styles.holidaysCard}

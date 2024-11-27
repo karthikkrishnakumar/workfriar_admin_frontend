@@ -1,7 +1,13 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styles from "./date-picker.module.scss";
+import {
+  findCurrentWeek,
+  formatDate,
+  formatYear,
+  getDisabledWeeks,
+  getWeekDates,
+} from "@/utils/datepicker-util/datepicker-formater-routes";
 import Icons from "@/themes/images/icons/icons";
 
 interface DateRangePickerProps {
@@ -10,81 +16,79 @@ interface DateRangePickerProps {
   onDateChange: (startDate: Date, endDate: Date) => void;
 }
 
-const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
   initialStartDate,
   initialEndDate,
   onDateChange,
 }) => {
-  const [currentWeek, setCurrentWeek] = useState(0);
+  const [currentWeek, setCurrentWeek] = useState<number>(1);
+  const [disabledWeeks, setDisabledWeeks] = useState<boolean[]>([]);
+  const [weekData, setWeekData] = useState<
+    { start: string; end: string; week: number }[]
+  >([]);
 
-  // Calculate the week range based on the offset
-  const getWeekDates = (weekOffset: number) => {
-    const today = new Date();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay() + 1 + weekOffset * 7);
+  useEffect(() => {
+    // Fetch week data from the API
+    const fetchWeekData = async () => {
+      try {
+        const response = await axios.get("/api/dashboard/datepicker-data");
+        const { DatePickerData } = response.data;
+        setWeekData(DatePickerData);
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 4);
+        // Set the current week and disabled weeks based on fetched data
+        const current = findCurrentWeek(DatePickerData);
+        setCurrentWeek(current);
+        setDisabledWeeks(getDisabledWeeks(DatePickerData));
 
-    return { startOfWeek, endOfWeek };
-  };
+        const { startDate, endDate } = getWeekDates(DatePickerData, current);
+        onDateChange(startDate, endDate);
+      } catch (error) {
+        console.error("Error fetching week data:", error);
+      }
+    };
 
-  // Format the date as "Oct 14"
-  const formatDate = (date: Date) =>
-    `${months[date.getMonth()]} ${date.getDate()}`;
+    fetchWeekData();
+  }, []);
 
   const handleWeekChange = (offset: number) => {
     const newWeek = currentWeek + offset;
-    setCurrentWeek(newWeek);
+    if (newWeek > 0 && newWeek <= weekData.length) {
+      setCurrentWeek(newWeek);
 
-    const { startOfWeek, endOfWeek } = getWeekDates(newWeek);
-    onDateChange(startOfWeek, endOfWeek);
+      const { startDate, endDate } = getWeekDates(weekData, newWeek);
+      onDateChange(startDate, endDate);
+    }
   };
 
-  // Get the current week's dates(with conditional, get date from props?)
-  const { startOfWeek, endOfWeek } =
-    initialStartDate && initialEndDate
-      ? { startOfWeek: initialStartDate, endOfWeek: initialEndDate }
-      : getWeekDates(currentWeek);
+  if (weekData.length === 0) return <div>Loading...</div>;
+
+  const { startDate, endDate } = getWeekDates(weekData, currentWeek);
 
   return (
     <div className={styles.dateRangePicker}>
-      {/* left navigationButton */}
+      {/* Left navigation button */}
       <button
         onClick={() => handleWeekChange(-1)}
         className={styles.navigationButtonLeft}
+        disabled={currentWeek === 1}
       >
-        {Icons.arrowRightDark}
+        {Icons.arrowLeftGrey}
       </button>
 
-      {/* date range */}
+      {/* Display current week */}
       <div className={styles.weekDisplay}>
-        {`${formatDate(startOfWeek)} - ${formatDate(
-          endOfWeek
-        )}, ${startOfWeek.getFullYear()}`}
+        {formatDate(startDate)} - {formatDate(endDate)}, {formatYear(endDate)}
       </div>
 
-      {/* right navigationButton */}
+      {/* Right navigation button */}
       <button
         onClick={() => handleWeekChange(1)}
-        className={styles.navigationButtonRight}
+        className={`${styles.navigationButtonRight} ${
+          disabledWeeks[currentWeek + 1] ? styles.disabled : ""
+        }`}
+        disabled={disabledWeeks[currentWeek + 1]}
       >
-        {Icons.arrowRightDark}
+        {Icons.arrowRightGrey}
       </button>
     </div>
   );
