@@ -6,58 +6,72 @@ import TimeInput from "@/themes/components/time-input/time-input";
 import Icons from "@/themes/images/icons/icons";
 import DropDownModal from "@/themes/components/drop-down-modal/drop-down-modal";
 import ProjectSelector from "../project-selector/project-selector";
+import TaskSelector from "../task-selector/task-selector";
+import TextAreaButton from "../text-area-button/text-area-button";
 
-// Interface for the time entry data
 interface TimeEntry {
   date: string;
   hours: string;
   holiday: boolean;
 }
 
-// Interface for the timesheet data from backend
 interface TimesheetData {
-  task: string | ReactNode;
+  task: ReactNode;
   project: string;
-  details: string;
+  details: ReactNode;
   dates: TimeEntry[];
   status: string;
 }
 
 const AllTimesheetsTable = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const toggleModal = () => setModalVisible(!isModalVisible);
+  const [showSubModal, setShowSubModal] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+    if (isModalVisible) {
+      setShowSubModal(!showSubModal);
+    } else {
+      setShowSubModal(false);
+    }
+  };
+
   const addButtonWrapperRef = useRef<HTMLDivElement>(null);
   const addButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Sample timesheet data (you should fetch this from the backend)
   const timesheetData: TimesheetData[] = [
     {
       task: "UI/UX Design",
       project: "Danti",
-      details: "Bug analysis",
+      details: <TextAreaButton buttonvalue="Bug analysis" />,
       dates: [
         { date: "2022-01-01", hours: "08:00", holiday: false },
         { date: "2022-01-02", hours: "10:30", holiday: false },
         { date: "2022-01-03", hours: "06:45", holiday: false },
         { date: "2022-01-04", hours: "04:50", holiday: false },
         { date: "2022-01-05", hours: "0", holiday: true },
+        { date: "2022-01-06", hours: "08:00", holiday: false },
+        { date: "2022-01-07", hours: "08:15", holiday: false },
+        { date: "2022-01-08", hours: "01:30", holiday: false },
       ],
       status: "approved",
     },
   ];
 
-  // State to hold timesheet data
-  const [taskData, setTaskData] = useState(timesheetData);
+  const [taskData, setTaskData] = useState<TimesheetData[]>(timesheetData);
 
-  // Function to calculate total hours for a task
   const calculateTotalHours = (dates: TimeEntry[]) => {
-    return dates.reduce((total, entry) => total + parseFloat(entry.hours), 0);
+    return dates.reduce(
+      (total, entry) => total + parseFloat(entry.hours || "0"),
+      0
+    );
   };
 
-  // Define columns for the table (now with ReactNode support for placeholders and edit fields)
   const columns = [
     { title: "Task", key: "task" },
-    { title: "Task details", key: "details" },
+    {
+      title: <span style={{ width: "160px" }}>Task Details</span>,
+      key: "details",
+    },
     ...["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => ({
       title: day,
       key: day,
@@ -65,75 +79,98 @@ const AllTimesheetsTable = () => {
     { title: "Total", key: "total" },
   ];
 
-  // Map days of the week to the corresponding index (Mon to Sun)
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  // Transform the task data into row data that CustomTable can accept
-  const data = taskData.map((task, taskIndex) => {
-    return {
-      task: task.task,
-      details: task.details,
-      ...task.dates.reduce<{ [key: string]: React.ReactNode }>(
-        (acc, dateEntry, dateIndex) => {
-          const dayOfWeek = daysOfWeek[dateIndex]; // Get the correct day of the week
-          acc[dayOfWeek] = (
-            <TimeInput value={dateEntry.hours} disabled={dateEntry.holiday} />
-          );
-          return acc;
-        },
-        {}
-      ),
-      total: (
-        <span className={styles.rowWiseTotal}>
-          <p>{calculateTotalHours(task.dates).toFixed(2)}</p>
-        </span>
-      ),
-    };
-  });
+  const data = taskData.map((task, taskIndex) => ({
+    task: (
+      <div>
+        <span className={styles.taskName}>{task.task}</span>
+        <span className={styles.projectName}>{task.project}</span>
+      </div>
+    ),
+    details: task.details,
+    ...task.dates.reduce<{ [key: string]: ReactNode }>(
+      (acc, dateEntry, dateIndex) => {
+        const dayOfWeek = daysOfWeek[dateIndex];
+        acc[dayOfWeek] = (
+          <TimeInput value={dateEntry.hours} disabled={dateEntry.holiday} />
+        );
+        return acc;
+      },
+      {}
+    ),
+    total: (
+      <span className={styles.rowWiseTotal}>
+        <p>{calculateTotalHours(task.dates).toFixed(2)}</p>
+      </span>
+    ),
+  }));
 
   const addRow = () => ({
     task: (
       <div ref={addButtonWrapperRef} className={styles.addButtonWrapper}>
-        <button className={styles.addButton} ref={addButtonRef} onClick={toggleModal}>
+        <button
+          className={styles.addButton}
+          ref={addButtonRef}
+          onClick={toggleModal}
+        >
           <span>{Icons.plusGold}</span> Add tasks
         </button>
         <DropDownModal
           isVisible={isModalVisible}
-          content={<ProjectSelector />}
+          content={
+            <ProjectSelector
+              showSubmodal={showSubModal}
+              setShowSubmodal={setShowSubModal}
+            />
+          }
           theme="white"
           onClose={() => setModalVisible(false)}
           parentRef={addButtonWrapperRef}
           offsetTop={-290}
           offsetLeft={0}
+          showSubModal={showSubModal}
+          subModalContent={<TaskSelector />}
         />
       </div>
     ),
-    details: "New details",
-    Mon: <TimeInput value="00:00" disabled={true} />,
-    Tue: <TimeInput value="00:00" disabled={true} />,
-    Wed: <TimeInput value="00:00" disabled={true} />,
-    Thu: <TimeInput value="00:00" disabled={true} />,
-    Fri: <TimeInput value="00:00" disabled={true} />,
-    Sat: <TimeInput value="00:00" disabled={true} />,
-    Sun: <TimeInput value="00:00" disabled={true} />,
-    total: <span className={styles.rowWiseTotal}><p>0</p></span>,
+    details: <TextAreaButton buttonvalue="Add task description" disabled />,
+    Mon: <TimeInput value="00:00" disabled />,
+    Tue: <TimeInput value="00:00" disabled />,
+    Wed: <TimeInput value="00:00" disabled />,
+    Thu: <TimeInput value="00:00" disabled />,
+    Fri: <TimeInput value="00:00" disabled />,
+    Sat: <TimeInput value="00:00" disabled />,
+    Sun: <TimeInput value="00:00" disabled />,
+    total: (
+      <span className={styles.rowWiseTotal}>
+        <p>0.00</p>
+      </span>
+    ),
   });
 
   const totalRow = () => ({
-    task: "Total",
-    details: "",
-    Mon: "00:00",
-    Tue: "00:00",
-    Wed: "00:00",
-    Thu: "00:00",
-    Fri: "00:00",
-    Sat: "00:00",
-    Sun: "00:00",
-    total: <span className={styles.rowWiseTotal}><p>00:00</p></span>,
+    task: (
+      <span className={styles.totalRowTask}>
+        Total
+      </span>
+    ),
+    details: <span></span>,
+    Mon: <span>00:00</span>,
+    Tue: <span>00:00</span>,
+    Wed: <span>00:00</span>,
+    Thu: <span>00:00</span>,
+    Fri: <span>00:00</span>,
+    Sat: <span>00:00</span>,
+    Sun: <span>00:00</span>,
+    total: (
+      <span className={styles.rowWiseTotal}>
+        <p>00:00</p>
+      </span>
+    ),
     flag: "rowOfTotal",
   });
 
-  // Correctly mutate the data array by pushing a new row
   data.push(addRow());
   data.push(totalRow());
 

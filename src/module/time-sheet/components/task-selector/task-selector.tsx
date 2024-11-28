@@ -4,7 +4,7 @@ import SearchBar from '@/themes/components/search-bar/search-bar';
 import Icons from '@/themes/images/icons/icons';
 
 const TaskSelector = () => {
-    const projects = [
+    const tasks = [
         { id: 1, name: 'Bug analysis' },
         { id: 2, name: 'UI/UX Design' },
         { id: 3, name: 'Project Meeting' },
@@ -18,18 +18,17 @@ const TaskSelector = () => {
     ];
 
     return (
-        <div className={styles.projectSelectorWrapper}>
-            <h2>Projects</h2>
+        <div className={styles.taskSelectorWrapper}>
+            <h2>Task category</h2>
             <SearchBar placeholder="Search" />
             <ul>
-                {projects.map((project) => (
-                    <li key={project.id}>
-                        {project.name}
-                        <span>{Icons.arrowRightGrey}</span>
+                {tasks.map((task) => (
+                    <li key={task.id}>
+                        {task.name}
                     </li>
                 ))}
             </ul>
-            <button className={styles.addProjectButton}><span>{Icons.plusGold}</span> Add Project</button>
+            <button className={styles.addTaskButton}><span>{Icons.plusGold}</span> Add task category</button>
         </div>
     );
 };

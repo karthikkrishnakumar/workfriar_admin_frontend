@@ -70,7 +70,7 @@
   font-weight: bold;
 }
 
-.addButton{
+.addButton {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,25 +83,39 @@
   font-weight: var(--sub-heading-font-weight);
   position: relative;
 
-  span{
+  span {
     width: 16px;
     height: 16px;
   }
 }
 
-.addButtonWrapper{
+.addButtonWrapper {
   position: relative;
 }
 
-.rowWiseTotal{
+.rowWiseTotal {
   border-left: 1px solid var(--primary-golden-color-dark);
   display: flex;
   align-items: center;
   width: 100%;
   height: 100%;
 
-  p{
+  p {
     width: 100%;
     text-align: center;
   }
+}
+
+.taskName{
+  display: block;
+  width: 100%;
+  color: var(--primary-font-color-dark);
+  font-weight: var(--sub-heading-font-weight);
+  font-size: var(--default-font-size);
+}
+
+.projectname{
+  font-size: var(--default-font-size);
+  color: var(--secondary-font-color-dark);
+  font-weight: var(--default-font-weight);
 }

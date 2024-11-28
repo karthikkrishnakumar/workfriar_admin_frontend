@@ -3,6 +3,7 @@
   justify-content: center;
   align-items: center;
   height: 48px;
+  width: 75px;
 }
 
 .timeInput {
@@ -10,17 +11,31 @@
   height: 48px;
   font-size: var(--default-font-size); /* Makes the font appear like a digital clock */
   text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+  border: 1px solid var(--navigation-arrow);
+  border-radius: 5px;
   outline: none;
   background-color: #fff;
-  color: #333;
+  color: var(--primary-font-color-dark);
 }
 
 .timeInput:focus {
   border-color: #000;
+  border-width: 2px;
 }
 
+.timeInput.disabled {
+  opacity: 0.5;
+  cursor: no-drop;
+}
+
+.timeInput.disabled::placeholder{
+  color: aqua;
+}
+
+
+
 .timeInput::placeholder {
-  color: #aaa;
+  color: var(--primary-font-color-dark);
+  font-size: var(--default-font-size);
+  font-weight: var(--default-font-weight);
 }

@@ -1,4 +1,4 @@
-.projectSelectorWrapper {
+.taskSelectorWrapper {
     display: flex;
     flex-direction: column;
     width: 240px;
@@ -8,8 +8,8 @@
     h2 {
         width: 100%;
         text-align: left;
-        font-size: var(--heading-2-size);
-        font-weight: var(--main-heading-font-weight);
+        font-size: var(--default-font-size);
+        font-weight: var(--sub-heading-font-weight);
         color: var(--primary-font-color-dark);
     }
 
@@ -17,32 +17,16 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        row-gap: 16px;
-        max-height: 180px;
-        overflow-y: auto; /* Allows the scrollbar to appear */
-        padding-right: 8px; /* Adds padding to the right for the scrollbar */
-        scrollbar-width: thin; /* Firefox scrollbar width */
-        scrollbar-color: #D9D9D9 transparent; /* Firefox scrollbar colors */
-
-        /* For Webkit-based browsers (e.g., Chrome, Safari) */
-        &::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background-color: #D9D9D9; /* Scrollbar color */
-            border-radius: 3px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background-color:transparent; /* Background behind the scrollbar */
-        }
+        row-gap: 5px;
+        max-height: 220px;
+        overflow-y: auto;
+        padding-right: 8px;
 
         li {
             padding: 5px;
             border-radius: 5px;
             display: flex;
-            font-size: var(--heading-3-size);
+            font-size: var(--default-font-size);
             font-weight: var(--default-font-weight);
             flex-direction: row;
             justify-content: space-between;
@@ -56,7 +40,23 @@
         }
     }
 
-    .addProjectButton {
+    ul::-webkit-scrollbar {
+        width: 4px;
+        background-color: transparent;
+    }
+
+    ul::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0) !important;
+        background-color: #D9D9D9;
+    }
+
+    ul::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: transparent;
+    }
+
+    .addTaskButton {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -69,19 +69,20 @@
         transition: color 0.3s ease;
         width: 100%;
         text-align: left;
-        padding:8px;
-        color:var(--primary-golden-color-dark);
+        padding: 8px;
+        color: var(--primary-golden-color-dark);
         font-weight: var(--sub-heading-font-weight);
 
 
-        span{
+        span {
             width: 16px;
             height: 16px;
         }
-    
+
         &:hover {
             color: var(--hover-primary-color);
         }
     }
-    
+
+
 }

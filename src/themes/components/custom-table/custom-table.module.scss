@@ -51,9 +51,10 @@
       }
   
       .dataCell {
+        width: max-content !important;
         height: 44px;
         flex: 1;
-        padding: 8px;
+        padding: 8px 0px;
         font-size: var(--default-font-size);
         color: var(--Text-text_grey_1, #686869);
         text-align: left;
