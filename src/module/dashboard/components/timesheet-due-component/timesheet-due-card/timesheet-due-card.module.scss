@@ -1,0 +1,46 @@
+
+.timesheetCard {
+    width: 100%;
+    height: 100%;
+    background-color:var(--container-color);
+    border-radius: 12px;
+    padding: 24px !important;
+  }
+
+   
+  .customSkeleton {
+    width: 100%;
+    height: 100%;
+    background-color:var(--container-color);
+    border-radius: 12px;
+    padding: 24px !important;
+    max-height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+
+    .skeletonItem {
+      background: #f0f0f0; // Custom background color
+      border: 1px solid #d9d9d9; // Custom border color
+    }
+  }
+
+  .customSkeletonForButton{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    .skeletonItem {
+      background: #f0f0f0; // Custom background color
+      border: 1px solid #d9d9d9; // Custom border color
+      width: 100px!important;
+    }
+  }
+
+  .customSkeletonDatepicker {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0px;
+    border: none !important;
+  }

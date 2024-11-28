@@ -5,6 +5,13 @@
   gap: 0px;
   border: none !important;
 }
+.customSkeleton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0px;
+  border: none !important;
+}
 
 .navigationButtonRight,
 .navigationButtonLeft {
@@ -20,10 +27,9 @@
   height: 24px;
 }
 
-.disabled{
+.disabled {
   opacity: 0;
 }
-
 
 .weekDisplay {
   font-size: 14px;
