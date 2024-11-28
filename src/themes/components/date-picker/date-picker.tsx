@@ -94,8 +94,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
       <div>
         <SkeletonLoader
           count={1}
-          avatar={true}
-          paragraph={{ rows: 2 }}
+          button={true}
           className={styles.customSkeleton}
         />
       </div>

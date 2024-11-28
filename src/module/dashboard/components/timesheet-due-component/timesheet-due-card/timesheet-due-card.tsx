@@ -50,12 +50,10 @@ const TimeSheetDueCard: React.FC = () => {
     <CardSection
       title="Timesheet due"
       topRightContent={
-        !loading ? (
+        loading ? (
           <SkeletonLoader
             count={1}
-            avatar={true}
-            paragraph={{ rows: 2 }}
-            className={styles.customSkeletonDatepicker}
+            button={true}
           />
         ) :(
         <DateRangePicker
@@ -66,12 +64,12 @@ const TimeSheetDueCard: React.FC = () => {
       )
       }
       centerContent={
-        !loading ? (
+        loading ? (
           <SkeletonLoader
-            count={3}
-            avatar={true}
-            paragraph={{ rows: 2 }}
+            count={8}
+            paragraph={{ rows: 3 }}
             className={styles.customSkeleton}
+            classNameItem={styles.skeletonItem }
           />
         ) : error ? (
           <div className={styles.error}>{error}</div>
@@ -82,11 +80,10 @@ const TimeSheetDueCard: React.FC = () => {
         )
       }
       bottomContent={
-        !loading ? (
+        loading ? (
           <SkeletonLoader
             count={2}
-            avatar={true}
-            paragraph={{ rows: 2 }}
+            button={true}
             className={styles.customSkeletonForButton}
           />
         ) : (

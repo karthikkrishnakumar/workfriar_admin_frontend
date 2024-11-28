@@ -32,8 +32,8 @@ const NotificationCard: React.FC = () => {
     <CardSection
       title="Notifications"
       centerContent={
-        !isLoading ? (
-          <SkeletonLoader count={2} avatar={true} paragraph={{ rows: 2 }} className={styles.customSkeleton }/>
+        isLoading ? (
+          <SkeletonLoader count={2} paragraph={{ rows: 1 }}/>
         ) : error ? (
           <div className={styles.error}>{error}</div>
         ) : (

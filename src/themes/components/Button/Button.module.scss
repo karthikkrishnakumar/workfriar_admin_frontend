@@ -6,6 +6,7 @@
   border-radius: 24px;
   transition: background-color 0.3s ease, color 0.3s ease;
   margin-left: 10px;
+
 }
 
 .black {
@@ -23,6 +24,13 @@
   background-color: red;
   color: white;
   border: 1px solid red;
+}
+.filter{
+  background-color: var(--primary-font-color-light);
+  border: 1px solid var(--primary-golden-color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .default {
   background-color: gray; // Fallback theme

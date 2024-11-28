@@ -36,8 +36,8 @@ const HolidayCard: React.FC = () => {
     <CardSection
       title="Holidays"
       centerContent={
-        !loading ? (
-          <SkeletonLoader count={2} avatar={true} paragraph={{ rows: 2 }} className={styles.customSkeleton} />
+        loading ? (
+          <SkeletonLoader count={1} button={true} paragraph={{rows:2}} className={styles.customSkeleton} classNameItem={styles.customSkeletonItem} />
         ) : error ? (
           <div className={styles.error}>{error}</div>
         ) : (

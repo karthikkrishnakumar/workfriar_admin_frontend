@@ -39,24 +39,21 @@ const ProjectTimeChartCard: React.FC = () => {
     <CardSection
       title="Project time today"
       topRightContent={
-        !loading ? (
+        loading ? (
           <SkeletonLoader
             count={1}
-            avatar={true}
-            paragraph={{ rows: 2 }}
-            className={styles.customSkeletonForButton}
+            button={true}
           />
         ) : (
           <ButtonComponent label="Add Entry" theme="black" />
         )
       }
       centerContent={
-        !loading ? (
+        loading ? (
           <SkeletonLoader
-            count={3}
-            avatar={true}
-            paragraph={{ rows: 2 }}
-            className={styles.customSkeleton}
+            count={1}
+            avatar={false}
+            paragraph={{ rows: 8 }}
           />
         ) : error ? (
           <div className={styles.error}>{error}</div>
