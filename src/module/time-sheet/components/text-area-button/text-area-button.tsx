@@ -3,7 +3,7 @@ import styles from "./text-area-button.module.scss";
 import Icons from "@/themes/images/icons/icons";
 
 interface TextAreaButtonProps {
-  buttonvalue: string;
+  buttonvalue?: string;
   onclickFunction?: () => void;
   disabled?: boolean;
 }
@@ -18,7 +18,7 @@ const TextAreaButton: React.FC<TextAreaButtonProps> = ({
         disabled ? styles.disabled : ""
       }`}
     >
-      <span className={styles.buttonValue}>{buttonvalue}</span>
+      <span className={styles.buttonValue}>{buttonvalue?buttonvalue:"Add task description"}</span>
       <span className={styles.editIcon}>{Icons.editPencil}</span>
     </button>
   );
