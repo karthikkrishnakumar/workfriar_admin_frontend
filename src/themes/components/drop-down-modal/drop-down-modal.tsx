@@ -12,6 +12,8 @@ interface DropDownModalProps {
   offsetLeft?: number; // Optional offset for left positioning
   offsetRight?: number; // Optional offset for right positioning
   offsetBottom?: number; // Optional offset for bottom positioning
+  showSubModal?: boolean;
+  subModalContent?: ReactNode;
 }
 
 /**
@@ -30,6 +32,8 @@ const DropDownModal: React.FC<DropDownModalProps> = ({
   offsetLeft = 0,
   offsetRight = 0,
   offsetBottom = 0,
+  showSubModal = false,
+  subModalContent,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -74,8 +78,11 @@ const DropDownModal: React.FC<DropDownModalProps> = ({
     return {
       top: offsetTop !== 0 ? `${parentBounds.bottom + offsetTop}px` : undefined,
       bottom:
-        offsetBottom !== 0 ? `${window.innerHeight - parentBounds.top + offsetBottom}px` : undefined,
-      left: offsetLeft !== 0 ? `${parentBounds.left + offsetLeft}px` : undefined,
+        offsetBottom !== 0
+          ? `${window.innerHeight - parentBounds.top + offsetBottom}px`
+          : undefined,
+      left:
+        offsetLeft !== 0 ? `${parentBounds.left + offsetLeft}px` : undefined,
       right:
         offsetRight !== 0
           ? `${window.innerWidth - parentBounds.right + offsetRight}px`
@@ -92,6 +99,9 @@ const DropDownModal: React.FC<DropDownModalProps> = ({
       ref={modalRef}
     >
       <div className={styles.modalContent}>{content}</div> {/* Modal content */}
+      {showSubModal && (
+        <div className={styles.subModalContent}>{subModalContent}</div>
+      )}
     </div>
   ) : null; // Return null if modal is not visible
 };

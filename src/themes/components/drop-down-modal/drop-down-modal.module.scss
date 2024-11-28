@@ -1,23 +1,77 @@
 .modalWrapper {
   position: absolute; // Absolute positioning to place near the parent
   z-index: 1000;
+  height: max-content;
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
 }
 
 .modalContent {
-  background-color: white;
+  z-index: 999;
+  background-color: var(--container-color);
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   min-width: 160px; // Adjust based on your design
   width: max-content;
+  height: max-content;
+}
+
+.subModalContent {
+  margin-top: 20px;
+  z-index: 999;
+  position: relative;
+  background-color: var(--container-color);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 160px; // Adjust based on your design
+  width: max-content;
+  height: max-content;
+}
+
+.subModalContent::before {
+  content: '';
+  z-index: 99999;
+  position: absolute;
+  top: 10px; /* Adjust the position of the arrow */
+  left: -10px; /* Adjust the position from the left side */
+  border-left: 8px solid transparent; /* Transparent borders for the arrow */
+  border-right: 8px solid transparent;
+  border-bottom: 10px solid #ff0000; /* Color of the arrow */
+  transform: rotate(270deg);
 }
 
 .blackTheme .modalContent {
+  z-index: 999;
   background-color: var(--nav-bar-background-color);
   color: white;
 }
 
+
+.blackTheme .subModalContent {
+  z-index: 999;
+  background-color: var(--nav-bar-background-color);
+  color: white;
+}
+
+.blackTheme .subModalContent::before{
+  border-bottom: 10px solid var(--nav-bar-background-color)
+}
+
 .whiteTheme .modalContent {
+  z-index: 999;
   background-color: var(--container-color);
   color: black;
+}
+
+.whiteTheme .subModalContent {
+  z-index: 999;
+  background-color: var(--container-color);
+  color: black;
+}
+
+.whiteTheme .subModalContent::before{
+  border-bottom: 10px solid var(--container-color)
 }

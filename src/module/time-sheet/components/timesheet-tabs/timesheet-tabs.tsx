@@ -21,6 +21,7 @@ const TimesheetsTabs = () => {
     <div className={styles.timesheetTabsWrapper}>
       <div>
         <TabComponent headings={tabs} />
+        
       </div>
     </div>
   );

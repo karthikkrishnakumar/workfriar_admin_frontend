@@ -1,20 +1,67 @@
-.customTable :global {
+.tableContainer {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
     width: 100%;
-    .ant-table-thead {
-        border-radius: 8px;
-        & .ant-table-cell {
-            background: var(--secondary-golden-color-light) !important;
-            justify-content: space-between;
-            height: 60px;
-            font-family: var(--font-rubik);
-            font-size: var(--default-font-size);
-            font-weight: var(--default-font-weight);
-            line-height: 16.59px;
-            text-align: left;
-            color: var(--Text-text_grey_1, #686869);
-
-        }
+  }
+  
+  .tableHeader {
+    display: flex;
+    background-color: var(--secondary-golden-color-light);
+    padding: 10px;
+    border-radius: 10px;
+  
+    .headerCell {
+      flex: 1;
+      text-align: center;
+      font-weight: var(--default-font-weight);
+      font-size: var(--default-font-size);
+      color: var(--grey-font-color);
+      padding: 8px;
+      width: 100%;
     }
+  }
+  
+  .tableBody {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 10px;
+  
+    .dataRow {
+      display: flex;
+      border-top: 1px solid #e0e0e0;
+      padding: 10px 0;
+      background-color: #ffffff; /* Default background color */
+  
+      &.rowOfTotal {
+        background-color: var(--disabled-table-column-background);
+        color: #aaa;
 
-
-}
+        .dataCell{
+          height: 44px;
+          font-size: var(--default-font-size) !important;
+          font-weight: var(--sub-heading-font-weight) !important;
+          color: var(--secondary-font-color-dark) !important;
+        }
+      }
+  
+      .importantRow {
+        background-color: rgba(255, 221, 51, 0.2); /* Slightly different color for important rows */
+        font-weight: bold;
+      }
+  
+      .dataCell {
+        width: max-content !important;
+        height: 44px;
+        flex: 1;
+        padding: 8px 0px;
+        font-size: var(--default-font-size);
+        color: var(--Text-text_grey_1, #686869);
+        text-align: left;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+  
