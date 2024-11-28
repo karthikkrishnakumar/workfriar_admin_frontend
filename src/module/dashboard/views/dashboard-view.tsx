@@ -1,5 +1,4 @@
 
-"use client"
 import Dashboard from "../components/dashboard-component/dashboard"
 
 const DashboardView =() => { 
