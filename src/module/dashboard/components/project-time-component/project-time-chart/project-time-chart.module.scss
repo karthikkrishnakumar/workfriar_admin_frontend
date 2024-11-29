@@ -9,7 +9,7 @@
     // Style canvas container
     canvas {
       background: transparent;
-      width: 100%!important;
+      width: 100% !important;
     }
 
     // Style the chart elements
@@ -43,8 +43,7 @@
   justify-content: center;
   position: relative;
 }
-
-.scrollTrack {
+.customScrollTrack {
   width: 100%;
   max-width: 500px;
   height: 7px;
@@ -54,7 +53,7 @@
   position: absolute;
 }
 
-.scrollThumb {
+.customScrollThumb {
   height: 100%;
   border: none;
   background-color: var(--scrollbar);
@@ -64,13 +63,13 @@
   position: absolute;
   left: 0;
 
-  &:hover {
-    background-color: var(--primary-golden-color-medium);
-  }
+    &:hover {
+      background-color: var(--primary-golden-color-medium);
+    }
 
-  &:active {
-    cursor: grabbing;
-  }
+    &:active {
+      cursor: grabbing;
+    }
 }
 
 .loader,

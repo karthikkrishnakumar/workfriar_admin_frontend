@@ -29,6 +29,10 @@ const NotificationCard: React.FC = () => {
     fetchNotifications();
   }, []);
 
+  const handleClickAllnotification = ()=>{
+    alert("under developing...")
+  }
+
   return (
     <CardSection
       title="Notifications"
@@ -36,7 +40,7 @@ const NotificationCard: React.FC = () => {
         isLoading ? (
           <SkeletonLoader count={1} button={true} classNameItem={styles.customSkeletonDatepicker}/>
         ) : (
-          <ButtonComponent label="View all" theme="link" link/>
+          <ButtonComponent label="View all" theme="link" link onClick={handleClickAllnotification}/>
         )
       }
       centerContent={

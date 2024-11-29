@@ -6,7 +6,6 @@
   border-radius: 24px;
   transition: background-color 0.3s ease, color 0.3s ease;
   margin-left: 10px;
-  transition: all 0.3s ease;
 }
 
 .black {
@@ -49,17 +48,18 @@
   padding-left: 6px;
 }
 
-.link{
+.link {
   color: var(--disabled-button-background-dark) !important;
   font-size: 12px;
   text-decoration: underline;
 }
 
-.linkButton{
-  background-color: transparent!important;
+.linkButton {
+  background-color: transparent !important;
   border: 0px !important;
   padding: 0px !important;
-  box-shadow: none!important;
+  box-shadow: none !important;
+  height: fit-content;
 }
 
 .default {
@@ -68,11 +68,9 @@
   border: 1px solid var(--disabled-button-background-dark);
 }
 
-
- /*
+/*
  button hovers
  */
-
 
 .button:hover {
   opacity: 0.8;
@@ -105,5 +103,3 @@
   align-items: center;
   justify-content: center;
 }
-
-

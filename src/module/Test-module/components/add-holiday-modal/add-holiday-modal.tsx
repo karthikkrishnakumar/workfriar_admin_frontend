@@ -2,8 +2,11 @@ import React from "react";
 import styles from "./add-holiday-modal.module.scss";
 import ModalComponent from "@/themes/components/modal/modal";
 import ModalSelectContent from "../modal-input-content/modal-input-content";
+interface AddHolidayModalProps {
+  onClose: () => void;
+}
 
-const AddHolidayModal = () => {
+const AddHolidayModal: React.FC<AddHolidayModalProps> = ({ onClose }) => {
   const inputField = {
     label: "Holiday Name",
     value: "",
@@ -50,6 +53,7 @@ const AddHolidayModal = () => {
         primaryButtonLabel={"Cancel"}
         secondaryButtonLabel={"Save"}
         theme="normal"
+        onClose={onClose} 
       />
     </div>
   );

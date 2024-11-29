@@ -33,19 +33,38 @@ const HolidayCard: React.FC = () => {
     fetchHolidayData();
   }, []);
 
+  const handleClickAllHoliday = () => {
+    alert("under developing...");
+  };
+
   return (
     <CardSection
       title="Holidays"
       topRightContent={
         loading ? (
-          <SkeletonLoader count={1} button={true} classNameItem={styles.customSkeletonItem} />
+          <SkeletonLoader
+            count={1}
+            button={true}
+            classNameItem={styles.customSkeletonItem}
+          />
         ) : (
-          <ButtonComponent label="View all" theme="link" link/>
+          <ButtonComponent
+            label="View all"
+            theme="link"
+            link
+            onClick={handleClickAllHoliday}
+          />
         )
       }
       centerContent={
         loading ? (
-          <SkeletonLoader count={1} button={true} paragraph={{rows:2}} className={styles.customSkeleton} classNameItem={styles.customSkeletonItem} />
+          <SkeletonLoader
+            count={1}
+            button={true}
+            paragraph={{ rows: 2 }}
+            className={styles.customSkeleton}
+            classNameItem={styles.customSkeletonItem}
+          />
         ) : error ? (
           <div className={styles.error}>{error}</div>
         ) : (

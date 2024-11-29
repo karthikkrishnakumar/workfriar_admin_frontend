@@ -51,7 +51,11 @@ const TimeSheetDueCard: React.FC = () => {
       title="Timesheet due"
       topRightContent={
         loading ? (
-          <SkeletonLoader count={1} button={true} classNameItem={styles.customSkeletonDatepicker}/>
+          <SkeletonLoader
+            count={1}
+            button={true}
+            classNameItem={styles.customSkeletonDatepicker}
+          />
         ) : (
           <DateRangePicker
             initialStartDate={selectedStartDate ?? undefined}

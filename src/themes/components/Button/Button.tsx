@@ -5,20 +5,29 @@ import Icons from "@/themes/images/icons/icons";
 
 interface ButtonProps {
   label?: string;
-  theme?: "black" | "white" | "danger" | "filter" | "disabled" | "link" | "golden";
+  theme?:
+    | "black"
+    | "white"
+    | "danger"
+    | "filter"
+    | "disabled"
+    | "link"
+    | "golden";
   onClick?: () => void;
-  link?:boolean;
+  link?: boolean;
   disabled?: boolean;
   filter?: boolean; // Add filter flag to props
+  className?: string;
 }
 
 const ButtonComponent: React.FC<ButtonProps> = ({
   label,
   theme = "",
   onClick,
-  link=false,
+  link = false,
   disabled = false,
   filter = false, // Default to false if not provided
+  className = "",
 }) => {
   // Determine class based on the theme prop
   const getButtonClass = (theme: string) => {
@@ -46,9 +55,10 @@ const ButtonComponent: React.FC<ButtonProps> = ({
     <Button
       className={`
       ${styles.button} 
+      ${className}
       ${getButtonClass(theme)} 
       ${disabled && styles.disableCursor}
-      ${link&& styles.linkButton}
+      ${link && styles.linkButton}
       `}
       onClick={onClick}
     >

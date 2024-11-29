@@ -35,6 +35,10 @@ const ProjectTimeChartCard: React.FC = () => {
     fetchProjectTimeData();
   }, []);
 
+  const handleClickAddEntry = () => {
+    window.location.href = "/time-sheet";
+  };
+
   return (
     <CardSection
       title="Project time today"
@@ -45,7 +49,7 @@ const ProjectTimeChartCard: React.FC = () => {
             button={true}
           />
         ) : (
-          <ButtonComponent label="Add Entry" theme="black" />
+          <ButtonComponent label="Add Entry" theme="black" onClick={handleClickAddEntry}/>
         )
       }
       centerContent={
