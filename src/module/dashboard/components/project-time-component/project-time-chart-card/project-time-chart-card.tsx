@@ -53,7 +53,7 @@ const ProjectTimeChartCard: React.FC = () => {
           <SkeletonLoader
             count={1}
             avatar={false}
-            paragraph={{ rows: 8 }}
+            paragraph={{ rows: 10 }}
           />
         ) : error ? (
           <div className={styles.error}>{error}</div>

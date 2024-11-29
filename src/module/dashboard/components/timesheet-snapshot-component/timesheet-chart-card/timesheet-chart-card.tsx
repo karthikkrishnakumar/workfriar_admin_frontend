@@ -57,7 +57,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
           <SkeletonLoader
             count={1}
             title={true}
-            paragraph={{ rows: 8 }}
+            paragraph={{ rows: 5 }}
             className={styles.customSkeleton}
             classNameItem={styles.customSkeletonItem}
           />

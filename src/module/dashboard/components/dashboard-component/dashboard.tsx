@@ -9,13 +9,15 @@ import HolidayCard from "../holiday-component/holiday-card/holiday-card";
 const Dashboard: React.FC = () => {
   return (
     <div className={styles.dashboard}>
-      <div className={styles.leftMainDiv}>
+      <div className={styles.topMainDiv}>
         <ProjectTimeChartCard />
-        <TimeSheetDueCard />
+        <div className={styles.additionalDiv}>
+          <TimesheetSnapshotChartCard />
+        </div>
       </div>
-      <div className={styles.rightMainDiv}>
+      <div className={styles.bottomMainDiv}>
         {/* Project Snapshot */}
-        <TimesheetSnapshotChartCard />
+        <TimeSheetDueCard />
         <div className={styles.additionalDiv}>
           {/* Notifications */}
           <NotificationCard />

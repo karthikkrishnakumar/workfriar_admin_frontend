@@ -3,6 +3,7 @@
 }
 
 .header {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -16,6 +17,7 @@
 }
 
 .topRight {
+  height: 40px;
   font-size: 0.9rem;
 }
 

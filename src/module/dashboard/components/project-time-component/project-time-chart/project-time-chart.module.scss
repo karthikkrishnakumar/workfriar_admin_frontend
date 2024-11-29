@@ -2,7 +2,6 @@
   padding: 20px 0px;
   background-color: var(--primary-background-color);
   border-radius: 10px;
-  width: 100%;
   display: flex;
   flex-direction: column;
 
@@ -10,6 +9,7 @@
     // Style canvas container
     canvas {
       background: transparent;
+      width: 100%!important;
     }
 
     // Style the chart elements

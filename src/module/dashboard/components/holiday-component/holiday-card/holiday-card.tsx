@@ -9,6 +9,7 @@ import {
   HolidayProps,
 } from "@/module/dashboard/services/holiday-services/holiday-services";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import ButtonComponent from "@/themes/components/button/button";
 
 const HolidayCard: React.FC = () => {
   const [holidayData, setHolidayData] = useState<HolidayProps[] | null>(null);
@@ -35,6 +36,13 @@ const HolidayCard: React.FC = () => {
   return (
     <CardSection
       title="Holidays"
+      topRightContent={
+        loading ? (
+          <SkeletonLoader count={1} button={true} classNameItem={styles.customSkeletonItem} />
+        ) : (
+          <ButtonComponent label="View all" theme="link" link/>
+        )
+      }
       centerContent={
         loading ? (
           <SkeletonLoader count={1} button={true} paragraph={{rows:2}} className={styles.customSkeleton} classNameItem={styles.customSkeletonItem} />

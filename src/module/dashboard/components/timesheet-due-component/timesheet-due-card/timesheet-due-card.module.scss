@@ -4,17 +4,20 @@
   background-color: var(--container-color);
   border-radius: 12px;
   padding: 24px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .customSkeleton {
-  width: 100% !important;
-  height: 60%!important;
-  background-color: var(--container-color);
-  border-radius: 12px;
-  padding: 0px !important;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  max-width: 82%;
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Creates 3 equal columns */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
 }
+
 .skeletonItem {
   background: #f0f0f0; // Custom background color
   width: 100px;
@@ -33,9 +36,6 @@
 }
 
 .customSkeletonDatepicker {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0px;
-  border: none !important;
+  height: 30px;
+  width: 160px !important;
 }

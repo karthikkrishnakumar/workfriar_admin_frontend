@@ -2,8 +2,19 @@ body {
     background-color: var(--page-background);
     width: calc(100vw - 293px);
     margin-left: 293px;
-    height: 100%;
+    height: 100vh;
     padding-top: 78px;
     padding-left: 40px;
     padding-right: 40px;
+}
+
+
+
+@media(max-width:1200px){
+    body{
+        width: calc(100vw - 80px)!important;
+        margin-left: 80px;
+        padding-right:20px;
+
+    }
 }

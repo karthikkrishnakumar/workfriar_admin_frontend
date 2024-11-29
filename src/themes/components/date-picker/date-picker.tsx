@@ -96,6 +96,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
           count={1}
           button={true}
           className={styles.customSkeleton}
+          classNameItem={styles.customSkeletonItem}
         />
       </div>
     );

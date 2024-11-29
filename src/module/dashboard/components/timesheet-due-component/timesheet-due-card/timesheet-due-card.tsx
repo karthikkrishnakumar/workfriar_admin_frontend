@@ -51,17 +51,14 @@ const TimeSheetDueCard: React.FC = () => {
       title="Timesheet due"
       topRightContent={
         loading ? (
-          <SkeletonLoader
-            count={1}
-            button={true}
+          <SkeletonLoader count={1} button={true} classNameItem={styles.customSkeletonDatepicker}/>
+        ) : (
+          <DateRangePicker
+            initialStartDate={selectedStartDate ?? undefined}
+            initialEndDate={selectedEndDate ?? undefined}
+            onDateChange={handleDateChange}
           />
-        ) :(
-        <DateRangePicker
-          initialStartDate={selectedStartDate ?? undefined}
-          initialEndDate={selectedEndDate ?? undefined}
-          onDateChange={handleDateChange}
-        />
-      )
+        )
       }
       centerContent={
         loading ? (
@@ -69,7 +66,7 @@ const TimeSheetDueCard: React.FC = () => {
             count={8}
             paragraph={{ rows: 3 }}
             className={styles.customSkeleton}
-            classNameItem={styles.skeletonItem }
+            classNameItem={styles.skeletonItem}
           />
         ) : error ? (
           <div className={styles.error}>{error}</div>

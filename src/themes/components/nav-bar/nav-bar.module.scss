@@ -3,7 +3,6 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 293px;
     height: 100dvh;
     background-color: var(--nav-bar-background-color);
     border-top-right-radius: 30px;
@@ -12,6 +11,8 @@
     display: flex;
     flex-direction: column;
     gap: 80px;
+    transition: all 0.3s ease;
+    z-index: 1500;
 
     // logo
     .logo{
@@ -37,5 +38,27 @@
         display: flex;
         flex-direction: column;
         row-gap: 16px;
+    }
+    @media (max-width: 1200px) {
+        
+        .navList {
+          .navBlockWrapper h3 {
+            display: none; // Hide text
+          }
+          .titleAndIcon {
+            justify-content: center; // Center the icons
+          }
+          .navBlockWrapper {
+            width: 64px; // Adjust width for smaller screens
+            height: 64px; // Adjust height for icons only
+          }
+        }
+    
+        .logo {
+          justify-content: center; // Center the logo
+          h2 {
+            display: none; // Hide company name
+          }
+        }
     }
 }

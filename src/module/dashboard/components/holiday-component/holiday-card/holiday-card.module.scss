@@ -1,12 +1,12 @@
 @keyframes skeletonPulse {
   0% {
-    background-color: var(--primary-golden-color-light) !important;
+    background-color: var(--primary-golden-color-light) ;
   }
   50% {
-    background-color: var(--primary-golden-color-dark) !important;
+    background-color: var(--primary-golden-color-dark) ;
   }
   100% {
-    background-color: var(--primary-golden-color-light) !important;
+    background-color: var(--primary-golden-color-light) ;
   }
 }
 

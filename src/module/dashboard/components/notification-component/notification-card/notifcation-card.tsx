@@ -5,6 +5,7 @@ import CardSection from "../../card-section/card-section";
 import DashboardNotifications from "../notifications/dashboard-notifications";
 import { Notification, NotificationService } from "@/module/dashboard/services/notifications-services/notifications-services";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import ButtonComponent from "@/themes/components/button/button";
 
 const NotificationCard: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -31,9 +32,16 @@ const NotificationCard: React.FC = () => {
   return (
     <CardSection
       title="Notifications"
+      topRightContent={
+        isLoading ? (
+          <SkeletonLoader count={1} button={true} classNameItem={styles.customSkeletonDatepicker}/>
+        ) : (
+          <ButtonComponent label="View all" theme="link" link/>
+        )
+      }
       centerContent={
         isLoading ? (
-          <SkeletonLoader count={2} paragraph={{ rows: 1 }}/>
+          <SkeletonLoader count={2} paragraph={{ rows: 1 }} className={styles.customSkeleton}/>
         ) : error ? (
           <div className={styles.error}>{error}</div>
         ) : (
