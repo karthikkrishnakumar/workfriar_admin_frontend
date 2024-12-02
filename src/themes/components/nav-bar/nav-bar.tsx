@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
-import { useRouter } from "next/navigation"; // Using useRouter from next/navigation
-import { usePathname } from "next/navigation"; // To get the current pathname
+import { usePathname , useRouter } from "next/navigation"; // To get the current pathname
 import styles from "./nav-bar.module.scss";
 import Icons from "@/themes/images/icons/icons"; // Importing icons
 import NavBlock from "../nav-block/nav-block";

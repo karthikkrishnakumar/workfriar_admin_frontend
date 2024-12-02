@@ -40,3 +40,11 @@
     align-items: center;
     column-gap: 24px;
 }
+
+
+@media(max-width:1200px){
+    .moduleHeaderwrpper{
+        left: 80px !important;
+        width: calc(100vw - 80px);
+    }
+}
