@@ -20,11 +20,13 @@ interface TimesheetProps {
  * @param date - The date of the day (e.g., "2024-11-26").
  * @param hours - The number of hours worked on that day (e.g., "8").
  * @param dayOfWeek - The name of the day (e.g., "Monday").
+ * @param disable
  */
 interface TimesheetDay {
   date: string; // The date of the day.
   hours: string; // The number of hours worked.
   dayOfWeek: string; // The day of the week (e.g., "Monday").
+  disable: boolean; // Add this property
 }
 
 /**
@@ -34,7 +36,7 @@ interface TimesheetDay {
  * @param total - An optional field for the total number of hours worked (e.g., "40").
  */
 interface TimesheetData {
-  days: TimesheetDay[]; // Array of days and their respective hours worked.
+  days: TimesheetDay[] | []; // Array of days and their respective hours worked.
   total?: string; // Optional total hours worked, can be left undefined.
 }
 
@@ -56,7 +58,7 @@ const Timesheet: React.FC<TimesheetProps> = ({ data }) => {
       <div className={styles.grid}>
         {data.days.slice(0, 4).map((day, index) => {
           // Determine if the date is empty
-          const isMuted = day.date === "";
+          const isMuted = day.disable;
 
           return (
             <div
@@ -89,7 +91,7 @@ const Timesheet: React.FC<TimesheetProps> = ({ data }) => {
       <div className={styles.grid}>
         {data.days.slice(4, 8).map((day, index) => {
           // Determine if the date is empty
-          const isMuted = day.date === "";
+          const isMuted =day.disable;
 
           return (
             <div

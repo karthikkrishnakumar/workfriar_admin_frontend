@@ -1,0 +1,39 @@
+@keyframes skeletonPulse {
+  0% {
+    background-color: var(--primary-golden-color-light) ;
+  }
+  50% {
+    background-color: var(--primary-golden-color-dark) ;
+  }
+  100% {
+    background-color: var(--primary-golden-color-light) ;
+  }
+}
+
+.holidaysCard {
+  width: 100%;
+  height: 100%;
+  background-color: var(--holiday-background) !important;
+  background-image: url("/dashboard-img/holiday-background.svg");
+  background-repeat: no-repeat;
+  background-position: bottom right; /* Positions the image in the bottom-right corner */
+  background-size: auto; /* Adjust this if you want to scale the image */
+  border-radius: 12px;
+  padding: 24px !important;
+}
+
+.customSkeleton {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--holiday-background) !important;
+  padding-left: 10px !important;
+  animation: skeletonPulse 1.5s infinite ease-in-out !important;
+}
+.customSkeletonItem {
+  background-color: var(--primary-golden-color-light) !important;
+  border-radius: 12px;
+  animation: skeletonPulse 1.5s infinite ease-in-out !important;
+}

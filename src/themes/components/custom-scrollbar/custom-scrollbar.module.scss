@@ -1,0 +1,28 @@
+// .scrollTrack {
+//   width: 100%;
+//   max-width: 500px;
+//   height: 7px;
+//   background-color: var(--scrollbar-background);
+//   border-radius: 9999px;
+//   cursor: pointer;
+//   position: absolute;
+// }
+
+// .scrollThumb {
+//   height: 100%;
+//   border: none;
+//   background-color: var(--scrollbar);
+//   border-radius: 9999px;
+//   cursor: grab;
+//   transition: all 150ms ease-out;
+//   position: absolute;
+//   left: 0;
+
+//   &:hover {
+//     background-color: var(--primary-golden-color-medium);
+//   }
+
+//   &:active {
+//     cursor: grabbing;
+//   }
+// }

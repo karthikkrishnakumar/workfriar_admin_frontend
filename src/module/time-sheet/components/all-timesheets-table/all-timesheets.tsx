@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./all-timesheets.module.scss";
 import TimeInput from "@/themes/components/time-input/time-input";
@@ -8,6 +8,8 @@ import DropDownModal from "@/themes/components/drop-down-modal/drop-down-modal";
 import ProjectSelector from "../project-selector/project-selector";
 import TaskSelector from "../task-selector/task-selector";
 import TextAreaButton from "../text-area-button/text-area-button";
+import ButtonComponent from "@/themes/components/button/button";
+import CustomMenu from "@/themes/menu-component/menu-component";
 
 interface TimeEntry {
   date: string;
@@ -53,8 +55,56 @@ const AllTimesheetsTable = () => {
         { date: "2022-01-07", hours: "08:15", holiday: false },
         { date: "2022-01-08", hours: "01:30", holiday: false },
       ],
-      status: "approved",
+      status: "pending",
     },
+    {
+      task: "UI/UX Design",
+      project: "Danti",
+      details: <TextAreaButton buttonvalue="Bug analysis" />,
+      dates: [
+        { date: "2022-01-01", hours: "08:00", holiday: false },
+        { date: "2022-01-02", hours: "10:30", holiday: false },
+        { date: "2022-01-03", hours: "06:45", holiday: false },
+        { date: "2022-01-04", hours: "04:50", holiday: false },
+        { date: "2022-01-05", hours: "0", holiday: true },
+        { date: "2022-01-06", hours: "08:00", holiday: false },
+        { date: "2022-01-07", hours: "08:15", holiday: false },
+        { date: "2022-01-08", hours: "01:30", holiday: false },
+      ],
+      status: "pending",
+    }, {
+      task: "UI/UX Design",
+      project: "Danti",
+      details: <TextAreaButton buttonvalue="Bug analysis" />,
+      dates: [
+        { date: "2022-01-01", hours: "08:00", holiday: false },
+        { date: "2022-01-02", hours: "10:30", holiday: false },
+        { date: "2022-01-03", hours: "06:45", holiday: false },
+        { date: "2022-01-04", hours: "04:50", holiday: false },
+        { date: "2022-01-05", hours: "0", holiday: true },
+        { date: "2022-01-06", hours: "08:00", holiday: false },
+        { date: "2022-01-07", hours: "08:15", holiday: false },
+        { date: "2022-01-08", hours: "01:30", holiday: false },
+      ],
+      status: "pending",
+    }, {
+      task: "UI/UX Design",
+      project: "Danti",
+      details: <TextAreaButton buttonvalue="Bug analysis" />,
+      dates: [
+        { date: "2022-01-01", hours: "08:00", holiday: false },
+        { date: "2022-01-02", hours: "10:30", holiday: false },
+        { date: "2022-01-03", hours: "06:45", holiday: false },
+        { date: "2022-01-04", hours: "04:50", holiday: false },
+        { date: "2022-01-05", hours: "0", holiday: true },
+        { date: "2022-01-06", hours: "08:00", holiday: false },
+        { date: "2022-01-07", hours: "08:15", holiday: false },
+        { date: "2022-01-08", hours: "01:30", holiday: false },
+      ],
+      status: "pending",
+    }
+
+   
   ];
 
   const [taskData, setTaskData] = useState<TimesheetData[]>(timesheetData);
@@ -67,16 +117,22 @@ const AllTimesheetsTable = () => {
   };
 
   const columns = [
-    { title: "Task", key: "task" },
+    { title: "Task", key: "task", width: 140 },
     {
-      title: <span style={{ width: "160px" }}>Task Details</span>,
+      title: <span style={{ width: "100px" }}>Task Details</span>,
       key: "details",
+      width: 155,
     },
     ...["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => ({
       title: day,
       key: day,
     })),
-    { title: "Total", key: "total" },
+    { title: "Total", key: "total", width: 70 },
+    {
+      title: "",
+      key: "action",
+      width: 50, // Add custom width for action column
+    },
   ];
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -104,6 +160,11 @@ const AllTimesheetsTable = () => {
         <p>{calculateTotalHours(task.dates).toFixed(2)}</p>
       </span>
     ),
+    action: (
+      <span>
+        {task.status === "pending" ? Icons.deleteActive : Icons.deleteDisabled}
+      </span>
+    ), // Ensure this is a React element
   }));
 
   const addRow = () => ({
@@ -116,6 +177,25 @@ const AllTimesheetsTable = () => {
         >
           <span>{Icons.plusGold}</span> Add tasks
         </button>
+
+        {/* testing custom antd menu component */}
+        {/* <CustomMenu
+          isVisible={isModalVisible}
+          content={
+            <ProjectSelector
+              showSubmodal={showSubModal}
+              setShowSubmodal={setShowSubModal}
+            />
+          }
+          theme="white"
+          onClose={() => setModalVisible(false)}
+          parentRef={addButtonWrapperRef}
+          offsetLeft={5}
+          showSubModal={true}
+          subModalContent={<TaskSelector />}
+        /> */}
+
+        {/* Original drop down modal */}
         <DropDownModal
           isVisible={isModalVisible}
           content={
@@ -127,8 +207,6 @@ const AllTimesheetsTable = () => {
           theme="white"
           onClose={() => setModalVisible(false)}
           parentRef={addButtonWrapperRef}
-          offsetTop={-290}
-          offsetLeft={0}
           showSubModal={showSubModal}
           subModalContent={<TaskSelector />}
         />
@@ -147,14 +225,11 @@ const AllTimesheetsTable = () => {
         <p>0.00</p>
       </span>
     ),
+    action: <span>{Icons.deleteDisabled}</span>, // Change to a React element instead of empty string
   });
 
   const totalRow = () => ({
-    task: (
-      <span className={styles.totalRowTask}>
-        Total
-      </span>
-    ),
+    task: <span className={styles.totalRowTask}>Total</span>,
     details: <span></span>,
     Mon: <span>00:00</span>,
     Tue: <span>00:00</span>,
@@ -168,6 +243,7 @@ const AllTimesheetsTable = () => {
         <p>00:00</p>
       </span>
     ),
+    action: <span></span>, // Add action column to match other rows
     flag: "rowOfTotal",
   });
 
@@ -175,8 +251,18 @@ const AllTimesheetsTable = () => {
   data.push(totalRow());
 
   return (
-    <div className={styles.tableWrapper}>
-      <CustomTable columns={columns} data={data} />
+    <div className={styles.mainContainer}>
+      <div className={styles.scrollContainer}>
+        <div className={styles.tableWrapper}>
+          <CustomTable columns={columns} data={data} />
+        </div>
+      
+      </div>
+      <div className={styles.actionButtons}>
+        <ButtonComponent label="Save" theme="white" />
+        <ButtonComponent label="Submit" theme="black" />
+      </div>
+     
     </div>
   );
 };

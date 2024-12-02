@@ -3,10 +3,10 @@
 }
 
 .header {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .title {
@@ -17,6 +17,7 @@
 }
 
 .topRight {
+  height: 100%;
   font-size: 0.9rem;
 }
 
