@@ -1,0 +1,26 @@
+.modalContent {
+  margin-top: 26px;
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: space-between;
+  margin-bottom: 84px;
+}
+
+.field {
+  flex: 1 1 calc(51% - 16px); /* Each field takes up 50% of the row's width, minus the gap */
+  min-width: 200px;
+  max-width: calc(51% - 16px);
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 13px;
+    font-weight: var(--default-font-weight);
+    margin-bottom: 12px;
+    color: var(--secondary-font-color-dark);
+  }
+}
+
+.asterisk{
+  color: #D83226;
+}
