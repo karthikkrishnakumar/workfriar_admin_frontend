@@ -1,12 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { Table, Button, Dropdown } from "antd";
+import { useRouter } from "next/navigation";
+import { Table, Button, Dropdown , Tag} from "antd";
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-list.module.scss";
 import EditProjectModal from "../edit-project-modal/edit-project-modal";
+import AddProjectModal from "../add-project-modal/add-project-modal";
 import dayjs from "dayjs";
-
 
 
 
@@ -66,7 +67,9 @@ const ProjectList: React.FC = () => {
     },
   ];
 
+  const router = useRouter();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
     null
   );
@@ -125,6 +128,11 @@ const ProjectList: React.FC = () => {
   };
 
 
+  const handleViewProject = (project: ProjectData) => {
+    router.push(`/projects/project-details/${project.key}`);
+  };
+
+
     /**
    * Converts the status value to a readable format
    * @param {string} status - The status value to convert
@@ -142,6 +150,11 @@ const ProjectList: React.FC = () => {
   const handleEditProjectSubmit = (values: Record<string, any>) => {
     console.log("Updated Project Details:", values);
     setIsEditModalOpen(false); // Close modal after submission
+  };
+
+  const handleAddProjectSubmit = (values: Record<string, any>) => {
+    console.log("Updated Project Details:", values);
+    setIsAddModalOpen(false); // Close modal after submission
   };
 
   const columns = [
@@ -196,9 +209,9 @@ const ProjectList: React.FC = () => {
       key: "timeEntry",
       width: "25%",
       render: (timeEntry: ProjectData["timeEntry"]) => (
-        <Button className={`${styles.timeEntryBtn} ${styles[timeEntry]}`}>
+        <Tag className={`${styles.timeEntryBtn} ${styles[timeEntry]}`}>
           {timeEntry.charAt(0).toUpperCase() + timeEntry.slice(1)}
-        </Button>
+        </Tag>
       ),
     },
     {
@@ -241,6 +254,7 @@ const ProjectList: React.FC = () => {
           {
             key: "view",
             label: <div className={styles.dropdownItem}>Details</div>,
+            onClick: () => handleViewProject(record),
           },
           {
             key: "edit",
@@ -296,6 +310,12 @@ const ProjectList: React.FC = () => {
         onSave={handleEditProjectSubmit}
         initialValues={selectedProject}
       />
+      <AddProjectModal
+        isAddModalOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleAddProjectSubmit}
+      />
+
     </div>
   );
 };
