@@ -58,13 +58,15 @@
   }
   .mutedDay {
     opacity: 0.5;
-    color: #bbb; /* Muted text color */
+    color: var(--secondary-golden-color-light); /* Muted text color */
   }
   .mutedDate {
-    color: #bbb; /* Muted text color */
+    opacity: 0.5;
+    color: var(--secondary-golden-color-light); /* Muted text color */
   }
   .mutedHour {
     color: var(--disabled-font-color) !important;
+    background-color: var(--secondary-golden-color-light)!important;
   }
 }
 

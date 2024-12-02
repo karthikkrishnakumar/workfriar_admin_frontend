@@ -9,10 +9,10 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-      <div>
+      <>
         <NavBar />
         <ModuleHeaderWrapper />
         {children}
-      </div>
+      </>
   );
 }

@@ -9,7 +9,8 @@ import styles from "./card-section.module.scss";
  * @param topRightContent - Content that will be displayed in the top-right corner (optional).
  * @param centerContent - Main content that will be displayed in the center of the card (required).
  * @param bottomContent - Content that will be displayed at the bottom (optional).
- * @param className - Additional custom classes to be added to the card element (optional).
+ * @param className - Additional custom classes to be added to the card element (optional)
+ * @param loading - for shimmer loading 
  */
 interface CardSectionProps {
   title: string;
@@ -17,6 +18,7 @@ interface CardSectionProps {
   centerContent: React.ReactNode;
   bottomContent?: React.ReactNode;
   className?: string;
+  loading?:boolean;
 }
 
 // Using forwardRef to forward the ref to the div element correctly
