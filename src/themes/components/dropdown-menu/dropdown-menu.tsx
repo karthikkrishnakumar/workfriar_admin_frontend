@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Dropdown } from "antd";
+import type { MenuProps } from "antd";
 import styles from "./dropdown-menu.module.scss";
 
 interface MenuItem {
@@ -31,7 +32,6 @@ const DropdownMenu: React.FC<DropdownProps> = ({
 
   const handleOpenChange = (visible: boolean) => {
     setOpen(visible);
-    console.log("Dropdown open state changed:", visible);
   };
 
   const handleScroll = useCallback(() => {
@@ -50,20 +50,20 @@ const DropdownMenu: React.FC<DropdownProps> = ({
     }
   }, [open, handleScroll]);
 
+  // Define menu with custom className for hover effect
+  const menu: MenuProps = {
+    items: menuItems,
+    className: styles.customMenu, 
+  };
+
   return (
     <Dropdown
       open={open}
       onOpenChange={handleOpenChange}
       trigger={trigger}
-      menu={{
-        items: menuItems.map((item) => ({
-          key: item.key,
-          label: item.label,
-          onClick: item.onClick,
-        })),
-      }}
-      overlayClassName={`${styles.customDropdownMenu} ${dropdownClassName}`}
-      overlayStyle={{ minWidth }} 
+      overlayClassName={`${styles.dropdownMenuOverlay} ${dropdownClassName}`}
+      overlayStyle={{ minWidth }}
+      menu={menu}
     >
       <div className={`${styles.triggerWrapper} ${wrapperClassName}`}>
         {icon}

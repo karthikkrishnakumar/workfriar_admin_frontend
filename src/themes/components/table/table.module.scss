@@ -67,10 +67,6 @@
       z-index: 0;
       background: var(--secondary-golden-color-light); // Ensure header stays on top during scroll
 
-
-      // Remove padding for the last header column
-      // &:last-child {   
-      // }
     }
 
     .ant-table-tbody > tr > td {
@@ -78,10 +74,7 @@
       font-weight: var(--default-font-weight);
       font-size: var(--heading-3-size);
 
-      // Remove padding for the last cell in each row
-      // &:last-child {
 
-      // }
     }
 
     .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder {

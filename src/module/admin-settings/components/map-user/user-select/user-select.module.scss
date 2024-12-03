@@ -1,0 +1,24 @@
+
+.userSelectdropdownContent {
+  
+  padding: 7px;
+  display: flex;
+  flex-direction: column;
+  // height: 320px;
+  // gap: 12px; /* Adds spacing between search bar and user list */
+}
+
+.userList {
+  margin-top: 24px;
+  overflow-y: auto; /* Enable scrolling when content exceeds the max height */
+}
+
+.userItem {
+  margin-bottom:18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color:var(--primary-font-color-dark);
+  font-size: 20px;
+
+}

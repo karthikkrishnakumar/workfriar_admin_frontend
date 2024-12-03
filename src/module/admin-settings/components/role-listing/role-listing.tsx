@@ -4,6 +4,8 @@ import DropdownMenu from "@/themes/components/dropdown-menu/dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
 import styles from "./role-listing.module.scss";
 import EditRoleModal from "../role-modal/edit-role-modal/edit-role";
+import MapUserModal from "../map-user/map-user-modal/map-user-modal";
+import { useRouter } from 'next/navigation';
 
 interface Role {
   key: string;
@@ -38,6 +40,9 @@ const SettingsRoleTable: React.FC = () => {
   const [statusData, setStatusData] = useState<Employee[]>(data);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+  const [isMapUserModalVisible, setIsMapUserModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState("");
+  const router = useRouter();
 
   const handleStatusChange = (key: string, newStatus: string) => {
     setStatusData((prevData) =>
@@ -51,7 +56,16 @@ const SettingsRoleTable: React.FC = () => {
     if (type === "edit") {
       setSelectedRole(record);
       setIsModalVisible(true);
+    }else if (type === "map-user") {
+      setSelectedRole(record);
+      setIsMapUserModalVisible(true);
     }
+    else if (type === "update-permissions") {
+      setSelectedRole(record);
+      router.push('/home/settings/permissions')
+      ;
+    }
+
   };
 
   const handleModalSave = () => {
@@ -63,6 +77,15 @@ const SettingsRoleTable: React.FC = () => {
       );
     }
     setIsModalVisible(false);
+  };
+
+  const handleUserChange = (value: string) => {
+    setSelectedUser(value);
+  };
+  
+  const handleMapUserSave = () => {
+    // Save the mapped user
+    setIsMapUserModalVisible(false);
   };
 
   const columns: ColumnType[] = [
@@ -138,7 +161,7 @@ const SettingsRoleTable: React.FC = () => {
       ),
     },
   ];
-
+//
   return (
     <div style={{ maxWidth: "100%" }}>
       <Table columns={columns} dataSource={statusData} />
@@ -165,6 +188,17 @@ const SettingsRoleTable: React.FC = () => {
           onSetPermissions={() => alert("Set Role Permissions clicked")}
         />
       )}
+
+
+      {isMapUserModalVisible && selectedRole && (
+            <MapUserModal
+              isVisible={isMapUserModalVisible}
+              role={selectedRole.role}
+              onUserChange={handleUserChange}
+              onSave={handleMapUserSave}
+              onClose={() => setIsMapUserModalVisible(false)}
+            />
+          )}
     </div>
   );
 };
