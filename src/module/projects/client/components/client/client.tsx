@@ -38,7 +38,7 @@ const Client: React.FC = () => {
     },
   ];
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [clientData, setClientData] = useState<ClientData[]>(data);
 
   /**

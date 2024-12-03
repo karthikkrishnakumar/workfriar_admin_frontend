@@ -102,7 +102,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
 
       {/* Details Section */}
       <Card className={styles.middleRow}>
-        <Row gutter={[16, 16]} align="middle" className={styles.firstRow}>
+        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
           <Col>
             <p>Client</p>
             <h4>{project.clientName}</h4>
@@ -116,7 +116,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
             <h4>{project.planned_end_date}</h4>
           </Col>
         </Row>
-        <Row gutter={[16, 16]} align="middle" className={styles.firstRow}>
+        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
           <Col>
             <p>Actual start date</p>
             <h4>{project.actual_start_date}</h4>
@@ -130,7 +130,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
             <h4>{project.billing_model}</h4>
           </Col>
         </Row>
-        <Row gutter={[16, 16]} align="middle" className={styles.firstRow}>
+        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
           <Col>
             <p>Time entry</p>
             <h4>{project.timeEntry}</h4>
