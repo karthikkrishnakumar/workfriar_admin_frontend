@@ -2,7 +2,8 @@
     position: fixed;
     top: 0 !important;
     left: 293px !important;
-    background-color: transparent;
+    background-color: var(--page-background);
+    z-index: 999;
     padding: 25px 40px;
     width: calc(100vw - 293px);
     display: flex;
@@ -10,6 +11,7 @@
     align-items: center;
     height: 76px;
     justify-content: space-between;
+    
 }
 
 .rightContainer{
@@ -37,4 +39,12 @@
     flex-direction: row;
     align-items: center;
     column-gap: 24px;
+}
+
+
+@media(max-width:1200px){
+    .moduleHeaderwrpper{
+        left: 80px !important;
+        width: calc(100vw - 80px);
+    }
 }

@@ -12,6 +12,8 @@ interface DropDownModalProps {
   offsetLeft?: number; // Optional offset for left positioning
   offsetRight?: number; // Optional offset for right positioning
   offsetBottom?: number; // Optional offset for bottom positioning
+  showSubModal?: boolean;
+  subModalContent?: ReactNode;
 }
 
 /**
@@ -30,6 +32,8 @@ const DropDownModal: React.FC<DropDownModalProps> = ({
   offsetLeft = 0,
   offsetRight = 0,
   offsetBottom = 0,
+  showSubModal = false,
+  subModalContent,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -69,18 +73,72 @@ const DropDownModal: React.FC<DropDownModalProps> = ({
    */
   const calculatePosition = () => {
     if (!parentRef.current) return {};
+  
     const parentBounds = parentRef.current.getBoundingClientRect();
-
-    return {
-      top: offsetTop !== 0 ? `${parentBounds.bottom + offsetTop}px` : undefined,
-      bottom:
-        offsetBottom !== 0 ? `${window.innerHeight - parentBounds.top + offsetBottom}px` : undefined,
-      left: offsetLeft !== 0 ? `${parentBounds.left + offsetLeft}px` : undefined,
-      right:
-        offsetRight !== 0
-          ? `${window.innerWidth - parentBounds.right + offsetRight}px`
-          : undefined,
+    const modalPosition: React.CSSProperties = {
+      position: 'absolute',
     };
+  
+    // Top positioning logic
+    if (offsetTop !== 0) {
+      modalPosition.top = `${parentBounds.bottom + offsetTop}px`;
+    } else if (offsetBottom !== 0) {
+      const availableSpaceBelow = window.innerHeight - parentBounds.bottom;
+      const availableSpaceAbove = parentBounds.top;
+  
+      if (availableSpaceBelow >= 0) {
+        // Prefer positioning below if there's enough space
+        modalPosition.top = `${parentBounds.bottom + offsetBottom}px`;
+      } else {
+        // Fallback to positioning above if below doesn't work
+        modalPosition.bottom = `${availableSpaceAbove + offsetBottom}px`;
+      }
+    }
+  
+    // Left positioning logic
+    if (offsetLeft !== 0) {
+      modalPosition.left = `${parentBounds.left + offsetLeft}px`;
+    } else if (offsetRight !== 0) {
+      const availableSpaceRight = window.innerWidth - parentBounds.right;
+      const availableSpaceLeft = parentBounds.left;
+  
+      if (availableSpaceRight >= 0) {
+        // Prefer positioning from right edge of parent
+        modalPosition.left = `${parentBounds.right - offsetRight}px`;
+      } else {
+        // Fallback to positioning from left side
+        modalPosition.right = `${availableSpaceLeft + offsetRight}px`;
+      }
+    }
+  
+    // Ensure the modal stays within viewport
+    const ensureInViewport = () => {
+      const modalWidth = modalRef.current?.offsetWidth || 0;
+      const modalHeight = modalRef.current?.offsetHeight || 0;
+  
+      // Check horizontal positioning
+      if (modalPosition.left !== undefined) {
+        const left = parseInt(modalPosition.left as string);
+        if (left + modalWidth > window.innerWidth) {
+          delete modalPosition.left;
+          modalPosition.right = '10px';
+        }
+      }
+  
+      // Check vertical positioning
+      if (modalPosition.top !== undefined) {
+        const top = parseInt(modalPosition.top as string);
+        if (top + modalHeight > window.innerHeight) {
+          delete modalPosition.top;
+          modalPosition.bottom = '10px';
+        }
+      }
+    };
+  
+    // Call viewport check
+    ensureInViewport();
+  
+    return modalPosition;
   };
 
   return isVisible ? (
@@ -92,6 +150,9 @@ const DropDownModal: React.FC<DropDownModalProps> = ({
       ref={modalRef}
     >
       <div className={styles.modalContent}>{content}</div> {/* Modal content */}
+      {showSubModal && (
+        <div className={styles.subModalContent}>{subModalContent}</div>
+      )}
     </div>
   ) : null; // Return null if modal is not visible
 };

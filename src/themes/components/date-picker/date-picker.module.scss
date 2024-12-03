@@ -5,6 +5,17 @@
   gap: 0px;
   border: none !important;
 }
+.customSkeleton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0px;
+  border: none !important;
+}
+.customSkeletonItem {
+  height: 27px;
+  width: 160px !important;
+}
 
 .navigationButtonRight,
 .navigationButtonLeft {
@@ -20,8 +31,8 @@
   height: 24px;
 }
 
-.navigationButtonLeft {
-  transform: rotate(180deg);
+.disabled {
+  opacity: 0;
 }
 
 .weekDisplay {

@@ -1,20 +1,73 @@
-.customTable :global {
-    width: 100%;
-    .ant-table-thead {
-        border-radius: 8px;
-        & .ant-table-cell {
-            background: var(--secondary-golden-color-light) !important;
-            justify-content: space-between;
-            height: 60px;
-            font-family: var(--font-rubik);
-            font-size: var(--default-font-size);
-            font-weight: var(--default-font-weight);
-            line-height: 16.59px;
-            text-align: left;
-            color: var(--Text-text_grey_1, #686869);
+.tableContainer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  width: 100%;
+}
 
-        }
+.tableHeader {
+  display: flex;
+  background-color: var(--secondary-golden-color-light);
+  padding: 10px;
+  border-radius: 10px;
+
+  .headerCell {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    font-weight: var(--default-font-weight);
+    font-size: var(--default-font-size);
+    color: var(--grey-font-color);
+    padding: 8px;
+  }
+}
+
+.tableBody {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+
+  .dataRow {
+    display: flex;
+    border-top: 1px solid #e0e0e0;
+    padding: 10px 0;
+    background-color: #ffffff;
+
+    &.firstRow {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
     }
 
+    &.lastRow {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
 
+    &.rowOfTotal {
+      background-color: var(--disabled-table-column-background);
+      color: #aaa;
+
+      .dataCell {
+        height: 44px;
+        font-size: var(--default-font-size) !important;
+        font-weight: var(--sub-heading-font-weight) !important;
+        color: var(--secondary-font-color-dark) !important;
+      }
+    }
+
+    &.importantRow {
+      background-color: rgba(255, 221, 51, 0.2);
+      font-weight: bold;
+    }
+
+    .dataCell {
+      display: flex;
+      align-items: center;
+      height: 44px;
+      font-size: var(--default-font-size);
+      color: var(--Text-text_grey_1, #686869);
+    }
+  }
 }

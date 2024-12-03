@@ -1,0 +1,80 @@
+// styles/Timesheet.module.scss
+
+/* 
+  Main container for the timesheet with padding, rounded corners, and a grid layout. 
+  Days are displayed in a 4-column grid, switching to 2 columns on small screens.
+*/
+.timesheet {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  max-width: 82%;
+
+  /* Grid layout for the days of the week */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* Styling for each day's section */
+  .day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    /* Day of the week and date styling */
+    .dayOfWeek,
+    .date {
+      height: 20px;
+      font-size: 14px;
+      color: var(--black);
+      margin-bottom: 0.25rem;
+    }
+
+    /* Hours styling with larger font size, background, and border */
+    .hours {
+      font-size: 18px;
+      padding: 19px 19px;
+      font-weight: 500;
+      color: var(--primary-golden-color-dark);
+      background-color: var(--page-background);
+      border-radius: 5px;
+      max-height: 63px;
+      max-width: 81px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #c1c1c1;
+    }
+  }
+
+  .muted {
+    opacity: 0.5;
+  }
+  .mutedDay {
+    opacity: 0.5;
+    color: var(--secondary-golden-color-light); /* Muted text color */
+  }
+  .mutedDate {
+    opacity: 0.5;
+    color: var(--secondary-golden-color-light); /* Muted text color */
+  }
+  .mutedHour {
+    color: var(--disabled-font-color) !important;
+    background-color: var(--secondary-golden-color-light)!important;
+  }
+}
+
+/* Responsive grid layout: switches to 2 columns on smaller screens */
+@media (max-width: 640px) {
+  .timesheet {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

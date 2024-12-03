@@ -1,0 +1,45 @@
+.textAreaButtonWrapper {
+    border: 1px solid var(--navigation-arrow);
+    background-color: transparent;
+    padding: 8px;
+    font-size: var(--default-font-size);
+    font-weight: var(--default-font-weight);
+    width: 155px;
+    height: 56px;
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+
+    &.disabled{
+        color: var(--disabled-font-color);
+        pointer-events: none;
+        cursor: no-drop;
+    }
+
+    .buttonValue {
+        width: 100px;
+        white-space: normal;
+        word-wrap: break-word;
+        text-align: left;
+        flex: 1;
+        display: -webkit-box;
+        /* Enable the line-clamp feature */
+        -webkit-line-clamp: 2;
+        /* Number of lines to display */
+        -webkit-box-orient: vertical;
+        /* Set the box orientation for line clamping */
+        overflow: hidden;
+        /* Hide overflowing text */
+        text-overflow: ellipsis;
+    }
+
+    .editIcon {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        right: 8px;
+        top: 8px;
+    }
+}
+

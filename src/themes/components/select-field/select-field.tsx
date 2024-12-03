@@ -25,7 +25,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   placeholder = "Select an option",
 }) => {
   return (
-    <div className={styles.customSelectContainer}> {/* Apply container class */}
+    <div className={styles.customSelectContainer}>
+      {" "}
+      {/* Apply container class */}
       <Select
         value={value}
         onChange={onChange}
