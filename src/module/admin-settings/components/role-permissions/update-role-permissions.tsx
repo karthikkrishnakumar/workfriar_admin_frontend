@@ -2,7 +2,7 @@
 
 import CheckboxComponent from "@/themes/components/checkbox/checkbox";
 import Table from "@/themes/components/table/table";
-
+import styles from "./update-role-permissions.module.scss";
 import React from "react";
 
 const CustomCheckbox = ({ checked, onChange }) => (
@@ -15,11 +15,13 @@ const UpdateRolePermissionsTable = () => {
       title: "Category",
       dataIndex: "category",
       key: "category",
+      width: "35%"
     },
     {
       title: "View",
       dataIndex: "view",
       key: "view",
+      width: "18%",
       render: (_, record) => (
         <CustomCheckbox
           checked={record.view}
@@ -31,6 +33,7 @@ const UpdateRolePermissionsTable = () => {
       title: "Create/Edit",
       dataIndex: "createEdit",
       key: "createEdit",
+      width: "18%",
       render: (_, record) => (
         <CustomCheckbox
           checked={record.createEdit}
@@ -42,6 +45,7 @@ const UpdateRolePermissionsTable = () => {
       title: "Review",
       dataIndex: "review",
       key: "review",
+      width: "18%",
       render: (_, record) => (
         <CustomCheckbox
           checked={record.review}
@@ -53,6 +57,7 @@ const UpdateRolePermissionsTable = () => {
       title: "Delete",
       dataIndex: "delete",
       key: "delete",
+      width: "11%",
       render: (_, record) => (
         <CustomCheckbox
           checked={record.delete}
@@ -125,7 +130,7 @@ const UpdateRolePermissionsTable = () => {
     console.log(`${field} for ${key} changed to ${checked}`);
   };
 
-  return <Table columns={columns} dataSource={data} />;
+  return <Table columns={columns} dataSource={data} className={styles.permissionTable }/>;
 };
 
 export default UpdateRolePermissionsTable;

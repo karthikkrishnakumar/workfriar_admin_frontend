@@ -14,7 +14,7 @@
         display: flex;
         flex-direction: column;
         background-color: var( --page-background);
-        gap: 10px; 
+        gap: 10px; //gap between thead and tbody
       }
       .ant-table-thead {
         border-radius: 12px;
@@ -58,7 +58,7 @@
     }
 
     .ant-table-thead > tr > th {
-      color: var(--header-font-color-light);
+      color: var(--grey-font-color);
       background: var(--secondary-golden-color-light);
       font-weight: var(--default-font-weight);
       font-size: var(--default-font-size);
@@ -67,6 +67,10 @@
       z-index: 0;
       background: var(--secondary-golden-color-light); // Ensure header stays on top during scroll
 
+      // border-right: 1px solid black;
+      // border-left: 1px solid black;
+
+
     }
 
     .ant-table-tbody > tr > td {
@@ -74,6 +78,8 @@
       font-weight: var(--default-font-weight);
       font-size: var(--heading-3-size);
 
+      // border-right: 1px solid black; 
+      // border-left: 1px solid black; 
 
     }
 
