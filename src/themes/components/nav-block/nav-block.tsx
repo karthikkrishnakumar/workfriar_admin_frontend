@@ -51,7 +51,7 @@ const NavBlock: React.FC<NavBlockProps> = ({
     >
       <div className={styles.titleAndIcon}>
         <span>{isHovered || activeStatus ? activeIcon : defaultIcon}</span>
-        <h3>{title}</h3>
+        <h2>{title}</h2>
       </div>
       <span>
         {collapsible

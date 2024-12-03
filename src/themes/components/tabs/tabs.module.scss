@@ -1,6 +1,35 @@
+.tabWrapper{
+    position: relative;
+}
+
+.subHeading{
+    position: absolute;
+    right: 25px;
+    top: 15px;
+}
+
+.customTabs:global(.ant-tabs .ant-tabs-tab+.ant-tabs-tab){
+    @media(max-width:850px){
+        margin: 0 0 0 15px;
+    }
+}
+
+.customTabs:global(.ant-tabs >.ant-tabs-nav){
+    width: max-content !important;
+}
+
+.customTabs:global(.ant-tabs-nav-wrap ){
+    width: max-content !important;
+}
+
 .customTabs:global(.ant-tabs-nav-list){
     font-size: var(--heading-2-size);
     font-weight: var(--default-font-weight);
+    width: max-content !important;
+
+    @media(max-width:850px){
+        font-size: var(--default-font-size);
+    }
 }
 // color of active tab's font
 .customTabs:global(.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
@@ -8,6 +37,10 @@
     font-size: var(--heading-2-size);
     font-weight: var(--sub-heading-font-weight);
     transition: all 0.4s ease !important;
+
+    @media(max-width:850px){
+        font-size: var(--default-font-size);
+    }
 }
 
 // color of active tab's underline
@@ -21,5 +54,9 @@
     font-size: var(--heading-2-size);
     font-weight: var(--default-font-weight);
     transition: all 0.4s ease !important;
+
+    @media(max-width:850px){
+        font-size: var(--default-font-size);
+    }
 }
 

@@ -21,6 +21,10 @@
 .timeInput:focus {
   border-color: #000;
   border-width: 2px;
+
+  &::placeholder{
+    display: none;
+  }
 }
 
 .timeInput.disabled {
@@ -29,7 +33,7 @@
 }
 
 .timeInput.disabled::placeholder{
-  color: aqua;
+  color: rgba(83, 85, 85, 0.632);
 }
 
 

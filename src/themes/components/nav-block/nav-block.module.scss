@@ -10,6 +10,7 @@
     padding: 12px 8px 12px 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
 
     // Hover effect
     &:hover {
@@ -43,45 +44,42 @@
 
 
 
-    h3 {
+    h2 {
         font-size: var(--heading-3-size);
         font-weight: var(--default-font-weight);
     }
         // Responsive styles for hiding text on smaller screens
         @media (max-width: 1200px) {
-            .navBlockWrapper{
-                width: 100%!important;
-            }
-            width: 40px; // Adjust width to fit icons only
+            
+            justify-content: center !important;
+            width: 50px; // Adjust width to fit icons only
             .titleAndIcon {
                 
-                h3 {
+                h2 {
                     opacity: 0;
                     visibility: hidden;
                     width: 0;
                     margin: 0;
                     padding: 0;
                 }
-
-                  // Tooltip display
-                  &:hover h3 {
-                    opacity: 1;
-                    visibility: visible;
-                    position: absolute;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background-color: #000;
-                    color: #fff;
-                    padding: 5px;
-                    border-radius: 4px;
-                    white-space: nowrap;
-                    z-index: 10;
-                    margin-top: 70px;
-                    font-size: 12px;
-                    width: auto;
-                    max-width: 150px;
-                  }
-     
+                // Tooltip display
+                &:hover h2 {
+                  opacity: 1;
+                  visibility: visible;
+                  position: absolute;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  background-color: #000;
+                  color: #fff;
+                  padding: 5px;
+                  border-radius: 4px;
+                  white-space: nowrap;
+                  z-index: 10;
+                  margin-top: 70px;
+                  font-size: 12px;
+                  width: auto;
+                  max-width: 150px;
+                }
             }
         }
     

@@ -75,8 +75,8 @@ const TimeInput: React.FC<TimeInputProps> = ({
       if (setValue) {
         setValue(formattedTime);
       }
-    }else if(e.key === "Backspace"){
-      setInputValue('')
+    } else if (e.key === "Backspace") {
+      setInputValue("");
     }
   };
 
@@ -97,7 +97,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
-        placeholder="00:00"
+        placeholder=""
         disabled={disabled}
       />
     </div>

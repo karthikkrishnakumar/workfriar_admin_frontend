@@ -62,7 +62,6 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
         // Set the initial date range for the current week
         const { startDate, endDate } = getWeekDates(DatePickerData, current);
-        console.log(startDate, endDate);
         onDateChange(startDate, endDate);
       } catch (error) {
         console.error("Error fetching week data:", error);

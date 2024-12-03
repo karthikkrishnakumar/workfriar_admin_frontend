@@ -54,6 +54,7 @@
     }
 
     ul::-webkit-scrollbar {
+        display: block !important;
         width: 4px;
         background-color: transparent;
     }
