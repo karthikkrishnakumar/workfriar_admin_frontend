@@ -11,7 +11,10 @@ const ModuleHeaderWrapper = () => {
   const pages = [
     { title: "Dashboard", path: "/dashboard", backButtonNeeded: false },
     { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false },
-    { title: "Projects", path: "/projects", backButtonNeeded: false },
+    { title: "Project List", path: "/projects", backButtonNeeded: false },
+    { title: "Client", path: "/projects/client", backButtonNeeded: false },
+    { title: "Task Category", path: "/projects/task-category", backButtonNeeded: false },
+    { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false },
     { title: "Organization", path: "/organization", backButtonNeeded: false },
     { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false },
     { title: "Time sheet reports", path: "/time-sheet-report", backButtonNeeded: false },
