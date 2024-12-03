@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@ant-design/charts": "2.2.3",
+    "@hapi/iron": "^7.0.1",
     "@types/chart.js": "2.9.41",
     "antd": "5.22.2",
     "axios": "1.7.7",
     "chart.js": "4.4.6",
+    "cookie": "^1.0.2",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-chartjs-2": "5.2.0",
