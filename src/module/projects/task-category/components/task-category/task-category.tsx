@@ -32,7 +32,7 @@ const TaskCategory: React.FC = () => {
   ];
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTaskCategory, setSelectedTaskCategory] =
     useState<TaskCategoryData | null>(null);
   const [TaskCategoryData, setTaskCategoryData] =
