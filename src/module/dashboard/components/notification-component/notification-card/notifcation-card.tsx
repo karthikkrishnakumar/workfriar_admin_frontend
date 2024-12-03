@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./notification-card.module.scss"; // Adjust the path as needed
 import CardSection from "../../card-section/card-section";
 import DashboardNotifications from "../notifications/dashboard-notifications";
-import { Notification, NotificationService } from "@/module/dashboard/services/notifications-services/notifications-services";
+import { Notification, NotificationServices } from "@/module/dashboard/services/notifications-services/notifications-services";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
 
@@ -16,7 +16,7 @@ const NotificationCard: React.FC = () => {
     // Fetch notifications when the component mounts
     const fetchNotifications = async () => {
       try {
-        const fetchedNotifications = await NotificationService.fetchNotifications(); // Pass the userID
+        const fetchedNotifications = await NotificationServices(); // Pass the userID
         setNotifications(fetchedNotifications);
       } catch (err) {
         console.error("Error fetching notifications:", err);

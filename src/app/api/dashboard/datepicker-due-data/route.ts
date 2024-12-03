@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
+import { dataForUser1, dataForUser2 } from "../data/data-sets"; // Your data sources
+import { convertToWeekData } from "@/utils/datepicker-util/datepicker-formater-routes";  // Adjust the path as needed
 
-export async function GET() {
-  const weekData = [
+ 
+// Week Data: You can import or define the week data structure as needed
+const weekData = [
     // Additional Weeks for 2024
    
     { month: "January", week: 0, start: "01/01/2024", end: "01/06/2024" },
@@ -79,8 +82,14 @@ export async function GET() {
     { month: "December", week: 61, start: "12/29/2024", end: "12/31/2024" },
   ];
 
-  // Return the response with the full week data
+
+export async function GET() {
+  // Generate week data for User 1 and User 2 based on the timesheet data and week data
+  const weekDueDataUser1 = convertToWeekData(dataForUser1.timesheetData.days, weekData);
+  const weekDueDataUser2 = convertToWeekData(dataForUser2.timesheetData.days, weekData);
+
   return NextResponse.json({
-    DatePickerData: weekData,
+    DatePickerData: weekDueDataUser1,
+    DatePickerDataUser2: weekDueDataUser2,
   });
 }

@@ -2,6 +2,7 @@ import Axios, { AxiosRequestConfig } from "axios";
 const axioClient = Axios.create({
   headers: {
     "X-Requested-With": "XMLHttpRequest",
+    "userID":"1"
   },
   withCredentials: true,
 });
@@ -15,7 +16,7 @@ const http = () => {
    */
   const post = async (
     url: string,
-    props?: JSON | FormData,
+    props?: JSON | FormData | {},
     hasFile?: boolean
   ) => {
     let config: AxiosRequestConfig = {

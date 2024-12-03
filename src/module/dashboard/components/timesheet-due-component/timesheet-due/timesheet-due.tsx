@@ -37,7 +37,6 @@ interface TimesheetDay {
  */
 interface TimesheetData {
   days: TimesheetDay[] | []; // Array of days and their respective hours worked.
-  total?: string; // Optional total hours worked, can be left undefined.
 }
 
 // The Timesheet component receives the 'data' prop and renders the timesheet grid
@@ -56,7 +55,7 @@ const Timesheet: React.FC<TimesheetProps> = ({ data }) => {
     <div className={styles.timesheet}>
       {/* Grid for first 4 days */}
       <div className={styles.grid}>
-        {data.days.slice(0, 4).map((day, index) => {
+        {data?.days?.slice(0, 4).map((day, index) => {
           // Determine if the date is empty
           const isMuted = day.disable;
 
@@ -89,9 +88,9 @@ const Timesheet: React.FC<TimesheetProps> = ({ data }) => {
 
       {/* Grid for next 4 days */}
       <div className={styles.grid}>
-        {data.days.slice(4, 8).map((day, index) => {
+        {data?.days?.slice(4, 8).map((day, index) => {
           // Determine if the date is empty
-          const isMuted =day.disable;
+          const isMuted = day.disable;
 
           return (
             <div

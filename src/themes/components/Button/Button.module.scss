@@ -24,6 +24,17 @@
   color: var(--primary-font-color-light);
   border: 1px solid var(--danger-primary-font-color);
 }
+
+.golden {
+  background-color: transparent;
+  color: var(--primary-golden-color-dark);
+  text-decoration: underline;
+}
+.golden:hover {
+  background-color: transparent;
+  color: var(--primary-golden-color-dark) !important;
+  text-decoration: underline;
+}
 .disabled {
   background-color: var(--disabled-button-background-dark);
   color: var(--primary-font-color-light);

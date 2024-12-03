@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { dataForUser1, dataForUser2 } from "../data/data-sets";
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
     const startDateHeader = request.headers.get("userID");
     const userId = startDateHeader ? parseInt(startDateHeader) : 1;
