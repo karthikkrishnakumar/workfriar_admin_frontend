@@ -1,4 +1,38 @@
-.triggerWrapper{
-  padding: 0px 0px;
-
+.statusTriggerWrapper{
+  padding: 6px 8px;
+  border-radius: 4px;
+  min-width: 96px;
+  margin: 0;
 }
+.statusTriggerWrapper:hover{
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+//actual dropdown menu
+.statusDropdownMenuOverlay {
+
+  :global(.ant-dropdown-menu) {
+    max-width: 96px;
+
+  }
+}
+
+.status{
+  font-size: var(--default-font-size);
+  color: var( --primary-golden-color-dark);
+  font-weight: var(--main-heading-font-weight);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionTriggerWrapper{
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+.actionTriggerWrapper:hover{
+  background-color: rgba(0, 0, 0, 0.04);
+}
+

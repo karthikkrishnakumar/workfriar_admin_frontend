@@ -1,205 +1,183 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Skeleton, message } from "antd";
 import Table, { ColumnType } from "@/themes/components/table/table";
 import DropdownMenu from "@/themes/components/dropdown-menu/dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
 import styles from "./role-listing.module.scss";
-import EditRoleModal from "../role-modal/edit-role-modal/edit-role";
+import useRoleService, { Role } from "../../services/role-service";
+import { useRouter } from "next/navigation";
+import EditRoleModal from "../role-modal/edit-role-modal/edit-role-modal";
 import MapUserModal from "../map-user/map-user-modal/map-user-modal";
-import { useRouter } from 'next/navigation';
-
-interface Role {
-  key: string;
-  role: string;
-  department: string;
-  users: number;
-  status: string;
-}
-
-const data = [
-  { key: "1", role: "CEO", department: "Management", users: "1 employee", status: "Active" },
-  { key: "2", role: "Product Manager", department: "Operations", users: 2, status: "Active" },
-  { key: "3", role: "Accountant", department: "Finance", users: 2, status: "Inactive" },
-  { key: "4", role: "Team Lead - Software Development", department: "Technical", users: 30, status: "Inactive" },
-  { key: "5", role: "HR Manager", department: "HR", users: 1, status: "Inactive" },
-];
-
-const departmentOptions = [
-  { label: "Management", value: "Management" },
-  { label: "Operations", value: "Operations" },
-  { label: "Finance", value: "Finance" },
-  { label: "Technical", value: "Technical" },
-  { label: "HR", value: "HR" },
-];
-
-const statusOptions = [
-  { label: "Active", value: "Active" },
-  { label: "Inactive", value: "Inactive" },
-];
 
 const SettingsRoleTable: React.FC = () => {
-  const [statusData, setStatusData] = useState<Employee[]>(data);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { listRoles, updateRole } = useRoleService();
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeModal, setActiveModal] = useState<"edit" | "map-user" | null>(null);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-  const [isMapUserModalVisible, setIsMapUserModalVisible] = useState(false);
-  const [selectedUser, setSelectedUser] = useState("");
   const router = useRouter();
 
-  const handleStatusChange = (key: string, newStatus: string) => {
-    setStatusData((prevData) =>
-      prevData.map((item) =>
-        item.key === key ? { ...item, status: newStatus } : item
-      )
-    );
-  };
-
-  const handleMenuClick = (type: string, record: Role) => {
-    if (type === "edit") {
-      setSelectedRole(record);
-      setIsModalVisible(true);
-    }else if (type === "map-user") {
-      setSelectedRole(record);
-      setIsMapUserModalVisible(true);
+  // Use useCallback to memoize the fetch function
+  const fetchRoles = useCallback(async () => {
+    const response = await listRoles();
+    if (response.status) {
+      setRoles(response.roles || []);
+    } else {
+      message.error(response.message);
     }
-    else if (type === "update-permissions") {
-      setSelectedRole(record);
-      router.push('/home/settings/permissions')
-      ;
-    }
+    setLoading(false);
+  }, []);
 
-  };
+  // Fetch roles on component mount
+  useEffect(() => {
+    fetchRoles();
+  }, []);
 
-  const handleModalSave = () => {
-    if (selectedRole) {
-      setStatusData((prevData) =>
-        prevData.map((item) =>
-          item.key === selectedRole.key ? selectedRole : item
-        )
+  // Handle status update
+  const handleStatusChange = async (role: Role, newStatus: boolean) => {
+    const response = await updateRole(role.id, newStatus);
+    if (response.status) {
+      setRoles((prevRoles) =>
+        prevRoles.map((r) => (r.id === role.id ? { ...r, status: newStatus } : r))
       );
+      message.success(response.message);
+    } else {
+      message.error(response.message);
     }
-    setIsModalVisible(false);
   };
 
-  const handleUserChange = (value: string) => {
-    setSelectedUser(value);
-  };
-  
-  const handleMapUserSave = () => {
-    // Save the mapped user
-    setIsMapUserModalVisible(false);
+  // Handle dropdown actions
+  const handleMenuClick = (action: string, role: Role) => {
+    setSelectedRole(role);
+
+    switch (action) {
+      case "edit":
+        setActiveModal("edit");
+        break;
+      case "map-user":
+        setActiveModal("map-user");
+        break;
+      case "update-permissions":
+        router.push("/home/settings/permissions");
+        break;
+      case "delete":
+        setRoles((prevRoles) => prevRoles.filter(({ id }) => id !== role.id));
+        break;
+    }
   };
 
-  const columns: ColumnType[] = [
-    { title: "Role", dataIndex: "role", key: "role", width: "25%" },
-    { title: "Department", dataIndex: "department", key: "department", width: "25%" },
-    { title: "No. of Users", dataIndex: "users", key: "users", width: "25%" },
+  const columns: ColumnType[] = useMemo(() => [
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      width: "30%",
+    },
+    {
+      title: "Department",
+      dataIndex: "department",
+      key: "department",
+      width: "22%",
+    },
+    {
+      title: "No. of Users",
+      dataIndex: "users",
+      key: "users",
+      width: "22%",
+      render: (_, record) => (
+        <span>
+          {record.users === 1 ? "1 employee" : `${record.users} employees`}
+        </span>
+      ),
+    },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width: "25%",
-      render: (status, record) => (
+      width: "22%",
+      render: (_, record) => (
         <DropdownMenu
           menuItems={[
             {
               key: "active",
               label: "Active",
-              onClick: () => handleStatusChange(record.key, "Active"),
+              onClick: () => handleStatusChange(record, true), // active
             },
             {
               key: "inactive",
               label: "Inactive",
-              onClick: () => handleStatusChange(record.key, "Inactive"),
+              onClick: () => handleStatusChange(record, false), // inactive
             },
           ]}
-          trigger={["click"]}
           icon={
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <span
-                style={{
-                  color: "var(--primary-golden-color-dark)",
-                  fontWeight: "var(--main-heading-font-weight)",
-                  fontSize: "var(--default-font-size)",
-                }}
-              >
-                {status}
+            <div className={styles.status}>
+              <span className={styles.statusText}>
+                {record.status ? "Active" : "Inactive"} {/* Display Active/Inactive based on status */}
               </span>
-              &nbsp;{Icons.arrowDownFilledGold}
+              {Icons.arrowDownFilledGold}
             </div>
           }
-          wrapperClassName={styles.triggerWrapper}
+          wrapperClassName={styles.statusTriggerWrapper}
+          dropdownClassName={styles.statusDropdownMenuOverlay}
         />
       ),
     },
     {
       key: "actions",
-      render: (_: string, record: any) => (
+      width: "4%",
+      render: (_, record) => (
         <DropdownMenu
           menuItems={[
-            {
-              key: "edit",
-              label: "Edit",
-              onClick: () => handleMenuClick("edit", record),
-            },
-            {
-              key: "update-permissions",
-              label: "Update Role Permissions",
-              onClick: () => handleMenuClick("update-permissions", record),
-            },
-            {
-              key: "map-user",
-              label: "Map User",
-              onClick: () => handleMenuClick("map-user", record),
-            },
-            {
-              key: "delete",
-              label: "Delete",
-              onClick: () => handleMenuClick("delete", record),
-            },
+            { key: "edit", label: "Edit", onClick: () => handleMenuClick("edit", record) },
+            { key: "update-permissions", label: "Update Role Permissions", onClick: () => handleMenuClick("update-permissions", record) },
+            { key: "map-user", label: "Map User", onClick: () => handleMenuClick("map-user", record) },
+            { key: "delete", label: "Delete", onClick: () => handleMenuClick("delete", record) },
           ]}
           icon={Icons.threeDots}
+          wrapperClassName={styles.actionTriggerWrapper}
+          dropdownClassName={styles.actionDropdownMenuOverlay}
         />
       ),
     },
-  ];
-//
-  return (
-    <div style={{ maxWidth: "100%" }}>
-      <Table columns={columns} dataSource={statusData} />
+  ], [roles]);
 
-      {isModalVisible && selectedRole && (
+  console.log(roles)
+
+  return (
+    <>
+      {loading ? (
+        <Skeleton active paragraph={{ rows: 6 }} />
+      ) : (
+        <Table columns={columns} dataSource={roles} />
+      )}
+
+      {activeModal === "edit" && selectedRole && (
         <EditRoleModal
-          isVisible={isModalVisible}
+          isVisible
           role={selectedRole.role}
           department={selectedRole.department}
           status={selectedRole.status}
-          departmentOptions={departmentOptions}
-          statusOptions={statusOptions}
-          onRoleChange={(value) =>
-            setSelectedRole({ ...selectedRole, role: value })
-          }
-          onDepartmentChange={(value) =>
-            setSelectedRole({ ...selectedRole, department: value })
-          }
-          onStatusChange={(value) =>
-            setSelectedRole({ ...selectedRole, status: value })
-          }
-          onSave={handleModalSave}
-          onClose={() => setIsModalVisible(false)}
-          onSetPermissions={() => alert("Set Role Permissions clicked")}
+          onRoleChange={(role) => setSelectedRole((prev) => prev && { ...prev, role })}
+          onDepartmentChange={(department) => setSelectedRole((prev) => prev && { ...prev, department })}
+          onStatusChange={(status) => setSelectedRole((prev) => prev && { ...prev, status })}
+          onSave={() => {
+            if (selectedRole) updateRole(selectedRole.id, selectedRole);
+            setActiveModal(null);
+          }}
+          onClose={() => setActiveModal(null)}
         />
       )}
 
-
-      {isMapUserModalVisible && selectedRole && (
-            <MapUserModal
-              isVisible={isMapUserModalVisible}
-              role={selectedRole.role}
-              onUserChange={handleUserChange}
-              onSave={handleMapUserSave}
-              onClose={() => setIsMapUserModalVisible(false)}
-            />
-          )}
-    </div>
+      {activeModal === "map-user" && selectedRole && (
+        <MapUserModal
+          isVisible
+          role={selectedRole.role}
+          onUserChange={(users) => setSelectedRole((prev) => prev && { ...prev, users })}
+          onSave={() => setActiveModal(null)}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+    </>
   );
 };
 

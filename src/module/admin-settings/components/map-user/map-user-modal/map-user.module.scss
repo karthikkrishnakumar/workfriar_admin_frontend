@@ -57,6 +57,9 @@
   height: 376px;
   overflow-y: auto; 
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+  :global(.ant-dropdown-menu) {
+    padding: 0;
+  }  
   
   :global(.ant-dropdown-menu-item) {
     &:hover {
