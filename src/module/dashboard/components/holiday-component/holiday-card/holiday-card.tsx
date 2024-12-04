@@ -5,8 +5,8 @@ import styles from "./holiday-card.module.scss"; // Adjust the path as needed
 import CardSection from "../../card-section/card-section";
 import DashboardHoliday from "../holiday-content/holiday-content";
 import {
-  HolidayService,
   HolidayProps,
+  HolidayServices,
 } from "@/module/dashboard/services/holiday-services/holiday-services";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
@@ -20,8 +20,7 @@ const HolidayCard: React.FC = () => {
   useEffect(() => {
     const fetchHolidayData = async () => {
       try {
-        const data = await HolidayService.fetchHolidayData();
-        console.log(data, "in holiday");
+        const data = await HolidayServices();
         setHolidayData(data);
       } catch (error) {
         setError("Error fetching holiday data.");

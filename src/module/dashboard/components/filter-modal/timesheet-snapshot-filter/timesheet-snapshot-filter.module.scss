@@ -1,0 +1,117 @@
+// CSS (timesheet-snapshot-filter.module.scss)
+.modalDiv {
+  :global(.ant-modal-content) {
+    border-radius: 20px !important;
+    overflow: hidden;
+  }
+}
+.timeSheetSnapshotFilter {
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  padding-top: 30px;
+
+  .tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .tabButton {
+    border: none;
+    background-color: transparent;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 202px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--secondary-font-color-dark);
+  }
+
+  .activeTab {
+    color: var(--primary-golden-color-dark);
+    background-color: var(--filter-tab-bg-color);
+  }
+
+  .yearFilter,
+  .monthFilter {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    height: 250px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .yearFilter::-webkit-scrollbar {
+    width: 4px;
+    background-color: transparent;
+  }
+  .yearFilter::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0) !important;
+    background-color: #d9d9d9;
+  }
+  .yearFilter::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+
+  .monthFilter::-webkit-scrollbar {
+    width: 4px;
+    background-color: transparent;
+  }
+
+  .monthFilter::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0) !important;
+    background-color: #d9d9d9;
+  }
+
+  .monthFilter::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+
+  .radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .radioInput {
+    appearance: none; /* Remove default styles */
+    width: 15px; /* Increase overall size for better visual spacing */
+    height: 15px;
+    border: 2px solid #d4af37; /* Golden border */
+    border-radius: 50%; /* Circular shape */
+    outline: none;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative; /* Position for inner fill */
+    background-color: transparent; /* Transparent background initially */
+  }
+
+  .radioInput:checked {
+    background-color: transparent; /* Keep the main background transparent */
+  }
+
+  .radioInput:checked::after {
+    content: ""; /* Add an inner fill */
+    position: absolute;
+    top: 1.4px; /* Adjust for the gap */
+    left: 1.4px; /* Adjust for the gap */
+    width: 9px; /* Inner fill size */
+    height: 9px;
+    background-color: #d4af37; /* Golden color for the fill */
+    border-radius: 50%; /* Circular inner fill */
+    align-self: center;
+  }
+}

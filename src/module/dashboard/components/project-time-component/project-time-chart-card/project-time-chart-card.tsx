@@ -7,7 +7,7 @@ import ButtonComponent from "@/themes/components/button/button";
 import ProjectTimeChart from "../project-time-chart/project-time-chart";
 import {
   ProjectTimeChartProps,
-  ProjectTimeService,
+  ProjectTimeServices,
 } from "@/module/dashboard/services/project-time-services/project-time-services";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
@@ -22,8 +22,7 @@ const ProjectTimeChartCard: React.FC = () => {
   useEffect(() => {
     const fetchProjectTimeData = async () => {
       try {
-        const data = await ProjectTimeService.fetchProjectTimeData();
-        console.log(data, "in project time today");
+        const data = await ProjectTimeServices();
         setProjectTimeData(data); // Set fetched data
       } catch (error) {
         setError("Error fetching project time data.");
@@ -44,21 +43,18 @@ const ProjectTimeChartCard: React.FC = () => {
       title="Project time today"
       topRightContent={
         loading ? (
-          <SkeletonLoader
-            count={1}
-            button={true}
-          />
+          <SkeletonLoader count={1} button={true} />
         ) : (
-          <ButtonComponent label="Add Entry" theme="black" onClick={handleClickAddEntry}/>
+          <ButtonComponent
+            label="Add Entry"
+            theme="black"
+            onClick={handleClickAddEntry}
+          />
         )
       }
       centerContent={
         loading ? (
-          <SkeletonLoader
-            count={1}
-            avatar={false}
-            paragraph={{ rows: 10 }}
-          />
+          <SkeletonLoader count={1} avatar={false} paragraph={{ rows: 10 }} />
         ) : error ? (
           <div className={styles.error}>{error}</div>
         ) : (

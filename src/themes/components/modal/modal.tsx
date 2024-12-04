@@ -1,30 +1,27 @@
 import { Modal } from "antd";
 import { ReactNode } from "react";
 import styles from "./modal.module.scss";
-import ButtonComponent from "../button/button";
 
 interface ModalProps {
   isVisible: boolean;
   title: string;
   content?: ReactNode;
-  primaryButtonLabel: string;
-  secondaryButtonLabel: string;
+  bottomContent?: ReactNode;
   theme?: "normal" | "danger" | "primary"; // Define themes
-  onPrimaryClick?: () => void;
-  onSecondaryClick?: () => void;
   onClose?: () => void;
+  className?: string;
+  classTitle?:string
 }
 
 const ModalComponent: React.FC<ModalProps> = ({
   isVisible,
   title,
   content,
-  primaryButtonLabel,
-  secondaryButtonLabel,
+  bottomContent,
   theme = "danger", // Default theme is "normal"
-  onPrimaryClick,
-  onSecondaryClick,
   onClose,
+  className = "",
+  classTitle = "",
 }) => {
   const themeStyles = {
     normal: {
@@ -47,26 +44,18 @@ const ModalComponent: React.FC<ModalProps> = ({
   const currentTheme = themeStyles[theme];
 
   return (
-    <Modal open={isVisible} footer={null} onCancel={onClose}>
-      <div className={`${styles.title} ${currentTheme.titleClass}`}>
-        {title}
-      </div>
-      {content}
-      <div className={styles.buttonsContainer}>
-        <ButtonComponent
-          label={primaryButtonLabel}
-          theme={
-            currentTheme.primaryButtonTheme as "black" | "white" | "danger"
-          }
-          onClick={onPrimaryClick}
-        />
-        <ButtonComponent
-          label={secondaryButtonLabel}
-          theme={
-            currentTheme.secondaryButtonTheme as "black" | "white" | "danger"
-          }
-          onClick={onSecondaryClick}
-        />
+    <Modal
+      open={isVisible}
+      footer={null}
+      onCancel={onClose}
+      className={`${styles.customModal} ${className}`}
+    >
+      <div className={styles.modalContent}>
+        <div className={`${styles.title} ${currentTheme.titleClass} ${classTitle}`}>
+          {title}
+        </div>
+        {content}
+        <div className={styles.buttonsContainer}>{bottomContent}</div>
       </div>
     </Modal>
   );

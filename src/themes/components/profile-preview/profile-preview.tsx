@@ -6,6 +6,7 @@ import Icons from "@/themes/images/icons/icons"; // Icons import
 import DropDownModal from "../drop-down-modal/drop-down-modal";
 import { useRouter } from "next/navigation"; // Use useRouter from next/navigation
 import { ProfileNavigationClass } from "@/utils/navigation-util/profile-navigation-router"; // Import the ProfileNavigationClass
+import LogoutModal from "@/module/dashboard/components/logout-modal/logout-modal";
 
 interface ProfilePreviewProps {
   avatarSrc?: string; // Source for the avatar image (optional)
@@ -19,6 +20,7 @@ const ProfilePreview: React.FC<ProfilePreviewProps> = ({
   onMenuClick,
 }) => {
   const [isModalVisible, setModalVisible] = useState(false); // State for modal visibility
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false); // State for LogoutModal visibility
   const avatarRef = useRef<HTMLDivElement>(null); // Reference to the avatar container
   const router = useRouter(); // Use useRouter from next/navigation for navigation
 
@@ -35,12 +37,19 @@ const ProfilePreview: React.FC<ProfilePreviewProps> = ({
    * @param {string} menuItem - The selected menu item.
    */
   const handleMenuClick = (menuItem: string) => {
-    if (onMenuClick) onMenuClick(menuItem); // Trigger callback if provided
-    profileNavigation.navigateTo(menuItem, router.push); // Use router.push for navigation
-    setModalVisible(false); // Close the modal after menu item click
+    if (menuItem === "Logout") {
+      // Show LogoutModal instead of navigating
+      setLogoutModalVisible(true);
+      setModalVisible(false);
+    } else {
+      if (onMenuClick) onMenuClick(menuItem); // Trigger callback if provided
+      profileNavigation.navigateTo(menuItem, router.push); // Use router.push for navigation
+      setModalVisible(false); // Close the dropdown modal
+    } // Close the modal after menu item click
   };
 
   return (
+    <>
     <div className={styles.profilePreviewWrapper} ref={avatarRef}>
       <span className={styles.avatarContainer} onClick={toggleModal}>
         <Image
@@ -65,7 +74,10 @@ const ProfilePreview: React.FC<ProfilePreviewProps> = ({
           <ul className={styles.profileNavigationList}>
             {profileNavigation.navigationLinks.map((link) => (
               <li key={link.label} onClick={() => handleMenuClick(link.label)}>
-                <span>{Icons[profileNavigation.getIconForLabel(link.label)]}</span> {link.label}
+                <span>
+                  {Icons[profileNavigation.getIconForLabel(link.label)]}
+                </span>{" "}
+                {link.label}
               </li>
             ))}
           </ul>
@@ -77,6 +89,13 @@ const ProfilePreview: React.FC<ProfilePreviewProps> = ({
         offsetRight={-20}
       />
     </div>
+
+    {isLogoutModalVisible && (
+        <LogoutModal
+          onClose={() => setLogoutModalVisible(false)} // Close the modal when the user clicks cancel or outside
+        />
+      )}
+    </>
   );
 };
 

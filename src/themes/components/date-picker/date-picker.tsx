@@ -12,7 +12,6 @@
  */
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import styles from "./date-picker.module.scss";
 import {
   findCurrentWeek,
@@ -27,16 +26,18 @@ import SkeletonLoader from "../skeleton-loader/skeleton-loader";
 interface DateRangePickerProps {
   initialStartDate?: Date;
   initialEndDate?: Date;
+  datePickerData: { start: string; end: string; week: number }[];
   onDateChange: (startDate: Date, endDate: Date) => void;
 }
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
   initialStartDate,
   initialEndDate,
+  datePickerData,
   onDateChange,
 }) => {
   // State to track the current week being displayed
-  const [currentWeek, setCurrentWeek] = useState<number>(1);
+  const [currentWeek, setCurrentWeek] = useState<number>(0);
   // State to manage disabled weeks for navigation
   const [disabledWeeks, setDisabledWeeks] = useState<boolean[]>([]);
   // State to store week data fetched from the API
@@ -48,26 +49,55 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
    * useEffect hook to fetch week data on component mount.
    * Initializes week data, current week, and disabled weeks based on the API response.
    */
+  // useEffect(() => {
+  //   const fetchWeekData = async () => {
+  //     if (dashboard) {
+  //       try {
+  //         const response = await axios.post(
+  //           "/api/dashboard/datepicker-due-data"
+  //         );
+  //         const { DatePickerData } = response.data;
+  //         setWeekData(DatePickerData);
+  //         const current = findCurrentWeek(DatePickerData);
+  //         setCurrentWeek(current);
+  //         setDisabledWeeks(getDisabledWeeks(DatePickerData));
+  //         const { startDate, endDate } = getWeekDates(DatePickerData, current);
+  //         onDateChange(startDate, endDate);
+  //       } catch (error) {
+  //         console.error("Error fetching week data:", error);
+  //       }
+  //     } else {
+  //       try {
+  //         const response = await axios.get("/api/dashboard/datepicker-data");
+  //         const { DatePickerData } = response.data;
+  //         setWeekData(DatePickerData);
+  //         const current = findCurrentWeek(DatePickerData);
+  //         setCurrentWeek(current);
+  //         setDisabledWeeks(getDisabledWeeks(DatePickerData));
+  //         const { startDate, endDate } = getWeekDates(DatePickerData, current);
+  //         onDateChange(startDate, endDate);
+  //       } catch (error) {
+  //         console.error("Error fetching week data:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchWeekData();
+  // }, []);
+
   useEffect(() => {
     const fetchWeekData = async () => {
-      try {
-        const response = await axios.get("/api/dashboard/datepicker-data");
-        const { DatePickerData } = response.data;
-        setWeekData(DatePickerData);
-
-        // Determine the current week and disabled weeks from the fetched data
-        const current = findCurrentWeek(DatePickerData);
-        setCurrentWeek(current);
-        setDisabledWeeks(getDisabledWeeks(DatePickerData));
-
-        // Set the initial date range for the current week
-        const { startDate, endDate } = getWeekDates(DatePickerData, current);
-        onDateChange(startDate, endDate);
-      } catch (error) {
-        console.error("Error fetching week data:", error);
-      }
+        try {
+          setWeekData(datePickerData);
+          const current = findCurrentWeek(datePickerData);
+          setCurrentWeek(current);
+          setDisabledWeeks(getDisabledWeeks(datePickerData));
+          const { startDate, endDate } = getWeekDates(datePickerData, current);
+          onDateChange(startDate, endDate);
+        } catch (error) {
+          console.error("Error fetching week data:", error);
+        }
     };
-
     fetchWeekData();
   }, []);
 
@@ -79,14 +109,12 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
    */
   const handleWeekChange = (offset: number) => {
     const newWeek = currentWeek + offset;
-    if (newWeek > 0 && newWeek <= weekData.length) {
+    if (newWeek >= 0 && newWeek < weekData.length) {
       setCurrentWeek(newWeek);
-
       const { startDate, endDate } = getWeekDates(weekData, newWeek);
       onDateChange(startDate, endDate);
     }
   };
-
   // Render a loading indicator while week data is being fetched
   if (weekData.length === 0)
     return (
@@ -108,8 +136,10 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
       {/* Left navigation button to navigate to the previous week */}
       <button
         onClick={() => handleWeekChange(-1)}
-        className={styles.navigationButtonLeft}
-        disabled={currentWeek === 1}
+        className={`${styles.navigationButtonLeft} ${
+          currentWeek === 0 ? styles.disabled : ""
+        }`}
+        disabled={currentWeek === 0}
       >
         {Icons.arrowLeftGrey}
       </button>
