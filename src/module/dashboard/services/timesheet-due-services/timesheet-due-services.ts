@@ -14,6 +14,13 @@ export interface TimesheetData {
   };
 }
 
+export interface DatePickerData {
+  start: string;
+  end: string;
+  week: number;
+}
+
+
 /**
  * Fetches the project time data for a given date range.
  * @param startDate - The start date for the range.
@@ -34,5 +41,16 @@ export const TimesheetDueServices = async (
   } catch (error) {
     console.error("Error fetching project time data:", error);
     throw error; // Rethrow the error if something goes wrong
+  }
+};
+
+
+export const fetchDatePickerData = async (): Promise<DatePickerData[]> => {
+  try {
+    const response = await http().post("/api/dashboard/datepicker-due-data");
+    return response.response.data.DatePickerData;
+  } catch (error) {
+    console.error("Error fetching date picker data:", error);
+    throw new Error("Failed to fetch date picker data");
   }
 };

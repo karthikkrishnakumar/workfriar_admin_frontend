@@ -6,6 +6,7 @@ import DateRangePicker from "@/themes/components/date-picker/date-picker";
 import Timesheet from "../timesheet-due/timesheet-due";
 import ButtonComponent from "@/themes/components/button/button";
 import {
+  fetchDatePickerData,
   TimesheetData,
   TimesheetDueServices,
 } from "@/module/dashboard/services/timesheet-due-services/timesheet-due-services";
@@ -13,8 +14,10 @@ import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"
 import TimeDueModal from "../../submit-timesheet-modal/submit-timesheet-modal";
 
 const TimeSheetDueCard: React.FC = () => {
-  const [timesheetDueData, setTimesheetDueData] =
-    useState<TimesheetData | null>(null);
+
+  const [timesheetDueData, setTimesheetDueData] =useState<TimesheetData | null>(null);
+  const [datePickerData, setDatePickerData] = useState<{ start: string; end: string; week: number }[]>([]);
+
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -53,6 +56,19 @@ const TimeSheetDueCard: React.FC = () => {
     fetchData();
   }, [selectedStartDate, selectedEndDate]);
 
+  useEffect(() => {
+    const fetchDatePicker = async () => {
+      try {
+        const DatePickerData = await fetchDatePickerData();
+        setDatePickerData(DatePickerData);
+      } catch (error) {
+        console.error("Error fetching date picker data:", error);
+      }
+    };
+
+    fetchDatePicker();
+  }, []);
+
   // Handle the date change from the DateRangePicker
   const handleDateChange = (startDate: Date, endDate: Date) => {
     setSelectedStartDate(startDate);
@@ -83,6 +99,7 @@ const TimeSheetDueCard: React.FC = () => {
             <DateRangePicker
               initialStartDate={selectedStartDate ?? undefined}
               initialEndDate={selectedEndDate ?? undefined}
+              datePickerData={datePickerData}
               onDateChange={handleDateChange}
             />
           )

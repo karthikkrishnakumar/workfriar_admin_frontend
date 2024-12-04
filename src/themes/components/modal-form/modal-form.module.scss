@@ -12,8 +12,8 @@
 
   &.singleField {
     .formField {
-      flex: 2;
-      max-width: 530px;
+      flex: 1;
+      max-width: 257px;
     }
   }
 
@@ -22,6 +22,10 @@
       flex: 1;
       max-width: 257px;
     }
+  }
+  .formField.extendedField {
+    flex: 2;
+    max-width: 530px;
   }
 
   .modal {
@@ -49,6 +53,13 @@
       width: 100%;
     }
 
+    :global(.ant-select-arrow){
+      top: 80%;
+      color: #1B1717;
+    }
+
+    
+
     :global(.ant-input-outlined),
     :global(.ant-select-selector),
     :global(.ant-picker) {
@@ -63,6 +74,10 @@
       border: 1px solid #afabab;
       border-radius: 6px;
     }
+
+  :global(.ant-form-item-additional){
+      margin-top: 15px;
+  }
 
   }
 }

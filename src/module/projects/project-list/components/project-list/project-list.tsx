@@ -1,14 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { Table, Button, Dropdown } from "antd";
+import { useRouter } from "next/navigation";
+import { Table, Button, Dropdown, Tag } from "antd";
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-list.module.scss";
 import EditProjectModal from "../edit-project-modal/edit-project-modal";
+import AddProjectModal from "../add-project-modal/add-project-modal";
 import dayjs from "dayjs";
-
-
-
 
 /**
  * Interface representing the project data structure.
@@ -16,7 +15,7 @@ import dayjs from "dayjs";
  */
 interface ProjectData {
   key: string;
-  projectLogo : string;
+  projectLogo: string;
   projectName: string;
   clientName: string;
   planned_start_date: string | dayjs.Dayjs;
@@ -25,12 +24,10 @@ interface ProjectData {
   actual_end_date: string | dayjs.Dayjs;
   projectLead: string;
   projectDescription: string;
-  billing_model: string,
+  billing_model: string;
   timeEntry: "closed" | "opened";
   status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
 }
-
-
 
 const ProjectList: React.FC = () => {
   const data: ProjectData[] = [
@@ -39,10 +36,10 @@ const ProjectList: React.FC = () => {
       projectLogo: "",
       projectName: "Diamond Lease",
       clientName: "Techfriar India",
-      planned_start_date:"11/10/2024",
-      planned_end_date:"02/05/2025",
-      actual_start_date:"11/10/2024",
-      actual_end_date:"02/05/2025",
+      planned_start_date: "11/10/2024",
+      planned_end_date: "02/05/2025",
+      actual_start_date: "11/10/2024",
+      actual_end_date: "02/05/2025",
       projectLead: "Aswina Vinod",
       timeEntry: "closed",
       status: "completed",
@@ -54,10 +51,10 @@ const ProjectList: React.FC = () => {
       projectLogo: "",
       projectName: "Platinum Hire",
       clientName: "Techfriar India",
-      planned_start_date:"15/11/2024",
-      planned_end_date:"03/06/2025",
-      actual_start_date:"15/11/2024",
-      actual_end_date:"03/06/2025",
+      planned_start_date: "15/11/2024",
+      planned_end_date: "03/06/2025",
+      actual_start_date: "15/11/2024",
+      actual_end_date: "03/06/2025",
       projectLead: "John Doe",
       timeEntry: "opened",
       status: "in_progress",
@@ -66,15 +63,15 @@ const ProjectList: React.FC = () => {
     },
   ];
 
+  const router = useRouter();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
     null
   );
   const [projectData, setProjectData] = useState<ProjectData[]>(data);
 
-
-
-    /**
+  /**
    * Toggles the time entry status between "closed" and "opened"
    * @param {string} key - The key of the project to update
    */
@@ -91,8 +88,7 @@ const ProjectList: React.FC = () => {
     );
   };
 
-
-    /**
+  /**
    * Changes the project status
    * @param {string} key - The key of the project to update
    * @param {string} newStatus - The new status to set
@@ -108,8 +104,7 @@ const ProjectList: React.FC = () => {
     );
   };
 
-
-    /**
+  /**
    * Opens the edit modal with the selected project's data
    * @param {ProjectData} project - The project to edit
    */
@@ -124,8 +119,16 @@ const ProjectList: React.FC = () => {
     setIsEditModalOpen(true);
   };
 
+  /**
+   * Redirects to the project details page
+   * @param {ProjectData} project - The project to view
+   */
 
-    /**
+  const handleViewProject = (project: ProjectData) => {
+    router.push(`/projects/project-details/${project.key}`);
+  };
+
+  /**
    * Converts the status value to a readable format
    * @param {string} status - The status value to convert
    * @returns {string} - The formatted status string
@@ -134,14 +137,23 @@ const ProjectList: React.FC = () => {
     return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-
-    /**
+  /**
    * Handles the form submission from the EditProjectModal
    * @param {Record<string, any>} values - The updated values for the project
    */
   const handleEditProjectSubmit = (values: Record<string, any>) => {
     console.log("Updated Project Details:", values);
     setIsEditModalOpen(false); // Close modal after submission
+  };
+
+  /**
+   * Handles the form submission from the AddProjectModal
+   * @param {Record<string, any>} values - The values for the new project
+   */
+
+  const handleAddProjectSubmit = (values: Record<string, any>) => {
+    console.log("Updated Project Details:", values);
+    setIsAddModalOpen(false); // Close modal after submission
   };
 
   const columns = [
@@ -159,9 +171,7 @@ const ProjectList: React.FC = () => {
               className={styles.circleImage}
             />
           ) : (
-            <div className={styles.circle}>
-              {text.charAt(0).toUpperCase()}
-            </div>
+            <div className={styles.circle}>{text.charAt(0).toUpperCase()}</div>
           )}
           <span>{text}</span>
         </div>
@@ -180,7 +190,13 @@ const ProjectList: React.FC = () => {
       width: "30%",
       render: (_: any, record: ProjectData) => (
         <>
-          {record.actual_start_date} - {record.actual_end_date}
+          {dayjs.isDayjs(record.actual_start_date)
+            ? record.actual_start_date.format("DD/MM/YYYY")
+            : record.actual_start_date}{" "}
+          -{" "}
+          {dayjs.isDayjs(record.actual_end_date)
+            ? record.actual_end_date.format("DD/MM/YYYY")
+            : record.actual_end_date}
         </>
       ),
     },
@@ -196,9 +212,9 @@ const ProjectList: React.FC = () => {
       key: "timeEntry",
       width: "25%",
       render: (timeEntry: ProjectData["timeEntry"]) => (
-        <Button className={`${styles.timeEntryBtn} ${styles[timeEntry]}`}>
+        <Tag className={`${styles.timeEntryBtn} ${styles[timeEntry]}`}>
           {timeEntry.charAt(0).toUpperCase() + timeEntry.slice(1)}
-        </Button>
+        </Tag>
       ),
     },
     {
@@ -241,6 +257,7 @@ const ProjectList: React.FC = () => {
           {
             key: "view",
             label: <div className={styles.dropdownItem}>Details</div>,
+            onClick: () => handleViewProject(record),
           },
           {
             key: "edit",
@@ -295,6 +312,11 @@ const ProjectList: React.FC = () => {
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleEditProjectSubmit}
         initialValues={selectedProject}
+      />
+      <AddProjectModal
+        isAddModalOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleAddProjectSubmit}
       />
     </div>
   );

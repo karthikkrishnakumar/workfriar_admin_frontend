@@ -1,5 +1,6 @@
 // src/app/data.ts
 
+// data for user 2
 export const dataForUser1 = {
   projectTimeChart: [
     { project: "One view", hours: 10 },

@@ -11,12 +11,6 @@
     overflow: hidden;
     cursor: pointer;
 
-    &.disabled{
-        color: var(--disabled-font-color);
-        pointer-events: none;
-        cursor: no-drop;
-    }
-
     .buttonValue {
         width: 100px;
         white-space: normal;

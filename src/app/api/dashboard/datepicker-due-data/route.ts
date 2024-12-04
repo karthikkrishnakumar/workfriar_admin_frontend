@@ -83,7 +83,7 @@ const weekData = [
   ];
 
 
-export async function GET() {
+export async function POST() {
   // Generate week data for User 1 and User 2 based on the timesheet data and week data
   const weekDueDataUser1 = convertToWeekData(dataForUser1.timesheetData.days, weekData);
   const weekDueDataUser2 = convertToWeekData(dataForUser2.timesheetData.days, weekData);
