@@ -5,7 +5,7 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 
 interface TabComponentProps {
-  headings: { key: string; label: string; content: React.ReactNode }[]; // Array of headings and content
+  headings: { key: string; label: string | ReactNode; content: React.ReactNode }[]; // Array of headings and content
   subHeading?: ReactNode;
 }
 
@@ -21,7 +21,7 @@ const TabComponent: React.FC<TabComponentProps> = ({
   // Map headings into TabItems format for Ant Design
   const tabItems: TabsProps["items"] = headings.map((heading) => ({
     key: heading.key,
-    label: heading.label,
+    label: <div className={styles.labelWrapper}>{heading.label}</div>,
     children: heading.content, // Content to render inside the tab
   }));
 

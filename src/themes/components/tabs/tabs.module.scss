@@ -50,6 +50,11 @@
     background-color: var(--primary-golden-color-dark);
 }
 
+
+.customTabs:global(.ant-tabs >.ant-tabs-nav .ant-tabs-nav-list){
+    transform: none !important;
+}
+
 // color of tab's font when not active
 .customTabs:global(.ant-tabs .ant-tabs-tab-btn){
     color: var(--grey-font-color);
@@ -60,5 +65,9 @@
     @media(max-width:850px){
         font-size: var(--default-font-size);
     }
+}
+
+.labelWrapper span{
+    background-color: aqua;
 }
 
