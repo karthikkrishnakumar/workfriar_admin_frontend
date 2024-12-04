@@ -183,7 +183,13 @@ const ProjectTeam: React.FC = () => {
       width: "30%",
       render: (_: any, record: ProjectTeamData) => (
         <>
-          {record.start_date} - {record.end_date}
+          {dayjs.isDayjs(record.start_date)
+            ? record.start_date.format("DD/MM/YYYY")
+            : record.start_date}{" "}
+          -{" "}
+          {dayjs.isDayjs(record.end_date)
+            ? record.end_date.format("DD/MM/YYYY")
+            : record.end_date}
         </>
       ),
     },
