@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import styles from "./project-selector.module.scss";
 import SearchBar from "@/themes/components/search-bar/search-bar";
 import Icons from "@/themes/images/icons/icons";
@@ -16,8 +16,13 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
   setShowSubmodal,
 }) => {
   const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
-  const toggleShowSubModal = () => {
-    setShowSubmodal(!showSubmodal);
+
+  const toggleShowSubModal = (projectId: number, projectName: string) => {
+    setActiveProjectId(projectId); // Highlight active project
+    setShowSubmodal(!showSubmodal); // Toggle submodal visibility
+    if (setSelectedProject) {
+      setSelectedProject(projectName); // Pass selected project to parent
+    }
   };
 
   const projects = [
@@ -34,7 +39,13 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
       <SearchBar placeholder="Search" />
       <ul>
         {projects.map((project) => (
-          <li key={project.id} className={styles.projectListItem} onClick={toggleShowSubModal}>
+          <li
+            key={project.id}
+            className={`${styles.projectListItem} ${
+              activeProjectId === project.id ? styles.active : ""
+            }`}
+            onClick={() => toggleShowSubModal(project.id, project.name)} // Updated click handler
+          >
             <div className={styles.projectWrapper}>
               {project.name}
               <span>{Icons.arrowRightGrey}</span>
