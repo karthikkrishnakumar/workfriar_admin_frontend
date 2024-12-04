@@ -1,4 +1,5 @@
 "use client";
+
 import React, { ReactNode, useState, useEffect, useRef } from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./all-timesheets.module.scss";
@@ -9,7 +10,9 @@ import ButtonComponent from "@/themes/components/button/button";
 import DropDownModal from "@/themes/components/drop-down-modal/drop-down-modal";
 import ProjectSelector from "../project-selector/project-selector";
 import TaskSelector from "../task-selector/task-selector";
+
 import { TimeEntry, TimesheetDataTable } from "../../services/time-sheet-services";
+
 
 interface AllTimeSheettableProps {
   timesheetData?: TimesheetDataTable[];
@@ -28,6 +31,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
   const addButtonRef = useRef<HTMLButtonElement>(null);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
+
 
   // Convert hours and minutes into total minutes
   const timeToMinutes = (time: string) => {
@@ -135,6 +139,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     const totalHours = calculateTotalHours(timesheet.dataSheet);
     const taskStatusClass = timesheet.status === "approved" ? styles.approved : timesheet.status === "rejected" ? styles.rejected : '';
 
+
     return {
       task: (
         <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
@@ -162,6 +167,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
       ),
     };
   });
+
 
   const addRow = () => ({
     task: (
@@ -206,6 +212,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         <p>0:00</p>
       </span>
     ),
+
     action: <span>{Icons.deleteDisabled}</span>,
   });
 
@@ -219,6 +226,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         return total + timeToMinutes(dayEntry?.hours || "00:00");
       }, 0);
     });
+
 
     return dailyTotals;
   };
@@ -249,6 +257,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     <div className={styles.mainContainer}>
       <div className={styles.scrollContainer}>
         <div className={styles.tableWrapper}>
+
           <CustomTable columns={columns} data={finalData} />
         </div>
       </div>

@@ -8,6 +8,7 @@
     top: 15px;
 }
 
+
 .customTabs:global(.ant-tabs .ant-tabs-tab+.ant-tabs-tab){
     @media(max-width:850px){
         margin: 0 0 0 15px;
@@ -30,6 +31,7 @@
     @media(max-width:850px){
         font-size: var(--default-font-size);
     }
+
 }
 // color of active tab's font
 .customTabs:global(.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){

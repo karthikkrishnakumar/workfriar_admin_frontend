@@ -6,6 +6,7 @@
   height: max-content;
 }
 
+
 .scrollContainer {
   width: 100%;
   overflow-x: scroll; // Enable horizontal scrolling
@@ -42,19 +43,21 @@
 }
 
 
+
 .tableWrapper {
   min-width: 1024px;
   z-index: 1100;
   padding-bottom: 20px;
 }
 
-.actionButtons {
+
+.actionButtons{
   margin-bottom: 20px;
   right: 10px;
   margin-top: 20px;
   display: flex;
   flex-direction: row-reverse;
-  gap: 10px;
+  gap: 10px; 
   width: 100%;
   height: max-content;
   padding-right: 7px;

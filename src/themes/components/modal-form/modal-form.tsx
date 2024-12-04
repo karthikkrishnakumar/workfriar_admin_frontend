@@ -15,6 +15,7 @@ interface FormField {
   required?: boolean;
   options?: { label: string; value: string | number }[];
   placeholder?: string;
+  isExtended?: boolean;
 }
 
 
@@ -162,7 +163,9 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
             {row.fields.map(
               (field, fieldIndex) =>
                 field && (
-                  <div key={field.name} className={styles.formField}>
+                  <div key={field.name} className={`${styles.formField} ${
+                    field.isExtended ? styles.extendedField : ""
+                  }`}>
                     <Form.Item
                       name={field.name}
                       rules={

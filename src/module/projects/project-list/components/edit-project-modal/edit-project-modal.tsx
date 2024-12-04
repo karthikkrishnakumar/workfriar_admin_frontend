@@ -95,6 +95,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
               label: "Project Description",
               type: "textarea",
               required: true,
+              isExtended:true,
             },
           ],
         },
