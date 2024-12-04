@@ -190,7 +190,13 @@ const ProjectList: React.FC = () => {
       width: "30%",
       render: (_: any, record: ProjectData) => (
         <>
-          {record.actual_start_date} - {record.actual_end_date}
+          {dayjs.isDayjs(record.actual_start_date)
+            ? record.actual_start_date.format("DD/MM/YYYY")
+            : record.actual_start_date}{" "}
+          -{" "}
+          {dayjs.isDayjs(record.actual_end_date)
+            ? record.actual_end_date.format("DD/MM/YYYY")
+            : record.actual_end_date}
         </>
       ),
     },
