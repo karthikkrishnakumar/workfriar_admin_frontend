@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./project-report-details.module.scss";
-import CustomAvatar from "@/themes/components/avatar/avatar";
+import GridContainer from "@/themes/components/grid-container/grid-container";
 
 interface ProjectDetailsProps {
   project: any;
@@ -8,9 +8,11 @@ interface ProjectDetailsProps {
   error: string | null;
 }
 
-const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, loading, error }) => {
-
-
+const ProjectDetails: React.FC<ProjectDetailsProps> = ({
+  project,
+  loading,
+  error,
+}) => {
   if (error) {
     return <div className={styles.error}>{error}</div>;
   }
@@ -24,79 +26,57 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, loading, error
         <div className={styles.loading}>Loading...</div>
       ) : (
         <div className={styles.detailsWrapper}>
-          <div className={styles.header}>
-            <div className={styles.headerGrid}>
-              <CustomAvatar
-                name={project?.project_name}
-                profile={project?.logo}
-                size={80}
-              />
+          {/* Header with Avatar and Project Details */}
+          <GridContainer
+            isGrid={true}
+            avatar={{
+              name: project?.project_name,
+              profile: project?.logo,
+              size: 80,
+            }}
+            fields={[
+              { label: "Project name", value: project?.project_name },
+              { label: "Project lead", value: project?.project_lead },
+            ]}
+          />
 
-              <div className={styles.field}>
-                <div className={styles.label}>Project name</div>
-                <div className={styles.value}>{project?.project_name}</div>
-              </div>
-
-              <div className={styles.field}>
-                <div className={styles.label}>Project lead</div>
-                <div className={styles.value}>{project?.project_lead}</div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.header}>
-            <div className={styles.headerGrid}>
-              <div className={styles.field}>
-                <div className={styles.label}>Reporting Period:</div>
-                <div className={styles.value}>--</div>
-              </div>
-              <div className={styles.field}>
-                <div className={styles.label}>Planned Start Date:</div>
-                <div className={styles.value}>
-                  {project?.planned_start_date}
-                </div>
-              </div>
-              <div className={styles.field}>
-                <div className={styles.label}>Planned End Date:</div>
-                <div className={styles.value}>{project?.planned_end_date}</div>
-              </div>
-
-              <div className={styles.field}>
-                <div className={styles.label}>Actual Start Date:</div>
-                <div className={styles.value}>{project?.actual_start_date}</div>
-              </div>
-              <div className={styles.field}>
-                <div className={styles.label}>Actual End Date:</div>
-                <div className={styles.value}>{project?.actual_end_date}</div>
-              </div>
-              <div className={styles.field}>
-                <div className={styles.label}>Progress:</div>
-                <div className={styles.value}>{project?.progress}%</div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.header}>
-            <div className={styles.label}>Comments</div>
-            <div className={styles.value}>
-              {project?.comments || "No comments available."}
-            </div>
-          </div>
-
-          <div className={styles.header}>
-            <div className={styles.label}>Accomplishments</div>
-            <div className={styles.value}>
-              {project?.accomplishments || "No accomplishments available."}
-            </div>
-          </div>
-          <div className={styles.header}>
-            <div className={styles.label}>Goals</div>
-            <div className={styles.value}>{project?.goals}</div>
-          </div>
-          <div className={styles.header}>
-            <div className={styles.label}>Blockers</div>
-            <div className={styles.value}>{project?.blockers}</div>
-          </div>
+          {/* Reporting and Dates */}
+          <GridContainer
+            isGrid={true}
+            fields={[
+              { label: "Reporting Period", value: "--" },
+              {
+                label: "Planned Start Date",
+                value: project?.planned_start_date,
+              },
+              { label: "Planned End Date", value: project?.planned_end_date },
+              { label: "Actual Start Date", value: project?.actual_start_date },
+              { label: "Actual End Date", value: project?.actual_end_date },
+              { label: "Progress", value: `${project?.progress}%` },
+            ]}
+          />
+          {/* Comments */}
+          <GridContainer
+            isGrid={false}
+            fields={[{ label: "Comments", value: project?.comments }]}
+          />
+          {/* Accomplishments */}
+          <GridContainer
+            isGrid={false}
+            fields={[
+              { label: "Accomplishments", value: project?.accomplishments },
+            ]}
+          />
+          {/* Goals */}
+          <GridContainer
+            isGrid={false}
+            fields={[{ label: "Goals", value: project?.goals }]}
+          />
+          {/* Blockers */}
+          <GridContainer
+            isGrid={false}
+            fields={[{ label: "Blockers", value: project?.blockers }]}
+          />
         </div>
       )}
     </div>
