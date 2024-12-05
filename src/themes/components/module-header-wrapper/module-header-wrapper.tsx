@@ -18,6 +18,9 @@ const ModuleHeaderWrapper = () => {
     { title: "Organization", path: "/organization", backButtonNeeded: false },
     { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false },
     { title: "Time sheet reports", path: "/time-sheet-report", backButtonNeeded: false },
+    { title: "Profile", path: "/profile", backButtonNeeded: true },
+    { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false },
+    { title: "Report details", path: "/project-status-report/report-details", backButtonNeeded: true  },
   ];
 
   // Find the matching page based on the current pathname

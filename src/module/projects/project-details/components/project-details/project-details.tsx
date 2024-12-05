@@ -1,7 +1,7 @@
+"use client"
 import { useState, useEffect } from "react";
-import { Spin } from "antd";
 import styles from "./project-details.module.scss";
-import { Card, Row, Col } from "antd";
+import { Card, Row, Col, Spin } from "antd";
 
 /**
  * Interface representing the project data structure.
