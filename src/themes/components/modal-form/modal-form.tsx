@@ -4,7 +4,6 @@ import { RcFile } from "antd/es/upload";
 import styles from "./modal-form.module.scss";
 import Icons from "@/themes/images/icons/icons";
 
-
 /**
  * Interface for defining a single form field's properties.
  */
@@ -16,8 +15,9 @@ interface FormField {
   options?: { label: string; value: string | number }[];
   placeholder?: string;
   isExtended?: boolean;
+  readonly?: boolean;
+  triggerElement?: React.ReactNode;
 }
-
 
 /**
  * Interface for defining a row of form fields.
@@ -41,8 +41,6 @@ interface ModalFormProps {
   initialValues?: Record<string, any>;
 }
 
-
-
 const ModalFormComponent: React.FC<ModalFormProps> = ({
   isVisible,
   title,
@@ -60,8 +58,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   );
   const projectName = initialValues.projectName || "Project";
 
-
-    /**
+  /**
    * Handles form submission by validating fields and triggering the onPrimaryClick callback.
    */
   const handleSubmit = async () => {
@@ -72,7 +69,6 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
       console.error("Form validation failed:", error);
     }
   };
-
 
   /**
    * Resets the form fields and triggers the onClose callback.
@@ -127,14 +123,18 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
               }}
               accept="image/*"
             >
-              <a href="#" className={styles.changeImageLink}>
-                Project logo
-              </a>
+              {field.triggerElement || (
+                <a href="#" className={styles.changeImageLink}>
+                  Project logo
+                </a>
+              )}
             </Upload>
           </div>
         );
       default:
-        return <Input placeholder={field.placeholder} />;
+        return (
+          <Input placeholder={field.placeholder} readOnly={field.readonly} />
+        );
     }
   };
 
@@ -163,9 +163,12 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
             {row.fields.map(
               (field, fieldIndex) =>
                 field && (
-                  <div key={field.name} className={`${styles.formField} ${
-                    field.isExtended ? styles.extendedField : ""
-                  }`}>
+                  <div
+                    key={field.name}
+                    className={`${styles.formField} ${
+                      field.isExtended ? styles.extendedField : ""
+                    }`}
+                  >
                     <Form.Item
                       name={field.name}
                       rules={
