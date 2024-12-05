@@ -18,6 +18,7 @@ import {
   formatDate,
   formatYear,
   getDisabledWeeks,
+  getFutureWeeks,
   getWeekDates,
 } from "@/utils/datepicker-util/datepicker-formater-routes";
 import Icons from "@/themes/images/icons/icons";
@@ -91,7 +92,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
           setWeekData(datePickerData);
           const current = findCurrentWeek(datePickerData);
           setCurrentWeek(current);
-          setDisabledWeeks(getDisabledWeeks(datePickerData));
+          setDisabledWeeks(getFutureWeeks(datePickerData));
           const { startDate, endDate } = getWeekDates(datePickerData, current);
           onDateChange(startDate, endDate);
         } catch (error) {
@@ -99,7 +100,8 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         }
     };
     fetchWeekData();
-  }, []);
+  }, [datePickerData]);
+
 
   /**
    * Handles changing the week based on an offset.

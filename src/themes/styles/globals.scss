@@ -12,6 +12,7 @@
   --danger-secondary-font-color: #ce9d9d;
   --success-font-color: #159117;
   --grey-font-color: #686869;
+  --holiday-font-color:#133E87;
 
   /* background */
   --page-background: #f4f4f4;
@@ -29,6 +30,8 @@
   --success-background-light-color: #f0ffe4;
   --success-background-dark-color: #40a813;
   --searchbar-background: #f0f0f0;
+  --disabled-count-background:#DDDDDD;
+  --active-count-background:#F0E7D6;
   --filter-tab-bg-color:#F1EDE6;
 
   /* others */
@@ -83,4 +86,16 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.ant-modal-root .ant-modal-mask{
+  background-color: #2727272e !important;
+}
+
+.ant-modal-root .ant-modal-wrap{
+  padding-left: 293px !important;
+
+    @media(max-width:1200px){
+      padding-left: 80px !important;
+    }
 }

@@ -51,13 +51,13 @@
 }
 
 
-.actionButtons{
+.actionButtons {
   margin-bottom: 20px;
   right: 10px;
   margin-top: 20px;
   display: flex;
   flex-direction: row-reverse;
-  gap: 10px; 
+  gap: 10px;
   width: 100%;
   height: max-content;
   padding-right: 7px;
@@ -152,7 +152,7 @@
 }
 
 .addButtonWrapper {
-  z-index: 10000;
+  z-index: 1000;
 }
 
 .rowWiseTotal {
@@ -199,3 +199,18 @@
     color: var(--danger-primary-font-color) !important;
   }
 }
+
+
+
+.dateTitles{
+  display: flex;
+  flex-direction: column;
+  color: var(--grey-font-colo);
+  font-weight: var(--default-font-weight);
+  font-size: var(--default-font-size);
+}
+
+.holidayDateTitles{
+  color:var(--holiday-font-color);
+}
+

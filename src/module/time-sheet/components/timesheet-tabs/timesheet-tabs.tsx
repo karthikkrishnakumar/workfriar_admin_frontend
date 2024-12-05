@@ -1,19 +1,20 @@
 "use client";
 
-
 import React, { useEffect, useState } from "react";
 import styles from "./timesheet-tabs.module.scss";
 import TabComponent from "@/themes/components/tabs/tabs";
 import AllTimesheetsTable from "../all-timesheets-table/all-timesheets";
-import PastDueTable from "../past-due-table/past-due-table";
 import RejectedTimesheetsTable from "../rejected-timesheets-table/rejected-timesheets-table";
 import DateRangePicker from "@/themes/components/date-picker/date-picker";
 
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import {
+  fetchDateData,
   fetchTimesheets,
   TimesheetDataTable,
+  WeekDaysData,
 } from "../../services/time-sheet-services";
+import PastDueOverviewTable from "../past-due-overview-table/past-due-overview-table";
 
 const TimesheetsTabs = () => {
   const [loading, setLoadig] = useState(true);
@@ -21,7 +22,13 @@ const TimesheetsTabs = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [timeSheetData, setTimeSheetdata] = useState<TimesheetDataTable[]>([]);
-  const [pastDueCount, setPastDueCount] = useState<number>(10);
+  const [pastDueCount, setPastDueCount] = useState<number>(1);
+  const [approvedCount, setApprovedCount] = useState<number>(4);
+  const [rejectedCount, setRejectedCount] = useState<number>(2);
+  const [datePickerData, setDatePickerData] = useState<
+    { start: string; end: string; week: number }[]
+  >([]);
+  const [dates, setDates] = useState<WeekDaysData[]>([]);
 
   const handleDateChange = (startDate: Date, endDate: Date) => {
     setStartDate(startDate);
@@ -31,12 +38,24 @@ const TimesheetsTabs = () => {
   useEffect(() => {
     fetchTimesheets(
       setTimeSheetdata,
+      setDates,
       startDate?.toISOString(),
       endDate?.toISOString()
     );
     setLoadig(false);
-    console.log("setLoad");
   }, [startDate, endDate]);
+  useEffect(() => {
+    const fetchDatePicker = async () => {
+      try {
+        const DatePickerData = await fetchDateData();
+        setDatePickerData(DatePickerData);
+      } catch (error) {
+        console.error("Error fetching date picker data:", error);
+      }
+    };
+
+    fetchDatePicker();
+  }, []);
 
   const tabs = [
     {
@@ -46,6 +65,7 @@ const TimesheetsTabs = () => {
         <AllTimesheetsTable
           timesheetData={timeSheetData}
           setTimeSheetData={setTimeSheetdata}
+          daysOfWeek={dates}
         />
       ),
     },
@@ -53,25 +73,34 @@ const TimesheetsTabs = () => {
       key: "2",
       label: (
         <>
-          Past due <span className={styles.count}>{pastDueCount}</span>
+          Past due{" "}
+          <span>
+            <p>{pastDueCount}</p>
+          </span>
         </>
       ),
-      content: <PastDueTable />,
+      content: <PastDueOverviewTable />,
     },
     {
       key: "3",
       label: (
         <>
-          Approved <span className={styles.count}>{pastDueCount}</span>
+          Approved{" "}
+          <span>
+            <p>{approvedCount}</p>
+          </span>
         </>
       ),
-      content: <PastDueTable />,
+      content: <RejectedTimesheetsTable />,
     },
     {
       key: "4",
       label: (
         <>
-          Rejected <span className={styles.count}>{pastDueCount}</span>
+          Rejected{" "}
+          <span>
+            <p>{rejectedCount}</p>
+          </span>
         </>
       ),
       content: <RejectedTimesheetsTable />,
@@ -96,7 +125,12 @@ const TimesheetsTabs = () => {
         <div>
           <TabComponent
             headings={tabs}
-            subHeading={<DateRangePicker onDateChange={handleDateChange} />}
+            subHeading={
+              <DateRangePicker
+                datePickerData={datePickerData}
+                onDateChange={handleDateChange}
+              />
+            }
           />
         </div>
       )}
