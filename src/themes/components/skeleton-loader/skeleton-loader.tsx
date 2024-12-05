@@ -8,10 +8,11 @@ interface SkeletonLoaderProps {
   paragraph?: boolean | { rows: number }; // Paragraph rows or none
   input?: boolean; // Whether to show an input skeleton
   button?: boolean; // Whether to show a button skeleton
+  profile?: boolean; 
   active?: boolean; // Enable shimmer animation
   width?: string; // Custom width for skeleton card
   className?: string; // Custom className for styling theme
-  classNameItem?:string;
+  classNameItem?: string;
 }
 
 const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
@@ -21,25 +22,51 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   paragraph = false,
   input = false,
   button = false,
+  profile = false,
   active = true,
   width = "100%",
   className = "",
-  classNameItem=""
+  classNameItem = "",
 }) => {
   return (
     <div className={`${className}`} style={{ width }}>
       {Array.from({ length: count }).map((_, index) => (
         <div key={index} className={`${styles.skeletonItem} ${className}`}>
-          {avatar && <div className={`${styles.skeletonAvatar} ${classNameItem}`} />}
-          {title && <div className={`${styles.skeletonTitle} ${classNameItem}`} />}
-          {paragraph && (
+          {/* Profile loader layout */}
+          {profile && (
+            <div className={`${styles.skeletonProfile} ${classNameItem}`}>
+              <div className={`${styles.skeletonProfileAvatar}`} />
+              <div className={`${styles.skeletonProfileContent}`}>
+                <div className={`${styles.skeletonProfileTitle} `} />
+                <div className={`${styles.skeletonSmallParagraph}`} />
+              </div>
+            </div>
+          )}
+
+          {/* Regular skeleton loader */}
+          {avatar && !profile && (
+            <div className={`${styles.skeletonAvatar} ${classNameItem}`} />
+          )}
+          {title && !profile && (
+            <div className={`${styles.skeletonTitle} ${classNameItem}`} />
+          )}
+          {paragraph && !profile && (
             <div
               className={`${styles.skeletonParagraph} ${classNameItem}`}
-              style={{ height: paragraph && typeof paragraph === "object" ? `${paragraph.rows * 20}px` : "15px" }}
+              style={{
+                height:
+                  paragraph && typeof paragraph === "object"
+                    ? `${paragraph.rows * 20}px`
+                    : "15px",
+              }}
             />
           )}
-          {input && <div className={`${styles.skeletonInput} ${classNameItem}`} />}
-          {button && <div className={`${styles.skeletonButton} ${classNameItem}`} />}
+          {input && !profile && (
+            <div className={`${styles.skeletonInput} ${classNameItem}`} />
+          )}
+          {button && !profile && (
+            <div className={`${styles.skeletonButton} ${classNameItem}`} />
+          )}
         </div>
       ))}
     </div>

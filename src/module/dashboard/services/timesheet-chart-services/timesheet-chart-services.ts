@@ -1,5 +1,5 @@
 import http from "@/utils/http";
-import axios from "axios";
+
 
 // Define the interface for the stats data returned by the API
 export interface StatsProps {
