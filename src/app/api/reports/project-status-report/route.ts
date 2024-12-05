@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export async function POST(request:Request) {
+export async function POST(request: Request) {
   try {
     // Example dataset
     const projects_status = [
@@ -101,8 +101,6 @@ export async function POST(request:Request) {
     // Extract user ID from the request headers (e.g., for user-specific filtering)
     const startDateHeader = request.headers.get("userID");
     const userId = startDateHeader ? parseInt(startDateHeader) : 1;
-
-    
 
     // Map to the required response structure
     const response = projects_status.map((report) => ({

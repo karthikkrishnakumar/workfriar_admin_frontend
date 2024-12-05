@@ -6,7 +6,7 @@ interface Column {
   title: ReactNode;
   key: string;
   width?: string | number; // Optional width for specific column
-  align?: 'left' | 'center' | 'right'; // Optional alignment
+  align?: "left" | "center" | "right"; // Optional alignment
 }
 
 interface RowData {
@@ -28,29 +28,26 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
 
       // Handle width if specified
       if (column.width) {
-        style.width = typeof column.width === 'number' 
-          ? `${column.width}px` 
-          : column.width;
+        style.width =
+          typeof column.width === "number" ? `${column.width}px` : column.width;
         style.flexShrink = 0; // Prevent shrinking for fixed-width columns
       } else {
         style.flex = 1; // Distribute remaining space equally
       }
 
       // Handle text alignment
-      style.justifyContent = column.align === 'left' 
-        ? 'flex-start' 
-        : column.align === 'right' 
-          ? 'flex-end' 
-          : 'center';
+      style.justifyContent =
+        column.align === "left"
+          ? "flex-start"
+          : column.align === "right"
+          ? "flex-end"
+          : "center";
 
       return style;
     };
 
     return (
-      <div 
-        ref={ref} 
-        className={`${styles.tableContainer} ${className || ''}`}
-      >
+      <div ref={ref} className={`${styles.tableContainer} ${className || ""}`}>
         {/* Header */}
         <div className={styles.tableHeader}>
           {columns.map((column) => (
@@ -76,10 +73,10 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
               <div
                 key={index}
                 className={`${styles.dataRow} 
-                  ${isImportant ? styles.importantRow : ''} 
-                  ${rowOfTotal ? styles.rowOfTotal : ''} 
-                  ${isFirstRow ? styles.firstRow : ''} 
-                  ${isLastRow ? styles.lastRow : ''}`}
+                  ${isImportant ? styles.importantRow : ""} 
+                  ${rowOfTotal ? styles.rowOfTotal : ""} 
+                  ${isFirstRow ? styles.firstRow : ""} 
+                  ${isLastRow ? styles.lastRow : ""}`}
               >
                 {columns.map((column) => (
                   <div
@@ -99,6 +96,6 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
   }
 );
 
-CustomTable.displayName = 'CustomTable';
+CustomTable.displayName = "CustomTable";
 
 export default CustomTable;

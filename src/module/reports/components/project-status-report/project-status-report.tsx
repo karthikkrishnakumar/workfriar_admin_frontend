@@ -14,6 +14,7 @@ const ProjectStatusReport: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const router = useRouter(); // Initialize router
 
+
   const columns = [
     { title: "Project", key: "project", align: "left" as const, width: 220 },
     { title: "Project Lead", key: "projectLead", align: "left" as const },
@@ -41,7 +42,7 @@ const ProjectStatusReport: React.FC = () => {
   const handleMenuClick = (e: { key: string }, record: any) => {
     if (e.key === "Details") {
       // Navigate to the ProjectDetails page with the selected project's ID
-      router.push(`/project-status-report/report-details?id=${record.id}`);
+      router.push(`/project-status-report/report-details/${record.id}`);
     } else if (e.key === "edit") {
       console.log("Edit clicked for:", record);
     }
@@ -49,7 +50,7 @@ const ProjectStatusReport: React.FC = () => {
 
   const handleRowClick = (record: any) => {
     // Navigate to the ProjectDetails page when the row or project cell is clicked
-    router.push(`/project-status-report/report-details?id=${record.id}`);
+    router.push(`/project-status-report/report-details/${record.id}`);
   };
 
   useEffect(() => {

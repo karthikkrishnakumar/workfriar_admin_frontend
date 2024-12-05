@@ -8,14 +8,15 @@ import ButtonComponent from "@/themes/components/button/button";
 import ProjectDetails from "../project-report-details/project-report-datails";
 import { fetchProjectDetails } from "../../services/project-status-report/project-reports-details";
 import { message } from "antd";
-import { useSearchParams } from "next/navigation";
 
-const ProjectReportTabs = () => {
+interface ReportTabProps {
+  id: string;
+}
+
+const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
 
   const tabs = [
     {
@@ -51,10 +52,7 @@ const ProjectReportTabs = () => {
             paragraph={{ rows: 2 }}
             classNameItem={styles.customSkeleton}
           />
-          <SkeletonLoader
-            profile
-            classNameItem={styles.customSkeletonItem}
-          />
+          <SkeletonLoader profile classNameItem={styles.customSkeletonItem} />
           <SkeletonLoader
             paragraph={{ rows: 10 }}
             classNameItem={styles.customSkeleton}
