@@ -7,19 +7,16 @@ export interface TimesheetDay {
   hours: string;
   disable: boolean;
 }
-
 export interface TimesheetData {
   timesheetData: {
     days: TimesheetDay[];
   };
 }
-
 export interface DatePickerData {
   start: string;
   end: string;
   week: number;
 }
-
 
 /**
  * Fetches the project time data for a given date range.
