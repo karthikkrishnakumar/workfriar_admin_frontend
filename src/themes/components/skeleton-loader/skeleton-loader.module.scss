@@ -103,3 +103,94 @@
 .skeletonButton::before {
   animation-duration: 1.6s; /* Default shimmer speed for button */
 }
+
+/* Profile loader structure */
+.skeletonProfile {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space between avatar and content */
+  width: 100%;
+  height: 100px;
+  padding: 20px;
+}
+
+.skeletonProfileAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f2f2f2;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonProfileContent {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.skeletonProfileTitle {
+  width: 60%;
+  height: 20px;
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonSmallParagraph {
+  width: 40%;
+  height: 12px;
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer effect */
+.skeletonProfileAvatar::before,
+.skeletonProfileTitle::before,
+.skeletonSmallParagraph::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%; /* Start position for shimmer */
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.434) 25%,
+    rgba(255, 255, 255, 0.373) 50%,
+    rgba(255, 255, 255, 0.536) 75%
+  );
+  animation: shimmerBlur 1.5s infinite ease-in-out;
+  filter: blur(5px); /* Apply the blur to the shimmer effect */
+  background-size: 200% 100%;
+}
+
+/* Shimmer animation */
+@keyframes shimmerBlur {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 50%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Differentiated shimmer durations */
+.skeletonProfileAvatar::before {
+  animation-duration: 1.8s; /* Slower shimmer for avatar */
+}
+
+.skeletonProfileTitle::before {
+  animation-duration: 1.5s; /* Default shimmer speed for title */
+}
+
+.skeletonSmallParagraph::before {
+  animation-duration: 2s; /* Slower shimmer for small paragraph */
+}

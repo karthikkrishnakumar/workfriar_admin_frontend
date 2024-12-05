@@ -15,7 +15,7 @@ export class NavBarNavigationClass {
       { path: "/projects", label: "Projects", defaultIcon: "projectsOutline", activeIcon: "projectsFilled", collapsible: true },
       { path: "/organization", label: "Organization", defaultIcon: "organizationOutline", activeIcon: "organizationFilled", collapsible: false },
       { path: "/project-forecast", label: "Project Forecast", defaultIcon: "projectForeCastOutline", activeIcon: "projectForeCastFilled", collapsible: false },
-      { path: "/time-sheet-report", label: "Reports", defaultIcon: "reportsOutline", activeIcon: "reportsFilled", collapsible: true },
+      { path: "/project-status-report", label: "Reports", defaultIcon: "reportsOutline", activeIcon: "reportsFilled", collapsible: true },
     ];
   
     // Function to get the active status of the link based on the current pathname

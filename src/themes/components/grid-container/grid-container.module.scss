@@ -1,0 +1,52 @@
+.header {
+  align-items: center;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  background: var(--container-color);
+  padding: 24px;
+  gap: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.avatar {
+  background: var(--searchbar-background);
+}
+.basicInfo {
+  width: 50%;
+}
+.headerGrid {
+  width: 75%;
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+  gap: 32px;
+  align-items: center; /* Align items at the top of the grid cells */
+}
+
+.field {
+  .label {
+    color: var(--secondary-font-color-dark);
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .value {
+    color: var(--black);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.96px;
+  }
+}
+
+.label {
+  color: var(--secondary-font-color-dark);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.value {
+  color: var(--black);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 18.96px;
+}

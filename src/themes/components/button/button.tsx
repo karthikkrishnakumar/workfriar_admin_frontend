@@ -12,7 +12,8 @@ interface ButtonProps {
     | "filter"
     | "disabled"
     | "link"
-    | "golden";
+    | "golden"
+    | "mixed-gold";
   onClick?: () => void;
   link?: boolean;
   disabled?: boolean;
@@ -46,6 +47,8 @@ const ButtonComponent: React.FC<ButtonProps> = ({
         return styles.link;
       case "golden":
         return styles.golden;
+      case "mixed-gold":
+        return styles.mixedGold;
       default:
         return styles.default;
     }
