@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import styles from "./timesheet-tabs.module.scss";
 import TabComponent from "@/themes/components/tabs/tabs";
 import AllTimesheetsTable from "../all-timesheets-table/all-timesheets";
-import RejectedTimesheetsTable from "../rejected-timesheets-table/rejected-timesheets-table";
 import DateRangePicker from "@/themes/components/date-picker/date-picker";
 
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
@@ -15,6 +14,8 @@ import {
   WeekDaysData,
 } from "../../services/time-sheet-services";
 import PastDueOverviewTable from "../past-due-overview-table/past-due-overview-table";
+import RejectedOverviewTable from "../rejected-overview-table/rejected-overview-table";
+import ApprovedOverviewTable from "../approved-overview-table/approved-overview-table";
 
 const TimesheetsTabs = () => {
   const [loading, setLoadig] = useState(true);
@@ -29,6 +30,7 @@ const TimesheetsTabs = () => {
     { start: string; end: string; week: number }[]
   >([]);
   const [dates, setDates] = useState<WeekDaysData[]>([]);
+  const [activeTabKey, setActiveTabKey] = useState<string>("1"); // State to track active tab
 
   const handleDateChange = (startDate: Date, endDate: Date) => {
     setStartDate(startDate);
@@ -44,6 +46,7 @@ const TimesheetsTabs = () => {
     );
     setLoadig(false);
   }, [startDate, endDate]);
+
   useEffect(() => {
     const fetchDatePicker = async () => {
       try {
@@ -91,7 +94,7 @@ const TimesheetsTabs = () => {
           </span>
         </>
       ),
-      content: <RejectedTimesheetsTable />,
+      content: <ApprovedOverviewTable />,
     },
     {
       key: "4",
@@ -103,7 +106,7 @@ const TimesheetsTabs = () => {
           </span>
         </>
       ),
-      content: <RejectedTimesheetsTable />,
+      content: <RejectedOverviewTable />,
     },
   ];
 
@@ -126,10 +129,10 @@ const TimesheetsTabs = () => {
           <TabComponent
             headings={tabs}
             subHeading={
-              <DateRangePicker
-                datePickerData={datePickerData}
-                onDateChange={handleDateChange}
-              />
+                <DateRangePicker
+                  datePickerData={datePickerData}
+                  onDateChange={handleDateChange}
+                />
             }
           />
         </div>

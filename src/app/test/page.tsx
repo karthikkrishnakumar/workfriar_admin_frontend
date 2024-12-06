@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useRef, useState } from "react";
 
 
@@ -9,7 +8,6 @@ export default function Page() {
 
   return (
     <div ref={parentRef} style={{ margin: "100px" }}>
-      <button onClick={() => setIsVisible(!isVisible)}>Toggle Dropdown</button>
     </div>
   );
 }
