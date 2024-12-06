@@ -99,8 +99,7 @@ const TimeSummary = ({ id }: TimeSummaryProps) => {
           <DateRangePicker
             onDateChange={(startDate: Date, endDate: Date) => {
               console.log("Date range selected:", startDate, endDate);
-            }}
-          />
+            } } datePickerData={[]}          />
           <DatePicker
             onChange={(date, dateString) => {
               console.log("Selected Date:", date, dateString);

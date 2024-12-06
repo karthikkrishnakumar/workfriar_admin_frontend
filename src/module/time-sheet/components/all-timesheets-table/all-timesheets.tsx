@@ -15,7 +15,6 @@ import {
   TimesheetDataTable,
   WeekDaysData,
 } from "../../services/time-sheet-services";
-import ModalComponent from "@/themes/components/modal/modal";
 import {
   minutesToTime,
   timeToMinutes,
@@ -46,7 +45,6 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     setEditingRowIndex(rowIndex);
     setTaskDetailModal(!showTaskDetailModal);
   };
-  const [taskDetails, setTaskDetails] = useState("");
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
 
   // Add a new row when a project and task are selected

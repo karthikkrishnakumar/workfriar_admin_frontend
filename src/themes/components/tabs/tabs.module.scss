@@ -57,12 +57,18 @@
     transform: none !important;
 }
 
+.customTabs:global(.ant-tabs .ant-tabs-tab-btn:active){
+    color: var(--primary-font-color-dark) !important;
+    font-weight: var(--sub-heading-font-weight) !important;
+}
+
 // color of tab's font when not active
 .customTabs:global(.ant-tabs .ant-tabs-tab-btn){
     color: var(--grey-font-color);
     font-size: var(--heading-2-size);
     font-weight: var(--default-font-weight);
     transition: all 0.4s ease !important;
+    outline: none;
 
     @media(max-width:890px){
         font-size: var(--default-font-size);
