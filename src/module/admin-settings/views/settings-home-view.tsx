@@ -1,10 +1,11 @@
 "use client"
 
-import SettingsRoleTable from "../components/role-listing/role-listing";
+import RoleListingTable from "../components/role-listing/role-listing";
+
 
 const SettingsHomeView =() => { 
   return (
-    <SettingsRoleTable/>
+    <RoleListingTable/>
   )
 }
 

@@ -25,3 +25,24 @@
 .asterisk{
   color: #D83226;
 }
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.link {
+  margin-right: 16px;
+  color: var(--primary-golden-color-dark);
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+
+  &:hover {
+    color: #b37e2e;
+    text-decoration: underline;
+  }
+}

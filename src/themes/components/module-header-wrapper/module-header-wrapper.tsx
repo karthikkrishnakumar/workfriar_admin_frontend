@@ -23,6 +23,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Report details", path: "/project-status-report/report-details/[id]", backButtonNeeded: true  },
     { title: "Review Timesheet", path: "/time-sheet/review-timesheet/[id]", backButtonNeeded: true  },
     { title: "Admin Settings", path: "/settings", backButtonNeeded: false },
+    { title: "Permissions Settings", path: "/settings/permissions", backButtonNeeded: false },
     { title: "Notifications", path: "/notifications", backButtonNeeded: false },
   ];
 

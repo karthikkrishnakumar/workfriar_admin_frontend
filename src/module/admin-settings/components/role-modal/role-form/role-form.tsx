@@ -1,65 +1,133 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { message } from "antd"; // Import message from antd
 import CustomInputField from "@/themes/components/input-field/input-field";
 import CustomSelect from "@/themes/components/select-field/select-field";
 import styles from "./role-form.module.scss";
+import { Role, RoleResponse } from "@/module/admin-settings/services/role-service";
+import ButtonComponent from "@/themes/components/button/button";
 
-interface RoleFormProps {
-  role: string;
-  department: string;
-  status: boolean;
+export interface RoleFormProps {
+  roleData: Role;
   departmentOptions: { label: string; value: string }[];
-  statusOptions: { label: string; value: string }[];
-  onRoleChange: (value: string | number) => void;
-  onDepartmentChange: (value: string | number) => void; 
-  onStatusChange: (value: string | number) => void; 
+  statusOptions: { label: string; value: boolean }[];
+  onChange: (field: keyof Role, value: string | number | boolean) => void;
+  onSave: () => Promise<RoleResponse | null>;
+  onCancel: () => void;
 }
 
-
 const RoleForm: React.FC<RoleFormProps> = ({
-  role,
-  department,
-  status,
+  roleData,
   departmentOptions,
   statusOptions,
-  onRoleChange,
-  onDepartmentChange,
-  onStatusChange,
+  onChange,
+  onSave,
+  onCancel,
 }) => {
+  const router = useRouter();
+  const [initialRoleData, setInitialRoleData] = useState<Role | null>(null);
+  const [hasMounted, setHasMounted] = useState(false); // Track whether the component has mounted
+
+  useEffect(() => {
+    if (!hasMounted) {
+      setInitialRoleData(roleData); // Set initial data only once
+      setHasMounted(true); // Set mounted flag to true
+    }
+  }, [ hasMounted]);
+
+  const handleChange =
+    (field: keyof Role) => (value: string | number | boolean) => {
+      onChange(field, value);
+    };
+
+  const hasChanges = () => {
+    if (!initialRoleData) return false; // Prevent comparison before initialRoleData is set
+    return (
+      roleData.role !== initialRoleData.role ||
+      roleData.department !== initialRoleData.department ||
+      roleData.status !== initialRoleData.status
+    );
+  };
+
+  const handleContinueToPermissions = async () => {
+
+    if (roleData.roleId) {
+      // If the role already has an ID (edit case), check if there are any changes
+      if (hasChanges()) {
+        // If there are changes, wait for onSave to complete
+        const response = await onSave();
+        if (response?.status) {
+          // If the save was successful, navigate to the permissions page
+          router.push(`/settings/permissions/${roleData.roleId}`);
+        } else {
+          // Handle failure, show an error message with antd message component
+          message.error("Failed to update role.yohoooooooooooo");
+        }
+      } else {
+        // No changes, navigate directly to the permissions page
+        router.push(`/settings/permissions/${roleData.roleId}`);
+      }
+    } else {
+      // If the role does not have an ID (add case), wait for onSave to complete
+      const response = await onSave(); // Wait for the save action to complete
+      if (response?.status && response?.data?.id) {
+        // If the role is added successfully and an ID is returned, navigate to the permissions page
+        router.push(`/settings/permissions/${response.data.id}`);
+      } else {
+        // Handle failure, show an error message with antd message component
+        message.error("Failed to add role or ID is missing.");
+      }
+    }
+  };
+
   return (
-    <div className={styles.modalContent}>
-      <div className={styles.field}>
-        <label>
-          Role<span className={styles.asterisk}>*</span>
-        </label>
-        <CustomInputField
-          value={role}
-          onChange={onRoleChange}
-          placeholder="Enter role"
-        />
+    <>
+      <div className={styles.modalContent}>
+        <div className={styles.field}>
+          <label>
+            Role<span className={styles.asterisk}>*</span>
+          </label>
+          <CustomInputField
+            value={roleData.role}
+            onChange={handleChange("role")}
+            placeholder="Enter Job role"
+          />
+        </div>
+        <div className={styles.field}>
+          <label>
+            Department<span className={styles.asterisk}>*</span>
+          </label>
+          <CustomSelect
+            options={departmentOptions}
+            value={roleData.department}
+            onChange={handleChange("department")}
+            placeholder="Select department"
+          />
+        </div>
+        <div className={styles.field}>
+          <label>
+            Status<span className={styles.asterisk}>*</span>
+          </label>
+          <CustomSelect
+            options={statusOptions.map((option) => ({
+              ...option,
+              value: option.value.toString(),
+            }))}
+            value={roleData.status.toString()}
+            onChange={handleChange("status")}
+            placeholder="Select status"
+          />
+        </div>
       </div>
-      <div className={styles.field}>
-        <label>
-          Department<span className={styles.asterisk}>*</span>
-        </label>
-        <CustomSelect
-          options={departmentOptions}
-          value={department}
-          onChange={onDepartmentChange}
-          placeholder="Select department"
-        />
+
+      <div className={styles.actions}>
+        <button className={styles.link} onClick={handleContinueToPermissions}>
+          Continue to Set Role Permissions
+        </button>
+        <ButtonComponent label="Cancel" theme="white" onClick={onCancel} />
+        <ButtonComponent label="Save" theme="black" onClick={onSave} />
       </div>
-      <div className={styles.field}>
-        <label>
-          Status<span className={styles.asterisk}>*</span>
-        </label>
-        <CustomSelect
-          options={statusOptions}
-          value={status}
-          onChange={onStatusChange}
-          placeholder="Select status"
-        />
-      </div>
-    </div>
+    </>
   );
 };
 

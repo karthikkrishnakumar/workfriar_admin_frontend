@@ -3,145 +3,155 @@ import { Skeleton, message } from "antd";
 import Table, { ColumnType } from "@/themes/components/table/table";
 import DropdownMenu from "@/themes/components/dropdown-menu/dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
-import styles from "./role-listing.module.scss";
 import useRoleService, { Role } from "../../services/role-service";
 import { useRouter } from "next/navigation";
 import EditRoleModal from "../role-modal/edit-role-modal/edit-role-modal";
 import MapUserModal from "../map-user/map-user-modal/map-user-modal";
+import { departmentOptions, statusOptions } from "../../constants";
+import styles from "./role-listing.module.scss";
+import AddRoleModal from "../role-modal/add-role-modal/add-role-modal";
 
-const SettingsRoleTable: React.FC = () => {
+
+const RoleListingTable: React.FC = () => {
   const { listRoles, updateRole } = useRoleService();
   const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeModal, setActiveModal] = useState<"edit" | "map-user" | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [activeModal, setActiveModal] = useState<"add" | "edit" | "map-user" | null>(null);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const router = useRouter();
-
-  // Use useCallback to memoize the fetch function
+  //fetch roles from the service 
   const fetchRoles = useCallback(async () => {
+    setLoading(true);
     const response = await listRoles();
     if (response.status) {
       setRoles(response.roles || []);
     } else {
-      message.error(response.message);
+      message.error(response.message || "Failed to fetch roles.");
     }
     setLoading(false);
   }, []);
 
-  // Fetch roles on component mount
   useEffect(() => {
     fetchRoles();
   }, []);
 
-  // Handle status update
+ //handle the updation of status field of  role data
   const handleStatusChange = async (role: Role, newStatus: boolean) => {
-    const response = await updateRole(role.id, newStatus);
+    const updatedRole = { ...role, status: newStatus };
+    const response = await updateRole(updatedRole);
+
     if (response.status) {
       setRoles((prevRoles) =>
-        prevRoles.map((r) => (r.id === role.id ? { ...r, status: newStatus } : r))
+        prevRoles.map((r) => (r.roleId === role.roleId ? { ...r, status: newStatus } : r))
       );
-      message.success(response.message);
+      message.success("Role status updated successfully!");
     } else {
-      message.error(response.message);
+      message.error(response.message || "Failed to update role status.");
     }
   };
 
-  // Handle dropdown actions
   const handleMenuClick = (action: string, role: Role) => {
     setSelectedRole(role);
-
     switch (action) {
       case "edit":
         setActiveModal("edit");
         break;
+      case "update-permissions":
+      router.push(`/settings/permissions/${role?.roleId}`);
+      break;
       case "map-user":
         setActiveModal("map-user");
         break;
-      case "update-permissions":
-        router.push("/home/settings/permissions");
-        break;
       case "delete":
-        setRoles((prevRoles) => prevRoles.filter(({ id }) => id !== role.id));
+        setRoles((prevRoles) => prevRoles.filter(({ roleId }) => roleId !== role.roleId));
+        message.success("Role deleted successfully.");
+        break;
+      default:
         break;
     }
   };
 
-  const columns: ColumnType[] = useMemo(() => [
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-      width: "30%",
-    },
-    {
-      title: "Department",
-      dataIndex: "department",
-      key: "department",
-      width: "22%",
-    },
-    {
-      title: "No. of Users",
-      dataIndex: "users",
-      key: "users",
-      width: "22%",
-      render: (_, record) => (
-        <span>
-          {record.users === 1 ? "1 employee" : `${record.users} employees`}
-        </span>
-      ),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: "22%",
-      render: (_, record) => (
-        <DropdownMenu
-          menuItems={[
-            {
-              key: "active",
-              label: "Active",
-              onClick: () => handleStatusChange(record, true), // active
-            },
-            {
-              key: "inactive",
-              label: "Inactive",
-              onClick: () => handleStatusChange(record, false), // inactive
-            },
-          ]}
-          icon={
-            <div className={styles.status}>
-              <span className={styles.statusText}>
-                {record.status ? "Active" : "Inactive"} {/* Display Active/Inactive based on status */}
-              </span>
-              {Icons.arrowDownFilledGold}
-            </div>
-          }
-          wrapperClassName={styles.statusTriggerWrapper}
-          dropdownClassName={styles.statusDropdownMenuOverlay}
-        />
-      ),
-    },
-    {
-      key: "actions",
-      width: "4%",
-      render: (_, record) => (
-        <DropdownMenu
-          menuItems={[
-            { key: "edit", label: "Edit", onClick: () => handleMenuClick("edit", record) },
-            { key: "update-permissions", label: "Update Role Permissions", onClick: () => handleMenuClick("update-permissions", record) },
-            { key: "map-user", label: "Map User", onClick: () => handleMenuClick("map-user", record) },
-            { key: "delete", label: "Delete", onClick: () => handleMenuClick("delete", record) },
-          ]}
-          icon={Icons.threeDots}
-          wrapperClassName={styles.actionTriggerWrapper}
-          dropdownClassName={styles.actionDropdownMenuOverlay}
-        />
-      ),
-    },
-  ], [roles]);
-
-  console.log(roles)
+  const columns: ColumnType[] = useMemo(
+    () => [
+      {
+        title: "Role",
+        dataIndex: "role",
+        key: "role",
+        width: "30%",
+      },
+      {
+        title: "Department",
+        dataIndex: "department",
+        key: "department",
+        width: "22%",
+      },
+      {
+        title: "No. of Users",
+        dataIndex: "users",
+        key: "users",
+        width: "22%",
+        render: (_, record) => (
+          <span>
+            {record.users === 1 ? "1 employee" : `${record.usersCount} employees`}
+          </span>
+        ),
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        width: "22%",
+        render: (_, record) => (
+          <DropdownMenu
+            menuItems={[
+              {
+                key: "active",
+                label: "Active",
+                onClick: () => handleStatusChange(record, true),
+              },
+              {
+                key: "inactive",
+                label: "Inactive",
+                onClick: () => handleStatusChange(record, false),
+              },
+            ]}
+            icon={
+              <div className={styles.status}>
+                <span className={styles.statusText}>
+                  {record.status ? "Active" : "Inactive"}
+                </span>
+                {Icons.arrowDownFilledGold}
+              </div>
+            }
+            wrapperClassName={styles.statusTriggerWrapper}
+            dropdownClassName={styles.statusDropdownMenuOverlay}
+          />
+        ),
+      },
+      {
+        key: "actions",
+        width: "4%",
+        render: (_, record) => (
+          <DropdownMenu
+            menuItems={[
+              { key: "edit", label: "Edit", onClick: () => handleMenuClick("edit", record) },
+              {
+                key: "update-permissions",
+                label: "Update Role Permissions",
+                onClick: () => handleMenuClick("update-permissions", record),
+              },
+              { key: "map-user", label: "Map User", onClick: () => handleMenuClick("map-user", record) },
+              { key: "delete", label: "Delete", onClick: () => handleMenuClick("delete", record) },
+            ]}
+            icon={Icons.threeDots}
+            wrapperClassName={styles.actionTriggerWrapper}
+            dropdownClassName={styles.actionDropdownMenuOverlay}
+          />
+        ),
+      },
+    ],
+    []
+  );
 
   return (
     <>
@@ -151,28 +161,35 @@ const SettingsRoleTable: React.FC = () => {
         <Table columns={columns} dataSource={roles} />
       )}
 
+      {activeModal === "add" && (
+        <AddRoleModal
+          isVisible
+          departmentOptions={departmentOptions}
+          statusOptions={statusOptions}
+          onClose={() => setActiveModal(null)}
+          onRoleAdded={fetchRoles}
+        />
+      )}
+      
+      <button className={styles.addButton} onClick={() => setActiveModal("add")}>
+        Add Role
+      </button>
+
       {activeModal === "edit" && selectedRole && (
         <EditRoleModal
           isVisible
-          role={selectedRole.role}
-          department={selectedRole.department}
-          status={selectedRole.status}
-          onRoleChange={(role) => setSelectedRole((prev) => prev && { ...prev, role })}
-          onDepartmentChange={(department) => setSelectedRole((prev) => prev && { ...prev, department })}
-          onStatusChange={(status) => setSelectedRole((prev) => prev && { ...prev, status })}
-          onSave={() => {
-            if (selectedRole) updateRole(selectedRole.id, selectedRole);
-            setActiveModal(null);
-          }}
+          roleData={selectedRole}
+          departmentOptions={departmentOptions}
+          statusOptions={statusOptions}
           onClose={() => setActiveModal(null)}
+          onRoleUpdated={fetchRoles} 
         />
       )}
 
-      {activeModal === "map-user" && selectedRole && (
+      {activeModal === "map-user" && selectedRole?.roleId && (
         <MapUserModal
           isVisible
-          role={selectedRole.role}
-          onUserChange={(users) => setSelectedRole((prev) => prev && { ...prev, users })}
+          roleId={selectedRole.roleId}
           onSave={() => setActiveModal(null)}
           onClose={() => setActiveModal(null)}
         />
@@ -181,4 +198,4 @@ const SettingsRoleTable: React.FC = () => {
   );
 };
 
-export default SettingsRoleTable;
+export default RoleListingTable;

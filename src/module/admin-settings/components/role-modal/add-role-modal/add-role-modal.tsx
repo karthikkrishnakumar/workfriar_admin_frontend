@@ -1,81 +1,81 @@
-import React from "react";
+import React, { useState } from "react";
 import ModalComponent from "@/themes/components/modal/modal";
-import CustomInputField from "@/themes/components/input-field/input-field";
-import CustomSelect from "@/themes/components/select-field/select-field";
-import styles from "./add-role.module.scss";
+import RoleForm from "../role-form/role-form";
+import { Role, RoleResponse } from "@/module/admin-settings/services/role-service";
+import useRoleService from "@/module/admin-settings/services/role-service";
+import { message } from "antd";
 
-export interface RoleModalProps {
+export interface AddRoleModalProps {
   isVisible: boolean;
-  role: string;
-  department: string;
-  status: string;
   departmentOptions: { label: string; value: string }[];
-  statusOptions: { label: string; value: string }[];
-  onRoleChange: (value: string | number) => void;
-  onDepartmentChange: (value: string | number) => void;
-  onStatusChange: (value: string | number) => void;
-  onSave: () => void;
+  statusOptions: { label: string; value: boolean }[];
   onClose: () => void;
+  onRoleAdded: () => void; 
 }
 
-const AddRoleModal: React.FC<RoleModalProps> = ({
+interface NewRole extends Omit<Role, "id"> {
+  permissions: [];
+}
+
+const AddRoleModal: React.FC<AddRoleModalProps> = ({
   isVisible,
-  role,
-  department,
-  status,
   departmentOptions,
   statusOptions,
-  onRoleChange,
-  onDepartmentChange,
-  onStatusChange,
-  onSave,
   onClose,
+  onRoleAdded,
 }) => {
+  const { addRole } = useRoleService();
+
+  // Initialize state for a new role
+  const [role, setRole] = useState<NewRole>({
+    role: "",
+    department: "",
+    status: true,
+    permissions: [], // Empty since permissions are added later
+  });
+
+  const handleSave = async (): Promise<RoleResponse | null> => {
+    if (!role.role || !role.department) {
+      message.error("Please fill all required fields.");
+      return null;
+    }
+  
+    const response = await addRole(role); // Call the addRole service
+    if (response.status) {
+      message.success("Role added successfully!");
+      onRoleAdded(); // Refresh the role list
+      return response; // Return the response for further use
+    } else {
+      message.error(response.message || "Failed to add role.");
+      return null;
+    }
+  };
+  
+  const handleFieldChange = (
+    field: keyof NewRole,
+    value: string | number | boolean
+  ) => {
+    setRole((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   return (
     <ModalComponent
       isVisible={isVisible}
       title="Add Role"
       theme="normal"
       content={
-        <div className={styles.modalContent}>
-          <div className={styles.field}>
-            <label>
-              Role<span className={styles.asterisk}>*</span>
-            </label>
-            <CustomInputField
-              value={role}
-              onChange={onRoleChange}
-              placeholder="Enter Job role"
-            />
-          </div>
-          <div className={styles.field}>
-            <label>
-              Department<span className={styles.asterisk}>*</span>
-            </label>
-            <CustomSelect
-              options={departmentOptions}
-              value={department}
-              onChange={onDepartmentChange}
-              placeholder="Select department"
-            />
-          </div>
-          <div className={styles.field}>
-            <label>
-              Status<span className={styles.asterisk}>*</span>
-            </label>
-            <CustomSelect
-              options={statusOptions}
-              value={status}
-              onChange={onStatusChange}
-              placeholder="Select status"
-            />
-          </div>
-        </div>
+        <RoleForm
+          roleData={role}
+          departmentOptions={departmentOptions}
+          statusOptions={statusOptions}
+          onChange={handleFieldChange}
+          onSave={handleSave}
+          onCancel={onClose}
+        />
       }
-      primaryButtonLabel="Cancel"
-      secondaryButtonLabel="Save"
-      onPrimaryClick={onClose}
-      onSecondaryClick={onSave}
       onClose={onClose}
     />
   );
