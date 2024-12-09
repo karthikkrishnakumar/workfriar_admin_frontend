@@ -1,0 +1,84 @@
+.modalDiv {
+  :global(.ant-modal-content) {
+    border-radius: 20px !important;
+    overflow: hidden;
+    height: 550px;
+    padding: 0px !important;
+  }
+}
+.formsContentDiv {
+  overflow-y: scroll;
+  padding: 0px 24px 0px 24px;
+  &::-webkit-scrollbar {
+    width: 4px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: var(--container-color);
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+}
+
+.titleClass {
+  padding: 24px 24px 0px 24px;
+}
+.bottomClass {
+  padding: 24px 24px 24px 24px;
+}
+.flexContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+.labelWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .requiredIndicator {
+    color: #ff4d4f; // Default Ant Design error color
+    margin-left: 4px;
+  }
+}
+
+.dateContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.formItems {
+  width: 100%;
+}
+.customSelect {
+  border-radius: 8px;
+  width: 100% !important;
+  max-width: 250px !important;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  
+}
+
+.customDatePicker {
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.customInput {
+  border-radius: 8px;
+  height: 48px;
+}
+
+.customTextarea {
+  border-radius: 8px;
+}

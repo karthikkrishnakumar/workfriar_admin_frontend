@@ -1,0 +1,70 @@
+.customHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #fff;
+}
+
+.monthWithYear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.arrowLeftButton,
+.arrowRightButton {
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+.arrowLeftButton {
+  transform: rotate(180deg);
+}
+
+.currentMonth {
+  font-size: 12px;
+}
+
+.yearControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.currentYear {
+  font-size: 12px;
+}
+.yearButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  align-items: center;
+  justify-content: center;
+}
+.yearArrowUpButton,
+.yearArrowDownButton {
+  border: none;
+  background: none;
+  font-size: 0px;
+  cursor: pointer;
+  height: 6px;
+  width: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.yearArrowUpButton {
+  transform: rotate(180deg);
+}
+
+/* Wrapper for the entire calendar */
+.calendarWrapper {
+  display: flex;
+  justify-content: center; /* Center the calendar */
+  width: 100%;
+  background-color: #f4f4f4; /* Light background */
+  padding: 0px;
+}

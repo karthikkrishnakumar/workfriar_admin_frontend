@@ -1,13 +1,9 @@
 .customSkeletonItem {
   background-color: rgba(160, 160, 160, 0.085) !important;
-  gap: 15px; /* Space between avatar and content */
-  width: 100%;
-  height: 100px;
-  padding: 20px;
 }
 .customSkeleton {
+  height: 140px !important;
   background-color: rgba(160, 160, 160, 0.085) !important;
-
 }
 
 .mixedGold {
