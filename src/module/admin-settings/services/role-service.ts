@@ -284,25 +284,25 @@ const useRoleService = () => {
  * @param roleId - The role ID to fetch users mapped to.
  * @returns A promise resolving to the mapped users data.
  */
-const fetchMappedUsers = async (roleId: string): Promise<UserResponse> => {
-  try {
-    const { body } = await http().post(`${apiUrl}/roles/${roleId}/mapped-users`);
+  const fetchMappedUsers = async (roleId: string): Promise<UserResponse> => {
+    try {
+      const { body } = await http().post(`${apiUrl}/roles/${roleId}/mapped-users`);
 
-    // Mock response for demonstration
-    const mockResponse = {
-      status: true,
-      message: "Mapped users fetched successfully",
-      data: MOCK_MAPPED_USERS.data,
-    };
+      // Mock response for demonstration
+      const mockResponse = {
+        status: true,
+        message: "Mapped users fetched successfully",
+        data: MOCK_MAPPED_USERS.data,
+      };
 
-    return mockResponse; // Replace `mockResponse` with `body` for real API responses
-  } catch (error) {
-    return {
-      status: false,
-      message: "Failed to fetch mapped users. Please try again.",
-    };
-  }
-};
+      return mockResponse; // Replace `mockResponse` with `body` for real API responses
+    } catch (error) {
+      return {
+        status: false,
+        message: "Failed to fetch mapped users. Please try again.",
+      };
+    }
+  };
 
   
   /**

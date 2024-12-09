@@ -1,38 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "@/themes/components/search-bar/search-bar";
 import CheckboxComponent from "@/themes/components/checkbox/checkbox";
 import styles from "./user-select.module.scss";
 import { User } from "@/module/admin-settings/services/role-service";
+import { UserCheckbox } from "../map-user-modal/map-user-modal";
 
 interface SelectUserProps {
   users: User[];
-  mappedUsers: User[];  
-  onUserChange: (updatedUsers: User[]) => void;
+  mappedUsers: User[]; 
+  onUserChange: (updatedUsers: UserCheckbox[]) => void;
 }
 
-const SelectUser: React.FC<SelectUserProps> = ({ users, mappedUsers, onUserChange }) => {
+const SelectUser: React.FC<SelectUserProps> = ({
+  users,
+  mappedUsers,
+  onUserChange,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [userList, setUserList] = useState<UserCheckbox[]>([]);
 
-  // Mark users as checked if they are in mappedUsers
-  const updatedUsers = users.map((user) => ({
-    ...user,
-    checked: mappedUsers.some((mappedUser) => mappedUser.id === user.id),
-  }));
+  // Adding a checked state to all users. Initialize user list with `checked` state.
+  useEffect(() => {
+    const updatedUsers = users.map((user) => ({
+      ...user,
+      checked: !!mappedUsers.find((mappedUser) => mappedUser.id === user.id),
+    }));
+    setUserList(updatedUsers);
+  }, [users, mappedUsers]);
 
-  // Handle checkbox change
+  // Handle checkbox state change
   const handleCheckboxChange = (id: string) => {
-    const updatedUsersState = updatedUsers.map((user) =>
+    const updatedUsers = userList.map((user) =>
       user.id === id ? { ...user, checked: !user.checked } : user
     );
-    onUserChange(updatedUsersState); 
+    setUserList(updatedUsers);
+    onUserChange(updatedUsers); // Pass the updated state back to the parent
   };
 
-  // Filter users based on the search term
-  const filteredUsers = updatedUsers.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter users based on search term
+  const filteredUsers = userList.filter((user) =>
+    user.name.toLowerCase().startsWith(searchTerm.toLowerCase())
   );
 
-  // Sort users: First mapped users, then the rest
+  // Sort users: checked users first
   const sortedUsers = [
     ...filteredUsers.filter((user) => user.checked),
     ...filteredUsers.filter((user) => !user.checked),

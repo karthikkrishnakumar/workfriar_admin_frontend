@@ -6,6 +6,7 @@ import SelectUser from "../user-select/user-select";
 import Icons from "@/themes/images/icons/icons";
 import useRoleService, { User, UserResponse } from "@/module/admin-settings/services/role-service";
 import ButtonComponent from "@/themes/components/button/button";
+import { message } from "antd";
 
 interface MapUserModalProps {
   isVisible: boolean;
@@ -15,6 +16,10 @@ interface MapUserModalProps {
   onClose: () => void;
 }
 
+export interface UserCheckbox extends User{
+  checked : boolean;
+}
+
 const MapUserModal: React.FC<MapUserModalProps> = ({
   isVisible,
   roleId,
@@ -22,10 +27,10 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
   onSave,
   onClose,
 }) => {
+  const { fetchAllUsers, fetchMappedUsers, mapUsersToRole } = useRoleService();
   const [users, setUsers] = useState<User[]>([]);
   const [mappedUsers, setMappedUsers] = useState<User[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]); 
-  const { fetchAllUsers, fetchMappedUsers, mapUsersToRole } = useRoleService();
 
   // Fetch all users and mapped users
   useEffect(() => {
@@ -50,7 +55,7 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
   }, [isVisible, roleId]);
 
   // Handle user selection change
-  const handleUserChange = (updatedUsers: User[]) => {
+  const handleUserChange = (updatedUsers: UserCheckbox[]) => {
     const selectedIds = updatedUsers.filter((user) => user.checked).map((user) => user.id);
     setSelectedUserIds(selectedIds);
     onUserChange && onUserChange(updatedUsers);
@@ -62,13 +67,16 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
       roleId: roleId,
       userIds: selectedUserIds,
     };
+    console.log(payload)
+
 
     const response = await mapUsersToRole(payload.roleId, payload.userIds);
 
     if (response.status) {
       onSave(); 
+      message.success(response.message)
     } else {
-      alert(response.message); 
+      message.error(response.message); 
     }
   };
 

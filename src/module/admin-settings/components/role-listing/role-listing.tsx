@@ -10,13 +10,14 @@ import MapUserModal from "../map-user/map-user-modal/map-user-modal";
 import { departmentOptions, statusOptions } from "../../constants";
 import styles from "./role-listing.module.scss";
 import AddRoleModal from "../role-modal/add-role-modal/add-role-modal";
+import DeleteRoleModal from "../role-modal/delete-role-modal/delete-role-modal";
 
 
 const RoleListingTable: React.FC = () => {
   const { listRoles, updateRole } = useRoleService();
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeModal, setActiveModal] = useState<"add" | "edit" | "map-user" | null>(null);
+  const [activeModal, setActiveModal] = useState<"add" | "edit" | "map-user" | "delete" | null>(null);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const router = useRouter();
   //fetch roles from the service 
@@ -63,8 +64,7 @@ const RoleListingTable: React.FC = () => {
         setActiveModal("map-user");
         break;
       case "delete":
-        setRoles((prevRoles) => prevRoles.filter(({ roleId }) => roleId !== role.roleId));
-        message.success("Role deleted successfully.");
+        setActiveModal("delete");
         break;
       default:
         break;
@@ -192,6 +192,15 @@ const RoleListingTable: React.FC = () => {
           roleId={selectedRole.roleId}
           onSave={() => setActiveModal(null)}
           onClose={() => setActiveModal(null)}
+        />
+      )}
+
+      {activeModal === "delete" && selectedRole?.roleId && (
+        <DeleteRoleModal
+          isVisible
+          roleData={selectedRole}
+          onClose={() => setActiveModal(null)}
+          onRoleDeleted={fetchRoles} 
         />
       )}
     </>
