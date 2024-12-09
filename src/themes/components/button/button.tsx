@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "antd";
 import styles from "./button.module.scss"; // SCSS module for styles
-import Icons from "@/themes/images/icons/icons";
 
 interface ButtonProps {
   label?: string;
@@ -19,6 +18,7 @@ interface ButtonProps {
   disabled?: boolean;
   filter?: boolean; // Add filter flag to props
   className?: string;
+  content?: React.ReactNode; // Content prop for custom rendering
 }
 
 const ButtonComponent: React.FC<ButtonProps> = ({
@@ -29,6 +29,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   disabled = false,
   filter = false, // Default to false if not provided
   className = "",
+  content,
 }) => {
   // Determine class based on the theme prop
   const getButtonClass = (theme: string) => {
@@ -54,6 +55,23 @@ const ButtonComponent: React.FC<ButtonProps> = ({
     }
   };
 
+  // Determine what to render in the button
+  // const renderContent = () => {
+  //   switch (true) {
+  //     case !!content: // Render content if provided
+  //       return content;
+  //     case filter: // Render filter icon with label
+  //       return (
+  //         <span>
+  //           {Icons.filter}
+  //           {label}
+  //         </span>
+  //       );
+  //     default: // Render label as default
+  //       return label;
+  //   }
+  // };
+
   return (
     <Button
       className={`
@@ -64,9 +82,9 @@ const ButtonComponent: React.FC<ButtonProps> = ({
       ${link && styles.linkButton}
       `}
       onClick={onClick}
+      icon={content}
     >
-      {!filter ? label : Icons.filter}{" "}
-      {/* Only show label if filter is false */}
+      {label}
     </Button>
   );
 };

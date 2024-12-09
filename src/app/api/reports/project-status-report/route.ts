@@ -94,16 +94,33 @@ export async function POST(request: Request) {
         progress: 95,
         comments: "All deliverables have been completed successfully.",
       },
+      {
+        _id: "3",
+        project_name: "Ruby Innovations",
+        project_lead: "Jane Smith",
+        actual_start_date: "03/01/2024",
+        actual_end_date: "09/15/2024",
+        reporting_period: "Innovate Qatar",
+        progress: 95,
+        comments: "All deliverables have been completed successfully.",
+      },
+      // Add more dummy data as needed
     ];
 
-    // Extract year and month from the request body
+    // Parse request body to get pagination parameters
+    const body = await request.json();
+    const page = body.page || 1; // Default to page 1
+    const pageSize = body.pageSize || 10; // Default to 10 items per page
 
-    // Extract user ID from the request headers (e.g., for user-specific filtering)
-    const startDateHeader = request.headers.get("userID");
-    const userId = startDateHeader ? parseInt(startDateHeader) : 1;
+    // Calculate the start and end indices for the slice
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+
+    // Paginate the dataset
+    const paginatedProjects = projects_status.slice(startIndex, endIndex);
 
     // Map to the required response structure
-    const response = projects_status.map((report) => ({
+    const response = paginatedProjects.map((report) => ({
       id: report._id,
       project_name: report.project_name,
       project_lead: report.project_lead,
@@ -114,9 +131,12 @@ export async function POST(request: Request) {
       comments: report.comments,
     }));
 
-    // Return the mapped response
+    console.log(response)
+
+    // Return the paginated response along with total count
     return NextResponse.json({
       projects: response,
+      total: projects_status.length, // Total number of items in the dataset
     });
   } catch (error) {
     console.error("Error fetching project status data:", error);

@@ -1,5 +1,5 @@
 "use client";
-
+import EmployeeCard from "@/module/approval-center/components/employee-list-tab/employee-list/employee-card/employee-card";
 import React, { useRef, useState } from "react";
 
 
@@ -9,7 +9,7 @@ export default function Page() {
 
   return (
     <div ref={parentRef} style={{ margin: "100px" }}>
-      <button onClick={() => setIsVisible(!isVisible)}>Toggle Dropdown</button>
+      <EmployeeCard name="Yadhu" />
     </div>
   );
 }

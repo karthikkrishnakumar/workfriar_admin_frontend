@@ -1,0 +1,45 @@
+.profileDetailsWrapper {
+  background-color: white;
+  border-radius: 20px;
+  width: 100%;
+  padding: 24px;
+
+  .imageUploadContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+  }
+
+  .topRow {
+    display: flex;
+    flex-direction: row;
+
+    Button {
+      width: 119px;
+      height: 38px;
+      padding: 8px 24px 8px 24px;
+      gap: 10px;
+      border-radius: 24px;
+      border: 1px solid var(--Primary-dark, #D4983F);
+      line-height: 19.6px;
+      margin-left: 860px;
+      font-family: var(--font-rubik);
+    }
+  }
+
+  .imageCircle {
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+    background: var(--Secondary-light, #F1EDE6);
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+  }
+}

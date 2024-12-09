@@ -1,0 +1,105 @@
+.tabbedComponent {
+  border-radius: 8px;
+  display: flex;
+  padding-top: 30px;
+  height: 100%;
+
+  .tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .tabButton {
+    border: none;
+    background-color: transparent;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 202px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--secondary-font-color-dark);
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--primary-golden-color-dark);
+      background-color: rgba(
+        255,
+        215,
+        0,
+        0.1
+      ); // Light golden background on hover
+    }
+  }
+  .tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .activeTab {
+    color: var(--primary-golden-color-dark);
+    background-color: var(--filter-tab-bg-color);
+  }
+
+  .tabContent {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: opacity 0.3s, transform 0.3s;
+
+    // Add animation for dynamic changes
+    &.fade-enter {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    &.fade-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    // Dynamic content styles
+    .filterSection {
+      margin-bottom: 16px;
+
+      h4 {
+        font-size: 18px;
+        color: var(--primary-font-color-dark);
+        margin-bottom: 8px;
+      }
+
+      .filterOptions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        .option {
+          font-size: 14px;
+          color: var(--secondary-font-color-dark);
+          padding: 8px 12px;
+          border-radius: 6px;
+          border: 1px solid var(--secondary-border-color);
+          transition: all 0.3s;
+
+          &:hover {
+            background-color: var(--hover-bg-color);
+            color: var(--primary-font-color-dark);
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}

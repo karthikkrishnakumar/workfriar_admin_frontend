@@ -1,6 +1,6 @@
 import React from 'react'
 
-const PastDueTable = () => {
+const ReviewAllTimeSheets = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const PastDueTable = () => {
   )
 }
 
-export default PastDueTable;
+export default ReviewAllTimeSheets;

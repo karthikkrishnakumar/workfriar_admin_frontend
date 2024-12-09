@@ -1,0 +1,162 @@
+.formRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  max-height: 902px;
+  margin-left: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &.multiField {
+    .formField {
+      flex: 1;
+      max-width: 525px;
+    }
+  }
+
+  .modal {
+    :global(.ant-modal-body) {
+      margin-left: 15px;
+    }
+  }
+
+
+
+  .formField {
+
+    :global(.ant-form-item) {
+      margin-bottom: 0;
+
+    }
+
+    :global(.ant-form-item-label > label) {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 18.2px;
+      color: var(--Text-grey, #6A6A6D);
+      margin-bottom: 4px;
+    }
+
+    :global(.ant-form-item-control-input-content) {
+      width: 100%;
+    }
+
+    :global(.ant-select-arrow) {
+      top: 80%;
+      color: #1B1717;
+    }
+
+
+
+    :global(.ant-input-outlined),
+    :global(.ant-select-selector),
+    :global(.ant-picker) {
+      border: 1px solid #afabab;
+      border-radius: 6px;
+      height: 48px;
+    }
+
+    :global(.ant-input-textarea) {
+      height: auto;
+      resize: none;
+      border: 1px solid #afabab;
+      border-radius: 6px;
+    }
+
+    :global(.ant-form-item-additional) {
+      margin-top: 15px;
+    }
+
+  }
+}
+
+.customModal :global {
+  .ant-modal-content {
+    border-radius: 24px !important;
+  }
+}
+
+
+.modalTitle {
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 33.6px;
+  text-align: left;
+  margin-left: 15px;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.2px;
+  text-align: left;
+}
+
+.secondaryButton {
+  min-width: 93px;
+  height: 42px;
+  padding: 12px 24px 12px 24px;
+  border-radius: 24px;
+  border: 1px solid var(--Black, #242424);
+  background-color: white;
+}
+
+.primaryButton {
+  min-width: 80px;
+  height: 42px;
+  padding: 12px 24px 12px 24px;
+  border-radius: 24px;
+  background: var(--Black, #242424);
+  color: white;
+}
+
+.imageUploadContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  // gap: 860px;
+}
+
+.topRow {
+  display: flex;
+  flex-direction: row;
+
+  Button {
+    width: 119px;
+    height: 38px;
+    padding: 8px 24px 8px 24px;
+    gap: 10px;
+    border-radius: 24px;
+    border: 1px solid var(--Primary-dark, #D4983F);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 19.6px;
+    text-align: left;
+    margin-left: 860px;
+    position: relative;
+  }
+}
+
+.imageCircle {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+  background: var(--Secondary-light, #F1EDE6);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

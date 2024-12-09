@@ -8,6 +8,7 @@ import ButtonComponent from "@/themes/components/button/button";
 import ProjectDetails from "../project-report-details/project-report-datails";
 import { fetchProjectDetails } from "../../services/project-status-report/project-reports-details";
 import { message } from "antd";
+import AddEditReport from "../add-edit-report-modal/add-edit-report-modal";
 
 interface ReportTabProps {
   id: string;
@@ -17,6 +18,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const tabs = [
     {
@@ -31,7 +33,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const result = await fetchProjectDetails(id as string); // Make sure you pass the ID
+        const result = await fetchProjectDetails(id); // Make sure you pass the ID
         setProject(result);
       } catch (error) {
         setError("Failed to fetch project details.");
@@ -44,22 +46,31 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
     fetchDetails();
   }, []); // Empty dependency array means this effect runs once on mount
 
+  const handleClickEdit = () => {
+    setIsModalVisible(true); // Open the modal when the filter button is clicked
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false); // Close the modal when required
+  };
+
   return (
     <div className={styles.timesheetTabsWrapper}>
       {loading ? (
         <div>
           <SkeletonLoader
             paragraph={{ rows: 2 }}
-            classNameItem={styles.customSkeleton}
+            classNameItem={styles.customSkeletonItem}
           />
-          <SkeletonLoader profile classNameItem={styles.customSkeletonItem} />
+          <SkeletonLoader profile classNameItem={styles.customSkeleton} />
           <SkeletonLoader
-            paragraph={{ rows: 10 }}
-            classNameItem={styles.customSkeleton}
+            paragraph={{ rows: 8 }}
+            classNameItem={styles.customSkeletonItem}
           />
           <SkeletonLoader
-            paragraph={{ rows: 7 }}
-            classNameItem={styles.customSkeleton}
+            count={2}
+            paragraph={{ rows: 4 }}
+            classNameItem={styles.customSkeletonItem}
           />
         </div>
       ) : (
@@ -70,10 +81,15 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
               <ButtonComponent
                 label="Edit Report"
                 className={styles.mixedGold}
+                onClick={handleClickEdit}
               />
             }
           />
         </div>
+      )}
+
+      {isModalVisible && (
+        <AddEditReport onClose={handleCloseModal} mode="edit" />
       )}
     </div>
   );

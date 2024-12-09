@@ -17,8 +17,11 @@ const ModuleHeaderWrapper = () => {
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false },
     { title: "Organization", path: "/organization", backButtonNeeded: false },
     { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false },
+    { title: "Timesheet Report", path: "/time-sheet-report", backButtonNeeded: false },
+    { title: "Profile", path: "/profile", backButtonNeeded: true },
     { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false },
     { title: "Report details", path: "/project-status-report/report-details/[id]", backButtonNeeded: true  },
+    { title: "Review Timesheet", path: "/time-sheet/review-timesheet/[id]", backButtonNeeded: true  },
   ];
 
   // Function to match the dynamic path
@@ -33,7 +36,7 @@ const ModuleHeaderWrapper = () => {
   );
 
   // Fallback in case no matching page is found
-  const title = currentPage?.title || "Default Title";
+  const title = currentPage?.title ?? "Default Title";
   const isBackButtonNeeded = currentPage?.backButtonNeeded || false;
 
   return (

@@ -1,4 +1,5 @@
 "use client ";
+
 import React, { useEffect, useState } from "react";
 import { fetchTimeSheetReportData } from "../../services/timesheet-report/timesheet-report-services"; // Adjust the path if needed
 import CustomTable from "@/themes/components/custom-table/custom-table"; // Adjust the path if needed
@@ -73,13 +74,17 @@ const TimesheetReport = ({ activeTab }: { activeTab: string }) => {
       title: "Employee Name",
       key: "employeeName",
       align: "left" as const,
-      width: 200,
     },
     { title: "Year", key: "year", align: "left" as const },
     { title: "Month", key: "month", align: "left" as const },
-    { title: "Period", key: "dateRange", align: "left" as const, width: 200 },
+    { title: "Period", key: "dateRange", align: "left" as const, width: 280 },
     { title: "Time Logged", key: "loggedHours", align: "left" as const },
-    { title: "Time Approved", key: "approvedHours", align: "left" as const },
+    {
+      title: "Time Approved",
+      key: "approvedHours",
+      align: "left" as const,
+      width: 120,
+    },
   ];
 
   // Get the exclude fields for the active tab
@@ -90,16 +95,20 @@ const TimesheetReport = ({ activeTab }: { activeTab: string }) => {
     (column) => !excludeFields.includes(column.key)
   );
 
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
-    <div>
+    <div className={styles.timeSheetTable}>
       {loading ? (
         <div>
           <SkeletonLoader count={3} paragraph={{ rows: 5 }} />
         </div> // Display loading state
-      ) : error ? (
-        <div>{error}</div> // Display error state
       ) : (
-        <CustomTable columns={filteredColumns} data={data} />
+        <div className={styles.tableWrapper}>
+          <CustomTable columns={filteredColumns} data={data} />
+        </div>
       )}
     </div>
   );

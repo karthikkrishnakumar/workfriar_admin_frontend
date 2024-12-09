@@ -10,7 +10,7 @@
 
 
 .customTabs:global(.ant-tabs .ant-tabs-tab+.ant-tabs-tab){
-    @media(max-width:850px){
+    @media(max-width:890px){
         margin: 0 0 0 15px;
     }
 }
@@ -28,11 +28,13 @@
     font-weight: var(--default-font-weight);
     width: max-content !important;
 
-    @media(max-width:850px){
+    @media(max-width:890px){
         font-size: var(--default-font-size);
     }
-
 }
+
+
+
 // color of active tab's font
 .customTabs:global(.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
     color: var(--primary-font-color-dark);
@@ -40,7 +42,7 @@
     font-weight: var(--sub-heading-font-weight);
     transition: all 0.4s ease !important;
 
-    @media(max-width:850px){
+    @media(max-width:890px){
         font-size: var(--default-font-size);
     }
 }
@@ -55,19 +57,63 @@
     transform: none !important;
 }
 
+.customTabs:global(.ant-tabs .ant-tabs-tab-btn:active){
+    color: var(--primary-font-color-dark) !important;
+    font-weight: var(--sub-heading-font-weight) !important;
+}
+
 // color of tab's font when not active
 .customTabs:global(.ant-tabs .ant-tabs-tab-btn){
     color: var(--grey-font-color);
     font-size: var(--heading-2-size);
     font-weight: var(--default-font-weight);
     transition: all 0.4s ease !important;
+    outline: none;
 
-    @media(max-width:850px){
+    @media(max-width:890px){
         font-size: var(--default-font-size);
     }
 }
 
-.labelWrapper span{
-    background-color: aqua;
+.labelWrapper{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    column-gap: 5px;
 }
+
+.labelWrapper span{
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--disabled-count-background);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media(max-width:890px){
+        width: 18px;
+        height: 18px;
+    }
+
+    p{
+        font-size: 13px;
+        font-weight: var(--default-font-size);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: max-content;
+    }
+}
+
+.customTabs:global(.ant-tabs .ant-tabs-tab.ant-tabs-tab-active) .labelWrapper span {
+    background-color: var(--active-count-background);
+    color: var(--primary-golden-color-dark);
+
+}
+
 

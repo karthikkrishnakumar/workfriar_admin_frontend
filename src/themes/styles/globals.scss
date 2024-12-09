@@ -12,10 +12,12 @@
   --danger-secondary-font-color: #ce9d9d;
   --success-font-color: #159117;
   --grey-font-color: #686869;
+  --holiday-font-color:#133E87;
 
   /* background */
   --page-background: #f4f4f4;
   --container-color: #ffffff;
+  --contanier-secondary-color: #FEFEFE;
   --holiday-background:#FFF1CF;
   --golden-background-color: #ffeac9;
   --scrollbar-background: #e9e9e9;
@@ -29,7 +31,10 @@
   --success-background-light-color: #f0ffe4;
   --success-background-dark-color: #40a813;
   --searchbar-background: #f0f0f0;
+  --disabled-count-background:#DDDDDD;
+  --active-count-background:#F0E7D6;
   --filter-tab-bg-color:#F1EDE6;
+  --header-background-color:#EEEEEE;
 
   /* others */
   --primary-golden-color-light: #ffe3b8;
@@ -78,9 +83,22 @@ body {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: var(--font-rubik);
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.ant-modal-root .ant-modal-mask{
+  background-color: #2727272e !important;
+}
+
+.ant-modal-root .ant-modal-wrap{
+  padding-left: 293px !important;
+
+    @media(max-width:1200px){
+      padding-left: 80px !important;
+    }
 }

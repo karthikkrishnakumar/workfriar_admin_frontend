@@ -1,3 +1,19 @@
+.timeSheetTable {
+  width: 100% !important;
+  overflow: scroll;
+  scroll-behavior: smooth;
+  border-radius: 8px;
+  padding-top: 10px;
+  height: 100%;
+  padding-bottom: 36px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tableWrapper {
+  min-width: 950px;
+}
 .projectCell {
   display: flex;
   align-items: center;
@@ -11,24 +27,24 @@
 .projectName {
   margin-left: 10px;
   color: var(--black);
+  font-size: 16px;
 }
 
 .employeeNameCell {
   padding: 20px;
   color: var(--black);
   text-align: left;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .yearCell,
 .monthCell,
-.dateRangeCell,
 .loggedHoursCell,
 .approvedHoursCell {
   padding: 10px;
   color: var(--black);
   text-align: left;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .yearCell {
@@ -41,7 +57,11 @@
 }
 
 .dateRangeCell {
-  text-align: center;
+  padding: 10px;
+  padding-left: 5px;
+  color: var(--black);
+  text-align: left;
+  font-size: 16px;
 }
 
 .loggedHoursCell {
