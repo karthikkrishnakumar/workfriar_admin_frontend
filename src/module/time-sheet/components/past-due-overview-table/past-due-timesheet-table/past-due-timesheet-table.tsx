@@ -2,34 +2,37 @@
 
 import React, { ReactNode, useState, useEffect, useRef } from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
-import styles from "./all-timesheets.module.scss";
+import styles from "./past-due-timesheet-table.module.scss";
 import TimeInput from "@/themes/components/time-input/time-input";
 import Icons from "@/themes/images/icons/icons";
-import TextAreaButton from "../text-area-button/text-area-button";
+import TextAreaButton from "../../text-area-button/text-area-button";
 import ButtonComponent from "@/themes/components/button/button";
 import DropDownModal from "@/themes/components/drop-down-modal/drop-down-modal";
-import ProjectSelector from "../project-selector/project-selector";
-import TaskSelector from "../task-selector/task-selector";
+import ProjectSelector from "../../project-selector/project-selector";
+import TaskSelector from "../../task-selector/task-selector";
 import {
   TimeEntry,
   TimesheetDataTable,
   WeekDaysData,
-} from "../../services/time-sheet-services";
+} from "../../../services/time-sheet-services";
 import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
 
-interface AllTimeSheettableProps {
+interface PastDueTableProps {
   timesheetData?: TimesheetDataTable[];
   setTimeSheetData: (data: TimesheetDataTable[]) => void;
   daysOfWeek: WeekDaysData[];
+  backButtonFunction: () => void;
 }
 
-const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
+const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
   timesheetData: initialTimesheetData = [],
   setTimeSheetData,
   daysOfWeek,
+  backButtonFunction
+
 }) => {
   const [timesheetData, setLocalTimesheetData] =
     useState<TimesheetDataTable[]>(initialTimesheetData);
@@ -276,20 +279,18 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         </div>
       ),
       details: (
-          <TextAreaButton
-            buttonvalue={timesheet.taskDetail}
-            onclickFunction={() => textAreaOnclick(index)}
-            showTaskDetailModal={
-              editingRowIndex === index && showTaskDetailModal
-            }
-            value={timesheetData[index].taskDetail} 
-            setvalue={(newValue) => {
-              const updatedData = [...timesheetData];
-              updatedData[index].taskDetail = newValue;
-              setLocalTimesheetData(updatedData);
-              setTimeSheetData(updatedData);
-            }}
-          />
+        <TextAreaButton
+          buttonvalue={timesheet.taskDetail}
+          onclickFunction={() => textAreaOnclick(index)}
+          showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
+          value={timesheetData[index].taskDetail}
+          setvalue={(newValue) => {
+            const updatedData = [...timesheetData];
+            updatedData[index].taskDetail = newValue;
+            setLocalTimesheetData(updatedData);
+            setTimeSheetData(updatedData);
+          }}
+        />
       ),
       ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
       total: (
@@ -322,11 +323,19 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         </div>
       </div>
       <div className={styles.actionButtons}>
-        <ButtonComponent label="Save" theme="black" onClick={handleSave} />
-        <ButtonComponent label="Submit" theme="white" onClick={handleSubmit} />
+        <div>
+          <ButtonComponent label="Save" theme="black" onClick={handleSave} />
+          <ButtonComponent
+            label="Submit"
+            theme="white"
+            onClick={handleSubmit}
+          />
+        </div>
+
+        <span className={styles.backButton} onClick={backButtonFunction}> {"< Back"}</span>
       </div>
     </div>
   );
 };
 
-export default AllTimesheetsTable;
+export default PastDueTimesheetsTable;

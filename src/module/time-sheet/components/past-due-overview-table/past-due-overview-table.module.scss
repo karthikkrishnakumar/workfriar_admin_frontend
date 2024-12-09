@@ -1,0 +1,15 @@
+.dataCell{
+    padding: 16px;
+    font-size: var(--heading-3-size);
+    color: var(--primary-font-color-dark);
+}
+
+.actionDataCell{
+    padding-left: 0px;
+    color: var(--primary-golden-color-dark);
+    text-decoration: underline;
+}
+
+.customSkeleton{
+    background-color: rgba(123, 121, 121, 0.085)!important;
+}

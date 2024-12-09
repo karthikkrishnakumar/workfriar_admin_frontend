@@ -52,15 +52,28 @@
 
 
 .actionButtons {
-  margin-bottom: 20px;
+  margin: 0;
   right: 10px;
-  margin-top: 20px;
+  margin-top: 10px;
   display: flex;
   flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
   gap: 10px;
   width: 100%;
   height: max-content;
-  padding-right: 7px;
+
+  .backButton{
+    background-color: transparent;
+    padding: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: var(--heading-3-size);
+    color: var(--primary-golden-color-dark);
+    font-weight: var(--sub-heading-font-weight);
+    text-decoration: underline;
+  }
 }
 
 .tableContainer {

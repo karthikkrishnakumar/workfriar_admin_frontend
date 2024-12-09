@@ -47,6 +47,7 @@ export const findCurrentWeek = (
 };
 
 // Determines which weeks should be disabled based on today's date
+
 export const getDisabledWeeks = (
   weekData: { start: string; end: string }[]
 ): boolean[] => {
@@ -67,6 +68,26 @@ export const getDisabledWeeks = (
   return disabledWeeks;
 };
 
+export const getFutureWeeks = (
+  weekData: { start: string; end: string }[]
+): boolean[] => {
+  const oneMonthAdvance = new Date();
+  oneMonthAdvance.setMonth(oneMonthAdvance.getMonth() + 1);
+  
+  // Map the input data to the disabled weeks array
+  const futureWeeks = weekData.map((week) => {
+    const weekStart = new Date(week.start);
+    const disable = weekStart > oneMonthAdvance; // Disable weeks starting after today
+    return disable;
+  });
+
+  // Check if all entries are false
+  if (futureWeeks.every((disable) => !disable)) {
+    futureWeeks.push(true); // Add a `true` if all are false
+  }
+
+  return futureWeeks;
+};
 
 //in dashboard due dates getting
 export interface TimesheetDay {
