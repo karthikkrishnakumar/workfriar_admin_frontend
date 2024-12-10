@@ -43,7 +43,7 @@ export const findCurrentWeek = (
     }
   }
 
-  return weekData[0].week; // Default to the first week if no match is found
+  return weekData[weekData.length-1].week; // Default to the first week if no match is found
 };
 
 // Determines which weeks should be disabled based on today's date

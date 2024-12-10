@@ -3,4 +3,4 @@ node_modules
 .next
 package-lock.json
 yarn.lock
-./src/app/api
+/src/app/api
