@@ -6,8 +6,8 @@ import type { TabsProps } from "antd";
 
 interface TabComponentProps {
   headings: { key: string; label: string | ReactNode; content: React.ReactNode }[]; // Array of headings and content
-  subHeading?: ReactNode;
   onChange?: (key: string) => void;
+  subHeading?: ReactNode;
   activeKey?: string;
 }
 
@@ -18,8 +18,8 @@ interface TabComponentProps {
  */
 const TabComponent: React.FC<TabComponentProps> = ({
   headings,
-  subHeading,
   onChange,
+  subHeading,
   activeKey,
 }) => {
   // Map headings into TabItems format for Ant Design

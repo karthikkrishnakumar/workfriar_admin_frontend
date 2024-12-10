@@ -1,8 +1,8 @@
 import ProjectReportTabs from "@/module/reports/components/project-report-tabs/project-report-tabs";
 
-export default function page () {
+export default function page ({ params }: { params: { id: string } }) {
   return (
-    <ProjectReportTabs/>
+    <ProjectReportTabs id={params.id}/>
   )
 }
 

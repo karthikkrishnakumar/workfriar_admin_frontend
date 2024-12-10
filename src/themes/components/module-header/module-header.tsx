@@ -32,7 +32,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
       </div>
 
       <div className={styles.leftContainer}>
-        <SearchBar placeholder="Search" />
+        <SearchBar placeholder="Search"/>
         <ProfilePreview />
       </div>
     </div>

@@ -17,17 +17,30 @@ const ModuleHeaderWrapper = () => {
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false },
     { title: "Organization", path: "/organization", backButtonNeeded: false },
     { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false },
-    { title: "Time sheet reports", path: "/time-sheet-report", backButtonNeeded: false },
+    { title: "Timesheet Report", path: "/time-sheet-report", backButtonNeeded: false },
     { title: "Profile", path: "/profile", backButtonNeeded: true },
     { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false },
-    { title: "Report details", path: "/project-status-report/report-details", backButtonNeeded: true  },
+    { title: "Report details", path: "/project-status-report/report-details/[id]", backButtonNeeded: true  },
+    { title: "Review Timesheet", path: "/time-sheet/review-timesheet/[id]", backButtonNeeded: true  },
+    { title: "Admin Settings", path: "/settings", backButtonNeeded: false },
+    { title: "Permissions Settings", path: "/settings/permissions", backButtonNeeded: false },
+    { title: "Notifications", path: "/notifications", backButtonNeeded: false },
   ];
 
+  // Function to match the dynamic path
+  const matchPath = (path: string, dynamicPath: string) => {
+    const staticSegments = dynamicPath.split("/").filter((seg) => !seg.startsWith("["));
+    return staticSegments.every((seg) => path.includes(seg));
+  };
+
+
   // Find the matching page based on the current pathname
-  const currentPage = pages.find((page) => page.path === pathname);
+  const currentPage = pages.find((page) =>
+    page.path.includes("[id]") ? matchPath(pathname, page.path) : page.path === pathname
+  );
 
   // Fallback in case no matching page is found
-  const title = currentPage?.title || "Default Title";
+  const title = currentPage?.title ?? "Default Title";
   const isBackButtonNeeded = currentPage?.backButtonNeeded || false;
 
   return (

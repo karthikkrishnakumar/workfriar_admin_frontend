@@ -1,36 +1,36 @@
-.iconInputFieldLeftWrapper{
-    display: flex;
-    flex-direction: row;
+.iconInputFieldLeftWrapper {
+  display: flex;
+  flex-direction: row;
 }
 
-.iconInputFieldRightWrapper{
-    display: flex;
-    flex-direction: row-reverse;
+.iconInputFieldRightWrapper {
+  display: flex;
+  flex-direction: row-reverse;
 }
 
 .inputfield {
-    background-color: transparent;
-    outline: none;
-    border: none;
-    width: 100%;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  width: 100%;
 }
-.inputfield:hover{
-    background-color: transparent;
+.inputfield:hover {
+  background-color: transparent;
 }
-.inputfield:focus{
-    background-color: transparent;
-    color: #000;
-    border: none;
-    outline: none;
-    box-shadow: none;
-}
-
-.icon{
-    width: 15px;
-    height: 15px;
+.inputfield:focus {
+  background-color: transparent;
+  color: #000;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
-.inputfield::placeholder{
-    font-weight: var(--thin-font-weight);
-    font-size: var(--default-font-size);
+.icon {
+  width: 15px;
+  height: 15px;
+}
+
+.inputfield::placeholder {
+  font-weight: var(--thin-font-weight);
+  font-size: var(--default-font-size);
 }

@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Tooltip, Dropdown, message } from "antd";
+import { Tooltip, Dropdown, message, Pagination } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
-import { useRouter } from "next/navigation"; // For navigation
+import { useRouter } from "next/navigation";
 import { fetchProjectStatusReport } from "../../services/project-status-report/project-status-report";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./project-status-report.module.scss";
@@ -12,7 +12,10 @@ import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"
 const ProjectStatusReport: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter(); // Initialize router
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
+  const pageSize = 5; // Number of rows per page
+  const router = useRouter();
 
   const columns = [
     { title: "Project", key: "project", align: "left" as const, width: 220 },
@@ -40,118 +43,83 @@ const ProjectStatusReport: React.FC = () => {
 
   const handleMenuClick = (e: { key: string }, record: any) => {
     if (e.key === "Details") {
-      // Navigate to the ProjectDetails page with the selected project's ID
-      router.push(`/project-status-report/report-details?id=${record.id}`);
+      router.push(`/project-status-report/report-details/${record.id}`);
     } else if (e.key === "edit") {
       console.log("Edit clicked for:", record);
     }
   };
 
-  const handleRowClick = (record: any) => {
-    // Navigate to the ProjectDetails page when the row or project cell is clicked
-    router.push(`/project-status-report/report-details?id=${record.id}`);
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    try {
+      const result = await fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
+      const formattedData = result.projects.map((item: any) => ({
+        id: item._id,
+        project: (
+          <div className={styles.projectCell}>
+            <CustomAvatar name={item.project_name} size={50} />
+            <div className={styles.projectName}>{item.project_name}</div>
+          </div>
+        ),
+        projectLead: (
+          <div className={styles.projectLeadCell}>
+            <div className={styles.name}>{item.project_lead}</div>
+          </div>
+        ),
+        date: (
+          <div className={styles.dateCell}>
+            <div>
+              {item.actual_start_date} - {item.actual_end_date}
+            </div>
+          </div>
+        ),
+        reportingPeriod: (
+          <div className={styles.reportingCell}>
+            <div>{item.reporting_period}</div>
+          </div>
+        ),
+        progress: (
+          <div className={styles.progressCell}>
+            <div>{item.progress}%</div>
+          </div>
+        ),
+        comments: (
+          <div className={styles.commentsCell}>
+            <Tooltip title={item.comments}>
+              <span>{item.comments.slice(0, 20)}...</span>
+            </Tooltip>
+          </div>
+        ),
+        action: (
+          <Dropdown
+            menu={{
+              items: menuItems,
+              onClick: (e) => handleMenuClick(e, item),
+            }}
+            trigger={["click"]}
+          >
+            <span className={styles.deleteButton}>
+              <MoreOutlined className={styles.threeDotButton} />
+            </span>
+          </Dropdown>
+        ),
+      }));
+      setData(formattedData);
+      setTotalRecords(result.total); // Set total records for pagination
+    } catch (error) {
+      message.error("Failed to fetch project status report.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await fetchProjectStatusReport();
-        const formattedData = result.projects.map((item: any) => ({
-          id: item._id, // Include the project ID
-          project: (
-            <div
-              className={styles.projectCell}
-              onClick={() => handleRowClick(item)} // Make the project cell clickable
-              role="button"
-              tabIndex={0}
-            >
-              <CustomAvatar name={item.project_name} size={50} />
-              <div className={styles.projectName}>{item.project_name}</div>
-            </div>
-          ),
-          projectLead: (
-            <div
-              className={styles.projectLeadCell}
-              onClick={() => handleRowClick(item)} // Make the project cell clickable
-              role="button"
-              tabIndex={0}
-            >
-              <div className={styles.name}>{item.project_lead}</div>
-            </div>
-          ),
-          date: (
-            <div
-              className={styles.dateCell}
-              onClick={() => handleRowClick(item)} // Make the project cell clickable
-              role="button"
-              tabIndex={0}
-            >
-              <div>
-                {item.actual_start_date} - {item.actual_end_date}
-              </div>
-            </div>
-          ),
-          reportingPeriod: (
-            <div
-              className={styles.reportingCell}
-              onClick={() => handleRowClick(item)} // Make the project cell clickable
-              role="button"
-              tabIndex={0}
-            >
-              <div>{item.reporting_period}</div>
-            </div>
-          ),
-          progress: (
-            <div
-              className={styles.progressCell}
-              onClick={() => handleRowClick(item)} // Make the project cell clickable
-              role="button"
-              tabIndex={0}
-            >
-              <div>{item.progress}%</div>
-            </div>
-          ),
-          comments: (
-            <div
-              className={styles.commentsCell}
-              onClick={() => handleRowClick(item)} // Make the project cell clickable
-              role="button"
-              tabIndex={0}
-            >
-              <Tooltip title={item.comments}>
-                <span>{item.comments.slice(0, 20)}...</span>
-              </Tooltip>
-            </div>
-          ),
-          action: (
-            <Dropdown
-              menu={{
-                items: menuItems,
-                onClick: (e) => handleMenuClick(e, item),
-              }}
-              trigger={["click"]}
-            >
-              <span
-                className={styles.deleteButton}
-                role="button"
-                tabIndex={0}
-                style={{ cursor: "pointer" }}
-              >
-                <MoreOutlined className={styles.threeDotButton} />
-              </span>
-            </Dropdown>
-          ),
-        }));
-        setData(formattedData);
-      } catch (error) {
-        message.error("Failed to fetch project status report.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchData(currentPage); // Fetch data for the current page
+  }, [currentPage]);
 
-    fetchData();
-  }, []);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); // Update the current page
+  };
 
   return (
     <div className={styles.projectStatusReport}>
@@ -165,14 +133,29 @@ const ProjectStatusReport: React.FC = () => {
           />
           <SkeletonLoader
             count={1}
-            paragraph={{ rows: 15 }}
-            className={styles.customSkeleton}
+            paragraph={{ rows: 4 }}
+            classNameItem={styles.customSkeletonItem}
+          />
+          <SkeletonLoader
+            count={3}
+            paragraph={{ rows: 5 }}
             classNameItem={styles.customSkeletonItem}
           />
         </>
       ) : (
         <div className={styles.tableWrapper}>
           <CustomTable columns={columns} data={data} />
+          <div className={styles.paginationDiv}>
+            <Pagination
+              className={styles.pagination}
+              total={totalRecords}
+              pageSize={pageSize}
+              current={currentPage}
+              onChange={handlePageChange}
+              showSizeChanger={false}
+              style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
+            />
+          </div>
         </div>
       )}
     </div>
