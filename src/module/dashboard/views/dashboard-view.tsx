@@ -3,7 +3,7 @@ import Dashboard from "../components/dashboard-component/dashboard"
 
 const DashboardView =() => { 
   return (
-   <Dashboard/>
+    <Dashboard/>
   )
 }
 

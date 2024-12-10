@@ -1,0 +1,27 @@
+
+.userSelectdropdownContent {
+  
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.userList {
+  margin-top: 24px;
+  overflow-y: auto; /* Enable scrolling when content exceeds the max height */
+}
+
+.userItem {
+  margin-bottom:9px;
+  padding:9px 4px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color:var(--primary-font-color-dark);
+  font-size: var(--heading-3-size);
+}
+
+.userItem:hover{
+  background-color: rgba(0, 0, 0, 0.046)
+}
