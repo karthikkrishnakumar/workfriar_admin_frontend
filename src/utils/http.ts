@@ -1,8 +1,10 @@
 import Axios, { AxiosRequestConfig } from "axios";
+
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 const axioClient = Axios.create({
   headers: {
     "X-Requested-With": "XMLHttpRequest",
-    "userID":"1"
   },
   withCredentials: true,
 });
@@ -10,15 +12,17 @@ const axioClient = Axios.create({
 const http = () => {
   /**
    * HTTP POST method for API request
-   * @param url
-   * @param props
-   * @returns
+   * @param url - API endpoint path
+   * @param props - Request data
+   * @param hasFile - Flag for file upload
+   * @returns Response data
    */
   const post = async (
     url: string,
-    props?: JSON | FormData | {},
+    props?: JSON | FormData,
     hasFile?: boolean
   ) => {
+    const fullUrl = `${backendUrl}${url}`;
     let config: AxiosRequestConfig = {
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +36,7 @@ const http = () => {
       };
     }
     const response = await axioClient
-      .post(url, props, config)
+      .post(fullUrl, props, config)
       .then((response) => {
         if (response.data == undefined || response.data == "") {
           response.data = {
