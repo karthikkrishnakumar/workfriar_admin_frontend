@@ -7,6 +7,8 @@ import type { TabsProps } from "antd";
 interface TabComponentProps {
   headings: { key: string; label: string | ReactNode; content: React.ReactNode }[]; // Array of headings and content
   subHeading?: ReactNode;
+  onChange?: (key: string) => void;
+  activeKey?: string;
 }
 
 /**
@@ -17,6 +19,8 @@ interface TabComponentProps {
 const TabComponent: React.FC<TabComponentProps> = ({
   headings,
   subHeading,
+  onChange,
+  activeKey,
 }) => {
   // Map headings into TabItems format for Ant Design
   const tabItems: TabsProps["items"] = headings.map((heading) => ({
@@ -30,7 +34,7 @@ const TabComponent: React.FC<TabComponentProps> = ({
     <div className={styles.subHeading}>
       {subHeading}
     </div>
-    <Tabs items={tabItems} className={styles.customTabs} />
+    <Tabs items={tabItems} className={styles.customTabs} onChange={onChange} activeKey={activeKey}/>
   </div>);
 };
 

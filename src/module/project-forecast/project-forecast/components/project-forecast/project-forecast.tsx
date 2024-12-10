@@ -7,18 +7,31 @@ import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-forecast.module.scss";
 import dayjs from "dayjs";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
+import EditForecastModal from "../edit-forecast-modal/edit-forecast-modal";
+import AddForecastModal from "../add-forecast-modal/add-forecast-modal";
 
 /**
  * Interface representing the ProjectForecast data structure.
  * @interface ProjectForecastData
  */
-interface ProjectForecastData {
+export interface ProjectForecastData {
   key: string;
   oppurtunity_name: string;
   opportunity_manager: string;
   client_name: string;
   opportunity_start_date: string | dayjs.Dayjs;
-  opportunity_end_date: string | dayjs.Dayjs;
+  opportunity_close_date: string | dayjs.Dayjs;
+  opportunity_description: string;
+  billing_model: string;
+  expected_start_date: string | dayjs.Dayjs;
+  expected_end_date: string | dayjs.Dayjs;
+  expected_resource_breakdown: string;
+  estimated_value: string;
+  product_manager: string;
+  project_manager: string;
+  team_lead: string;
+  account_manager: string;
+  estimated_completion: number;
   opportunity_stage: "closed_won" | "closed_lost";
   status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
 }
@@ -30,20 +43,42 @@ const ProjectForecast: React.FC = () => {
       oppurtunity_name: "Diamond Lease",
       client_name: "Techfriar India",
       opportunity_start_date: "11/10/2024",
-      opportunity_end_date: "02/05/2025",
+      opportunity_close_date: "02/05/2025",
       opportunity_manager: "Aswina Vinod",
       opportunity_stage: "closed_won",
       status: "completed",
+      opportunity_description: "description",
+      billing_model: "",
+      expected_start_date: "11/10/2024",
+      expected_end_date: "11/10/2024",
+      expected_resource_breakdown: "",
+      estimated_value: "",
+      product_manager: "Aswina Vinod",
+      project_manager: "Aswina Vinod",
+      team_lead: "Aswina Vinod",
+      account_manager: "Aswina Vinod",
+      estimated_completion: 75,
     },
     {
       key: "2",
       oppurtunity_name: "Diamond Lease",
       client_name: "Techfriar India",
       opportunity_start_date: "11/10/2024",
-      opportunity_end_date: "02/05/2025",
+      opportunity_close_date: "02/05/2025",
       opportunity_manager: "Aswina Vinod",
       opportunity_stage: "closed_lost",
       status: "completed",
+      opportunity_description: "description",
+      billing_model: "",
+      expected_start_date: "11/10/2024",
+      expected_end_date: "11/10/2024",
+      expected_resource_breakdown: "",
+      estimated_value: "",
+      product_manager: "Aswina Vinod",
+      project_manager: "Aswina Vinod",
+      team_lead: "Aswina Vinod",
+      account_manager: "Aswina Vinod",
+      estimated_completion: 75,
     },
   ];
 
@@ -161,9 +196,9 @@ const ProjectForecast: React.FC = () => {
             ? record.opportunity_start_date.format("DD/MM/YYYY")
             : record.opportunity_start_date}{" "}
           -{" "}
-          {dayjs.isDayjs(record.opportunity_end_date)
-            ? record.opportunity_end_date.format("DD/MM/YYYY")
-            : record.opportunity_end_date}
+          {dayjs.isDayjs(record.opportunity_close_date)
+            ? record.opportunity_close_date.format("DD/MM/YYYY")
+            : record.opportunity_close_date}
         </>
       ),
     },
@@ -298,17 +333,17 @@ const ProjectForecast: React.FC = () => {
         onSecondaryClick={() => setEffectiveDateModal(false)}
         onClose={() => setEffectiveDateModal(false)}
       />
-      {/* <EditProjectForecastModal
+      <EditForecastModal
         isEditModalOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleEditProjectForecastSubmit}
         initialValues={selectedProjectForecast}
       />
-      <AddProjectForecastModal
+      <AddForecastModal
         isAddModalOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSave={handleAddProjectForecastSubmit}
-      /> */}
+      />
     </div>
   );
 };
