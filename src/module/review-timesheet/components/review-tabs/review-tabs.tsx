@@ -3,30 +3,31 @@
 import React, { useEffect, useState } from "react";
 import TabComponent from "@/themes/components/tabs/tabs";
 import DateRangePicker from "@/themes/components/date-picker/date-picker";
+import { fetchDateData } from "@/module/time-sheet/services/time-sheet-services";
+import ReviewAllTimesheetsTable from "../all-timesheets/all-timesheets";
+import PendingOverviewTable from "../pending-timesheets/pending-timesheets-overview";
+import ApprovedOverviewTable from "../approved-timesheets/approved-timesheets-overview";
+import RejectedOverviewTable from "../rejected-timesheets/rejected-timesheets-overview";
+import OverdueTable from "../overdue-timesheets/overdue-timesheets";
 
-import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
-import styles from './review-tabs.module.scss';
-import { TimesheetDataTable, WeekDaysData } from "@/module/time-sheet/services/time-sheet-services";
-import AllTimesheetsTable from "@/module/time-sheet/components/all-timesheets-table/all-timesheets";
-import PastDueOverviewTable from "@/module/time-sheet/components/past-due-overview-table/past-due-overview-table";
-import ApprovedOverviewTable from "@/module/time-sheet/components/approved-overview-table/approved-overview-table";
-import RejectedOverviewTable from "@/module/time-sheet/components/rejected-overview-table/rejected-overview-table";
+interface ReviewPageProps{
+  pendingCount:number;
+  approvedCount:number;
+  rejectedCount:number;
+  overDueCount:number;
+}
 
-const ReviewTabs = () => {
+const ReviewTabs:React.FC<ReviewPageProps> = ({pendingCount,approvedCount,rejectedCount,overDueCount}) => {
 
   const [loading, setLoadig] = useState(true);
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [timeSheetData, setTimeSheetdata] = useState<TimesheetDataTable[]>([]);
   const [pastDueCount, setPastDueCount] = useState<number>(1);
-  const [approvedCount, setApprovedCount] = useState<number>(4);
-  const [rejectedCount, setRejectedCount] = useState<number>(2);
   const [datePickerData, setDatePickerData] = useState<
     { start: string; end: string; week: number }[]
   >([]);
-  const [dates, setDates] = useState<WeekDaysData[]>([]);
   const [activeTabKey, setActiveTabKey] = useState<string>("1"); // State to track active tab
 
   const handleDateChange = (startDate: Date, endDate: Date) => {
@@ -34,15 +35,28 @@ const ReviewTabs = () => {
     setEndDate(endDate);
   };
 
+  useEffect(() => {
+    const fetchDatePicker = async () => {
+      try {
+        const DatePickerData = await fetchDateData();
+        setDatePickerData(DatePickerData);
+      } catch (error) {
+        console.error("Error fetching date picker data:", error);
+      }
+    };
+
+    fetchDatePicker();
+  }, []);
+
+
   const tabs = [
     {
       key: "1",
       label: <>All Timesheets</>,
       content: (
-        <AllTimesheetsTable
-          timesheetData={timeSheetData}
-          setTimeSheetData={setTimeSheetdata}
-          daysOfWeek={dates}
+        <ReviewAllTimesheetsTable
+          startDate={startDate}
+          endDate={endDate}
         />
       ),
     },
@@ -50,13 +64,13 @@ const ReviewTabs = () => {
       key: "2",
       label: (
         <>
-          Past due{" "}
+          Pending{" "}
           <span>
-            <p>{pastDueCount}</p>
+            <p>{pendingCount}</p>
           </span>
         </>
       ),
-      content: <PastDueOverviewTable />,
+      content: <PendingOverviewTable />,
     },
     {
       key: "3",
@@ -82,10 +96,27 @@ const ReviewTabs = () => {
       ),
       content: <RejectedOverviewTable />,
     },
+    {
+      key: "5",
+      label: (
+        <>
+          Overdue{" "}
+          <span>
+            <p>{overDueCount}</p>
+          </span>
+        </>
+      ),
+      content: <OverdueTable />,
+    },
   ];
   return (
     <div>
-      <TabComponent headings={tabs} />
+      <TabComponent headings={tabs} subHeading={
+        <DateRangePicker
+        datePickerData={datePickerData}
+        onDateChange={handleDateChange}
+      />
+      }/>
     </div>
   )
 }

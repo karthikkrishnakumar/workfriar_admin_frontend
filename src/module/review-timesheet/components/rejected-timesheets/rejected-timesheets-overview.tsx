@@ -1,24 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import styles from "./approved-overdue-table.module.scss";
+import styles from "./rejected-timesheets-overview.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
-import {
-  fetchApprovedTimesheets,
-  fetchApprovedWeeks,
-  fetchPastDueTimesheets,
-  fetchPastDueWeeks,
-  OverViewTable,
-  TimesheetDataTable,
-  WeekDaysData,
-} from "../../services/time-sheet-services";
-import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import ApprovedTimesheetsTable from "./approved-timesheet-table/approved-timesheet-table";
 
-interface PastDueOverviewProps {
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import { OverViewTable, TimesheetDataTable, WeekDaysData } from "@/module/time-sheet/services/time-sheet-services";
+import { fetchRejectedTimesheets, fetchRejectedWeeks } from "../../services/review-timesheet-services";
+import RejectedDetailedView from "./rejected-timesheet-table/rejected-detailed-view";
+
+
+
+interface RejectedOverviewProps {
   tableData?: OverViewTable[];
 }
 
-const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
+const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
   tableData,
 }) => {
   const [table, setTable] = useState<OverViewTable[]>([]);
@@ -46,7 +42,7 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
   const handleFetchTimesheets = (dateRange: string) => {
     setShowDetailedView(true);
     setLoading(true);
-    fetchApprovedTimesheets(dateRange,setTimesheetTable, setDates,setLoading);
+    fetchRejectedTimesheets(dateRange,setTimesheetTable, setDates,setLoading);
   };
 
   const handleBackToOverview = () => {
@@ -79,7 +75,7 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
 
   useEffect(() => {
     setLoading(true);
-    fetchApprovedWeeks(setTable, setLoading);
+    fetchRejectedWeeks(setTable, setLoading);
   }, []);
 
   return (
@@ -90,7 +86,7 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
           classNameItem={styles.customSkeleton}
         />
       ) : (
-        <ApprovedTimesheetsTable timesheetData={timeSheetTable} setTimeSheetData={setTimesheetTable} daysOfWeek={dates} backButtonFunction={handleBackToOverview}/>
+        <RejectedDetailedView timeSheetData={timeSheetTable} daysOfWeek={dates} backButtonFunction={handleBackToOverview}/>
         // detailed view table shhould be here
       ) : loading ? (
         <SkeletonLoader
@@ -104,4 +100,4 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
   );
 };
 
-export default ApprovedOverviewTable;
+export default RejectedOverviewTable;

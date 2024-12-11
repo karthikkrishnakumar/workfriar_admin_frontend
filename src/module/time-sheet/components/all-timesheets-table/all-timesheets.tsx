@@ -117,6 +117,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
           tooltipContent={
             entry.isDisabled ? "These dates are in next week" : ""
           }
+          readOnly={timesheetData[index].status === "approved"? true : false}
         />
       );
     });
@@ -289,6 +290,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
               setLocalTimesheetData(updatedData);
               setTimeSheetData(updatedData);
             }}
+            readOnly={timesheet.status === 'approved'}
           />
       ),
       ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
@@ -298,15 +300,17 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         </span>
       ),
       action: (
-        <span
-          className={styles.deleteButton}
-          role="button"
-          tabIndex={0}
-          style={{ cursor: "pointer" }}
-          onClick={() => handleDeleteRow(index)}
-        >
-          {Icons.deleteActive}
-        </span>
+        <button className={styles.deleteButton} disabled={timesheet.status === "approved"}>
+          <span
+            className={styles.deleteButton}
+            role="button"
+            tabIndex={0}
+            style={{ cursor: "pointer" }}
+            onClick={() => handleDeleteRow(index)}
+          >
+            {Icons.deleteActive}
+          </span>
+        </button>
       ),
     };
   });
