@@ -22,7 +22,7 @@ const ProjectForecast: React.FC = () => {
   const router = useRouter();
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedProjectForecast, setSelectedProjectForecast] =
     useState<ProjectForecastData | null>(null);
   const [projectForecastData, setProjectForecastData] = useState<

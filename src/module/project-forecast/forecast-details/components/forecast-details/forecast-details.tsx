@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./forecast-details.module.scss";
-import { message } from "antd";
+import { Col, message, Row } from "antd";
 import GridContainer from "@/themes/components/grid-container/grid-container";
 import {
   fetchProjectForecastDetailsById,
@@ -30,7 +30,7 @@ const ForecastDetails = ({
 }: ForecastDetailsProps) => {
   const [forecast, setForecast] = useState<ProjectForecastData | null>(null);
   const [selectedForecast, setSelectedForecast] =
-  useState<ProjectForecastData | null>(null);
+    useState<ProjectForecastData | null>(null);
 
   // useEffect hook to fetch forecast data based on the ID when the component mounts
   useEffect(() => {
@@ -40,8 +40,14 @@ const ForecastDetails = ({
         setForecast(result);
         setSelectedForecast({
           ...result,
-          opportunity_start_date: dayjs(result.opportunity_start_date, "DD/MM/YYYY"),
-          opportunity_close_date: dayjs(result.opportunity_close_date, "DD/MM/YYYY"),
+          opportunity_start_date: dayjs(
+            result.opportunity_start_date,
+            "DD/MM/YYYY"
+          ),
+          opportunity_close_date: dayjs(
+            result.opportunity_close_date,
+            "DD/MM/YYYY"
+          ),
           expected_start_date: dayjs(result.expected_start_date, "DD/MM/YYYY"),
           expected_end_date: dayjs(result.expected_end_date, "DD/MM/YYYY"),
         });
@@ -53,12 +59,13 @@ const ForecastDetails = ({
     fetchDetails();
   }, []);
 
-
   /**
    * Handles the form submission from the EditProjectForecastModal
    * @param {Record<string, any>} values - The updated values for the ProjectForecast
    */
-  const handleEditProjectForecastSubmit = async (values: Record<string, any>) => {
+  const handleEditProjectForecastSubmit = async (
+    values: Record<string, any>
+  ) => {
     try {
       const response = await updateProjectForecast(values);
       console.log(response);
@@ -67,6 +74,7 @@ const ForecastDetails = ({
     }
     setModalOpen(false); // Close modal after submission
   };
+
   if (!forecast) {
     return (
       <div className={styles.loadingWrapper}>
@@ -108,15 +116,25 @@ const ForecastDetails = ({
           fields={[
             {
               label: "Opportunity start date",
-              value: dayjs(forecast?.opportunity_start_date).format("DD/MM/YYYY")
+              value: dayjs(forecast?.opportunity_start_date).format(
+                "DD/MM/YYYY"
+              ),
             },
             {
               label: "Tentative opportunity close date",
-              value: dayjs(forecast?.opportunity_close_date).format("DD/MM/YYYY"),
+              value: dayjs(forecast?.opportunity_close_date).format(
+                "DD/MM/YYYY"
+              ),
             },
             { label: "Billing model", value: forecast?.billing_model },
-            { label: "Expected start date", value: dayjs(forecast?.expected_start_date).format("DD/MM/YYYY") },
-            { label: "Expected end date", value: dayjs(forecast?.expected_end_date).format("DD/MM/YYYY") },
+            {
+              label: "Expected start date",
+              value: dayjs(forecast?.expected_start_date).format("DD/MM/YYYY"),
+            },
+            {
+              label: "Expected end date",
+              value: dayjs(forecast?.expected_end_date).format("DD/MM/YYYY"),
+            },
             {
               label: "Estimated revenue",
               value: forecast?.estimated_value,
@@ -152,8 +170,33 @@ const ForecastDetails = ({
               value: forecast?.estimated_completion,
             },
           ]}
+          children={<div>
+            <Row gutter={[16, 16]} align="middle" className={styles.gridRow}>
+              <Col>
+                <p>Team member</p>
+              </Col>
+              <Col>
+                <p>Forecasted hours</p>
+              </Col>
+            </Row>
+      
+            {forecast?.team_forecast?.map((teamMember, index) => (
+              <Row
+                key={index}
+                gutter={[16, 16]}
+                align="middle"
+                className={styles.gridRow}
+              >
+                <Col>
+                  <h4>{teamMember.team_member_id}</h4>
+                </Col>
+                <Col>
+                  <h4>{teamMember.forecast_hours} hrs</h4>
+                </Col>
+              </Row>
+            ))}
+          </div>}
         />
-        
       </div>
       <EditForecastModal
         isEditModalOpen={isModalOpen}

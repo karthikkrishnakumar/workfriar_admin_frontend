@@ -118,11 +118,11 @@ export const fetchProjectForecastDetails = async (): Promise<any> => {
     estimated_completion: 75,
     team_forecast: [
         {
-            team_member_id: "emp123",
+            team_member_id: "Vishnu M S",
             forecast_hours: 120,
         },
         {
-            team_member_id: "emp456",
+            team_member_id: "Guru",
             forecast_hours: 80,
         },
     ]
@@ -151,11 +151,11 @@ export const fetchProjectForecastDetails = async (): Promise<any> => {
       estimated_completion: 75,
       team_forecast: [
         {
-            team_member_id: "emp123",
+            team_member_id: "Vishnu M S",
             forecast_hours: 120,
         },
         {
-            team_member_id: "emp456",
+            team_member_id: "Guru",
             forecast_hours: 80,
         },
     ]
@@ -182,11 +182,11 @@ export const fetchProjectForecastDetails = async (): Promise<any> => {
       estimated_completion: 75,
       team_forecast: [
         {
-            team_member_id: "emp123",
+            team_member_id: "Vishnu M S",
             forecast_hours: 120,
         },
         {
-            team_member_id: "emp456",
+            team_member_id: "Guru",
             forecast_hours: 80,
         },
     ]
