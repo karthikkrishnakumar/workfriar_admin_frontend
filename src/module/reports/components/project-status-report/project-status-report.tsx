@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { Tooltip, Dropdown, message, Pagination } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
-import { fetchProjectStatusReport } from "../../services/project-status-report/project-status-report";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./project-status-report.module.scss";
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import useProjectStatusServices from "../../services/project-status-report/project-status-report-services";
 
 const ProjectStatusReport: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
@@ -16,6 +16,7 @@ const ProjectStatusReport: React.FC = () => {
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
   const pageSize = 5; // Number of rows per page
   const router = useRouter();
+  const { fetchProjectStatusReport } = useProjectStatusServices();
 
   const columns = [
     { title: "Project", key: "project", align: "left" as const, width: 220 },
@@ -52,8 +53,8 @@ const ProjectStatusReport: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const result = await fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
-      const formattedData = result.projects.map((item: any) => ({
+      const reports = await fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
+      const formattedData = reports.map((item: any) => ({
         id: item._id,
         project: (
           <div className={styles.projectCell}>
@@ -105,7 +106,7 @@ const ProjectStatusReport: React.FC = () => {
         ),
       }));
       setData(formattedData);
-      setTotalRecords(result.total); // Set total records for pagination
+      setTotalRecords(reports.total); // Set total records for pagination
     } catch (error) {
       message.error("Failed to fetch project status report.");
     } finally {

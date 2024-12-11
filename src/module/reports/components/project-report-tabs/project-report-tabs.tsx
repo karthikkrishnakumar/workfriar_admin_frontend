@@ -6,9 +6,10 @@ import TabComponent from "@/themes/components/tabs/tabs";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
 import ProjectDetails from "../project-report-details/project-report-datails";
-import { fetchProjectDetails } from "../../services/project-status-report/project-reports-details";
+
 import { message } from "antd";
 import AddEditReport from "../add-edit-report-modal/add-edit-report-modal";
+import useProjectStatusServices from "../../services/project-status-report/project-status-report-services";
 
 interface ReportTabProps {
   id: string;
@@ -19,6 +20,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   const [project, setProject] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const { fetchProjectDetails } = useProjectStatusServices();
 
   const tabs = [
     {

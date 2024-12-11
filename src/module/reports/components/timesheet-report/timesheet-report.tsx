@@ -1,7 +1,7 @@
 "use client ";
 
 import React, { useEffect, useState } from "react";
-import { fetchTimeSheetReportData } from "../../services/timesheet-report/timesheet-report-services"; // Adjust the path if needed
+import useTimeSheetServices from "../../services/timesheet-report/timesheet-report-services"; // Adjust the path if needed
 import CustomTable from "@/themes/components/custom-table/custom-table"; // Adjust the path if needed
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import styles from "./timesheet-report.module.scss";
@@ -19,6 +19,7 @@ const TimesheetReport = ({ activeTab }: { activeTab: string }) => {
     "employee-details": { exclude: [] },
   };
 
+  const { fetchTimeSheetReportData } = useTimeSheetServices();
   const fetchData = async () => {
     setLoading(true);
     setError(null);

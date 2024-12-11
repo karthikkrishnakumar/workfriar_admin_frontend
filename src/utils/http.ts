@@ -6,7 +6,7 @@ const axioClient = Axios.create({
   headers: {
     "X-Requested-With": "XMLHttpRequest",
   },
-  withCredentials: true,
+  withCredentials: false,
 });
 
 const http = () => {
