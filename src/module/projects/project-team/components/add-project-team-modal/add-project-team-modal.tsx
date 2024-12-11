@@ -1,14 +1,10 @@
 "use client";
 import React from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
+import { AddModalProps } from "@/module/project-forecast/project-forecast/components/add-forecast-modal/add-forecast-modal";
 
-interface AddProjectTeamModalProps {
-  isAddModalOpen: boolean;
-  onClose?: () => void;
-  onSave: (values: Record<string, any>) => void;
-}
 
-const AddProjectTeamModal: React.FC<AddProjectTeamModalProps> = ({
+const AddProjectTeamModal: React.FC<AddModalProps> = ({
   isAddModalOpen,
   onClose,
   onSave,

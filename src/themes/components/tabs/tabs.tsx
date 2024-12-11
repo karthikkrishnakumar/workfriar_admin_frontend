@@ -8,6 +8,7 @@ interface TabComponentProps {
   headings: { key: string; label: string | ReactNode; content: React.ReactNode }[]; // Array of headings and content
   onChange?: (key: string) => void;
   subHeading?: ReactNode;
+  activeKey?: string;
 }
 
 /**
@@ -19,6 +20,7 @@ const TabComponent: React.FC<TabComponentProps> = ({
   headings,
   onChange,
   subHeading,
+  activeKey,
 }) => {
   // Map headings into TabItems format for Ant Design
   const tabItems: TabsProps["items"] = headings.map((heading) => ({
@@ -32,7 +34,7 @@ const TabComponent: React.FC<TabComponentProps> = ({
     <div className={styles.subHeading}>
       {subHeading}
     </div>
-    <Tabs items={tabItems} className={styles.customTabs} onChange={onChange}  />
+    <Tabs items={tabItems} className={styles.customTabs} onChange={onChange} activeKey={activeKey}/>
   </div>);
 };
 
