@@ -1,147 +1,166 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./forecast-details.module.scss";
-import { Card, Row, Col, Spin } from "antd";
+import { message } from "antd";
+import GridContainer from "@/themes/components/grid-container/grid-container";
+import {
+  fetchProjectForecastDetailsById,
+  ProjectForecastData,
+  updateProjectForecast,
+} from "@/module/project-forecast/project-forecast/services/project-forecast/project-forecast";
+import EditForecastModal from "@/module/project-forecast/project-forecast/components/edit-forecast-modal/edit-forecast-modal";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import dayjs from "dayjs";
 
 /**
- * Interface representing the project data structure.
- * This interface defines the shape of the project data.
- * @interface ProjectData
+ * Interface representing the forecast details structure.
+ * This interface defines the props for the ForecastDetails component.
+ * @interface ForecastDetailsProps
  */
-interface ProjectData {
+interface ForecastDetailsProps {
   id: string;
-  projectLogo: string;
-  projectName: string;
-  clientName: string;
-  planned_start_date: string;
-  planned_end_date: string;
-  actual_start_date: string;
-  actual_end_date: string;
-  projectLead: string;
-  projectDescription: string;
-  billing_model: string;
-  timeEntry: "closed" | "opened";
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
+  isModalOpen: boolean;
+  setModalOpen: (isOpen: boolean) => void;
 }
 
-/**
- * Interface representing the project details structure.
- * This interface defines the props for the ProjectDetails component.
- * @interface ProjectDetailsProps
- */
-interface ProjectDetailsProps {
-  id: string;
-}
+const ForecastDetails = ({
+  id,
+  isModalOpen,
+  setModalOpen,
+}: ForecastDetailsProps) => {
+  const [forecast, setForecast] = useState<ProjectForecastData | null>(null);
+  const [selectedForecast, setSelectedForecast] =
+  useState<ProjectForecastData | null>(null);
 
-const ForecastDetails = ({ id }: ProjectDetailsProps) => {
-  const [project, setProject] = useState<ProjectData | null>(null);
-
-  // useEffect hook to fetch project data based on the ID when the component mounts
+  // useEffect hook to fetch forecast data based on the ID when the component mounts
   useEffect(() => {
-    if (id) {
-      const projectData: ProjectData = {
-        id,
-        projectLogo: "",
-        projectName: "Example Project",
-        clientName: "Techfriar India",
-        planned_start_date: "11/10/2024",
-        planned_end_date: "02/05/2025",
-        actual_start_date: "11/10/2024",
-        actual_end_date: "02/05/2025",
-        projectLead: "Aswina Vinod",
-        projectDescription: "Detailed description of the project.",
-        billing_model: "Retainer",
-        timeEntry: "closed",
-        status: "in_progress",
-      };
-      setProject(projectData);
-    }
-  }, [id]);
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchProjectForecastDetailsById(id); // Make sure you pass the ID
+        setForecast(result);
+        setSelectedForecast({
+          ...result,
+          opportunity_start_date: dayjs(result.opportunity_start_date, "DD/MM/YYYY"),
+          opportunity_close_date: dayjs(result.opportunity_close_date, "DD/MM/YYYY"),
+          expected_start_date: dayjs(result.expected_start_date, "DD/MM/YYYY"),
+          expected_end_date: dayjs(result.expected_end_date, "DD/MM/YYYY"),
+        });
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
 
-  if (!project) {
+    fetchDetails();
+  }, []);
+
+
+  /**
+   * Handles the form submission from the EditProjectForecastModal
+   * @param {Record<string, any>} values - The updated values for the ProjectForecast
+   */
+  const handleEditProjectForecastSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await updateProjectForecast(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
+    setModalOpen(false); // Close modal after submission
+  };
+  if (!forecast) {
     return (
       <div className={styles.loadingWrapper}>
-        <Spin size="large" />
+        <SkeletonLoader
+          count={20}
+          button={true}
+          width="100%"
+          classNameItem={styles.customSkeletonItem}
+        />
       </div>
     );
   }
 
   return (
-    <div className={styles.projectDetailsWrapper}>
-      <Card>
-        <Row gutter={[16, 16]} align="middle" className={styles.firstRow}>
-          <Col>
-            {project.projectLogo ? (
-              <img
-                src={project.projectLogo}
-                alt={project.projectName}
-                className={styles.circleImage}
-              />
-            ) : (
-              <div className={styles.circle}>
-                {project.projectName.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </Col>
-          <Col>
-            <p>Project</p>
-            <h4>{project.projectName}</h4>
-          </Col>
-          <Col>
-            <p>Project lead</p>
-            <h4>{project.projectLead}</h4>
-          </Col>
-        </Row>
-      </Card>
+    <div>
+      <div className={styles.forecastDetailsWrapper}>
+        <GridContainer
+          isGrid={true}
+          fields={[
+            { label: "Opportunity name", value: forecast?.opportunity_name },
+            {
+              label: "Opportunity manager",
+              value: forecast?.opportunity_manager,
+            },
+            { label: "Client name", value: forecast?.client_name },
+          ]}
+        />
+        <GridContainer
+          isGrid={false}
+          fields={[
+            {
+              label: "Opportunity description",
+              value: forecast?.opportunity_description,
+            },
+          ]}
+        />
+        <GridContainer
+          isGrid={true}
+          fields={[
+            {
+              label: "Opportunity start date",
+              value: dayjs(forecast?.opportunity_start_date).format("DD/MM/YYYY")
+            },
+            {
+              label: "Tentative opportunity close date",
+              value: dayjs(forecast?.opportunity_close_date).format("DD/MM/YYYY"),
+            },
+            { label: "Billing model", value: forecast?.billing_model },
+            { label: "Expected start date", value: dayjs(forecast?.expected_start_date).format("DD/MM/YYYY") },
+            { label: "Expected end date", value: dayjs(forecast?.expected_end_date).format("DD/MM/YYYY") },
+            {
+              label: "Estimated revenue",
+              value: forecast?.estimated_value,
+            },
+            { label: "Opportunity stage", value: forecast?.opportunity_stage },
+            {
+              label: "Expected resource breakdown",
+              value: forecast?.expected_resource_breakdown,
+            },
+            { label: "Status", value: forecast?.status },
+          ]}
+        />
+        <h3>Associated core members</h3>
 
-      {/* Description Section */}
-      <Card className={styles.middleRow}>
-        <p>Project description</p>
-        <h4>{project.projectDescription}</h4>
-      </Card>
-
-      {/* Details Section */}
-      <Card className={styles.middleRow}>
-        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
-          <Col>
-            <p>Client</p>
-            <h4>{project.clientName}</h4>
-          </Col>
-          <Col>
-            <p>Planned start date</p>
-            <h4>{project.planned_start_date}</h4>
-          </Col>
-          <Col>
-            <p>Planned end date</p>
-            <h4>{project.planned_end_date}</h4>
-          </Col>
-        </Row>
-        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
-          <Col>
-            <p>Actual start date</p>
-            <h4>{project.actual_start_date}</h4>
-          </Col>
-          <Col>
-            <p>Actual end date</p>
-            <h4>{project.actual_end_date}</h4>
-          </Col>
-          <Col>
-            <p>Billing model</p>
-            <h4>{project.billing_model}</h4>
-          </Col>
-        </Row>
-        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
-          <Col>
-            <p>Time entry</p>
-            <h4>{project.timeEntry}</h4>
-          </Col>
-          <Col>
-            <p>Status</p>
-            <h4>{project.status}</h4>
-          </Col>
-          <Col></Col>
-        </Row>
-      </Card>
+        <GridContainer
+          isGrid={true}
+          fields={[
+            { label: "Project Manager", value: forecast?.project_manager },
+            {
+              label: "Product Manager",
+              value: forecast?.product_manager,
+            },
+            { label: "Tech lead", value: forecast?.tech_lead },
+            { label: "Account Manager", value: forecast?.account_manager },
+          ]}
+        />
+        <h3>Team forecast</h3>
+        <GridContainer
+          isGrid={true}
+          fields={[
+            {
+              label: "Estimated Project completion %",
+              value: forecast?.estimated_completion,
+            },
+          ]}
+        />
+        
+      </div>
+      <EditForecastModal
+        isEditModalOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleEditProjectForecastSubmit}
+        initialValues={selectedForecast}
+      />
     </div>
   );
 };

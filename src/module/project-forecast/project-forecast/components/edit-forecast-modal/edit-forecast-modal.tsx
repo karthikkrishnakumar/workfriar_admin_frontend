@@ -4,7 +4,7 @@ import ModalFormComponent, {
   FormRow,
 } from "@/themes/components/modal-form/modal-form";
 import TabComponent from "@/themes/components/tabs/tabs";
-import { ProjectForecastData } from "../project-forecast/project-forecast";
+import { ProjectForecastData } from "../../services/project-forecast/project-forecast";
 
 interface EditForecastModalProps {
   isEditModalOpen: boolean;
@@ -20,16 +20,29 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
   initialValues,
 }) => {
   const values = initialValues || {
-    key: "",
-    oppurtunity_name: "",
+    _id: "",
+    opportunity_name: "",
     opportunity_manager: "",
     client_name: "",
     opportunity_start_date: "",
-    opportunity_end_date: "",
+    opportunity_close_date: "",
     opportunity_stage: "closed_won",
     status: "completed",
+    opportunity_description: "",
+    billing_model: "",
+    expected_start_date: "",
+    expected_end_date: "",
+    expected_resource_breakdown: "",
+    estimated_value: "",
+    product_manager: "",
+    project_manager: "",
+    tech_lead: "",
+    account_manager: "",
+    estimated_completion: 1,
   };
 
+
+  
   const formRowsTab1: FormRow[] = [
     {
       fields: [
@@ -95,11 +108,11 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
     {
       fields: [
         {
-          name: "project_start_date",
+          name: "expected_start_date",
           label: "Expected project start date",
           type: "date",
         },        {
-          name: "project_end_date",
+          name: "expected_end_date",
           label: "Expected project end date",
           type: "date",
         }, 
@@ -108,7 +121,7 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
     {
       fields: [
         {
-          name: "estimated_revenue",
+          name: "estimated_value",
           label: "Estimated revenue",
           type: "text",
           placeholder:"Enter estimated revenue"
@@ -164,7 +177,7 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
     {
       fields: [
         {
-          name: "team_lead",
+          name: "tech_lead",
           label: "Tech lead",
           placeholder:"Select tech lead",
           type: "select",
@@ -184,7 +197,7 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
     {
       fields: [
         {
-          name: "estimated_project",
+          name: "estimated_completion",
           label: "Estimated Project completion % (Per month)",
           type: "text",
           placeholder: "%",
@@ -274,6 +287,7 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
         onSecondaryClick={handleSecondaryClick}
         onClose={onClose}
         formRows={formRows}
+        initialValues={values}
         children={
           <TabComponent
             headings={headings}

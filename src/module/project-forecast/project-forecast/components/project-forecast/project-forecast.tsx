@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Table, Button, Dropdown, Tag } from "antd";
+import { Table, Button, Dropdown, Tag, message } from "antd";
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-forecast.module.scss";
@@ -9,87 +9,39 @@ import dayjs from "dayjs";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 import EditForecastModal from "../edit-forecast-modal/edit-forecast-modal";
 import AddForecastModal from "../add-forecast-modal/add-forecast-modal";
-
-/**
- * Interface representing the ProjectForecast data structure.
- * @interface ProjectForecastData
- */
-export interface ProjectForecastData {
-  key: string;
-  oppurtunity_name: string;
-  opportunity_manager: string;
-  client_name: string;
-  opportunity_start_date: string | dayjs.Dayjs;
-  opportunity_close_date: string | dayjs.Dayjs;
-  opportunity_description: string;
-  billing_model: string;
-  expected_start_date: string | dayjs.Dayjs;
-  expected_end_date: string | dayjs.Dayjs;
-  expected_resource_breakdown: string;
-  estimated_value: string;
-  product_manager: string;
-  project_manager: string;
-  team_lead: string;
-  account_manager: string;
-  estimated_completion: number;
-  opportunity_stage: "closed_won" | "closed_lost";
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
-}
+import {
+  addProjectForecast,
+  changeStatus,
+  deleteProjectForecast,
+  fetchProjectForecastDetails,
+  ProjectForecastData,
+  updateProjectForecast,
+} from "../../services/project-forecast/project-forecast";
 
 const ProjectForecast: React.FC = () => {
-  const data: ProjectForecastData[] = [
-    {
-      key: "1",
-      oppurtunity_name: "Diamond Lease",
-      client_name: "Techfriar India",
-      opportunity_start_date: "11/10/2024",
-      opportunity_close_date: "02/05/2025",
-      opportunity_manager: "Aswina Vinod",
-      opportunity_stage: "closed_won",
-      status: "completed",
-      opportunity_description: "description",
-      billing_model: "",
-      expected_start_date: "11/10/2024",
-      expected_end_date: "11/10/2024",
-      expected_resource_breakdown: "",
-      estimated_value: "",
-      product_manager: "Aswina Vinod",
-      project_manager: "Aswina Vinod",
-      team_lead: "Aswina Vinod",
-      account_manager: "Aswina Vinod",
-      estimated_completion: 75,
-    },
-    {
-      key: "2",
-      oppurtunity_name: "Diamond Lease",
-      client_name: "Techfriar India",
-      opportunity_start_date: "11/10/2024",
-      opportunity_close_date: "02/05/2025",
-      opportunity_manager: "Aswina Vinod",
-      opportunity_stage: "closed_lost",
-      status: "completed",
-      opportunity_description: "description",
-      billing_model: "",
-      expected_start_date: "11/10/2024",
-      expected_end_date: "11/10/2024",
-      expected_resource_breakdown: "",
-      estimated_value: "",
-      product_manager: "Aswina Vinod",
-      project_manager: "Aswina Vinod",
-      team_lead: "Aswina Vinod",
-      account_manager: "Aswina Vinod",
-      estimated_completion: 75,
-    },
-  ];
-
   const router = useRouter();
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(true);
   const [selectedProjectForecast, setSelectedProjectForecast] =
     useState<ProjectForecastData | null>(null);
-  const [projectForecastData, setProjectForecastData] =
-    useState<ProjectForecastData[]>(data);
+  const [projectForecastData, setProjectForecastData] = useState<
+    ProjectForecastData[]
+  >([]);
+
+  // useEffect hook to fetch forecast data based on the ID when the component mounts
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchProjectForecastDetails(); // Make sure you pass the ID
+        setProjectForecastData(result);
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
+
+    fetchDetails();
+  }, []);
 
   /**
    * Changes the ProjectForecast status
@@ -102,7 +54,7 @@ const ProjectForecast: React.FC = () => {
   ) => {
     setProjectForecastData((prevData) =>
       prevData.map((item) =>
-        item.key === key ? { ...item, status: newStatus } : item
+        item._id === key ? { ...item, status: newStatus } : item
       )
     );
   };
@@ -111,34 +63,26 @@ const ProjectForecast: React.FC = () => {
    * Opens the edit modal with the selected ProjectForecast's data
    * @param {ProjectForecastData} ProjectForecast - The ProjectForecast to edit
    */
-  const handleEditProjectForecast = (ProjectForecast: ProjectForecastData) => {
+  const handleEditProjectForecast = (projectForecast: ProjectForecastData) => {
     setSelectedProjectForecast({
-      ...ProjectForecast,
-      // planned_start_date: dayjs(ProjectForecast.planned_start_date, "DD/MM/YYYY"),
-      // planned_end_date: dayjs(ProjectForecast.planned_end_date, "DD/MM/YYYY"),
-      // actual_start_date: dayjs(ProjectForecast.actual_start_date, "DD/MM/YYYY"),
-      // actual_end_date: dayjs(ProjectForecast.actual_end_date, "DD/MM/YYYY"),
+      ...projectForecast,
+      opportunity_start_date: dayjs(projectForecast.opportunity_start_date, "DD/MM/YYYY"),
+      opportunity_close_date: dayjs(projectForecast.opportunity_close_date, "DD/MM/YYYY"),
+      expected_start_date: dayjs(projectForecast.expected_start_date, "DD/MM/YYYY"),
+      expected_end_date: dayjs(projectForecast.expected_end_date, "DD/MM/YYYY"),
     });
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteProjectForecast = (
-    ProjectForecast: ProjectForecastData
-  ) => {
-    setSelectedProjectForecast({
-      ...ProjectForecast,
-    });
-    setIsEditModalOpen(true);
+  const handleDeleteProjectForecast = async (id: string) => {
+    try {
+      const response = await deleteProjectForecast(id);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed to log in with Google.");
+    }
   };
 
-  /**
-   * Redirects to the ProjectForecast details page
-   * @param {ProjectForecastData} ProjectForecast - The ProjectForecast to view
-   */
-
-  const handleViewProjectForecast = (ProjectForecast: ProjectForecastData) => {
-    router.push(`/project-forecast/forecast-details/${ProjectForecast.key}`);
-  };
 
   /**
    * Converts the status value to a readable format
@@ -153,13 +97,27 @@ const ProjectForecast: React.FC = () => {
    * Handles the form submission from the EditProjectForecastModal
    * @param {Record<string, any>} values - The updated values for the ProjectForecast
    */
-  const handleEditProjectForecastSubmit = (values: Record<string, any>) => {
-    console.log("Updated ProjectForecast Details:", values);
+  const handleEditProjectForecastSubmit = async (
+    values: Record<string, any>
+  ) => {
+    console.log(values);
+
+    try {
+      const response = await updateProjectForecast(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsEditModalOpen(false); // Close modal after submission
   };
 
-  const handleEffectiveDateSubmit = (values: Record<string, any>) => {
-    setEffectiveDateModal(false); // Close modal after submission
+  const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await changeStatus(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
   };
 
   /**
@@ -167,16 +125,24 @@ const ProjectForecast: React.FC = () => {
    * @param {Record<string, any>} values - The values for the new ProjectForecast
    */
 
-  const handleAddProjectForecastSubmit = (values: Record<string, any>) => {
-    console.log("Updated ProjectForecast Details:", values);
+  const handleAddProjectForecastSubmit = async (
+    values: Record<string, any>
+  ) => {
+    console.log(values);
+    try {
+      const response = await addProjectForecast(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsAddModalOpen(false); // Close modal after submission
   };
 
   const columns = [
     {
       title: "Oppurtunity name",
-      dataIndex: "oppurtunity_name",
-      key: "oppurtunity_name",
+      dataIndex: "opportunity_name",
+      key: "opportunity_name",
       width: "20%",
     },
     {
@@ -241,7 +207,7 @@ const ProjectForecast: React.FC = () => {
         const handleMenuClick = (e: { key: string }) => {
           setEffectiveDateModal(true);
           handleStatusChange(
-            record.key,
+            record._id,
             e.key as ProjectForecastData["status"]
           );
         };
@@ -268,7 +234,7 @@ const ProjectForecast: React.FC = () => {
           {
             key: "view",
             label: <div className={styles.dropdownItem}>Details</div>,
-            onClick: () => handleViewProjectForecast(record),
+            onClick: () => router.push(`/project-forecast/forecast-details/${record._id}`),
           },
           {
             key: "edit",
@@ -278,7 +244,7 @@ const ProjectForecast: React.FC = () => {
           {
             key: "delete",
             label: <div className={styles.dropdownItem}>Delete</div>,
-            onClick: () => handleDeleteProjectForecast(record),
+            onClick: () => handleDeleteProjectForecast(record._id),
           },
         ];
 

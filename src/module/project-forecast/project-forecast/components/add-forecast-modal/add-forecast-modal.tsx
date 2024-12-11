@@ -5,13 +5,13 @@ import ModalFormComponent, {
 } from "@/themes/components/modal-form/modal-form";
 import TabComponent from "@/themes/components/tabs/tabs";
 
-interface AddForecastModalProps {
+export interface AddModalProps {
   isAddModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
 }
 
-const AddForecastModal: React.FC<AddForecastModalProps> = ({
+const AddForecastModal: React.FC<AddModalProps> = ({
   isAddModalOpen,
   onClose,
   onSave,
@@ -151,7 +151,7 @@ const AddForecastModal: React.FC<AddForecastModalProps> = ({
     {
       fields: [
         {
-          name: "team_lead",
+          name: "tech_lead",
           label: "Tech lead",
           placeholder:"Select tech lead",
           type: "select",
