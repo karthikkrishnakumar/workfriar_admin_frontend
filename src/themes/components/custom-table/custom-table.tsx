@@ -22,7 +22,7 @@ interface Column {
   align?: "left" | "center" | "right";
 }
 
-interface RowData {
+export interface RowData {
   /**
    * A flexible object where keys correspond to column keys, and values are the data for each cell.
    */

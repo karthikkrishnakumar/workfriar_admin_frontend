@@ -1,8 +1,5 @@
+import OrganizationViews from "@/module/organization/views/organization-views";
 
-export default function page () {
-    return (
-      <div>page</div>
-    )
-  }
-  
-  
+export default function page() {
+  return <OrganizationViews />;
+}
