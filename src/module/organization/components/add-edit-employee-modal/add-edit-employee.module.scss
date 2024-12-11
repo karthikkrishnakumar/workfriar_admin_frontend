@@ -1,0 +1,71 @@
+.modalDiv {
+    :global(.ant-modal-content) {
+      border-radius: 20px !important;
+      overflow: hidden;
+      height: 550px;
+      padding: 0px !important;
+    }
+  }
+  .formsContentDiv {
+    overflow-y: scroll;
+    padding: 0px 24px 0px 24px;
+    &::-webkit-scrollbar {
+      width: 4px;
+      background-color: transparent;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: #d9d9d9;
+    }
+  
+    &::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background-color: transparent;
+    }
+  }
+  
+  .titleClass {
+    padding: 24px 24px 0px 24px;
+  }
+  .bottomClass {
+    padding: 24px 24px 24px 24px;
+  }
+  .flexContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    
+  }
+  .avatarflexContainer {
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    
+  }
+  .avatarButton{
+    background-color: transparent!important;
+    box-shadow: none!important;
+    font-weight: 400;
+  }
+  
+  .dateContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Creates two equal-width columns */
+    gap: 16px;        /* Adds space between items */
+    width: 100%;      /* Ensures the container takes up the full width */
+    margin-bottom: 16px;
+  }
+  
+  /* Optional: Make the last item span the entire width if needed */
+  .dateContainer .formItems:last-child {
+    grid-column: span 2;  /* Makes the last item span both columns */
+  }
+  
+  
+  .formItems {
+    width: 100%;
+  }

@@ -1,39 +1,71 @@
 .organizationTableWrapper {
-    overflow-x: scroll;
-    padding-top: 20px;
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  overflow: scroll;
+  width: 100% !important;
+  padding-top: 20px;
+  &::-webkit-scrollbar {
+    display: none;
   }
-  .nameCell {
-    display: flex;
-    align-items: center;
-    padding-left: 15px;
-  }
-  .employeeName {
-    padding-left: 10px;
-    font-size: 16px;
-    color:var(--black);
-    transition: color 0.3s ease;
-  }
-  .paginationDiv {
-    text-align: right;
-  }
-  .deleteButton {
-    cursor: pointer;
-    padding: 5px;
-    font-size: 18px;
-    color:var(--black);
-    transition: color 0.3s ease;
-  }
-  .threeDotButton {
-    font-size: 20px;
-  }
-  .status {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color:var(--black);
-  }
+}
 
+.tableWrapper {
   
+  min-width: 950px;
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+}
+.employeeName {
+  padding-left: 10px;
+  font-size: 16px;
+  color: var(--black);
+  transition: color 0.3s ease;
+  cursor: pointer;
+  background-color: transparent;
+  height: 40px;
+  border: none;
+}
+.paginationDiv {
+  text-align: right;
+}
+
+.employeeEmail,
+.employeeDepartment,
+.employeeRole,
+.employeeManager {
+  padding-left: 15px;
+  font-size: 16px;
+  color: var(--black);
+}
+.employeeStatus {
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  gap:5px;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-golden-color-dark);
+  .arrow{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+  }
+}
+
+
+.actionCell {
+  text-align: center;
+  cursor: pointer;
+}
+.threeDotButton {
+  font-size: 20px !important;
+  color: var(--black);
+}
+
+
+.customPaginationDiv{
+  width: 100%;
+}

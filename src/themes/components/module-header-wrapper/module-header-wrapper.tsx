@@ -25,6 +25,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Admin Settings", path: "/settings", backButtonNeeded: false },
     { title: "Permissions Settings", path: "/settings/permissions", backButtonNeeded: false },
     { title: "Notifications", path: "/notifications", backButtonNeeded: false },
+    { title: "Employee Details", path: "/organization/employee-details/[id]", backButtonNeeded: true  },
   ];
 
   // Function to match the dynamic path

@@ -86,8 +86,8 @@ const FormField: React.FC<FormFieldProps> = ({
             value={value ? moment(value) : null}
             onChange={onChange}
             className={`${styles.customDatePicker} ${className}`}
-            placeholder={placeholder || "dd/mm/yyyy"}
-            suffixIcon={suffixIcon || Icons.calender}
+            placeholder={placeholder ?? "dd/mm/yyyy"}
+            suffixIcon={suffixIcon ?? Icons.calender}
           />
         );
 
@@ -118,7 +118,7 @@ const FormField: React.FC<FormFieldProps> = ({
   return (
     // Form item that encapsulates the input field and label
     <Form.Item
-      label={renderLabel()}
+     label={<span style={{ color: '#6c757d' }}>{renderLabel()}</span>} 
       name={name}
       required={required}
       className={styles.formItems}
