@@ -3,7 +3,7 @@
 import React, { forwardRef, ReactNode, CSSProperties } from "react";
 import styles from "./custom-table.module.scss";
 
-interface Column {
+export interface Column {
   /**
    * The title of the column to be displayed in the table header.
    */
@@ -49,6 +49,8 @@ interface CustomTableProps {
    * Optional: Additional className for custom styling.
    */
   className?: string;
+
+  onRowClick?: (row: RowData) => void;
 }
 
 /**
@@ -61,7 +63,7 @@ interface CustomTableProps {
  * @returns {JSX.Element} The rendered table component.
  */
 const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
-  ({ columns, data, className }, ref) => {
+  ({ columns, data, className ,onRowClick }, ref) => {
     /**
      * Helper function to generate column-specific styles.
      * @param {Column} column - The column definition.
@@ -124,6 +126,10 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
                   ${rowOfTotal ? styles.rowOfTotal : ""} 
                   ${isFirstRow ? styles.firstRow : ""} 
                   ${isLastRow ? styles.lastRow : ""}`}
+                onClick={() => onRowClick && onRowClick(row)} // Trigger onRowClick if provided
+                role="button"
+                tabIndex={0}
+                style={{ cursor: onRowClick ? "pointer" : "default" }}
               >
                 {columns.map((column) => (
                   <div
