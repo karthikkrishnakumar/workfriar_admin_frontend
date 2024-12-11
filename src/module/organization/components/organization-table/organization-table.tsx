@@ -5,7 +5,7 @@ import CustomTable, {
   Column,
   RowData,
 } from "@/themes/components/custom-table/custom-table"; // Adjust the path based on your project structure
-import { fetchEmployeesData } from "../../services/organization-services/organization-services"; // Import the service function
+import { useEmployeeData } from "../../services/organization-services/organization-services";
 import styles from "./organization-table.module.scss"; // Optional: Add styling
 import CustomAvatar from "@/themes/components/avatar/avatar"; // Avatar component import
 import { Dropdown } from "antd";
@@ -26,8 +26,8 @@ interface Employee {
   email: string;
   department: string;
   role: string;
-  reportingManager: string;
-  status: string;
+  reporting_manager: string;
+  status: boolean;
 }
 
 const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
@@ -36,8 +36,9 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
-  const pageSize = 3; // Number of rows per page
+  const pageSize = 1; // Number of rows per page
   const router = useRouter();
+  const { fetchEmployeesData } = useEmployeeData();
 
   const menuItems = [
     { key: "Details", label: "Details" },
@@ -70,12 +71,12 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
       role: <span className={styles.employeeRole}>{employee.role}</span>,
       reportingManager: (
         <span className={styles.employeeManager}>
-          {employee.reportingManager}
+          {employee.reporting_manager?employee.reporting_manager:"--"}
         </span>
       ),
       status: (
         <StatusDropdown
-          status={employee.status}
+          status={employee.status?"Active":"Inactive"}
           menuItems={[
             { key: "active", label: <span>Active</span> },
             { key: "inactive", label: <span>Inactive</span> },
@@ -115,7 +116,8 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
     setLoading(true);
     try {
       const response = await fetchEmployeesData(page, pageSize, activeTab); // Fetch data using the service
-      setFilteredEmployees(mapEmployeeData(response.employees)); // Map the data to RowData format
+      console.log(response)
+      setFilteredEmployees(mapEmployeeData(response.data)); // Map the data to RowData format
 
       setTotalRecords(response.total);
     } catch (err) {

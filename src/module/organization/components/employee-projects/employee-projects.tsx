@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import CustomTable, {
   RowData,
 } from "@/themes/components/custom-table/custom-table"; // Import the CustomTable
-import { fetchEmployeeProjectsData } from "../../services/organization-services/employee-projects-services"; // Import the service function
+import { useEmployeeData } from "../../services/organization-services/organization-services"; // Import the service function
 import styles from "./employee-projects.module.scss"; // Optional: Add styling
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"; // Loading skeleton
 import { MoreOutlined } from "@ant-design/icons";
@@ -25,6 +25,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
   const pageSize = 5;
+  const { fetchEmployeeProjectsData } = useEmployeeData();
 
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: any[]): RowData[] => {
@@ -92,7 +93,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
     setLoading(true);
     try {
       const data = await fetchEmployeeProjectsData(page, pageSize, employeeId); // Service to fetch employee projects
-      setProjects(mapProjectData(data.employee_projects)); // Map the data to RowData format
+      setProjects(mapProjectData(data.data)); // Map the data to RowData format
       setTotalRecords(data.total);
     } catch (err: any) {
       setError("Failed to fetch employee projects");

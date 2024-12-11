@@ -2,11 +2,12 @@ import Axios, { AxiosRequestConfig } from "axios";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
+
 const axioClient = Axios.create({
   headers: {
     "X-Requested-With": "XMLHttpRequest",
   },
-  withCredentials: true,
+  withCredentials: false,
 });
 
 const http = () => {
@@ -22,7 +23,9 @@ const http = () => {
     props?: JSON | FormData,
     hasFile?: boolean
   ) => {
-    const fullUrl = `${backendUrl}${url}`;
+    // const fullUrl = `${url}`;
+    const fullUrl = `http://localhost:3002${url}`;
+    console.log(fullUrl)
     let config: AxiosRequestConfig = {
       headers: {
         "Content-Type": "application/json",
