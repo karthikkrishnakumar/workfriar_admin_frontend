@@ -25,8 +25,8 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
   const pageSize = 5;
-  const { fetchEmployeeProjectsData } = useEmployeeData();
 
+  const menuItems = [{ key: "Details", label: "Details" }];
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: any[]): RowData[] => {
     return projects.map((project) => ({
@@ -79,20 +79,14 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
     }));
   };
 
-  const menuItems = [{ key: "Details", label: "Details" }];
-
-  const handleMenuClick = (e: { key: string }, record: any) => {
-    if (e.key === "Details") {
-      console.log("Details clicked for:", record);
-    } else if (e.key === "edit") {
-      console.log("Edit clicked for:", record);
-    }
-  };
-
   const getEmployeeProjects = async (page: number) => {
     setLoading(true);
     try {
-      const data = await fetchEmployeeProjectsData(page, pageSize, employeeId); // Service to fetch employee projects
+      const data = await useEmployeeData().fetchEmployeeProjectsData(
+        page,
+        pageSize,
+        employeeId
+      ); // Service to fetch employee projects
       setProjects(mapProjectData(data.data)); // Map the data to RowData format
       setTotalRecords(data.total);
     } catch (err: any) {
@@ -129,6 +123,14 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   if (error) {
     return <div>{error}</div>;
   }
+
+  const handleMenuClick = (e: { key: string }, record: any) => {
+    if (e.key === "Details") {
+      console.log("Details clicked for:", record);
+    } else if (e.key === "edit") {
+      console.log("Edit clicked for:", record);
+    }
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page); // Update the current page

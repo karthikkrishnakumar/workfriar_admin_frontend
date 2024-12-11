@@ -12,12 +12,11 @@ const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({ employeeId }) => {
   const [employeeData, setEmployeeData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { fetchEmployeeData } = useEmployeeData();
 
   useEffect(() => {
     const getEmployeeData = async () => {
       try {
-        const data = await fetchEmployeeData(employeeId);
+        const data = await useEmployeeData().fetchEmployeeData(employeeId);
         console.log(data);
         setEmployeeData(data.data);
       } catch (err: any) {
@@ -69,7 +68,10 @@ const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({ employeeId }) => {
           { label: "Employee role", value: employeeData.role },
           { label: "Department", value: employeeData.department },
           { label: "Reporting Manager", value: employeeData.reporting_manager },
-          { label: "Status", value: employeeData.status?"Active":"In Active" },
+          {
+            label: "Status",
+            value: employeeData.status ? "Active" : "In Active",
+          },
         ],
       }
     : demoData;

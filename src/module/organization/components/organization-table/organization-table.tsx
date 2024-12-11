@@ -38,7 +38,6 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
   const pageSize = 1; // Number of rows per page
   const router = useRouter();
-  const { fetchEmployeesData } = useEmployeeData();
 
   const menuItems = [
     { key: "Details", label: "Details" },
@@ -71,12 +70,12 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
       role: <span className={styles.employeeRole}>{employee.role}</span>,
       reportingManager: (
         <span className={styles.employeeManager}>
-          {employee.reporting_manager?employee.reporting_manager:"--"}
+          {employee.reporting_manager ? employee.reporting_manager : "--"}
         </span>
       ),
       status: (
         <StatusDropdown
-          status={employee.status?"Active":"Inactive"}
+          status={employee.status ? "Active" : "Inactive"}
           menuItems={[
             { key: "active", label: <span>Active</span> },
             { key: "inactive", label: <span>Inactive</span> },
@@ -104,19 +103,15 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
     }));
   };
 
-  const handleMenuClick = (e: { key: string }, employee: Employee) => {
-    if (e.key === "Details") {
-      console.log("Details clicked for:", employee);
-    } else if (e.key === "Edit") {
-      console.log("Edit clicked for:", employee);
-    }
-  };
-
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await fetchEmployeesData(page, pageSize, activeTab); // Fetch data using the service
-      console.log(response)
+      const response = await useEmployeeData().fetchEmployeesData(
+        page,
+        pageSize,
+        activeTab
+      ); // Fetch data using the service
+      console.log(response);
       setFilteredEmployees(mapEmployeeData(response.data)); // Map the data to RowData format
 
       setTotalRecords(response.total);
@@ -155,11 +150,24 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
     { title: "", key: "action", align: "left", width: 40 },
   ];
 
+  
   const handleRowClick = (row: Employee) => {
-    console.log("hai", row);
     if (row.id) {
       const rowId = row.id;
       router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
+    }
+  };
+  const handleMenuClick = (e: { key: string }, employee: Employee) => {
+    if (e.key === "Details") {
+      if (employee.id) {
+        const rowId = employee.id;
+        router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
+      }
+    } else if (e.key === "Edit") {
+      if (employee.id) {
+        const rowId = employee.id;
+        router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
+      }
     }
   };
 

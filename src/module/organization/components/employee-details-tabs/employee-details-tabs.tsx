@@ -59,14 +59,16 @@ const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
                 label="Edit User"
                 className={styles.mixedGold}
                 onClick={handleClickEdit}
-                theme="filter" 
+                theme="filter"
               />
             }
           />
         </div>
       )}
 
-      {isModalVisible && <AddEditEmployeeModal  onClose={handleCloseModal} mode="edit" />}
+      {isModalVisible && (
+        <AddEditEmployeeModal onClose={handleCloseModal} mode="edit" />
+      )}
     </div>
   );
 };
