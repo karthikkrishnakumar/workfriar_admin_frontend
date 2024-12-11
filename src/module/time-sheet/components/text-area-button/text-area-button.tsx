@@ -11,6 +11,7 @@ interface TextAreaButtonProps {
   showTaskDetailModal?: boolean;
   value?: string;
   setvalue?: (value: string) => void;
+  readOnly?: boolean;
 }
 
 const TextAreaButton: React.FC<TextAreaButtonProps> = ({
@@ -20,6 +21,7 @@ const TextAreaButton: React.FC<TextAreaButtonProps> = ({
   showTaskDetailModal = false,
   value = "",
   setvalue,
+  readOnly = false,
 }) => {
   const [textAreaValue, setTextAreaValue] = useState(value);
 
@@ -44,7 +46,9 @@ const TextAreaButton: React.FC<TextAreaButtonProps> = ({
         <span className={styles.buttonValue}>
           {buttonvalue ? buttonvalue : "Add task description"}
         </span>
-        <span className={styles.editIcon}>{Icons.editPencil}</span>
+        {!readOnly && (
+          <span className={styles.editIcon}>{Icons.editPencil}</span>
+        )}
       </button>
 
       <ModalComponent
@@ -61,15 +65,20 @@ const TextAreaButton: React.FC<TextAreaButtonProps> = ({
               placeholder="Add Task description here..."
               value={textAreaValue}
               onChange={(e) => setTextAreaValue(e.target.value)} // Update local state
+              readOnly={readOnly}
             />
-            <p>
-              Maximum 200 characters.
-            </p>
+            {!readOnly && <p>Maximum 200 characters.</p>}
             <div className={styles.actionButtons}>
-              <ButtonComponent label="Save" theme="black" onClick={handleSave} />
+              {!readOnly && (
+                <ButtonComponent
+                  label="Save"
+                  theme="black"
+                  onClick={handleSave}
+                />
+              )}
               <ButtonComponent
-                label="Cancel"
-                theme="white"
+                label={readOnly ? "Close" : "Cancel"}
+                theme={readOnly ? "black" : "white"}
                 onClick={onclickFunction} // Close the modal without saving
               />
             </div>

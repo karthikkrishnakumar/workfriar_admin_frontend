@@ -21,6 +21,10 @@ interface TimeInputProps {
    * Tooltip content while disabled.
    */
   tooltipContent?: string;
+  /**
+   * is readonly
+   */
+  readOnly?: boolean;
 }
 
 /**
@@ -37,6 +41,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
   setValue,
   disabled = false,
   tooltipContent,
+  readOnly = false, 
 }) => {
   // State for raw user input and formatted display value
   const [inputValue, setInputValue] = useState<string>(value);
@@ -160,6 +165,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
           onBlur={handleBlur}
           placeholder="00:00"
           disabled={disabled}
+          readOnly={readOnly}
         />
       )}
     </div>

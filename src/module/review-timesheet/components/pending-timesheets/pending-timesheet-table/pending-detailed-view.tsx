@@ -1,46 +1,50 @@
-"use client";
-
-import React, { ReactNode, useState, useEffect, useRef } from "react";
-import CustomTable from "@/themes/components/custom-table/custom-table";
-import styles from "./approved-timesheet-table.module.scss";
-import TimeInput from "@/themes/components/time-input/time-input";
-import Icons from "@/themes/images/icons/icons";
-import TextAreaButton from "../../text-area-button/text-area-button";
-import ButtonComponent from "@/themes/components/button/button";
 import {
   TimeEntry,
   TimesheetDataTable,
   WeekDaysData,
-} from "../../../services/time-sheet-services";
+} from "@/module/time-sheet/services/time-sheet-services";
+import TimeInput from "@/themes/components/time-input/time-input";
 import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
+import React, { ReactNode, useState } from "react";
+import styles from "./pending-detailed-view.module.scss";
+import { Dropdown } from "antd";
+import CustomTable from "@/themes/components/custom-table/custom-table";
+import ButtonComponent from "@/themes/components/button/button";
+import Icons from "@/themes/images/icons/icons";
+import TextAreaButton from "@/module/time-sheet/components/text-area-button/text-area-button";
 
-interface PastDueTableProps {
-  timesheetData?: TimesheetDataTable[];
-  setTimeSheetData: (data: TimesheetDataTable[]) => void;
+interface PendingDetailedViewProps {
+  timeSheetData: TimesheetDataTable[];
   daysOfWeek: WeekDaysData[];
   backButtonFunction: () => void;
 }
-
-const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
-  timesheetData: initialTimesheetData = [],
-  setTimeSheetData,
+const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
+  timeSheetData,
   daysOfWeek,
-  backButtonFunction
-
+  backButtonFunction,
 }) => {
-  const [timesheetData, setLocalTimesheetData] =
-    useState<TimesheetDataTable[]>(initialTimesheetData);
+  const [loading, setLoading] = useState(false);
   const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false);
+  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
   const textAreaOnclick = (rowIndex: number) => {
     setEditingRowIndex(rowIndex);
     setTaskDetailModal(!showTaskDetailModal);
   };
-  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+  const menuItems = [
+    { key: "approve", label: "Approve" },
+    { key: "reject", label: "Reject" },
+  ];
 
-
+  const handleMenuClick = (e: { key: string }, id?: string) => {
+    if (e.key === "approve") {
+      // function to approve
+    } else if (e.key === "reject") {
+      //  function to reject
+    }
+  };
 
   // Calculate total hours for a row
   const calculateTotalHours = (entries: TimeEntry[]) => {
@@ -77,22 +81,11 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     return weekMap;
   };
 
-
-
-  // Save button functionality
-  
-
-  // Submit button functionality
-  const handleSubmit = () => {
-
-    alert("Timesheet data submitted successfully!");
-  };
-
   // Calculate total hours by day
   const calculateTotalByDay = () => {
     const dailyTotals: Record<string, number> = {};
     daysOfWeek.forEach((day) => {
-      dailyTotals[day.name] = timesheetData.reduce((total, timesheet) => {
+      dailyTotals[day.name] = timeSheetData.reduce((total, timesheet) => {
         const dayIndex = daysOfWeek.indexOf(day);
         const dayEntry = timesheet.dataSheet[dayIndex];
         return total + timeToMinutes(dayEntry?.hours || "00:00");
@@ -150,16 +143,24 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
       key: day.name,
     })),
     { title: "Total", key: "total", width: 70 },
+    { title: "", key: "action", width: 50 },
   ];
 
-  const data = timesheetData.map((timesheet, index) => {
+  const data = timeSheetData.map((timesheet, index) => {
     const totalHours = calculateTotalHours(timesheet.dataSheet);
+    let isDisabled;
     const taskStatusClass =
       timesheet.status === "approved"
         ? styles.approved
         : timesheet.status === "rejected"
         ? styles.rejected
         : "";
+
+    if (timesheet.status === "approved" || timesheet.status === "rejected") {
+      isDisabled = true;
+    } else {
+      isDisabled = false;
+    }
 
     return {
       task: (
@@ -171,16 +172,10 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
       details: (
         <TextAreaButton
           buttonvalue={timesheet.taskDetail}
+          readOnly={true}
           onclickFunction={() => textAreaOnclick(index)}
           showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
-          value={timesheetData[index].taskDetail}
-          setvalue={(newValue) => {
-            const updatedData = [...timesheetData];
-            updatedData[index].taskDetail = newValue;
-            setLocalTimesheetData(updatedData);
-            setTimeSheetData(updatedData);
-          }}
-          readOnly={true}
+          value={timeSheetData[index].taskDetail}
         />
       ),
       ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
@@ -189,6 +184,25 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
           <p>{totalHours}</p>
         </span>
       ),
+      action: (
+        <Dropdown
+          menu={{
+            items: menuItems,
+            onClick: (e) => handleMenuClick(e, timesheet.timesheetId),
+          }}
+          trigger={["click"]}
+          disabled={isDisabled}
+        >
+          <button
+            className={styles.action}
+            role="button"
+            tabIndex={0}
+            disabled={isDisabled}
+          >
+            <span>{Icons.threeDots}</span>
+          </button>
+        </Dropdown>
+      ),
     };
   });
 
@@ -196,17 +210,28 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     <div className={styles.mainContainer}>
       <div className={styles.scrollContainer}>
         <div className={styles.tableWrapper}>
-          <CustomTable
-            columns={columns}
-            data={[...data, totalRow()]}
-          />
+          <CustomTable columns={columns} data={[...data, totalRow()]} />
         </div>
       </div>
+      <div className={styles.timesheetNotesWrapper}>
+        <h2>Timesheet Note</h2>
+        <textarea
+          className={styles.timesheetNote}
+          placeholder="Write your timesheet note here."
+        />
+      </div>
       <div className={styles.actionButtons}>
-        <span className={styles.backButton} onClick={backButtonFunction}> {"< Back"}</span>
+        <div>
+          <ButtonComponent label="Approve" theme="black" />
+          <ButtonComponent label="Reject" theme="white" />
+        </div>
+        <span className={styles.backButton} onClick={backButtonFunction}>
+          {" "}
+          {"< Back"}
+        </span>
       </div>
     </div>
   );
 };
 
-export default ApprovedTimesheetsTable;
+export default PendingDetailedView;

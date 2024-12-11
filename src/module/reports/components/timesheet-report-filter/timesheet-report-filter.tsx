@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styles from "./timesheet-report-filter.module.scss";
 import ModalComponent from "@/themes/components/modal/modal";
 import ButtonComponent from "@/themes/components/button/button";
-import DatePicker from "react-datepicker"; // Import a date picker library
 import "react-datepicker/dist/react-datepicker.css"; // Include its styles
 import TabbedComponent from "@/themes/components/tabbed-filter/tabbed-filter";
 import CustomDatePicker from "@/themes/components/datepicker-calender/datepicker-calender";

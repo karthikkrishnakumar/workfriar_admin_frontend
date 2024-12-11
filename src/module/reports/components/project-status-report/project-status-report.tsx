@@ -3,18 +3,18 @@ import React, { useEffect, useState } from "react";
 import { Tooltip, Dropdown, message, Pagination } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
-import { fetchProjectStatusReport } from "../../services/project-status-report/project-status-report";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./project-status-report.module.scss";
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import useProjectStatusServices from "../../services/project-status-report/project-status-report-services";
 
 const ProjectStatusReport: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1); // Current page state
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
-  const pageSize = 5; // Number of rows per page
+  const pageSize = 1; // Number of rows per page
   const router = useRouter();
 
   const columns = [
@@ -52,18 +52,21 @@ const ProjectStatusReport: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const result = await fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
-      const formattedData = result.projects.map((item: any) => ({
+      const reports = await useProjectStatusServices().fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
+      console.log(reports, "reports");
+      const formattedData = reports.data.map((item: any) => ({
         id: item._id,
         project: (
           <div className={styles.projectCell}>
-            <CustomAvatar name={item.project_name} size={50} />
-            <div className={styles.projectName}>{item.project_name}</div>
+            <CustomAvatar name={item.project_name.project_name} size={50} />
+            <div className={styles.projectName}>
+              {item.project_name.project_name}
+            </div>
           </div>
         ),
         projectLead: (
           <div className={styles.projectLeadCell}>
-            <div className={styles.name}>{item.project_lead}</div>
+            <div className={styles.name}>{item.project_lead.full_name}</div>
           </div>
         ),
         date: (
@@ -80,7 +83,7 @@ const ProjectStatusReport: React.FC = () => {
         ),
         progress: (
           <div className={styles.progressCell}>
-            <div>{item.progress}%</div>
+            <div>{item.progress}</div>
           </div>
         ),
         comments: (
@@ -105,7 +108,7 @@ const ProjectStatusReport: React.FC = () => {
         ),
       }));
       setData(formattedData);
-      setTotalRecords(result.total); // Set total records for pagination
+      setTotalRecords(reports.total); // Set total records for pagination
     } catch (error) {
       message.error("Failed to fetch project status report.");
     } finally {
@@ -122,43 +125,45 @@ const ProjectStatusReport: React.FC = () => {
   };
 
   return (
-    <div className={styles.projectStatusReport}>
-      {loading ? (
-        <>
-          <SkeletonLoader
-            count={1}
-            paragraph={{ rows: 2 }}
-            className={styles.customSkeleton}
-            classNameItem={styles.customSkeletonItem}
-          />
-          <SkeletonLoader
-            count={1}
-            paragraph={{ rows: 4 }}
-            classNameItem={styles.customSkeletonItem}
-          />
-          <SkeletonLoader
-            count={3}
-            paragraph={{ rows: 5 }}
-            classNameItem={styles.customSkeletonItem}
-          />
-        </>
-      ) : (
-        <div className={styles.tableWrapper}>
-          <CustomTable columns={columns} data={data} />
-          <div className={styles.paginationDiv}>
-            <Pagination
-              className={styles.pagination}
-              total={totalRecords}
-              pageSize={pageSize}
-              current={currentPage}
-              onChange={handlePageChange}
-              showSizeChanger={false}
-              style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
+    <>
+      <div className={styles.projectStatusReport}>
+        {loading ? (
+          <>
+            <SkeletonLoader
+              count={1}
+              paragraph={{ rows: 2 }}
+              className={styles.customSkeleton}
+              classNameItem={styles.customSkeletonItem}
             />
+            <SkeletonLoader
+              count={1}
+              paragraph={{ rows: 4 }}
+              classNameItem={styles.customSkeletonItem}
+            />
+            <SkeletonLoader
+              count={3}
+              paragraph={{ rows: 5 }}
+              classNameItem={styles.customSkeletonItem}
+            />
+          </>
+        ) : (
+          <div className={styles.tableWrapper}>
+            <CustomTable columns={columns} data={data} />
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+      <div className={styles.paginationDiv}>
+        <Pagination
+          className={styles.pagination}
+          total={totalRecords}
+          pageSize={pageSize}
+          current={currentPage}
+          onChange={handlePageChange}
+          showSizeChanger={false}
+          style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
+        />
+      </div>
+    </>
   );
 };
 

@@ -9,8 +9,11 @@ import EditRoleModal from "../role-modal/edit-role-modal/edit-role-modal";
 import MapUserModal from "../map-user/map-user-modal/map-user-modal";
 import { departmentOptions, statusOptions } from "../../constants";
 import styles from "./role-listing.module.scss";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/redux/store";
 import AddRoleModal from "../role-modal/add-role-modal/add-role-modal";
 import DeleteRoleModal from "../role-modal/delete-role-modal/delete-role-modal";
+import { closeModal } from "@/redux/slices/modalSlice";
 
 
 const RoleListingTable: React.FC = () => {
@@ -20,6 +23,9 @@ const RoleListingTable: React.FC = () => {
   const [activeModal, setActiveModal] = useState<"add" | "edit" | "map-user" | "delete" | null>(null);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
+  
   //fetch roles from the service 
   const fetchRoles = useCallback(async () => {
     setLoading(true);
@@ -70,6 +76,10 @@ const RoleListingTable: React.FC = () => {
         break;
     }
   };
+
+  // const handleCloseModal = () => {
+  //   dispatch(closeModal());
+  // };
 
   const columns: ColumnType[] = useMemo(
     () => [
@@ -161,19 +171,22 @@ const RoleListingTable: React.FC = () => {
         <Table columns={columns} dataSource={roles} />
       )}
 
-      {activeModal === "add" && (
+      {isOpen && modalType === "roleModal" && (
         <AddRoleModal
           isVisible
           departmentOptions={departmentOptions}
           statusOptions={statusOptions}
-          onClose={() => setActiveModal(null)}
+          onClose={() =>{
+            setActiveModal(null)
+            dispatch(closeModal());
+          }}
           onRoleAdded={fetchRoles}
         />
       )}
       
-      <button className={styles.addButton} onClick={() => setActiveModal("add")}>
+      {/* <button className={styles.addButton} onClick={() => setActiveModal("add")}>
         Add Role
-      </button>
+      </button> */}
 
       {activeModal === "edit" && selectedRole && (
         <EditRoleModal
