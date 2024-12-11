@@ -1,0 +1,17 @@
+.mixedGold {
+    background-color: transparent !important;
+    color: var(--black) !important;
+    border: 1px solid var(--primary-golden-color-dark) !important;
+    padding: 0px 20px;
+  
+    &:hover {
+      background-color: transparent !important;
+      color: var(--black) !important;
+      border: 1px solid var(--primary-golden-color-dark) !important;
+    }
+  }
+
+  .customSkeletonItem{
+    background-color: var(--disabled-table-column-background)!important;
+  }
+  

@@ -8,7 +8,7 @@
     position: relative;
     margin: 222px 253px;
     text-align: center;
-    font-family:  var(--font-rubik);
+    font-family: var(--font-rubik);
 
     h3 {
         font-size: var(--heading-1-size);
@@ -30,7 +30,20 @@
         background-color: transparent;
         border: 1px solid var(--secondary-font-color-dark);
         color: var(--secondary-font-color-dark);
+
+        &:hover {
+            background-color: transparent !important;
+        }
     }
+
+    .error {
+        color: red;
+        font-size: var(--default-font-size);
+        font-weight: var(--default-font-weight);
+        text-align: left;
+        margin-top: -20px;
+    }
+
 
     .divider {
         display: flex;
@@ -46,7 +59,7 @@
 
         p {
             font-size: var(--default-font-size);
-            font-weight:var(--default-font-weight);
+            font-weight: var(--default-font-weight);
             line-height: 0;
             color: #646464;
 
@@ -69,7 +82,11 @@
         background: var(--primary-golden-color-dark);
         color: white;
         margin-top: 0;
-        font-weight:var(--sub-heading-font-weight);
+        font-weight: var(--sub-heading-font-weight);
         line-height: 18.96px;
+
+        &:hover {
+            background: var(--primary-golden-color-dark) !important;
+        }
     }
 }

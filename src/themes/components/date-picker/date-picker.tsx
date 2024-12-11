@@ -90,6 +90,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     const fetchWeekData = async () => {
         try {
           setWeekData(datePickerData);
+          console.log(datePickerData,"datepickerdata ")
           const current = findCurrentWeek(datePickerData);
           setCurrentWeek(current);
           setDisabledWeeks(getFutureWeeks(datePickerData));

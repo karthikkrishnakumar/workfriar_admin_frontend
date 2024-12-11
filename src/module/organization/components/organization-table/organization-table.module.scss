@@ -1,0 +1,39 @@
+.organizationTableWrapper {
+    overflow-x: scroll;
+    padding-top: 20px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .nameCell {
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+  }
+  .employeeName {
+    padding-left: 10px;
+    font-size: 16px;
+    color:var(--black);
+    transition: color 0.3s ease;
+  }
+  .paginationDiv {
+    text-align: right;
+  }
+  .deleteButton {
+    cursor: pointer;
+    padding: 5px;
+    font-size: 18px;
+    color:var(--black);
+    transition: color 0.3s ease;
+  }
+  .threeDotButton {
+    font-size: 20px;
+  }
+  .status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:var(--black);
+  }
+
+  

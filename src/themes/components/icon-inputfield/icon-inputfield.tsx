@@ -3,10 +3,10 @@ import styles from "./icon-inputfield.module.scss";
 import { Input } from "antd"; // Ant Design's Input component
 
 interface IconInputFieldProps {
-  iconPosition: "left" | "right"; // Position of the icon (left or right)
-  icon: ReactNode; // The icon to display within the input field
-  placeholder: string; // Placeholder text for the input field
-  value: string; // Current value of the input field
+  iconPosition?: "left" | "right"; // Position of the icon (left or right)
+  icon?: ReactNode; // The icon to display within the input field
+  placeholder?: string; // Placeholder text for the input field
+  value?: string; // Current value of the input field
   onChange: (value: string) => void; // Function to handle value change
   type?: string; // Input type (e.g., text, password, etc.)
 }

@@ -3,11 +3,18 @@ import styles from "./module-header.module.scss";
 import Icons from "@/themes/images/icons/icons";
 import SearchBar from "../search-bar/search-bar";
 import ProfilePreview from "../profile-preview/profile-preview";
+import ButtonComponent from "../button/button";
 
 interface ModuleHeaderProps {
   title: string; // Title of the module header
-  actionButton?: ReactNode; // Optional action button to be displayed (if any)
+  actionButton?: ActionButtonProps | null;
   isBackButtonNeeded: boolean; // Flag to show or hide the back button
+}
+
+interface ActionButtonProps {
+  label: string; // Button label
+  icon: typeof Icons[keyof typeof Icons];
+  onClick: () => void; // Click handler
 }
 
 /**
@@ -22,17 +29,31 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   actionButton,
   isBackButtonNeeded,
 }) => {
+
+
+
   return (
     <div className={styles.moduleHeaderwrpper}>
-      <div className={styles.rightContainer}>
+      <div className={styles.leftContainer}>
         {isBackButtonNeeded && (
           <span>{Icons.arrowLeftDark}</span>
         )}
         <h2>{title}</h2>
+        <div className={styles.actionbutton}>
+          {actionButton && (
+            <ButtonComponent
+              label={actionButton.label}
+              theme="black"
+              onClick={actionButton.onClick}
+              content={actionButton.icon}
+              className={styles.addButton}
+            />
+          )}
+        </div>
       </div>
-
-      <div className={styles.leftContainer}>
-        <SearchBar placeholder="Search" />
+      
+      <div className={styles.rightContainer}>
+        <SearchBar placeholder="Search"/>
         <ProfilePreview />
       </div>
     </div>

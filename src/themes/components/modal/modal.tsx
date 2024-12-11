@@ -10,7 +10,8 @@ interface ModalProps {
   theme?: "normal" | "danger" | "primary"; // Define themes
   onClose?: () => void;
   className?: string;
-  classTitle?:string
+  classTitle?: string;
+  classBottom?:string;
 }
 
 const ModalComponent: React.FC<ModalProps> = ({
@@ -22,6 +23,7 @@ const ModalComponent: React.FC<ModalProps> = ({
   onClose,
   className = "",
   classTitle = "",
+  classBottom="",
 }) => {
   const themeStyles = {
     normal: {
@@ -51,11 +53,13 @@ const ModalComponent: React.FC<ModalProps> = ({
       className={`${styles.customModal} ${className}`}
     >
       <div className={styles.modalContent}>
-        <div className={`${styles.title} ${currentTheme.titleClass} ${classTitle}`}>
+        <div
+          className={`${styles.title} ${currentTheme.titleClass} ${classTitle}`}
+        >
           {title}
         </div>
         {content}
-        <div className={styles.buttonsContainer}>{bottomContent}</div>
+        <div className={`${styles.buttonsContainer} ${classBottom}`}>{bottomContent}</div>
       </div>
     </Modal>
   );
