@@ -1,62 +1,56 @@
-import { DatePickerData } from "@/module/dashboard/services/timesheet-due-services/timesheet-due-services";
+import { TeamMember } from "@/module/approval-center/services/all-time-sheet-services";
+import { OverViewTable, run, TimesheetDataTable, WeekDaysData } from "@/module/time-sheet/services/time-sheet-services";
 import { dateStringToMonthDate, enGBFormattter, toISODateFormatter } from "@/utils/date-formatter-util/date-formatter";
-import http from "@/utils/http";
 
-export interface TimeEntry {
-    weekday: string;
-    date: string;
-    isHoliday: boolean;
-    hours: string;
-    isDisabled: boolean;
-    formattedDate?: string;
+// function to fetch all counts of timesheet
+async function fetchUserData(
+    id: string,
+    setPendingCount: (count: number) => void,
+    setApprovedCount: (count: number) => void,
+    setRejected: (count: number) => void,
+    setOverDue: (count: number) => void,
+    setLoading: (loading: boolean) => void,
+    setuserData: (data: TeamMember) => void
+): Promise<void> {
+    try {
+        const response = {
+            status: "true",
+            message: "Count fetched successfully",
+            data: {
+                count: {
+                    pending: 10,
+                    approved: 5,
+                    rejected: 2,
+                    overdue: 3
+                },
+                userData: {
+                    id: "6748098aa081d9c94604c49e",
+                    name: "Guruvayoorappan G R",
+                },
+            }
+        };
+
+        setPendingCount(response.data.count.pending);
+        setApprovedCount(response.data.count.approved);
+        setRejected(response.data.count.rejected);
+        setOverDue(response.data.count.overdue);
+
+        setuserData(response.data.userData);
+        await run()
+        setLoading(false);
+    } catch (err) {
+        console.error("Error fetching timesheet counts:", err);
+    }
 }
 
-export interface TimesheetDataTable {
-    timesheetId?: string;
-    projectName: string;
-    categoryName: string;
-    taskDetail: string;
-    dataSheet: TimeEntry[];
-    status: string;
-}
 
-export interface WeekDaysData {
-    name: string;
-    date: string;
-    isHoliday: boolean;
-    formattedDate?: string;
-    isDisabled: boolean;
-}
-
-export interface OverViewTable {
-    dateRange: string;
-    loggedHours?: string;
-    approvedHours?: string;
-}
-
-
-
-
-// delay function to set loading
-export function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// Usage example
-export async function run() {
-    await delay(1000); // Wait for 3 seconds
-}
-
-// //////////////////////////////////////////////////
-
-
-
-// function to fetch all time sheets
-async function fetchTimesheets(
-    setTimeSheetData: (data: TimesheetDataTable[]) => void,
-    setDates: (dateArray: WeekDaysData[]) => void,
-    startDate?: string,
-    endDate?: string
+// function to detch all time sheets
+async function fetchAllTimeSheetsToReview(
+    startDate: Date | null,
+    endDate: Date | null,
+    setTimesheets: (timesheets: TimesheetDataTable[]) => void,
+    setLoading: (loading: boolean) => void,
+    setDates: (dates: WeekDaysData[]) => void
 ): Promise<void> {
     try {
         const response = {
@@ -115,8 +109,7 @@ async function fetchTimesheets(
             ]
         };
 
-        // Set timesheet data
-        setTimeSheetData(response.data);
+        setTimesheets(response.data);
 
         // Extract unique dates
         const getUniqueDates = () => {
@@ -143,17 +136,15 @@ async function fetchTimesheets(
 
         const uniqueDates = getUniqueDates();
         setDates(uniqueDates);
-    } catch (error) {
-        console.error("Error fetching timesheet data:", error);
+        setLoading(false);
+    } catch (err) {
+        console.error("Error fetching timesheet:", err);
     }
 }
 
 
 
-
-
-// fetch past due weeks
-async function fetchPastDueWeeks(setTable: (table: OverViewTable[]) => void,setLoading:(loading:boolean)=>void): Promise<void> {
+async function fetchPendingWeeks(setTable: (table: OverViewTable[]) => void, setLoading: (loading: boolean) => void): Promise<void> {
     try {
         const response = {
             status: true,
@@ -192,15 +183,14 @@ async function fetchPastDueWeeks(setTable: (table: OverViewTable[]) => void,setL
         setTable(tableData); // Pass the transformed data to setTable
         await run();
         setLoading(false);
-    } catch (error) {
-        console.error("Error fetching past due weeks:", error);
+    } catch (err) {
+        console.error("Error fetching pending weeks:", err);
     }
 }
 
 
-// fetch past due time sheet according to each week
-async function fetchPastDueTimesheets(dateRangeString:string, setTimesheetTable:(table:TimesheetDataTable[])=>void, setDates: (dateArray: WeekDaysData[]) => void, setLoading:(loading:boolean)=>void): Promise<void>{
-    try{
+async function fetchPendingTimesheets(dateRangeString: string, setTimesheetTable: (table: TimesheetDataTable[]) => void, setDates: (dateArray: WeekDaysData[]) => void, setLoading: (loading: boolean) => void): Promise<void> {
+    try {
         const startDateString = dateRangeString.split("-")[0];
         const endDateString = dateRangeString.split("-")[1];
 
@@ -293,20 +283,17 @@ async function fetchPastDueTimesheets(dateRangeString:string, setTimesheetTable:
 
         await run();
         setLoading(false)
-
-
-    }catch(error){
-        console.error(error)
+    } catch (err) {
+        console.error(err)
     }
 }
 
 
-
-async function fetchApprovedWeeks(setTable: (table: OverViewTable[]) => void,setLoading:(loading:boolean)=>void): Promise<void> {
+async function fetchApprovedWeeks(setTable: (table: OverViewTable[]) => void, setLoading: (loading: boolean) => void): Promise<void> {
     try {
         const response = {
             status: true,
-            message: "Past Due",
+            message: "Approved",
             data: [
                 {
                     startDate: "2024-11-20",
@@ -341,14 +328,14 @@ async function fetchApprovedWeeks(setTable: (table: OverViewTable[]) => void,set
         setTable(tableData); // Pass the transformed data to setTable
         await run();
         setLoading(false);
-    } catch (error) {
-        console.error("Error fetching past due weeks:", error);
+    } catch (err) {
+        console.error("Error fetching pending weeks:", err);
     }
 }
 
 
-async function fetchApprovedTimesheets(dateRangeString:string, setTimesheetTable:(table:TimesheetDataTable[])=>void, setDates: (dateArray: WeekDaysData[]) => void, setLoading:(loading:boolean)=>void): Promise<void>{
-    try{
+async function fetchApprovedTimesheets(dateRangeString: string, setTimesheetTable: (table: TimesheetDataTable[]) => void, setDates: (dateArray: WeekDaysData[]) => void, setLoading: (loading: boolean) => void): Promise<void> {
+    try {
         const startDateString = dateRangeString.split("-")[0];
         const endDateString = dateRangeString.split("-")[1];
 
@@ -441,19 +428,16 @@ async function fetchApprovedTimesheets(dateRangeString:string, setTimesheetTable
 
         await run();
         setLoading(false)
-
-
-    }catch(error){
-        console.error(error)
+    } catch (err) {
+        console.error(err)
     }
 }
 
-
-async function fetchRejectedWeeks(setTable: (table: OverViewTable[]) => void,setLoading:(loading:boolean)=>void): Promise<void> {
+async function fetchRejectedWeeks(setTable: (table: OverViewTable[]) => void, setLoading: (loading: boolean) => void): Promise<void> {
     try {
         const response = {
             status: true,
-            message: "Past Due",
+            message: "Rejected",
             data: [
                 {
                     startDate: "2024-11-20",
@@ -488,14 +472,13 @@ async function fetchRejectedWeeks(setTable: (table: OverViewTable[]) => void,set
         setTable(tableData); // Pass the transformed data to setTable
         await run();
         setLoading(false);
-    } catch (error) {
-        console.error("Error fetching past due weeks:", error);
+    } catch (err) {
+        console.error("Error fetching pending weeks:", err);
     }
 }
 
-
-async function fetchRejectedTimesheets(dateRangeString:string, setTimesheetTable:(table:TimesheetDataTable[])=>void, setDates: (dateArray: WeekDaysData[]) => void, setLoading:(loading:boolean)=>void): Promise<void>{
-    try{
+async function fetchRejectedTimesheets(dateRangeString: string, setTimesheetTable: (table: TimesheetDataTable[]) => void, setDates: (dateArray: WeekDaysData[]) => void, setLoading: (loading: boolean) => void): Promise<void> {
+    try {
         const startDateString = dateRangeString.split("-")[0];
         const endDateString = dateRangeString.split("-")[1];
 
@@ -588,27 +571,61 @@ async function fetchRejectedTimesheets(dateRangeString:string, setTimesheetTable
 
         await run();
         setLoading(false)
-
-
-    }catch(error){
-        console.error(error)
+    } catch (err) {
+        console.error(err)
     }
 }
 
 
-// function to fetch date
-const fetchDateData = async (): Promise<DatePickerData[]> => {
+async function fetchOverdueWeeks(
+    setTable: (table: OverViewTable[]) => void,
+    setLoading: (loading: boolean) => void
+): Promise<void> {
     try {
-        const response = await http().post("/api/dashboard/datepicker-data");
-        return response.response.data.DatePickerData;
-    } catch (error) {
-        console.error("Error fetching date picker data:", error);
-        throw new Error("Failed to fetch date picker data");
+        const response = {
+            status: true,
+            message: "Rejected",
+            data: [
+                {
+                    startDate: "2024-11-20",
+                    endDate: "2024-11-27",
+                    status: "pastDue",
+                },
+                {
+                    startDate: "2024-11-28",
+                    endDate: "2024-11-31",
+                    status: "pastDue",
+                },
+                {
+                    startDate: "2024-12-01",
+                    endDate: "2024-12-07",
+                    status: "pastDue",
+                },
+            ],
+        };
+
+        const tableData: OverViewTable[] = response.data.map((row) => ({
+            dateRange: `${enGBFormattter(row.startDate)} - ${enGBFormattter(row.endDate)}`,
+            loggedHours: (row as any).totalHours?.toString() , // Default to "0" if undefined
+            approvedHours: (row as any).approvedHours?.toString(), // Return undefined if property is missing
+        }));
+
+        setTable(tableData);
+
+        // If `run` is required, ensure it is defined
+        if (typeof run === "function") {
+            await run();
+        }
+
+        setLoading(false);
+    } catch (err) {
+        console.error("Error fetching pending weeks:", err);
+        setLoading(false); // Ensure loading state is reset even on error
     }
-};
+}
 
 
 
 
 
-export { fetchTimesheets, fetchDateData, fetchPastDueWeeks, fetchPastDueTimesheets, fetchApprovedWeeks,fetchApprovedTimesheets, fetchRejectedWeeks, fetchRejectedTimesheets };
+export { fetchUserData, fetchAllTimeSheetsToReview, fetchPendingWeeks, fetchPendingTimesheets, fetchApprovedWeeks, fetchApprovedTimesheets, fetchRejectedWeeks, fetchRejectedTimesheets, fetchOverdueWeeks }

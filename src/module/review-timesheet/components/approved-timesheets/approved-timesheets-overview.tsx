@@ -1,24 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import styles from "./approved-overdue-table.module.scss";
+import styles from "./approved-timesheet-overview.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
-import {
-  fetchApprovedTimesheets,
-  fetchApprovedWeeks,
-  fetchPastDueTimesheets,
-  fetchPastDueWeeks,
-  OverViewTable,
-  TimesheetDataTable,
-  WeekDaysData,
-} from "../../services/time-sheet-services";
-import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import ApprovedTimesheetsTable from "./approved-timesheet-table/approved-timesheet-table";
 
-interface PastDueOverviewProps {
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import { OverViewTable, TimesheetDataTable, WeekDaysData } from "@/module/time-sheet/services/time-sheet-services";
+import { fetchApprovedTimesheets, fetchApprovedWeeks } from "../../services/review-timesheet-services";
+import ApprovedDetailedView from "./approved-timesheet-table/approved-detailed-view";
+
+
+interface ApprovedOverviewProps {
   tableData?: OverViewTable[];
 }
 
-const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
+const ApprovedOverviewTable: React.FC<ApprovedOverviewProps> = ({
   tableData,
 }) => {
   const [table, setTable] = useState<OverViewTable[]>([]);
@@ -90,7 +85,7 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
           classNameItem={styles.customSkeleton}
         />
       ) : (
-        <ApprovedTimesheetsTable timesheetData={timeSheetTable} setTimeSheetData={setTimesheetTable} daysOfWeek={dates} backButtonFunction={handleBackToOverview}/>
+        <ApprovedDetailedView timeSheetData={timeSheetTable} daysOfWeek={dates} backButtonFunction={handleBackToOverview}/>
         // detailed view table shhould be here
       ) : loading ? (
         <SkeletonLoader

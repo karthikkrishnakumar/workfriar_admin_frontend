@@ -1,0 +1,46 @@
+.dataCell {
+    padding: 16px;
+    font-size: var(--heading-3-size);
+    color: var(--primary-font-color-dark);
+}
+
+.actionDataCell {
+    padding-left: 0px;
+    color: var(--primary-golden-color-dark);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.customSkeleton {
+    background-color: rgba(123, 121, 121, 0.085) !important;
+}
+
+.customToast {
+    border-radius: 12px;
+    background-color: #ffffff !important; // Dark background
+    color: #000000 !important; // White text
+    border-radius: 8px !important; // Rounded corners
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important; // Subtle shadow
+}
+
+.customToastBody {
+    font-size: var(--default-font-size) !important; // Adjust font size
+    font-family: Arial, sans-serif !important; // Set font family
+}
+
+.tickMark{
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: var(--success-background-dark-color);
+}
+
+.toastMessage{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 16px;
+}

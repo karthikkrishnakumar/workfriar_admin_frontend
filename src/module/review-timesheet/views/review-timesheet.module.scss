@@ -1,0 +1,25 @@
+.customSkelton{
+    background-color: rgba(110, 100, 100, 0.188)!important;
+    padding: 10px !important;
+    margin: 0 !important;
+}
+
+.reviewTimesheetWrapper{
+    display: flex;
+    flex-direction: column;
+    row-gap: 28px;
+}
+
+.profileWrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 28px;
+    align-items: center;
+    margin-top: 24px;
+
+    h2{
+        font-size: 20px;
+        font-weight: var(--sub-heading-font-weight);
+    }
+}
