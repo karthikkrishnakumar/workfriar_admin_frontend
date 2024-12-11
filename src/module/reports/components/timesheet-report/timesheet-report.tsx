@@ -19,14 +19,13 @@ const TimesheetReport = ({ activeTab }: { activeTab: string }) => {
     "employee-details": { exclude: [] },
   };
 
-  const { fetchTimeSheetReportData } = useTimeSheetServices();
   const fetchData = async () => {
     setLoading(true);
     setError(null);
 
     try {
       // Fetch data for the active tab
-      const result = await fetchTimeSheetReportData(activeTab);
+      const result = await useTimeSheetServices().fetchTimeSheetReportData(activeTab);
 
       const formattedData = result.map((item: any) => ({
         projectName: (

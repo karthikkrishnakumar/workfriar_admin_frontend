@@ -20,7 +20,6 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   const [project, setProject] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const { fetchProjectDetails } = useProjectStatusServices();
 
   const tabs = [
     {
@@ -35,7 +34,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const result = await fetchProjectDetails(id); // Make sure you pass the ID
+        const result = await useProjectStatusServices().fetchProjectDetails(id); // Make sure you pass the ID
         setProject(result.data);
       } catch (error) {
         setError("Failed to fetch project details.");

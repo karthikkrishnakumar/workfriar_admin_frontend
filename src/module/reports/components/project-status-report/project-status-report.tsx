@@ -16,7 +16,6 @@ const ProjectStatusReport: React.FC = () => {
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
   const pageSize = 1; // Number of rows per page
   const router = useRouter();
-  const { fetchProjectStatusReport } = useProjectStatusServices();
 
   const columns = [
     { title: "Project", key: "project", align: "left" as const, width: 220 },
@@ -53,7 +52,7 @@ const ProjectStatusReport: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const reports = await fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
+      const reports = await useProjectStatusServices().fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
       console.log(reports, "reports");
       const formattedData = reports.data.map((item: any) => ({
         id: item._id,
