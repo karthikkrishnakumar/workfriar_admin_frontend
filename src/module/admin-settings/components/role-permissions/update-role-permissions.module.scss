@@ -1,0 +1,28 @@
+.permissionTable {
+  :global {
+    .ant-table {
+      .ant-table-tbody > tr > td {
+        color: var(--black);
+        padding-left: 4%;
+
+        &:first-child {
+          padding-left: 1.5%; /* Set padding for the first column */
+        }
+      }
+
+      .ant-table-thead > tr > th {
+        padding-left: 3%;
+
+        &:first-child {
+          padding-left: 1.5%; /* Set padding for the first column */
+        }
+      }
+    }
+  }
+}
+
+.actions{
+  margin-top:40px ;
+  display: flex;
+  justify-content: flex-end;
+}

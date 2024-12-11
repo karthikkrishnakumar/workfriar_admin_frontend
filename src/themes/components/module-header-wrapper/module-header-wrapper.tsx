@@ -22,6 +22,9 @@ const ModuleHeaderWrapper = () => {
     { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false },
     { title: "Report details", path: "/project-status-report/report-details/[id]", backButtonNeeded: true  },
     { title: "Review Timesheet", path: "/time-sheet/review-timesheet/[id]", backButtonNeeded: true  },
+    { title: "Admin Settings", path: "/settings", backButtonNeeded: false },
+    { title: "Permissions Settings", path: "/settings/permissions", backButtonNeeded: false },
+    { title: "Notifications", path: "/notifications", backButtonNeeded: false },
   ];
 
   // Function to match the dynamic path
@@ -29,6 +32,7 @@ const ModuleHeaderWrapper = () => {
     const staticSegments = dynamicPath.split("/").filter((seg) => !seg.startsWith("["));
     return staticSegments.every((seg) => path.includes(seg));
   };
+
 
   // Find the matching page based on the current pathname
   const currentPage = pages.find((page) =>

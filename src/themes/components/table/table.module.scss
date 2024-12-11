@@ -1,0 +1,98 @@
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 36px;
+  border-radius: 12px;
+
+
+  :global {
+    .ant-table {
+      border-collapse: separate;
+
+      .ant-table-container {
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        background-color: var( --page-background);
+        gap: 10px; //gap between thead and tbody
+      }
+      .ant-table-thead {
+        border-radius: 12px;
+
+        > tr {
+          > th:first-child {
+            border-bottom-left-radius: 12px; 
+          }
+
+          > th:last-child {
+            border-bottom-right-radius: 12px; 
+          }
+        }
+      }
+      // Custom scrollbar styles
+      .ant-table-body {
+        background-color: var( --container-color);
+        border-radius: 12px;
+        scrollbar-width: thin; // For Firefox
+        scrollbar-color: rgba(0,0,0,0.2) rgba(0,0,0,0.1); // For Firefox
+
+        &::-webkit-scrollbar {
+          width: 8px; // Vertical scrollbar width
+          height: 8px; // Horizontal scrollbar height
+        }
+
+        &::-webkit-scrollbar-track {
+          background: rgba(0,0,0,0.05); // Light track color
+          border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: rgba(0,0,0,0.2); // Scrollbar color
+          border-radius: 10px;
+          
+          &:hover {
+            background: rgba(0,0,0,0.3); // Darker on hover
+          }
+        }
+      }
+    }
+
+    .ant-table-thead > tr > th {
+      color: var(--grey-font-color);
+      background: var(--secondary-golden-color-light);
+      font-weight: var(--default-font-weight);
+      font-size: var(--default-font-size);
+      position: sticky;
+      top: 0;
+      z-index: 0;
+      background: var(--secondary-golden-color-light); // Ensure header stays on top during scroll
+
+      // border-right: 1px solid black;
+      // border-left: 1px solid black;
+
+
+    }
+
+    .ant-table-tbody > tr > td {
+      color: var(--primary-font-color-dark);
+      font-weight: var(--default-font-weight);
+      font-size: var(--heading-3-size);
+
+      // border-right: 1px solid black; 
+      // border-left: 1px solid black; 
+
+    }
+
+    .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder {
+      color: rgba(0, 0, 0, 0.25);
+    }
+
+    @media (max-width: 768px) {
+      .ant-table-thead > tr > th,
+      .ant-table-tbody > tr > td {
+        padding: 12px 8px;
+      }
+    }
+  }
+}
+
