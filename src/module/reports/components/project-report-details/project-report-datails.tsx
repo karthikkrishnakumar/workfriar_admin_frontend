@@ -30,13 +30,13 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
           <GridContainer
             isGrid={true}
             avatar={{
-              name: project?.project_name,
-              profile: project?.logo,
+              name: project?.project_name.project_name,
+              profile: project?.project_name.project_logo,
               size: 80,
             }}
             fields={[
-              { label: "Project name", value: project?.project_name },
-              { label: "Project lead", value: project?.project_lead },
+              { label: "Project name", value: project?.project_name.project_name },
+              { label: "Project lead", value: project?.project_lead.full_name },
             ]}
           />
 
@@ -44,7 +44,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
           <GridContainer
             isGrid={true}
             fields={[
-              { label: "Reporting Period", value: "--" },
+              { label: "Reporting Period", value: project?.reporting_period },
               {
                 label: "Planned Start Date",
                 value: project?.planned_start_date,
@@ -52,7 +52,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
               { label: "Planned End Date", value: project?.planned_end_date },
               { label: "Actual Start Date", value: project?.actual_start_date },
               { label: "Actual End Date", value: project?.actual_end_date },
-              { label: "Progress", value: `${project?.progress}%` },
+              { label: "Progress", value: `${project?.progress}` },
             ]}
           />
           {/* Comments */}

@@ -11,19 +11,20 @@ export default function useProjectStatusServices() {
    * @returns Project details or throws an error if the request fails.
    */
   const fetchProjectDetails = async (id: string): Promise<any> => {
-    const props: JSON = <JSON>(<unknown>{ id }); // Properly formatted request body
+    // const props: JSON = <JSON>(<unknown>{ id }); // Properly formatted request body
 
     try {
       // Send a POST request to fetch project details
       const { body } = await http().post(
-        "/api/project-status-report/get-report",
-        props
+        `/api/project-status-report/get-report/${id}`,
       );
 
+  
+      console.log(body)
       // Handle the API response and return the report details
       return {
         status: body.status,
-        data: body.report_details || null, // Return the project report details
+        data: body.data || null, // Return the project report details
         message: body.message || "Successfully fetched project details.",
         errors: body.errors || null,
       };
@@ -58,8 +59,8 @@ export default function useProjectStatusServices() {
       // Handle the API response and return filtered data
       return {
         status: body.status,
-        data: body.reports || [], // Return the projects data
-        total: body.pagination.totalPages || 0, // Total count of projects
+        data: body.data.reports || [], // Return the projects data
+        total: body.data.pagination.totalPages || 0, // Total count of projects
         message: body.message || "Successfully fetched project status report.",
         errors: body.errors || null,
       };

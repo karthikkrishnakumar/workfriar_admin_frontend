@@ -14,7 +14,7 @@ const ProjectStatusReport: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1); // Current page state
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
-  const pageSize = 5; // Number of rows per page
+  const pageSize = 1; // Number of rows per page
   const router = useRouter();
   const { fetchProjectStatusReport } = useProjectStatusServices();
 
@@ -54,17 +54,20 @@ const ProjectStatusReport: React.FC = () => {
     setLoading(true);
     try {
       const reports = await fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
-      const formattedData = reports.map((item: any) => ({
+      console.log(reports, "reports");
+      const formattedData = reports.data.map((item: any) => ({
         id: item._id,
         project: (
           <div className={styles.projectCell}>
-            <CustomAvatar name={item.project_name} size={50} />
-            <div className={styles.projectName}>{item.project_name}</div>
+            <CustomAvatar name={item.project_name.project_name} size={50} />
+            <div className={styles.projectName}>
+              {item.project_name.project_name}
+            </div>
           </div>
         ),
         projectLead: (
           <div className={styles.projectLeadCell}>
-            <div className={styles.name}>{item.project_lead}</div>
+            <div className={styles.name}>{item.project_lead.full_name}</div>
           </div>
         ),
         date: (
@@ -81,7 +84,7 @@ const ProjectStatusReport: React.FC = () => {
         ),
         progress: (
           <div className={styles.progressCell}>
-            <div>{item.progress}%</div>
+            <div>{item.progress}</div>
           </div>
         ),
         comments: (
@@ -123,43 +126,45 @@ const ProjectStatusReport: React.FC = () => {
   };
 
   return (
-    <div className={styles.projectStatusReport}>
-      {loading ? (
-        <>
-          <SkeletonLoader
-            count={1}
-            paragraph={{ rows: 2 }}
-            className={styles.customSkeleton}
-            classNameItem={styles.customSkeletonItem}
-          />
-          <SkeletonLoader
-            count={1}
-            paragraph={{ rows: 4 }}
-            classNameItem={styles.customSkeletonItem}
-          />
-          <SkeletonLoader
-            count={3}
-            paragraph={{ rows: 5 }}
-            classNameItem={styles.customSkeletonItem}
-          />
-        </>
-      ) : (
-        <div className={styles.tableWrapper}>
-          <CustomTable columns={columns} data={data} />
-          <div className={styles.paginationDiv}>
-            <Pagination
-              className={styles.pagination}
-              total={totalRecords}
-              pageSize={pageSize}
-              current={currentPage}
-              onChange={handlePageChange}
-              showSizeChanger={false}
-              style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
+    <>
+      <div className={styles.projectStatusReport}>
+        {loading ? (
+          <>
+            <SkeletonLoader
+              count={1}
+              paragraph={{ rows: 2 }}
+              className={styles.customSkeleton}
+              classNameItem={styles.customSkeletonItem}
             />
+            <SkeletonLoader
+              count={1}
+              paragraph={{ rows: 4 }}
+              classNameItem={styles.customSkeletonItem}
+            />
+            <SkeletonLoader
+              count={3}
+              paragraph={{ rows: 5 }}
+              classNameItem={styles.customSkeletonItem}
+            />
+          </>
+        ) : (
+          <div className={styles.tableWrapper}>
+            <CustomTable columns={columns} data={data} />
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+      <div className={styles.paginationDiv}>
+        <Pagination
+          className={styles.pagination}
+          total={totalRecords}
+          pageSize={pageSize}
+          current={currentPage}
+          onChange={handlePageChange}
+          showSizeChanger={false}
+          style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
+        />
+      </div>
+    </>
   );
 };
 

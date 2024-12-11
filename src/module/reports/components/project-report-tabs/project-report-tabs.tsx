@@ -36,7 +36,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
     const fetchDetails = async () => {
       try {
         const result = await fetchProjectDetails(id); // Make sure you pass the ID
-        setProject(result);
+        setProject(result.data);
       } catch (error) {
         setError("Failed to fetch project details.");
         message.error("Failed to fetch project details.");
