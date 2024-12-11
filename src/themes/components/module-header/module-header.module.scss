@@ -14,13 +14,16 @@
     
 }
 
-.rightContainer{
+.leftContainer{
     display: flex;
     flex-direction: row;
     column-gap: 8px;
+    align-items: center;
+    width: auto;
+    
 
     span{
-        max-width: 34px;
+        // max-width: 34px;
         max-height: 34px;
         display: flex;
         justify-content: center;
@@ -33,13 +36,20 @@
         size: var(--heading-1-size);
         font-weight: var(--sub-heading-font-weight);
     }
+
+    .addButton{
+      font-size: 14px;
+      margin-left: 16px;
+    }
+    
 }
 
-.leftContainer{
+.rightContainer{
     display: flex;
     flex-direction: row;
     align-items: center;
     column-gap: 24px;
+
 }
 
 
