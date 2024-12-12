@@ -68,15 +68,15 @@
         }
 
         &.saved .value {
-          color: var(--primary-golden-color-light);
+          color: var(--black);
         }
 
         &.approved .value {
-          color: var(--primary-golden-color-medium);
+          color: var(--black);
         }
 
         &.rejected .value {
-          color: var(--primary-golden-color-dark);
+          color: var(--black);
         }
       }
     }
