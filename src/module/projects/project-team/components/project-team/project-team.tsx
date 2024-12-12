@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { Table, Button, Dropdown } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Dropdown, message } from "antd";
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-team.module.scss";
@@ -9,87 +9,48 @@ import AvatarGroup from "@/themes/components/avatar-group/avatar-group";
 import AddProjectTeamModal from "../add-project-team-modal/add-project-team-modal";
 import EditProjectTeamModal from "../edit-project-team-modal/edit-project-team-modal";
 import { useRouter } from "next/navigation";
-
-/**
- * Interface representing the Team member data structure.
- * @interface TeamMember
- */
-interface TeamMember {
-  name: string;
-  profile_pic?: string | null;
-}
-
-/**
- * Interface representing the ProjectTeam data structure.
- * @interface ProjectTeamData
- */
-interface ProjectTeamData {
-  key: string;
-  ProjectLogo: string;
-  ProjectName: string;
-  start_date: string | dayjs.Dayjs;
-  end_date: string | dayjs.Dayjs;
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
-  ProjectTeam: TeamMember[];
-}
+import useProjectTeamService, {
+  ProjectTeamData,
+  TeamMember,
+} from "../../services/project-team-service";
+import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 
 const ProjectTeam: React.FC = () => {
-  const data: ProjectTeamData[] = [
-    {
-      key: "1",
-      ProjectLogo: "",
-      ProjectName: "Diamond Lease",
-      ProjectTeam: [
-        {
-          name: "Alice",
-          profile_pic:
-            "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-        },
-        { name: "Bob", profile_pic: null },
-        { name: "Charlie", profile_pic: null },
-        { name: "Diana", profile_pic: null },
-      ],
-      start_date: "11/10/2024",
-      end_date: "02/05/2025",
-      status: "completed",
-    },
-    {
-      key: "2",
-      ProjectLogo: "",
-      ProjectName: "Platinum Hire",
-      start_date: "15/11/2024",
-      end_date: "03/06/2025",
-      status: "in_progress",
-      ProjectTeam: [
-        {
-          name: "Alice",
-          profile_pic: null,
-        },
-        {
-          name: "Bob",
-          profile_pic:
-            "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-        },
-        { name: "Charlie", profile_pic: null },
-      ],
-    },
-  ];
-
   const router = useRouter();
+  const {
+    addProjectTeam,
+    changeStatus,
+    fetchProjectTeamDetails,
+    updateProjectTeam,
+  } = useProjectTeamService();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [selectedProjectTeam, setSelectedProjectTeam] =
     useState<ProjectTeamData | null>(null);
-  const [projectTeamData, setProjectTeamData] =
-    useState<ProjectTeamData[]>(data);
+  const [projectTeamData, setProjectTeamData] = useState<ProjectTeamData[]>([]);
 
-  /**
-   * Redirects to the project details page
-   * @param {ProjectData} project - The project to view
-   */
+  // useEffect hook to fetch forecast data based on the ID when the component mounts
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchProjectTeamDetails(); // Make sure you pass the ID
+        setProjectTeamData(result);
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
 
-  const handleViewProject = (project: ProjectTeamData) => {
-    router.push(`/projects/project-details/${project.key}`);
+    fetchDetails();
+  }, []);
+
+  const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await changeStatus(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
   };
 
   /**
@@ -103,7 +64,7 @@ const ProjectTeam: React.FC = () => {
   ) => {
     setProjectTeamData((prevData) =>
       prevData.map((item) =>
-        item.key === key ? { ...item, status: newStatus } : item
+        item._id === key ? { ...item, status: newStatus } : item
       )
     );
   };
@@ -134,8 +95,13 @@ const ProjectTeam: React.FC = () => {
    * Handles the form submission from the EditProjectTeamModal
    * @param {Record<string, any>} values - The updated values for the ProjectTeam
    */
-  const handleEditProjectTeamSubmit = (values: Record<string, any>) => {
-    console.log("Updated ProjectTeam Details:", values);
+  const handleEditProjectTeamSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await updateProjectTeam(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsEditModalOpen(false); // Close modal after submission
   };
 
@@ -143,8 +109,13 @@ const ProjectTeam: React.FC = () => {
    * Handles the form submission from the AddProjectModal
    * @param {Record<string, any>} values - The values for the new project
    */
-  const handleAddProjectTeamSubmit = (values: Record<string, any>) => {
-    console.log("Updated ProjectTeam Details:", values);
+  const handleAddProjectTeamSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await addProjectTeam(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsAddModalOpen(false); // Close modal after submission
   };
 
@@ -209,7 +180,8 @@ const ProjectTeam: React.FC = () => {
         ];
 
         const handleMenuClick = (e: { key: string }) => {
-          handleStatusChange(record.key, e.key as ProjectTeamData["status"]);
+          setEffectiveDateModal(true);
+          handleStatusChange(record._id, e.key as ProjectTeamData["status"]);
         };
 
         return (
@@ -234,7 +206,8 @@ const ProjectTeam: React.FC = () => {
           {
             key: "view",
             label: <div className={styles.dropdownItem}>Details</div>,
-            onClick: () => handleViewProject(record),
+            onClick: () =>
+              router.push(`/projects/project-details/${record.project_id}`),
           },
           {
             key: "edit",
@@ -283,6 +256,27 @@ const ProjectTeam: React.FC = () => {
         isAddModalOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSave={handleAddProjectTeamSubmit}
+      />
+      <ModalFormComponent
+        isVisible={effectiveDateModal}
+        title={"Effective date"}
+        formRows={[
+          {
+            fields: [
+              {
+                name: "effective_date",
+                label: "Effective date",
+                type: "date",
+                required: true,
+              },
+            ],
+          },
+        ]}
+        primaryButtonLabel={"Save"}
+        secondaryButtonLabel={"Cancel"}
+        onPrimaryClick={handleEffectiveDateSubmit}
+        onSecondaryClick={() => setEffectiveDateModal(false)}
+        onClose={() => setEffectiveDateModal(false)}
       />
     </div>
   );

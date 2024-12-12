@@ -1,72 +1,60 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Button, Dropdown } from "antd";
+import { Table, Button, Dropdown, message } from "antd";
 import type { MenuProps } from "antd";
 import styles from "./team-members.module.scss";
 import dayjs from "dayjs";
+import useProjectTeamService, {
+  TeamMember,
+} from "@/module/projects/project-team/services/project-team-service";
 
 // Interface for the props passed to the TeamMembers component
 interface TeamMembersProps {
   id: string;
 }
 
-// Interface for the structure of each team member
-interface TeamMember {
-  key: string;
-  name: string;
-  profile_pic?: string | null;
-  email: string;
-  start_date: string | dayjs.Dayjs;
-  end_date: string | dayjs.Dayjs;
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
-}
-
 const TeamMembers = ({ id }: TeamMembersProps) => {
+  const { fetchProjectTeamByProjectId, changeMemberStatus } =
+    useProjectTeamService();
   const [ProjectTeamData, setProjectTeamData] = useState<
     TeamMember[] | undefined
   >(undefined);
 
+  // useEffect hook to fetch project data based on the ID when the component mounts
+
   useEffect(() => {
-    if (id) {
-      const data: TeamMember[] = [
-        {
-          key: "1",
-          name: "Alice",
-          email: "alice@gmail.com",
-          profile_pic:
-            "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchProjectTeamByProjectId(id); // Make sure you pass the ID
+        setProjectTeamData(result);
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
 
-          start_date: "11/10/2024",
-          end_date: "02/05/2025",
-          status: "completed",
-        },
-        {
-          key: "2",
-          name: "Bob",
-          email: "bob@gmail.com",
-          profile_pic:
-            "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-
-          start_date: "11/10/2024",
-          end_date: "02/05/2025",
-          status: "completed",
-        },
-      ];
-      setProjectTeamData(data);
-    }
-  }, [id]);
+    fetchDetails();
+  }, []);
 
   /**
    * Changes the ProjectTeam status
    * @param {string} key - The key of the ProjectTeam to update
    * @param {string} newStatus - The new status to set
    */
-  const handleStatusChange = (key: string, newStatus: TeamMember["status"]) => {
+  const handleStatusChange = async (
+    key: string,
+    newStatus: TeamMember["status"]
+  ) => {
     setProjectTeamData((prevData = []) =>
       prevData.map((item) =>
-        item.key === key ? { ...item, status: newStatus } : item
+        item._id === key ? { ...item, status: newStatus } : item
       )
     );
+    try {
+      const response = await changeMemberStatus(key);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
   };
 
   /**
@@ -138,7 +126,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
         ];
 
         const handleMenuClick = (e: { key: string }) => {
-          handleStatusChange(record.key, e.key as TeamMember["status"]);
+          handleStatusChange(record._id, e.key as TeamMember["status"]);
         };
 
         return (
