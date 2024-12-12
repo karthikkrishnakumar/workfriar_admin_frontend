@@ -14,6 +14,7 @@ const ModuleHeaderWrapper = () => {
 
   // Define the pages and their corresponding data
   const pages = [
+
     { title: "Dashboard", path: "/dashboard", backButtonNeeded: false, actionButton: null},
     { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false, actionButton: null},
     { title: "Project List", path: "/projects", backButtonNeeded: false, actionButton: null,  },
@@ -31,6 +32,8 @@ const ModuleHeaderWrapper = () => {
     { title: "Permissions Settings", path: "/settings/permissions", backButtonNeeded: false, actionButton: null},
     { title: "Notifications", path: "/notifications", backButtonNeeded: false, actionButton: null},
     { title: "Holidays", path: "/holidays", backButtonNeeded: true, actionButton: { label: "Add Holidays", icon: Icons.plusLight, modalType: "roleModal" }},
+
+
   ];
 
   // Function to match the dynamic path

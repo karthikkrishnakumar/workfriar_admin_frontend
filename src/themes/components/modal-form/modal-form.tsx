@@ -22,7 +22,7 @@ interface FormField {
 /**
  * Interface for defining a row of form fields.
  */
-interface FormRow {
+export interface FormRow {
   fields: [FormField, FormField?];
 }
 
@@ -39,6 +39,7 @@ interface ModalFormProps {
   onSecondaryClick?: () => void;
   onClose?: () => void;
   initialValues?: Record<string, any>;
+  children?: React.ReactNode;
 }
 
 const ModalFormComponent: React.FC<ModalFormProps> = ({
@@ -51,6 +52,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   onSecondaryClick,
   onClose,
   initialValues = {},
+  children,
 }) => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string | null>(
@@ -147,6 +149,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
       width={610}
       className={styles.customModal}
     >
+    {children && <div className={styles.modalChildren}>{children}</div>}
       <Form
         form={form}
         layout="vertical"

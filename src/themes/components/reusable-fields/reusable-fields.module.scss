@@ -67,6 +67,9 @@
   align-items: center;
   
 }
+.ant-input-outlined:focus,.ant-input-outlined:focus-within{
+  border-color: black!important;
+}
 
 .customDatePicker {
   height: 48px;

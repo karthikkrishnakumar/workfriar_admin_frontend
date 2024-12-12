@@ -18,6 +18,7 @@ interface GridContainerProps {
   isGrid: boolean;
   avatar?: { name: string; profile: string; size: number };
   fields: { label: string; value: string | number | null }[] | null;
+  children?: React.ReactNode;
 }
 
 /**
@@ -30,6 +31,7 @@ const GridContainer: React.FC<GridContainerProps> = ({
   isGrid,
   avatar,
   fields,
+  children,
 }) => {
   return (
     <div className={styles.header}>
@@ -64,6 +66,7 @@ const GridContainer: React.FC<GridContainerProps> = ({
           </div>
         ))
       )}
+      {children && <div className={styles.modalChildren}>{children}</div>}
     </div>
   );
 };

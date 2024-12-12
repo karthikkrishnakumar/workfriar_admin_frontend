@@ -1,111 +1,220 @@
-    // organization-table.tsx
+// organization-table.tsx
 
-    import React, { useState, useEffect } from "react";
-    import CustomTable, {RowData} from "@/themes/components/custom-table/custom-table"; // Adjust the path based on your project structure
-    import { fetchEmployeeData } from "../../services/organization-services/organization-services"; // Import the service function
-    import styles from "./organization-table.module.scss"; // Optional: Add styling
-    import CustomAvatar from "@/themes/components/avatar/avatar"; // Avatar component import
-    import { Dropdown } from "antd";
-    import { MoreOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import CustomTable, {
+  Column,
+  RowData,
+} from "@/themes/components/custom-table/custom-table"; // Adjust the path based on your project structure
+import { useEmployeeData } from "../../services/organization-services/organization-services";
+import styles from "./organization-table.module.scss"; // Optional: Add styling
+import CustomAvatar from "@/themes/components/avatar/avatar"; // Avatar component import
+import { Dropdown } from "antd";
+import { MoreOutlined } from "@ant-design/icons";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import { useRouter } from "next/navigation"; // Import Next.js router
+import Icons from "@/themes/images/icons/icons";
+import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
+import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
 
-    interface OrganizationTableProps {
-    activeTab: string;
-    }
+interface OrganizationTableProps {
+  activeTab: string;
+}
 
-    const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
-    const [filteredEmployees, setFilteredEmployees] = useState<RowData[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+interface Employee {
+  id: string;
+  name: string;
+  email: string;
+  department: string;
+  role: string;
+  reporting_manager: string;
+  status: boolean;
+}
 
-    const menuItems = [
-        { key: "Details", label: "Details" },
-        { key: "Edit", label: "Edit" },
-        { key: "Update-role-permissions", label: "Update Role Permissions" },
-        { key: "Delete", label: "Delete" },
-    ];
+const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
+  const [filteredEmployees, setFilteredEmployees] = useState<RowData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
+  const pageSize = 1; // Number of rows per page
+  const router = useRouter();
 
-    // Function to map employee data to RowData format for compatibility with the table
-    const mapEmployeeData = (employees: any[]): RowData[] => {
-        return employees.map((employee) => ({
-        name: (
-            <div className={styles.nameCell}>
-            <CustomAvatar name={employee.name} size={50} />
-            {/* Custom avatar added */}
-            <span className={styles.employeeName}>{employee.name}</span>
-            {/* Employee name */}
-            </div>
-        ),
-        email: employee.email,
-        department: employee.department,
-        role: employee.role,
-        reportingManager: employee.reportingManager,
-        status: employee.status,
-        action: (
-            <Dropdown
+  const menuItems = [
+    { key: "Details", label: "Details" },
+    { key: "Edit", label: "Edit" },
+    { key: "Update-role-permissions", label: "Update Role Permissions" },
+    { key: "Delete", label: "Delete" },
+  ];
+
+  // Function to map employee data to RowData format for compatibility with the table
+  const mapEmployeeData = (employees: Employee[]): RowData[] => {
+    return employees.map((employee) => ({
+      id: employee.id,
+      name: (
+        <span className={styles.nameCell}>
+          <CustomAvatar name={employee.name} size={50} />
+          {/* Custom avatar */}
+          <button
+            className={styles.employeeName}
+            onClick={() => handleRowClick(employee)}
+          >
+            {employee.name}
+          </button>
+          {/* Employee name */}
+        </span>
+      ),
+      email: <span className={styles.employeeEmail}>{employee.email}</span>,
+      department: (
+        <span className={styles.employeeDepartment}>{employee.department}</span>
+      ),
+      role: <span className={styles.employeeRole}>{employee.role}</span>,
+      reportingManager: (
+        <span className={styles.employeeManager}>
+          {employee.reporting_manager ? employee.reporting_manager : "--"}
+        </span>
+      ),
+      status: (
+        <StatusDropdown
+          status={employee.status ? "Active" : "Inactive"}
+          menuItems={[
+            { key: "active", label: <span>Active</span> },
+            { key: "inactive", label: <span>Inactive</span> },
+          ]}
+          onMenuClick={(key) => {
+            console.log(`Selected status: ${key} for employee`, employee);
+          }}
+          arrowIcon={Icons.arrowDownFilledGold}
+          className={styles.employeeStatus}
+        />
+      ),
+      action: (
+        <span className={styles.actionCell}>
+          <Dropdown
             menu={{
-                items: menuItems,
-                onClick: (e) => handleMenuClick(e, employee),
+              items: menuItems,
+              onClick: (e) => handleMenuClick(e, employee),
             }}
             trigger={["click"]}
-            >
-            <span className={styles.deleteButton}>
-                <MoreOutlined className={styles.threeDotButton} />
-            </span>
-            </Dropdown>
-        ),
-        }));
-    };
+          >
+            <MoreOutlined className={styles.threeDotButton} />
+          </Dropdown>
+        </span>
+      ),
+    }));
+  };
 
-    const handleMenuClick = (e: { key: string }, record: any) => {
-        if (e.key === "Details") {
-        console.log("Details clicked for:", record);
-       } 
-        else if (e.key === "edit") {
-        console.log("Edit clicked for:", record);
-        }
-    };
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    try {
+      const response = await useEmployeeData().fetchEmployeesData(
+        page,
+        pageSize,
+        activeTab
+      ); // Fetch data using the service
+      console.log(response);
+      setFilteredEmployees(mapEmployeeData(response.data)); // Map the data to RowData format
 
-    // Fetch employee data based on the selected tab
-    useEffect(() => {
-        const fetchData = async () => {
-        setLoading(true);
-        try {
-            const employees = await fetchEmployeeData(activeTab); // Fetch data using the service
-            setFilteredEmployees(mapEmployeeData(employees)); // Map the data to RowData format
-        } catch (err) {
-            setError("Failed to load employee data");
-        } finally {
-            setLoading(false);
-        }
-        };
-
-        fetchData();
-    }, [activeTab]);
-
-    if (loading) {
-        return <div>Loading...</div>;
+      setTotalRecords(response.total);
+    } catch (err) {
+      setError("Failed to load employee data");
+    } finally {
+      setLoading(false);
     }
+  };
+  // Fetch employee data based on the selected tab
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [activeTab, currentPage]);
 
-    if (error) {
-        return <div>{error}</div>;
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  // Define column headers for the table
+  const columns: Column[] = [
+    { title: "Employee name", key: "name", align: "left", width: 240 },
+    {
+      title: "Email address",
+      key: "email",
+      align: "left",
+      width: 220,
+    },
+    { title: "Department", key: "department", align: "left" },
+    { title: "Role", key: "role", align: "left" },
+    {
+      title: "Reporting Manager",
+      key: "reportingManager",
+      align: "left",
+    },
+    { title: "Status", key: "status", align: "left" },
+    { title: "", key: "action", align: "left", width: 40 },
+  ];
+
+  
+  const handleRowClick = (row: Employee) => {
+    if (row.id) {
+      const rowId = row.id;
+      router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
     }
+  };
+  const handleMenuClick = (e: { key: string }, employee: Employee) => {
+    if (e.key === "Details") {
+      if (employee.id) {
+        const rowId = employee.id;
+        router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
+      }
+    } else if (e.key === "Edit") {
+      if (employee.id) {
+        const rowId = employee.id;
+        router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
+      }
+    }
+  };
 
-    // Define column headers for the table
-    const columns = [
-        { title: "Name", key: "name", align: "left" as const ,width:240},
-        { title: "Email", key: "email", align: "left" as const ,width:220},
-        { title: "Department", key: "department", align: "left" as const },
-        { title: "Role", key: "role", align: "left" as const },
-        { title: "Reporting Manager",key: "reportingManager",align: "left" as const,},
-        { title: "Status", key: "status", align: "left" as const },
-        { title: "", key: "action", align: "left" as const, width: 40 },
-    ];
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); // Update the current page
+  };
 
-    return (
-        <div className={styles.organizationTableWrapper}>
-        <CustomTable columns={columns} data={filteredEmployees} />
-        </div>
-    );
-    };
+  return (
+    <>
+      <div className={styles.organizationTableWrapper}>
+        {loading ? (
+          <>
+            <SkeletonLoader
+              count={1}
+              paragraph={{ rows: 2 }}
+              className={styles.customSkeleton}
+              classNameItem={styles.customSkeletonItem}
+            />
+            <SkeletonLoader
+              count={1}
+              paragraph={{ rows: 4 }}
+              classNameItem={styles.customSkeletonItem}
+            />
+            <SkeletonLoader
+              count={3}
+              paragraph={{ rows: 5 }}
+              classNameItem={styles.customSkeletonItem}
+            />
+          </>
+        ) : (
+          <div className={styles.tableWrapper}>
+            <CustomTable columns={columns} data={filteredEmployees} />
+          </div>
+        )}
+      </div>
+      <div className={styles.customPaginationDiv}>
+        <PaginationComponent
+          total={totalRecords!}
+          pageSize={pageSize}
+          current={currentPage}
+          onChange={handlePageChange}
+          showSizeChanger={false}
+          className={styles.customPagination}
+        />
+      </div>
+    </>
+  );
+};
 
-    export default OrganizationTable;
+export default OrganizationTable;
