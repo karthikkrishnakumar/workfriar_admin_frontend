@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import CustomTable, {
   RowData,
 } from "@/themes/components/custom-table/custom-table"; // Import the CustomTable
-import { useEmployeeData } from "../../services/organization-services/organization-services"; // Import the service function
+import useEmployeeData from "../../services/organization-services/organization-services"; // Import the service function
 import styles from "./employee-projects.module.scss"; // Optional: Add styling
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"; // Loading skeleton
 import { MoreOutlined } from "@ant-design/icons";
@@ -24,7 +24,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
-  const pageSize = 5;
+  const pageSize = 1;
 
   const menuItems = [{ key: "Details", label: "Details" }];
   // Function to map project data to RowData format for compatibility with the table
@@ -33,8 +33,8 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
       key: project.id,
       projectName: (
         <span className={styles.projectNameCell}>
-          <CustomAvatar name={project.projectName} size={50} />
-          <span className={styles.projectNameSpan}>{project.projectName}</span>
+          <CustomAvatar name={project.project_name} size={50} />
+          <span className={styles.projectNameSpan}>{project.project_name}</span>
         </span>
       ),
       client: <span className={styles.projectClient}>{project.client}</span>,
@@ -44,7 +44,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
         >{`${project.startDate} - ${project.endDate}`}</span>
       ),
       projectLead: (
-        <span className={styles.projectLead}>{project.projectLead}</span>
+        <span className={styles.projectLead}>{project.project_lead}</span>
       ),
       projectStatus: (
         <StatusDropdown
