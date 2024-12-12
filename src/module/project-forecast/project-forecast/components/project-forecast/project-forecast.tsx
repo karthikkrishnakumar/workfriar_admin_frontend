@@ -9,17 +9,19 @@ import dayjs from "dayjs";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 import EditForecastModal from "../edit-forecast-modal/edit-forecast-modal";
 import AddForecastModal from "../add-forecast-modal/add-forecast-modal";
-import {
-  addProjectForecast,
-  changeStatus,
-  deleteProjectForecast,
-  fetchProjectForecastDetails,
+import useProjectForecastService, {
   ProjectForecastData,
-  updateProjectForecast,
 } from "../../services/project-forecast/project-forecast";
 
 const ProjectForecast: React.FC = () => {
   const router = useRouter();
+  const {
+    addProjectForecast,
+    changeStatus,
+    deleteProjectForecast,
+    fetchProjectForecastDetails,
+    updateProjectForecast,
+  } = useProjectForecastService();
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -66,9 +68,18 @@ const ProjectForecast: React.FC = () => {
   const handleEditProjectForecast = (projectForecast: ProjectForecastData) => {
     setSelectedProjectForecast({
       ...projectForecast,
-      opportunity_start_date: dayjs(projectForecast.opportunity_start_date, "DD/MM/YYYY"),
-      opportunity_close_date: dayjs(projectForecast.opportunity_close_date, "DD/MM/YYYY"),
-      expected_start_date: dayjs(projectForecast.expected_start_date, "DD/MM/YYYY"),
+      opportunity_start_date: dayjs(
+        projectForecast.opportunity_start_date,
+        "DD/MM/YYYY"
+      ),
+      opportunity_close_date: dayjs(
+        projectForecast.opportunity_close_date,
+        "DD/MM/YYYY"
+      ),
+      expected_start_date: dayjs(
+        projectForecast.expected_start_date,
+        "DD/MM/YYYY"
+      ),
       expected_end_date: dayjs(projectForecast.expected_end_date, "DD/MM/YYYY"),
     });
     setIsEditModalOpen(true);
@@ -82,7 +93,6 @@ const ProjectForecast: React.FC = () => {
       console.log("Failed to log in with Google.");
     }
   };
-
 
   /**
    * Converts the status value to a readable format
@@ -234,7 +244,8 @@ const ProjectForecast: React.FC = () => {
           {
             key: "view",
             label: <div className={styles.dropdownItem}>Details</div>,
-            onClick: () => router.push(`/project-forecast/forecast-details/${record._id}`),
+            onClick: () =>
+              router.push(`/project-forecast/forecast-details/${record._id}`),
           },
           {
             key: "edit",
