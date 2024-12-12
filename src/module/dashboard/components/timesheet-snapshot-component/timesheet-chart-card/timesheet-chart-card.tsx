@@ -10,6 +10,7 @@ import {
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
 import TimeSheetSnapshotFilter from "../../filter-modal/timesheet-snapshot-filter/timesheet-snapshot-filter";
+import Icons from "@/themes/images/icons/icons";
 
 const TimesheetSnapshotChartCard: React.FC = () => {
   const [stats, setStats] = useState<StatsProps | null>(null);
@@ -24,7 +25,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const fetchedStats = await await fetchTimesheetChartData(year, month);
+      const fetchedStats =  await fetchTimesheetChartData(year, month);
       setStats(fetchedStats);
     } catch (err) {
       console.error("Error fetching timesheet stats:", err);
@@ -60,6 +61,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
     setIsModalVisible(false); // Close the modal when required
   };
 
+  if(error) return <div>{error}</div>
   return (
     <>
       <CardSection
@@ -71,6 +73,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
             <ButtonComponent
               filter={true}
               theme="filter"
+              content={Icons.filter}
               onClick={handleClickFilter}
             />
           )
@@ -89,8 +92,6 @@ const TimesheetSnapshotChartCard: React.FC = () => {
               className={styles.customSkeleton}
               classNameItem={styles.customSkeletonItem}
             />
-          ) : error ? (
-            <div className={styles.error}>{error}</div>
           ) : (
             <div className={styles.snapshotDetails}>
               <StatusGauge
