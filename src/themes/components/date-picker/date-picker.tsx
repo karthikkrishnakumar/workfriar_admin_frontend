@@ -11,8 +11,8 @@ interface DateRangePickerProps {
     prev: boolean;
     next: boolean;
   }) => void;
-  isPrev: boolean; // True if the previous button should be disabled
-  isNext: boolean; // True if the next button should be disabled
+  isPrev?: boolean; // True if the previous button should be disabled
+  isNext?: boolean; // True if the next button should be disabled
 }
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
