@@ -1,6 +1,6 @@
 import { DatePickerData } from "@/module/dashboard/services/timesheet-due-services/timesheet-due-services";
 import { dateStringToMonthDate, enGBFormattter, toISODateFormatter } from "@/utils/date-formatter-util/date-formatter";
-import http from "@/utils/http";
+import axios from "axios";
 
 export interface TimeEntry {
     weekday: string;
@@ -599,8 +599,8 @@ async function fetchRejectedTimesheets(dateRangeString:string, setTimesheetTable
 // function to fetch date
 const fetchDateData = async (): Promise<DatePickerData[]> => {
     try {
-        const response = await http().post("/api/dashboard/datepicker-data");
-        return response.response.data.DatePickerData;
+        const response = await axios.post("/api/dashboard/datepicker-data");
+        return response.data.DatePickerData;
     } catch (error) {
         console.error("Error fetching date picker data:", error);
         throw new Error("Failed to fetch date picker data");

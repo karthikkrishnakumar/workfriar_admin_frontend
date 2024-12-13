@@ -3,7 +3,7 @@ import http from "@/utils/http"; // Assuming you have a custom HTTP utility for 
 /**
  * Fetches employee data, employee projects data, and employees table data based on various conditions.
  */
-export const useEmployeeData = () => {
+export default function useEmployeeData() {
 
   /**
    * Fetches employee details based on employee ID.
@@ -42,19 +42,22 @@ export const useEmployeeData = () => {
   const fetchEmployeeProjectsData = async (
     page: number,
     pageSize: number,
-    employeeId: string
+    userId: string
   ): Promise<any> => {
-    const props: JSON = <JSON>(<unknown> { page, pageSize, employeeId });
+    const limit = pageSize;
+    const props: JSON = <JSON>(<unknown> { page, limit, userId });
 
     try {
       const { body } = await http().post(
-        "/api/employee-projects-details/",
+        "/api/project/get-projects-by-user",
         props
       );
 
+      console.log(body,"project ")
       return {
         status: body.status,
         data: body.data || null,
+        total:body.pagination.totalPages,
         message: body.message || "Successfully fetched employee projects data.",
         errors: body.errors || null,
       };

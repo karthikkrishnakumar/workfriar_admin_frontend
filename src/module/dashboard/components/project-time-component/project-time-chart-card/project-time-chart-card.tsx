@@ -5,11 +5,12 @@ import styles from "./project-time-chart-card.module.scss"; // Adjust the path a
 import CardSection from "../../card-section/card-section";
 import ButtonComponent from "@/themes/components/button/button";
 import ProjectTimeChart from "../project-time-chart/project-time-chart";
-import {
-  ProjectTimeChartProps,
-  ProjectTimeServices,
-} from "@/module/dashboard/services/project-time-services/project-time-services";
+
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import useDashboardServices, {
+  ProjectTimeChartProps,
+  ProjectTimeResponse,
+} from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
 const ProjectTimeChartCard: React.FC = () => {
   const [projectTimeData, setProjectTimeData] = useState<
@@ -22,8 +23,9 @@ const ProjectTimeChartCard: React.FC = () => {
   useEffect(() => {
     const fetchProjectTimeData = async () => {
       try {
-        const data = await ProjectTimeServices();
-        setProjectTimeData(data); // Set fetched data
+        const data: ProjectTimeResponse =
+          await useDashboardServices().fetchProjectTimes();
+        setProjectTimeData(data.data); // Set fetched data
       } catch (error) {
         setError("Error fetching project time data.");
       } finally {
