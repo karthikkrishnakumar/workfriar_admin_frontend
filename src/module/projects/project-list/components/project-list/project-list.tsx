@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Table, Button, Dropdown, Tag, message } from "antd";
-import type { MenuProps } from "antd";
+import { Dropdown, Tag, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-list.module.scss";
 import EditProjectModal from "../edit-project-modal/edit-project-modal";
@@ -10,7 +9,13 @@ import AddProjectModal from "../add-project-modal/add-project-modal";
 import dayjs from "dayjs";
 import useProjectService, { ProjectData } from "../../services/project-service";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-
+import CustomTable, {
+  Column,
+  RowData,
+} from "@/themes/components/custom-table/custom-table";
+import CustomAvatar from "@/themes/components/avatar/avatar";
+import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
+import Icons from "@/themes/images/icons/icons";
 const ProjectList: React.FC = () => {
   const router = useRouter();
   const {
@@ -20,6 +25,9 @@ const ProjectList: React.FC = () => {
     fetchProjectDetails,
     updateProject,
   } = useProjectService();
+  const [filteredProject, setFilteredProject] = useState<
+  RowData[]
+>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
@@ -28,12 +36,13 @@ const ProjectList: React.FC = () => {
   );
   const [projectData, setProjectData] = useState<ProjectData[]>([]);
 
-  // useEffect hook to fetch forecast data based on the ID when the component mounts
+  // useEffect hook to fetch project data based on the ID when the component mounts
   useEffect(() => {
     const fetchDetails = async () => {
       try {
         const result = await fetchProjectDetails(); // Make sure you pass the ID
         setProjectData(result);
+        setFilteredProject(mapProjectData(result));
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -48,16 +57,18 @@ const ProjectList: React.FC = () => {
    */
   const handleTimeEntryChange = async (key: string) => {
     try {
-      setProjectData((prevData) =>
-        prevData.map((item) =>
+      setProjectData((prevData) => {
+        const updatedData = prevData.map((item) =>
           item._id === key
             ? {
                 ...item,
                 timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
               }
             : item
-        )
-      );
+        );
+        setFilteredProject(mapProjectData(updatedData)); // Re-map to RowData format
+        return updatedData;
+      });
       const response = await changeTimeEntry(key);
       console.log(response);
     } catch (err) {
@@ -143,157 +154,146 @@ const ProjectList: React.FC = () => {
     setIsAddModalOpen(false); // Close modal after submission
   };
 
-  const columns = [
-    {
-      title: "Projects",
-      dataIndex: "projectName",
-      key: "projectName",
-      width: "30%",
-      render: (text: string, record: ProjectData) => (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          {record.projectLogo ? (
-            <img
-              src={record.projectLogo}
-              alt={record.projectName}
-              className={styles.circleImage}
-            />
-          ) : (
-            <div className={styles.circle}>{text.charAt(0).toUpperCase()}</div>
-          )}
-          <span>{text}</span>
-        </div>
-      ),
-    },
-    {
-      title: "Client",
-      dataIndex: "clientName",
-      key: "clientName",
-      width: "20%",
-    },
+  const handleRowClick = (row: ProjectData) => {
+    if (row._id) {
+      const rowId = row._id;
+      router.push(`/projects/project-details/${rowId}`);
+    }
+  };
+
+
+  const columns: Column[] = [
+    { title: "Projects", key: "projectName", align: "left",width: 250, },
+    { title: "Client", key: "clientName", align: "left" },
     {
       title: "Actual Start & End Date",
-      dataIndex: "actual_start_date",
       key: "dates",
-      width: "30%",
-      render: (_: any, record: ProjectData) => (
-        <>
-          {dayjs.isDayjs(record.actual_start_date)
-            ? record.actual_start_date.format("DD/MM/YYYY")
-            : record.actual_start_date}{" "}
-          -{" "}
-          {dayjs.isDayjs(record.actual_end_date)
-            ? record.actual_end_date.format("DD/MM/YYYY")
-            : record.actual_end_date}
-        </>
-      ),
+      align: "left",
+      width: 250,
     },
-    {
-      title: "Project lead",
-      dataIndex: "projectLead",
-      key: "projectLead",
-      width: "25%",
-    },
-    {
-      title: "Time entry",
-      dataIndex: "timeEntry",
-      key: "timeEntry",
-      width: "25%",
-      render: (timeEntry: ProjectData["timeEntry"]) => (
-        <Tag className={`${styles.timeEntryBtn} ${styles[timeEntry]}`}>
-          {timeEntry.charAt(0).toUpperCase() + timeEntry.slice(1)}
-        </Tag>
-      ),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: "10%",
-      render: (status: ProjectData["status"], record: ProjectData) => {
-        const menuItems: MenuProps["items"] = [
-          { key: "completed", label: getStatusText("completed") },
-          { key: "in_progress", label: getStatusText("in_progress") },
-          { key: "on_hold", label: getStatusText("on_hold") },
-          { key: "cancelled", label: getStatusText("cancelled") },
-          { key: "not_started", label: getStatusText("not_started") },
-        ];
-
-        const handleMenuClick = (e: { key: string }) => {
-          setEffectiveDateModal(true);
-          handleStatusChange(record._id, e.key as ProjectData["status"]);
-        };
-        return (
-          <Dropdown
-            menu={{ items: menuItems, onClick: handleMenuClick }}
-            trigger={["click"]}
-          >
-            <Button type="text" className={styles.statusButton}>
-              {getStatusText(status)}
-              <span style={{ marginLeft: 0, fontSize: "8px" }}>▼</span>
-            </Button>
-          </Dropdown>
-        );
-      },
-    },
-    {
-      title: "",
-      key: "action",
-      width: "1%",
-      render: (record: ProjectData) => {
-        const dynamicActionItems: MenuProps["items"] = [
-          {
-            key: "view",
-            label: <div className={styles.dropdownItem}>Details</div>,
-            onClick: () =>
-              router.push(`/projects/project-details/${record._id}`),
-          },
-          {
-            key: "edit",
-            label: <div className={styles.dropdownItem}>Edit</div>,
-            onClick: () => handleEditProject(record),
-          },
-          {
-            key: "entry",
-            label: (
-              <div
-                className={styles.dropdownItem}
-                onClick={() => handleTimeEntryChange(record._id)}
-              >
-                {record.timeEntry === "closed" ? "Open entry" : "Close entry"}
-              </div>
-            ),
-          },
-        ];
-
-        return (
-          <Dropdown
-            menu={{ items: dynamicActionItems }}
-            trigger={["click"]}
-            placement="bottomRight"
-            dropdownRender={(menu) => (
-              <div className={styles.dropdownMenu}>{menu}</div>
-            )}
-          >
-            <Button
-              type="text"
-              icon={
-                <MoreOutlined style={{ fontSize: "18px", color: "black" }} />
-              }
-              className={styles.actionButton}
-            />
-          </Dropdown>
-        );
-      },
-    },
+    { title: "Project lead", key: "projectLead", align: "left" },
+    { title: "Time entry", key: "timeEntry", align: "left" },
+    { title: "Status", key: "status", align: "left" },
+    { title: "", key: "action", align: "left", width: 40 },
   ];
+
+    // Function to map project data to RowData format for compatibility with the table
+    const mapProjectData = (projects: ProjectData[]): RowData[] => {
+
+
+      const handleStatusClick = (
+        e: { key: string },
+        project: ProjectData
+      ) => {
+        setEffectiveDateModal(true);
+        handleStatusChange(project._id, e.key as ProjectData["status"]);
+      };
+      const handleMenuClick = (
+        e: { key: string },
+        project: ProjectData
+      ) => {
+        if (e.key === "Details") {
+          if (project._id) {
+            router.push(`/projects/project-details/${project._id}`);
+          }
+        } else if (e.key === "Edit") {
+          if (project._id) {
+            handleEditProject(project);
+          }
+        }
+        else if (e.key === "Update-timeEntry") {
+          if (project._id) {
+            handleTimeEntryChange(project._id);
+          }
+        }
+      };
+      return projects.map((project) => ({
+        _id: project._id,
+        projectName: (
+          <span className={styles.nameCell}>
+        <CustomAvatar name={project.projectName} size={50} src={project.projectLogo}/>
+        {/* Custom avatar */}
+        <span className={styles.project}>{project.projectName}</span>
+        {/* Employee name */}
+      </span>
+        ),
+        clientName: (
+          <span className={styles.project}>{project.clientName}</span>
+        ),
+        dates: (
+          <span className={styles.project}>
+            <>
+              {dayjs.isDayjs(project.actual_start_date)
+                ? project.actual_start_date.format("DD/MM/YYYY")
+                : project.actual_start_date}{" "}
+              -{" "}
+              {dayjs.isDayjs(project.actual_end_date)
+                ? project.actual_end_date.format("DD/MM/YYYY")
+                : project.actual_end_date}
+            </>
+          </span>
+        ),
+        projectLead: (
+          <span className={styles.project}>{project.projectLead}</span>
+        ),
+        timeEntry: (
+          <Tag
+            className={`${styles.timeEntryBtn} ${
+              styles[project.timeEntry]
+            }`}
+          >
+            {project.timeEntry
+              .replace(/_/g, " ")
+              .replace(/\b\w/g, (l) => l.toUpperCase())}
+          </Tag>
+        ),
+        status: (
+          <StatusDropdown
+            status={getStatusText(project.status)}
+            menuItems={[
+              { key: "completed", label: getStatusText("completed") },
+              { key: "in_progress", label: getStatusText("in_progress") },
+              { key: "on_hold", label: getStatusText("on_hold") },
+              { key: "cancelled", label: getStatusText("cancelled") },
+              { key: "not_started", label: getStatusText("not_started") },
+            ]}
+            onMenuClick={(e: any) => handleStatusClick(e, project)}
+            arrowIcon={Icons.arrowDownFilledGold}
+            className={styles.status}
+          />
+        ),
+        action: (
+          <span className={styles.actionCell}>
+            <Dropdown
+              menu={{
+                items: [
+                  { key: "Details", label: "Details" },
+                  { key: "Edit", label: "Edit" },
+                  {
+                    key: "Update-timeEntry",
+                    label:
+                      project.timeEntry === "closed"
+                        ? "Open entry"
+                        : "Close entry",
+                  },
+                ],
+                onClick: (e) => handleMenuClick(e, project),
+              }}
+              trigger={["click"]}
+            >
+              <MoreOutlined className={styles.threeDotButton} />
+            </Dropdown>
+          </span>
+        ),
+      }));
+    };
 
   return (
     <div className={styles.tableWrapper}>
-      <Table
+       <CustomTable
         columns={columns}
-        dataSource={projectData}
-        pagination={false}
-        className={styles.table}
+        data={filteredProject}
+        onRowClick={() => handleRowClick}
       />
       <EditProjectModal
         isEditModalOpen={isEditModalOpen}

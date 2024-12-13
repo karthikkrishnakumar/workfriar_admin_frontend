@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 export interface TaskCategoryData {
   _id: string;
   task_category: string;
-  timeEntry: "closed" | "opened";
+  timeEntry: string;
 }
 
 /**
@@ -147,6 +147,6 @@ const taskCategoryDatas: TaskCategoryData[] = [
   {
     _id: "2",
     task_category: "Development",
-    timeEntry: "closed",
+    timeEntry: "opened",
   },
 ];

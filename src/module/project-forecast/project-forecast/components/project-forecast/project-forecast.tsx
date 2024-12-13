@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Table, Button, Dropdown, Tag, message } from "antd";
-import type { MenuProps } from "antd";
+import { Dropdown, Tag, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-forecast.module.scss";
 import dayjs from "dayjs";
@@ -12,6 +11,12 @@ import AddForecastModal from "../add-forecast-modal/add-forecast-modal";
 import useProjectForecastService, {
   ProjectForecastData,
 } from "../../services/project-forecast/project-forecast";
+import CustomTable, {
+  Column,
+  RowData,
+} from "@/themes/components/custom-table/custom-table";
+import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
+import Icons from "@/themes/images/icons/icons";
 
 const ProjectForecast: React.FC = () => {
   const router = useRouter();
@@ -25,6 +30,9 @@ const ProjectForecast: React.FC = () => {
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [filteredProjectForecast, setFilteredProjectForecast] = useState<
+    RowData[]
+  >([]);
   const [selectedProjectForecast, setSelectedProjectForecast] =
     useState<ProjectForecastData | null>(null);
   const [projectForecastData, setProjectForecastData] = useState<
@@ -37,6 +45,7 @@ const ProjectForecast: React.FC = () => {
       try {
         const result = await fetchProjectForecastDetails(); // Make sure you pass the ID
         setProjectForecastData(result);
+        setFilteredProjectForecast(mapForecastData(result));
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -45,6 +54,22 @@ const ProjectForecast: React.FC = () => {
     fetchDetails();
   }, []);
 
+  const handleRowClick = (row: ProjectForecastData) => {
+    if (row._id) {
+      const rowId = row._id;
+      router.push(`/project-forecast/forecast-details/${rowId}`);
+    }
+  };
+
+      /**
+     * Converts the status value to a readable format
+     * @param {string} status - The status value to convert
+     * @returns {string} - The formatted status string
+     */
+      const getStatusText = (status: ProjectForecastData["status"]): string => {
+        return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+      };
+      
   /**
    * Changes the ProjectForecast status
    * @param {string} key - The key of the ProjectForecast to update
@@ -95,15 +120,6 @@ const ProjectForecast: React.FC = () => {
   };
 
   /**
-   * Converts the status value to a readable format
-   * @param {string} status - The status value to convert
-   * @returns {string} - The formatted status string
-   */
-  const getStatusText = (status: ProjectForecastData["status"]): string => {
-    return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-  };
-
-  /**
    * Handles the form submission from the EditProjectForecastModal
    * @param {Record<string, any>} values - The updated values for the ProjectForecast
    */
@@ -147,147 +163,126 @@ const ProjectForecast: React.FC = () => {
     }
     setIsAddModalOpen(false); // Close modal after submission
   };
-
-  const columns = [
-    {
-      title: "Oppurtunity name",
-      dataIndex: "opportunity_name",
-      key: "opportunity_name",
-      width: "20%",
-    },
-    {
-      title: "Oppurtunity manager",
-      dataIndex: "opportunity_manager",
-      key: "opportunity_manager",
-      width: "20%",
-    },
+  const columns: Column[] = [
+    { title: "Oppurtunity name", key: "opportunity_name", align: "left" },
+    { title: "Oppurtunity manager", key: "opportunity_manager", align: "left" },
     {
       title: "Opportunity start & close date",
-      dataIndex: "opportunity_start_date",
-      key: "dates",
-      width: "30%",
-      render: (_: any, record: ProjectForecastData) => (
-        <>
-          {dayjs.isDayjs(record.opportunity_start_date)
-            ? record.opportunity_start_date.format("DD/MM/YYYY")
-            : record.opportunity_start_date}{" "}
-          -{" "}
-          {dayjs.isDayjs(record.opportunity_close_date)
-            ? record.opportunity_close_date.format("DD/MM/YYYY")
-            : record.opportunity_close_date}
-        </>
+      key: "opportunity_dates",
+      align: "left",
+      width: 250,
+    },
+    { title: "Client name", key: "client_name", align: "left" },
+    { title: "Oppurtunity stage", key: "opportunity_stage", align: "left" },
+    { title: "Status", key: "status", align: "left" },
+    { title: "", key: "action", align: "left", width: 40 },
+  ];
+
+  // Function to map forecast data to RowData format for compatibility with the table
+  const mapForecastData = (forecasts: ProjectForecastData[]): RowData[] => {
+
+
+    const handleStatusClick = (
+      e: { key: string },
+      forecast: ProjectForecastData
+    ) => {
+      setEffectiveDateModal(true);
+      handleStatusChange(forecast._id, e.key as ProjectForecastData["status"]);
+    };
+    const handleMenuClick = (
+      e: { key: string },
+      forecast: ProjectForecastData
+    ) => {
+      if (e.key === "Details") {
+        if (forecast._id) {
+          router.push(`/project-forecast/forecast-details/${forecast._id}`);
+        }
+      } else if (e.key === "Edit") {
+        if (forecast._id) {
+          handleEditProjectForecast(forecast);
+        }
+      } else if (e.key === "Delete") {
+        if (forecast._id) {
+          handleDeleteProjectForecast(forecast._id);
+        }
+      }
+    };
+    return forecasts.map((forecast) => ({
+      _id: forecast._id,
+      opportunity_name: (
+        <span className={styles.forecast}>{forecast.opportunity_name}</span>
       ),
-    },
-    {
-      title: "Client name",
-      dataIndex: "client_name",
-      key: "client_name",
-      width: "20%",
-    },
-    {
-      title: "Oppurtunity stage",
-      dataIndex: "opportunity_stage",
-      key: "opportunity_stage",
-      width: "25%",
-      render: (timeEntry: ProjectForecastData["opportunity_stage"]) => (
-        <Tag className={`${styles.timeEntryBtn} ${styles[timeEntry]}`}>
-          {timeEntry
+      opportunity_manager: (
+        <span className={styles.forecast}>{forecast.opportunity_manager}</span>
+      ),
+      opportunity_dates: (
+        <span className={styles.forecast}>
+          <>
+            {dayjs.isDayjs(forecast.opportunity_start_date)
+              ? forecast.opportunity_start_date.format("DD/MM/YYYY")
+              : forecast.opportunity_start_date}{" "}
+            -{" "}
+            {dayjs.isDayjs(forecast.opportunity_close_date)
+              ? forecast.opportunity_close_date.format("DD/MM/YYYY")
+              : forecast.opportunity_close_date}
+          </>
+        </span>
+      ),
+      client_name: (
+        <span className={styles.forecast}>{forecast.client_name}</span>
+      ),
+      opportunity_stage: (
+        <Tag
+          className={`${styles.timeEntryBtn} ${
+            styles[forecast.opportunity_stage]
+          }`}
+        >
+          {forecast.opportunity_stage
             .replace(/_/g, " ")
             .replace(/\b\w/g, (l) => l.toUpperCase())}
         </Tag>
       ),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: "10%",
-      render: (
-        status: ProjectForecastData["status"],
-        record: ProjectForecastData
-      ) => {
-        const menuItems: MenuProps["items"] = [
-          { key: "completed", label: getStatusText("completed") },
-          { key: "in_progress", label: getStatusText("in_progress") },
-          { key: "on_hold", label: getStatusText("on_hold") },
-          { key: "cancelled", label: getStatusText("cancelled") },
-          { key: "not_started", label: getStatusText("not_started") },
-        ];
-
-        const handleMenuClick = (e: { key: string }) => {
-          setEffectiveDateModal(true);
-          handleStatusChange(
-            record._id,
-            e.key as ProjectForecastData["status"]
-          );
-        };
-
-        return (
+      status: (
+        <StatusDropdown
+          status={getStatusText(forecast.status)}
+          menuItems={[
+            { key: "completed", label: getStatusText("completed") },
+            { key: "in_progress", label: getStatusText("in_progress") },
+            { key: "on_hold", label: getStatusText("on_hold") },
+            { key: "cancelled", label: getStatusText("cancelled") },
+            { key: "not_started", label: getStatusText("not_started") },
+          ]}
+          onMenuClick={(e: any) => handleStatusClick(e, forecast)}
+          arrowIcon={Icons.arrowDownFilledGold}
+          className={styles.status}
+        />
+      ),
+      action: (
+        <span className={styles.actionCell}>
           <Dropdown
-            menu={{ items: menuItems, onClick: handleMenuClick }}
+            menu={{
+              items: [
+                { key: "Details", label: "Details" },
+                { key: "Edit", label: "Edit" },
+                { key: "Delete", label: "Delete" },
+              ],
+              onClick: (e) => handleMenuClick(e, forecast),
+            }}
             trigger={["click"]}
           >
-            <Button type="text" className={styles.statusButton}>
-              {getStatusText(status)}
-              <span style={{ marginLeft: 0, fontSize: "8px" }}>▼</span>
-            </Button>
+            <MoreOutlined className={styles.threeDotButton} />
           </Dropdown>
-        );
-      },
-    },
-    {
-      title: "",
-      key: "action",
-      width: "1%",
-      render: (record: ProjectForecastData) => {
-        const dynamicActionItems: MenuProps["items"] = [
-          {
-            key: "view",
-            label: <div className={styles.dropdownItem}>Details</div>,
-            onClick: () =>
-              router.push(`/project-forecast/forecast-details/${record._id}`),
-          },
-          {
-            key: "edit",
-            label: <div className={styles.dropdownItem}>Edit</div>,
-            onClick: () => handleEditProjectForecast(record),
-          },
-          {
-            key: "delete",
-            label: <div className={styles.dropdownItem}>Delete</div>,
-            onClick: () => handleDeleteProjectForecast(record._id),
-          },
-        ];
-
-        return (
-          <Dropdown
-            menu={{ items: dynamicActionItems }}
-            trigger={["click"]}
-            placement="bottomRight"
-            dropdownRender={(menu) => (
-              <div className={styles.dropdownMenu}>{menu}</div>
-            )}
-          >
-            <Button
-              type="text"
-              icon={
-                <MoreOutlined style={{ fontSize: "18px", color: "black" }} />
-              }
-              className={styles.actionButton}
-            />
-          </Dropdown>
-        );
-      },
-    },
-  ];
+        </span>
+      ),
+    }));
+  };
 
   return (
     <div className={styles.tableWrapper}>
-      <Table
+      <CustomTable
         columns={columns}
-        dataSource={projectForecastData}
-        pagination={false}
-        className={styles.table}
+        data={filteredProjectForecast}
+        onRowClick={() => handleRowClick}
       />
       <ModalFormComponent
         isVisible={effectiveDateModal}
