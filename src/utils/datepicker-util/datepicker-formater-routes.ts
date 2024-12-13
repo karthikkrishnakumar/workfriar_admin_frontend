@@ -1,19 +1,14 @@
 // date-formater.ts
 
-// Formats a date to "MMM dd" format
-export const formatDate = (date: Date): string => {
-  return date.toLocaleDateString("en-US", {
+ // Format date (e.g., "Jan 1")
+ export const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
   });
-};
 
-// Extracts and formats the year from a date
-export const formatYear = (date: Date): string => {
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-  });
-};
+// Format year (e.g., "2024")
+export const formatYear = (date: string) => new Date(date).getFullYear();
 
 // Calculates start and end dates for a given week
 export const getWeekDates = (

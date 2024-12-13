@@ -27,7 +27,7 @@ ChartJS.register(
 
 // Define the shape of the data for the chart (project name and hours worked)
 interface ChartData {
-  project: string;
+  project_name: string;
   hours: number;
 }
 
@@ -115,17 +115,20 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
   }, []);
 
   // Function to update visible data based on scroll position
-  const updateVisibleData = useCallback((position: number) => {
-    if (data.length > 0) {
-      const startIndex = Math.floor(position * (data.length - ITEMS_TO_SHOW));
-      const visibleItems = data.slice(startIndex, startIndex + ITEMS_TO_SHOW);
+  const updateVisibleData = useCallback(
+    (position: number) => {
+      if (data.length > 0) {
+        const startIndex = Math.floor(position * (data.length - ITEMS_TO_SHOW));
+        const visibleItems = data.slice(startIndex, startIndex + ITEMS_TO_SHOW);
 
-      setVisibleData({
-        labels: visibleItems.map((item) => item.project),
-        values: visibleItems.map((item) => item.hours),
-      });
-    }
-  }, [data]);
+        setVisibleData({
+          labels: visibleItems.map((item) => item.project_name),
+          values: visibleItems.map((item) => item.hours),
+        });
+      }
+    },
+    [data]
+  );
 
   // Prepare chart data based on visible data
   const chartData = {
@@ -136,7 +139,7 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
         backgroundColor: "#FDB853",
         hoverBackgroundColor: "#D4983F",
         borderRadius: 0,
-        barPercentage: 0.4,
+        barPercentage: Math.max(visibleData.values.length / 10),
       },
     ],
   };
@@ -160,7 +163,7 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
 
       {/* Use the new CustomScrollbar component */}
       <CustomScrollbar
-        totalItems={data.length} 
+        totalItems={data.length}
         visibleItemCount={ITEMS_TO_SHOW}
         onScrollPositionChange={updateVisibleData}
         className={styles.scrollTrackParentDiv}

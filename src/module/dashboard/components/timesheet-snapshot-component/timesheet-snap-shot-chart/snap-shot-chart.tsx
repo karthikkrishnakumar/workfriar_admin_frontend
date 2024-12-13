@@ -7,65 +7,46 @@ import styles from "./snap-shot-chart.module.scss";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 // Defining the type for props
-/**
- * @param {number} saved - The number of saved items.
- * @param {number} approved - The number of approved items.
- * @param {number} rejected - The number of rejected items.
- */
 interface StatusGaugeProps {
-  saved: number;
-  approved: number;
-  rejected: number;
+  statusData: { status: string; count: number }[];
 }
 
 // StatusGauge component definition
-/**
- *
- * @param {StatusGaugeProps} props - The props passed to the component, which includes `saved`, `approved`, and `rejected` values.
- */
-
-// StatusGauge component definition
-export const StatusGauge: React.FC<StatusGaugeProps> = ({
-  saved,
-  approved,
-  rejected,
-}) => {
-  // Array for statuses with dynamic values and associated classes
+export const StatusGauge: React.FC<StatusGaugeProps> = ({ statusData }) => {
+  // Mapping statusData to match statuses array format
   const statuses = [
-    { label: "Saved", value: saved, colorClass: styles.saved },
-    { label: "Approved", value: approved, colorClass: styles.approved },
-    { label: "Rejected", value: rejected, colorClass: styles.rejected },
+    { label: "Saved", value: 0, color: "#FFE3B8", colorClass: styles.saved },
+    {
+      label: "Accepted",
+      value: 0,
+      color: "#FDB853",
+      colorClass: styles.approved,
+    },
+    {
+      label: "Rejected",
+      value: 0,
+      color: "#D4983F",
+      colorClass: styles.rejected,
+    },
   ];
 
-  // Generating chart data dynamically based on statuses
+  // Populate the statuses array based on statusData
+  statusData.forEach((item) => {
+    const match = statuses.find(
+      (status) => status.label.toLowerCase() === item.status.toLowerCase()
+    );
+    if (match) {
+      match.value = item.count;
+    }
+  });
+
+  // Generate chart data dynamically based on statuses
   const data = {
     datasets: [
       {
         data: statuses.map((status) => status.value),
-        backgroundColor: statuses.map((status) => {
-          switch (status.label) {
-            case "Saved":
-              return "#FFE3B8";
-            case "Approved":
-              return "#FDB853";
-            case "Rejected":
-              return "#D4983F";
-            default:
-              return "#000";
-          }
-        }),
-        borderColor: statuses.map((status) => {
-          switch (status.label) {
-            case "Saved":
-              return "#FFE3B8";
-            case "Approved":
-              return "#FDB853";
-            case "Rejected":
-              return "#D4983F";
-            default:
-              return "#000";
-          }
-        }),
+        backgroundColor: statuses.map((status) => status.color),
+        borderColor: statuses.map((status) => status.color),
         borderWidth: 1,
         circumference: 180,
         rotation: 270,
@@ -96,8 +77,7 @@ export const StatusGauge: React.FC<StatusGaugeProps> = ({
             >
               <span className={styles.label}>{status.label}</span>
               <span className={styles.value}>
-                {status.value.toString().padStart(2, "0")}{" "}
-                {/* Format value with padding */}
+                {status.value.toString().padStart(2, "0")}
               </span>
             </div>
           ))}

@@ -7,47 +7,53 @@ export interface TimesheetDay {
   hours: string;
   disable: boolean;
 }
+
 export interface TimesheetData {
   timesheetData: {
     days: TimesheetDay[];
   };
 }
-export interface DatePickerData {
-  start: string;
-  end: string;
-  week: number;
-}
 
 /**
  * Fetches the project time data for a given date range.
- * @param startDate - The start date for the range.
- * @param endDate - The end date for the range.
+ * @param startDate - The start date in ISO format (optional).
+ * @param endDate - The end date in ISO format (optional).
+ * @param prev - Whether to fetch the previous period (optional).
+ * @param next - Whether to fetch the next period (optional).
  * @returns A promise containing the project time chart data.
  */
-export const TimesheetDueServices = async (
-  startDate: Date | null,
-  endDate: Date | null
-): Promise<TimesheetData> => {
-  try {
-    // Make an HTTP POST request to fetch the project time data
-    const response = await http().post("/api/dashboard/timesheet-due", {
-      startDate: startDate?.toISOString(), // Convert startDate to ISO string if it exists
-      endDate: endDate?.toISOString(), // Convert endDate to ISO string if it exists
-    });
-    return response.response.data; // Return the project time data
-  } catch (error) {
-    console.error("Error fetching project time data:", error);
-    throw error; // Rethrow the error if something goes wrong
-  }
-};
+export const useTimesheetDue = () => {
+  const fetchTimesheetData = async (
+    startDate?: string,
+    endDate?: string,
+    prev?: boolean,
+    next?: boolean
+  ): Promise<any> => {
+    console.log(startDate, endDate, prev, next, "in services");
+    // Prepare the request payload
+    const props: JSON = <JSON>(<unknown>{ startDate, endDate, prev, next });
 
+    try {
+      const { body } = await http().post(
+        "/api/timesheet/get-due-timesheets",
+        props
+      );
 
-export const fetchDatePickerData = async (): Promise<DatePickerData[]> => {
-  try {
-    const response = await http().post("/api/dashboard/datepicker-due-data");
-    return response.response.data.DatePickerData;
-  } catch (error) {
-    console.error("Error fetching date picker data:", error);
-    throw new Error("Failed to fetch date picker data");
-  }
+      console.log(body);
+      return {
+        status: body.status,
+        data: body.data || null,
+        range: body.range,
+        message: body.message || "Successfully fetched project time data.",
+        errors: body.errors || null,
+      };
+    } catch (error) {
+      console.error("Error fetching project time data:", error);
+      throw error; // Rethrow the error if something goes wrong
+    }
+  };
+
+  return {
+    fetchTimesheetData,
+  };
 };
