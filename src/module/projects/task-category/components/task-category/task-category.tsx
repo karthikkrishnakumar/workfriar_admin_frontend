@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Button, Dropdown, Tag, message } from "antd";
-import type { MenuProps } from "antd";
+import { Dropdown, Tag, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./task-category.module.scss";
 import AddTaskCategoryModal from "../add-task-category-modal/add-task-category-modal";
@@ -9,6 +8,10 @@ import EditTaskCategoryModal from "../edit-task-category-modal/edit-task-categor
 import useTaskCategoryService, {
   TaskCategoryData,
 } from "../../services/task-category-service";
+import CustomTable, {
+  Column,
+  RowData,
+} from "@/themes/components/custom-table/custom-table";
 
 const TaskCategory: React.FC = () => {
   const {
@@ -19,9 +22,12 @@ const TaskCategory: React.FC = () => {
   } = useTaskCategoryService();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [filteredTaskCategory, setFilteredTaskCategory] = useState<RowData[]>(
+    []
+  );
   const [selectedTaskCategory, setSelectedTaskCategory] =
     useState<TaskCategoryData | null>(null);
-  const [TaskCategoryData, setTaskCategoryData] = useState<TaskCategoryData[]>(
+  const [taskCategoryData, setTaskCategoryData] = useState<TaskCategoryData[]>(
     []
   );
 
@@ -31,6 +37,7 @@ const TaskCategory: React.FC = () => {
       try {
         const result = await fetchTaskCategoryDetails(); // Make sure you pass the ID
         setTaskCategoryData(result);
+        setFilteredTaskCategory(mapCategoryData(result)); // Map the data to RowData format
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -39,22 +46,25 @@ const TaskCategory: React.FC = () => {
     fetchDetails();
   }, []);
 
+
   /**
    * Toggles the time entry status between "closed" and "opened"
    * @param {string} key - The key of the TaskCategory to update
    */
   const handleTimeEntryChange = async (key: string) => {
     try {
-      setTaskCategoryData((prevData) =>
-        prevData.map((item) =>
+      setTaskCategoryData((prevData) => {
+        const updatedData = prevData.map((item) =>
           item._id === key
             ? {
                 ...item,
                 timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
               }
             : item
-        )
-      );
+        );
+        setFilteredTaskCategory(mapCategoryData(updatedData)); // Re-map to RowData format
+        return updatedData;
+      });
       const response = await changeTimeEntry(key);
       console.log(response);
     } catch (err) {
@@ -99,78 +109,62 @@ const TaskCategory: React.FC = () => {
     setIsAddModalOpen(false); // Close modal after submission
   };
 
-  const columns = [
-    {
-      title: "Task category",
-      dataIndex: "task_category",
-      key: "task_category",
-      width: "60%",
-    },
-    {
-      title: "Time entry",
-      dataIndex: "timeEntry",
-      key: "timeEntry",
-      width: "30%",
-      render: (timeEntry: TaskCategoryData["timeEntry"]) => (
-        <Tag className={`${styles.timeEntryBtn} ${styles[timeEntry]}`}>
-          {timeEntry.charAt(0).toUpperCase() + timeEntry.slice(1)}
+  const columns: Column[] = [
+    { title: "Task category", key: "task_category", align: "left" },
+    { title: "Time entry", key: "timeEntry", align: "left", width: 400 },
+    { title: "", key: "action", align: "left", width: 40 },
+  ];
+  // Function to map category data to RowData format for compatibility with the table
+  const mapCategoryData = (categorys: TaskCategoryData[]): RowData[] => {
+    const handleMenuClick = (e: { key: string }, category: TaskCategoryData) => {
+      if (e.key === "Edit") {
+        if (category._id) {
+          handleEditTaskCategory(category);
+        }
+      } else if (e.key === "Update-timeEntry") {
+        if (category._id) {
+          handleTimeEntryChange(category._id);
+        }
+      }
+    };
+    return categorys.map((category) => ({
+      _id: category._id,
+      task_category: (
+        <span className={styles.category}>{category.task_category}</span>
+      ),
+      timeEntry: (
+        <Tag className={`${styles.timeEntryBtn} ${styles[category.timeEntry]}`}>
+          {category.timeEntry.charAt(0).toUpperCase() +
+            category.timeEntry.slice(1)}
         </Tag>
       ),
-    },
-    {
-      title: "",
-      key: "action",
-      width: "5%",
-      render: (record: TaskCategoryData) => {
-        const dynamicActionItems: MenuProps["items"] = [
-          {
-            key: "edit",
-            label: <div className={styles.dropdownItem}>Edit</div>,
-            onClick: () => handleEditTaskCategory(record),
-          },
-          {
-            key: "entry",
-            label: (
-              <div
-                className={styles.dropdownItem}
-                onClick={() => handleTimeEntryChange(record._id)}
-              >
-                {record.timeEntry === "closed" ? "Open entry" : "Close entry"}
-              </div>
-            ),
-          },
-        ];
-
-        return (
+      action: (
+        <span className={styles.actionCell}>
           <Dropdown
-            menu={{ items: dynamicActionItems }}
+            menu={{
+              items: [
+                { key: "Edit", label: "Edit" },
+                {
+                  key: "Update-timeEntry",
+                  label:
+                    category.timeEntry === "closed"
+                      ? "Open entry"
+                      : "Close entry",
+                },
+              ],
+              onClick: (e) => handleMenuClick(e, category),
+            }}
             trigger={["click"]}
-            placement="bottomRight"
-            dropdownRender={(menu) => (
-              <div className={styles.dropdownMenu}>{menu}</div>
-            )}
           >
-            <Button
-              type="text"
-              icon={
-                <MoreOutlined style={{ fontSize: "18px", color: "black" }} />
-              }
-              className={styles.actionButton}
-            />
+            <MoreOutlined className={styles.threeDotButton} />
           </Dropdown>
-        );
-      },
-    },
-  ];
-
+        </span>
+      ),
+    }));
+  };
   return (
     <div className={styles.tableWrapper}>
-      <Table
-        columns={columns}
-        dataSource={TaskCategoryData}
-        pagination={false}
-        className={styles.table}
-      />
+      <CustomTable columns={columns} data={filteredTaskCategory} />
       <EditTaskCategoryModal
         isEditModalOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
