@@ -1,52 +1,41 @@
 "use client";
-import React, { useState } from "react";
-import { Table, Button, Dropdown } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Dropdown, message } from "antd";
 import type { MenuProps } from "antd";
 import styles from "./client.module.scss";
 import AddClientModal from "../add-client-modal/add-client-modal";
-
-/**
- * Interface representing the client data structure.
- * @interface ClientData
- */
-interface ClientData {
-  key: string;
-  client_name: string;
-  location: string;
-  client_manager: string;
-  billing_currency: string;
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
-}
+import useClientService, { ClientData } from "../../services/client-service";
 
 const Client: React.FC = () => {
-  const data: ClientData[] = [
-    {
-      key: "1",
-      client_name: "Techfriar Technologies",
-      location: "India",
-      client_manager: "Aswina Vinod",
-      billing_currency: "",
-      status: "completed",
-    },
-    {
-      key: "2",
-      client_name: "Techfriar Technologies",
-      location: "Dubai",
-      client_manager: "Aswina Vinod",
-      billing_currency: "Dirham",
-      status: "completed",
-    },
-  ];
-
+  const { addClient, changeStatus, fetchClientDetails } = useClientService();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [clientData, setClientData] = useState<ClientData[]>(data);
+  const [clientData, setClientData] = useState<ClientData[]>([]);
+
+  // useEffect hook to fetch forecast data based on the ID when the component mounts
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchClientDetails(); // Make sure you pass the ID
+        setClientData(result);
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
+
+    fetchDetails();
+  }, []);
 
   /**
    * Handles the form submission from the AddClientModal
    * @param {Record<string, any>} values - The values for the new client
    */
-  const handleAddClientSubmit = (values: Record<string, any>) => {
-    console.log("Updated Client Details:", values);
+  const handleAddClientSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await addClient(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsAddModalOpen(false); // Close modal after submission
   };
 
@@ -55,12 +44,21 @@ const Client: React.FC = () => {
    * @param {string} key - The key of the client to update
    * @param {string} newStatus - The new status to set
    */
-  const handleStatusChange = (key: string, newStatus: ClientData["status"]) => {
+  const handleStatusChange = async (
+    key: string,
+    newStatus: ClientData["status"]
+  ) => {
     setClientData((prevData) =>
       prevData.map((item) =>
-        item.key === key ? { ...item, status: newStatus } : item
+        item._id === key ? { ...item, status: newStatus } : item
       )
     );
+    try {
+      const response = await changeStatus(key);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
   };
 
   /**
@@ -113,7 +111,7 @@ const Client: React.FC = () => {
         ];
 
         const handleMenuClick = (e: { key: string }) => {
-          handleStatusChange(record.key, e.key as ClientData["status"]);
+          handleStatusChange(record._id, e.key as ClientData["status"]);
         };
 
         return (

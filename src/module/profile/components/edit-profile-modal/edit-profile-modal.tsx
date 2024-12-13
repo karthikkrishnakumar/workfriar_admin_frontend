@@ -3,6 +3,7 @@ import React from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 import styles from "./edit-profile-modal.module.scss";
 import Icons from "@/themes/images/icons/icons";
+import { ProfileData } from "../../services/profile-service";
 
 interface EditProfileModalProps {
   isEditModalOpen: boolean;
@@ -11,26 +12,6 @@ interface EditProfileModalProps {
   initialValues: ProfileData | null;
 }
 
-interface TeamMember {
-  name: string;
-  profile_pic?: string | null;
-}
-
-/**
- * Interface representing the Profile data structure.
- * This interface defines the shape of the Profile data.
- * @interface ProfileData
- */
-interface ProfileData {
-  id: string;
-  profile_pic: string;
-  name: string;
-  email: string;
-  location: string;
-  phone: string;
-  role: string;
-  reporting_manager: string;
-}
 
 const EditProfileModal: React.FC<EditProfileModalProps> = ({
   isEditModalOpen,

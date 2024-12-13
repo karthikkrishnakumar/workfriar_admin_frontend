@@ -1,91 +1,77 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Table, Button, Dropdown, Tag } from "antd";
+import { Table, Button, Dropdown, Tag, message } from "antd";
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-list.module.scss";
 import EditProjectModal from "../edit-project-modal/edit-project-modal";
 import AddProjectModal from "../add-project-modal/add-project-modal";
 import dayjs from "dayjs";
-
-/**
- * Interface representing the project data structure.
- * @interface ProjectData
- */
-interface ProjectData {
-  key: string;
-  projectLogo: string;
-  projectName: string;
-  clientName: string;
-  planned_start_date: string | dayjs.Dayjs;
-  planned_end_date: string | dayjs.Dayjs;
-  actual_start_date: string | dayjs.Dayjs;
-  actual_end_date: string | dayjs.Dayjs;
-  projectLead: string;
-  projectDescription: string;
-  billing_model: string;
-  timeEntry: "closed" | "opened";
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
-}
+import useProjectService, { ProjectData } from "../../services/project-service";
+import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 
 const ProjectList: React.FC = () => {
-  const data: ProjectData[] = [
-    {
-      key: "1",
-      projectLogo: "",
-      projectName: "Diamond Lease",
-      clientName: "Techfriar India",
-      planned_start_date: "11/10/2024",
-      planned_end_date: "02/05/2025",
-      actual_start_date: "11/10/2024",
-      actual_end_date: "02/05/2025",
-      projectLead: "Aswina Vinod",
-      timeEntry: "closed",
-      status: "completed",
-      projectDescription: "",
-      billing_model: "Retainer",
-    },
-    {
-      key: "2",
-      projectLogo: "",
-      projectName: "Platinum Hire",
-      clientName: "Techfriar India",
-      planned_start_date: "15/11/2024",
-      planned_end_date: "03/06/2025",
-      actual_start_date: "15/11/2024",
-      actual_end_date: "03/06/2025",
-      projectLead: "John Doe",
-      timeEntry: "opened",
-      status: "in_progress",
-      projectDescription: "",
-      billing_model: "Retainer",
-    },
-  ];
-
   const router = useRouter();
+  const {
+    addProject,
+    changeStatus,
+    changeTimeEntry,
+    fetchProjectDetails,
+    updateProject,
+  } = useProjectService();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
     null
   );
-  const [projectData, setProjectData] = useState<ProjectData[]>(data);
+  const [projectData, setProjectData] = useState<ProjectData[]>([]);
+
+  // useEffect hook to fetch forecast data based on the ID when the component mounts
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchProjectDetails(); // Make sure you pass the ID
+        setProjectData(result);
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
+
+    fetchDetails();
+  }, []);
 
   /**
    * Toggles the time entry status between "closed" and "opened"
    * @param {string} key - The key of the project to update
    */
-  const handleTimeEntryChange = (key: string) => {
-    setProjectData((prevData) =>
-      prevData.map((item) =>
-        item.key === key
-          ? {
-              ...item,
-              timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
-            }
-          : item
-      )
-    );
+  const handleTimeEntryChange = async (key: string) => {
+    try {
+      setProjectData((prevData) =>
+        prevData.map((item) =>
+          item._id === key
+            ? {
+                ...item,
+                timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
+              }
+            : item
+        )
+      );
+      const response = await changeTimeEntry(key);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
+  };
+
+  const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await changeStatus(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
   };
 
   /**
@@ -99,7 +85,7 @@ const ProjectList: React.FC = () => {
   ) => {
     setProjectData((prevData) =>
       prevData.map((item) =>
-        item.key === key ? { ...item, status: newStatus } : item
+        item._id === key ? { ...item, status: newStatus } : item
       )
     );
   };
@@ -120,15 +106,6 @@ const ProjectList: React.FC = () => {
   };
 
   /**
-   * Redirects to the project details page
-   * @param {ProjectData} project - The project to view
-   */
-
-  const handleViewProject = (project: ProjectData) => {
-    router.push(`/projects/project-details/${project.key}`);
-  };
-
-  /**
    * Converts the status value to a readable format
    * @param {string} status - The status value to convert
    * @returns {string} - The formatted status string
@@ -141,8 +118,13 @@ const ProjectList: React.FC = () => {
    * Handles the form submission from the EditProjectModal
    * @param {Record<string, any>} values - The updated values for the project
    */
-  const handleEditProjectSubmit = (values: Record<string, any>) => {
-    console.log("Updated Project Details:", values);
+  const handleEditProjectSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await updateProject(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsEditModalOpen(false); // Close modal after submission
   };
 
@@ -151,8 +133,13 @@ const ProjectList: React.FC = () => {
    * @param {Record<string, any>} values - The values for the new project
    */
 
-  const handleAddProjectSubmit = (values: Record<string, any>) => {
-    console.log("Updated Project Details:", values);
+  const handleAddProjectSubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await addProject(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsAddModalOpen(false); // Close modal after submission
   };
 
@@ -232,9 +219,9 @@ const ProjectList: React.FC = () => {
         ];
 
         const handleMenuClick = (e: { key: string }) => {
-          handleStatusChange(record.key, e.key as ProjectData["status"]);
+          setEffectiveDateModal(true);
+          handleStatusChange(record._id, e.key as ProjectData["status"]);
         };
-
         return (
           <Dropdown
             menu={{ items: menuItems, onClick: handleMenuClick }}
@@ -257,7 +244,8 @@ const ProjectList: React.FC = () => {
           {
             key: "view",
             label: <div className={styles.dropdownItem}>Details</div>,
-            onClick: () => handleViewProject(record),
+            onClick: () =>
+              router.push(`/projects/project-details/${record._id}`),
           },
           {
             key: "edit",
@@ -269,7 +257,7 @@ const ProjectList: React.FC = () => {
             label: (
               <div
                 className={styles.dropdownItem}
-                onClick={() => handleTimeEntryChange(record.key)}
+                onClick={() => handleTimeEntryChange(record._id)}
               >
                 {record.timeEntry === "closed" ? "Open entry" : "Close entry"}
               </div>
@@ -317,6 +305,27 @@ const ProjectList: React.FC = () => {
         isAddModalOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSave={handleAddProjectSubmit}
+      />
+      <ModalFormComponent
+        isVisible={effectiveDateModal}
+        title={"Effective date"}
+        formRows={[
+          {
+            fields: [
+              {
+                name: "effective_date",
+                label: "Effective date",
+                type: "date",
+                required: true,
+              },
+            ],
+          },
+        ]}
+        primaryButtonLabel={"Save"}
+        secondaryButtonLabel={"Cancel"}
+        onPrimaryClick={handleEffectiveDateSubmit}
+        onSecondaryClick={() => setEffectiveDateModal(false)}
+        onClose={() => setEffectiveDateModal(false)}
       />
     </div>
   );

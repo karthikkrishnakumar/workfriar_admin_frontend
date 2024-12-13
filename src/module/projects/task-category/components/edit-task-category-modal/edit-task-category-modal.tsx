@@ -1,18 +1,13 @@
 "use client";
 import React from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-
+import { TaskCategoryData } from "../../services/task-category-service";
 
 interface EditTaskCategoryModalProps {
   isEditModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
   initialValues: TaskCategoryData | null;
-}
-interface TaskCategoryData {
-  key: string;
-  task_category: string;
-  timeEntry: "closed" | "opened";
 }
 
 const EditTaskCategoryModal: React.FC<EditTaskCategoryModalProps> = ({
@@ -44,7 +39,7 @@ const EditTaskCategoryModal: React.FC<EditTaskCategoryModalProps> = ({
               label: "Task category",
               type: "text",
               required: true,
-              placeholder:"Select task category"
+              placeholder: "Select task category",
             },
             {
               name: "timeEntry",
@@ -55,7 +50,7 @@ const EditTaskCategoryModal: React.FC<EditTaskCategoryModalProps> = ({
                 { label: "Closed", value: "closed" },
               ],
               required: true,
-              placeholder:"Select time entry"
+              placeholder: "Select time entry",
             },
           ],
         },

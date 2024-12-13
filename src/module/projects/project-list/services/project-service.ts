@@ -1,46 +1,32 @@
-import dayjs from "dayjs";
 import http from "@/utils/http";
-
-
-export interface TeamForecast {
-  team_member_id: string; // Name of the team member
-  forecast_hours: number; // Forecasted hours for the team member
-}
+import dayjs from "dayjs";
 
 /**
- * Interface representing the ProjectForecast data structure.
- * @interface ProjectForecastData
+ * Interface representing the project data structure.
+ * @interface ProjectData
  */
-export interface ProjectForecastData {
+export interface ProjectData {
   _id: string;
-  opportunity_name: string;
-  opportunity_manager: string;
-  client_name: string;
-  opportunity_start_date: string | dayjs.Dayjs;
-  opportunity_close_date: string | dayjs.Dayjs;
-  opportunity_description: string;
+  projectLogo: string;
+  projectName: string;
+  clientName: string;
+  planned_start_date: string | dayjs.Dayjs;
+  planned_end_date: string | dayjs.Dayjs;
+  actual_start_date: string | dayjs.Dayjs;
+  actual_end_date: string | dayjs.Dayjs;
+  projectLead: string;
+  projectDescription: string;
   billing_model: string;
-  expected_start_date: string | dayjs.Dayjs;
-  expected_end_date: string | dayjs.Dayjs;
-  expected_resource_breakdown: string;
-  estimated_value: string;
-  product_manager: string;
-  project_manager: string;
-  tech_lead: string;
-  account_manager: string;
-  estimated_completion: number;
-  team_forecast: TeamForecast[];
-  opportunity_stage: "closed_won" | "closed_lost";
+  timeEntry: "closed" | "opened";
   status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
 }
 
-
-
 /**
- * create the custom hook for handling project forecast
+ * create the custom hook for handling project list
  */
-export default function useProjectForecastService() {
-  const fetchProjectForecastDetailsById = async function (
+export default function useProjectListService() {
+
+  const fetchProjectDetailsById = async function (
     id: string
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>{
@@ -62,7 +48,7 @@ export default function useProjectForecastService() {
       //     message: body.message,
       //   };
       // }
-      const response = forecastData;
+      const response = projectData;
       return response;
     } catch (error) {
       // Handle unexpected errors
@@ -73,7 +59,7 @@ export default function useProjectForecastService() {
     }
   };
 
-  const fetchProjectForecastDetails = async function (): Promise<any> {
+  const fetchProjectDetails = async function (): Promise<any> {
     try {
       // Make an HTTP POST request
       // const { body } = await http().post("/api");
@@ -90,7 +76,7 @@ export default function useProjectForecastService() {
       //     message: body.message,
       //   };
       // }
-      const response = forecastDatas;
+      const response = projectDatas;
       return response;
     } catch (error) {
       // Handle unexpected errors
@@ -130,65 +116,7 @@ export default function useProjectForecastService() {
     }
   };
 
-  const updateProjectForecast = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
-    try {
-      // Make an HTTP POST request
-      const { body } = await http().post("/api", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error) {
-      // Handle unexpected errors
-      return {
-        status: false,
-        message: "An error occurred. Please try again.",
-      };
-    }
-  };
-
-  const addProjectForecast = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
-    try {
-      // Make an HTTP POST request
-      const { body } = await http().post("/api", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error) {
-      // Handle unexpected errors
-      return {
-        status: false,
-        message: "An error occurred. Please try again.",
-      };
-    }
-  };
-
-  const deleteProjectForecast = async function (id: string): Promise<any> {
+  const changeTimeEntry = async function (id:string): Promise<any> {
     const props: JSON = <JSON>(<unknown>{
       id,
     });
@@ -212,115 +140,126 @@ export default function useProjectForecastService() {
       // Handle unexpected errors
       return {
         status: false,
-        message: "An error occurred while sending OTP. Please try again.",
+        message: "An error occurred. Please try again.",
+      };
+    }
+  };
+
+  const updateProject = async function (payload: any): Promise<any> {
+    const props: JSON = <JSON>(<unknown>{
+      payload,
+    });
+    try {
+      // Make an HTTP POST request
+      const { body } = await http().post("/api", props);
+      if (body.status) {
+        const response: any = {
+          status: body.status,
+          message: body.message,
+          data: body.data ? body.data : undefined,
+        };
+        return response;
+      } else {
+        return {
+          status: false,
+          message: body.message,
+        };
+      }
+    } catch (error) {
+      // Handle unexpected errors
+      return {
+        status: false,
+        message: "An error occurred. Please try again.",
+      };
+    }
+  };
+
+  const addProject = async function (payload: any): Promise<any> {
+    const props: JSON = <JSON>(<unknown>{
+      payload,
+    });
+    try {
+      // Make an HTTP POST request
+      const { body } = await http().post("/api", props);
+      if (body.status) {
+        const response: any = {
+          status: body.status,
+          message: body.message,
+          data: body.data ? body.data : undefined,
+        };
+        return response;
+      } else {
+        return {
+          status: false,
+          message: body.message,
+        };
+      }
+    } catch (error) {
+      // Handle unexpected errors
+      return {
+        status: false,
+        message: "An error occurred. Please try again.",
       };
     }
   };
 
   return {
-    fetchProjectForecastDetailsById,
-    fetchProjectForecastDetails,
+    fetchProjectDetailsById,
+    fetchProjectDetails,
     changeStatus,
-    updateProjectForecast,
-    addProjectForecast,
-    deleteProjectForecast,
+    updateProject,
+    addProject,
+    changeTimeEntry
   };
 }
 
-const forecastData: ProjectForecastData = {
-  _id: "1",
-  opportunity_name: "Diamond Lease",
-  client_name: "Techfriar India",
-  opportunity_start_date: "11/10/2024",
-  opportunity_close_date: "02/05/2025",
-  opportunity_manager: "Aswina Vinod",
-  opportunity_stage: "closed_won",
-  status: "completed",
-  opportunity_description: "description",
-  billing_model: "",
-  expected_start_date: "11/10/2024",
-  expected_end_date: "11/10/2024",
-  expected_resource_breakdown: "",
-  estimated_value: "",
-  product_manager: "Aswina Vinod",
-  project_manager: "Aswina Vinod",
-  tech_lead: "Aswina Vinod",
-  account_manager: "Aswina Vinod",
-  estimated_completion: 75,
-  team_forecast: [
-    {
-      team_member_id: "Vishnu M S",
-      forecast_hours: 120,
-    },
-    {
-      team_member_id: "Guru",
-      forecast_hours: 80,
-    },
-  ],
-};
 
-const forecastDatas: ProjectForecastData[] = [
-  
+const projectData: ProjectData = 
   {
     _id: "1",
-    opportunity_name: "Diamond Lease",
-    client_name: "Techfriar India",
-    opportunity_start_date: "11/10/2024",
-    opportunity_close_date: "02/05/2025",
-    opportunity_manager: "Aswina Vinod",
-    opportunity_stage: "closed_won",
+    projectLogo: "",
+    projectName: "Diamond Lease",
+    clientName: "Techfriar India",
+    planned_start_date: "11/10/2024",
+    planned_end_date: "02/05/2025",
+    actual_start_date: "11/10/2024",
+    actual_end_date: "02/05/2025",
+    projectLead: "Aswina Vinod",
+    timeEntry: "closed",
     status: "completed",
-    opportunity_description: "description",
-    billing_model: "",
-    expected_start_date: "11/10/2024",
-    expected_end_date: "11/10/2024",
-    expected_resource_breakdown: "",
-    estimated_value: "",
-    product_manager: "Aswina Vinod",
-    project_manager: "Aswina Vinod",
-    tech_lead: "Aswina Vinod",
-    account_manager: "Aswina Vinod",
-    estimated_completion: 75,
-    team_forecast: [
-      {
-        team_member_id: "Vishnu M S",
-        forecast_hours: 120,
-      },
-      {
-        team_member_id: "Guru",
-        forecast_hours: 80,
-      },
-    ],
+    projectDescription: "",
+    billing_model: "Retainer",
+  };
+
+const projectDatas: ProjectData[] = [
+  {
+    _id: "1",
+    projectLogo: "",
+    projectName: "Diamond Lease",
+    clientName: "Techfriar India",
+    planned_start_date: "11/10/2024",
+    planned_end_date: "02/05/2025",
+    actual_start_date: "11/10/2024",
+    actual_end_date: "02/05/2025",
+    projectLead: "Aswina Vinod",
+    timeEntry: "closed",
+    status: "completed",
+    projectDescription: "",
+    billing_model: "Retainer",
   },
   {
     _id: "2",
-    opportunity_name: "Diamond Lease",
-    client_name: "Techfriar India",
-    opportunity_start_date: "11/10/2024",
-    opportunity_close_date: "02/05/2025",
-    opportunity_manager: "Aswina Vinod",
-    opportunity_stage: "closed_lost",
-    status: "completed",
-    opportunity_description: "description",
-    billing_model: "",
-    expected_start_date: "11/10/2024",
-    expected_end_date: "11/10/2024",
-    expected_resource_breakdown: "",
-    estimated_value: "",
-    product_manager: "Aswina Vinod",
-    project_manager: "Aswina Vinod",
-    tech_lead: "Aswina Vinod",
-    account_manager: "Aswina Vinod",
-    estimated_completion: 75,
-    team_forecast: [
-      {
-        team_member_id: "Vishnu M S",
-        forecast_hours: 120,
-      },
-      {
-        team_member_id: "Guru",
-        forecast_hours: 80,
-      },
-    ],
+    projectLogo: "",
+    projectName: "Platinum Hire",
+    clientName: "Techfriar India",
+    planned_start_date: "15/11/2024",
+    planned_end_date: "03/06/2025",
+    actual_start_date: "15/11/2024",
+    actual_end_date: "03/06/2025",
+    projectLead: "John Doe",
+    timeEntry: "opened",
+    status: "in_progress",
+    projectDescription: "",
+    billing_model: "Retainer",
   },
 ];
