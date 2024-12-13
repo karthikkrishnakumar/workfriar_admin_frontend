@@ -30,8 +30,8 @@ export interface ProjectForecastData {
   account_manager: string;
   estimated_completion: number;
   team_forecast: TeamForecast[];
-  opportunity_stage: "closed_won" | "closed_lost";
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
+  opportunity_stage: string;
+  status: string;
 }
 
 

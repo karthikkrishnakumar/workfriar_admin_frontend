@@ -1,11 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./project-details.module.scss";
-import { Card, Row, Col, Spin, message } from "antd";
+import { Spin, message } from "antd";
 import useProjectService, {
   ProjectData,
 } from "@/module/projects/project-list/services/project-service";
 import dayjs from "dayjs";
+import GridContainer from "@/themes/components/grid-container/grid-container";
 
 /**
  * Interface representing the project details structure.
@@ -45,80 +46,59 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
 
   return (
     <div className={styles.projectDetailsWrapper}>
-      <Card>
-        <Row gutter={[16, 16]} align="middle" className={styles.firstRow}>
-          <Col>
-            {project.projectLogo ? (
-              <img
-                src={project.projectLogo}
-                alt={project.projectName}
-                className={styles.circleImage}
-              />
-            ) : (
-              <div className={styles.circle}>
-                {project?.projectName?.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </Col>
-          <Col>
-            <p>Project</p>
-            <h4>{project.projectName}</h4>
-          </Col>
-          <Col>
-            <p>Project lead</p>
-            <h4>{project.projectLead}</h4>
-          </Col>
-        </Row>
-      </Card>
+      <GridContainer
+          isGrid={true}
+          avatar={{
+            name: project?.projectName,
+            profile: project?.projectLogo || "",
+            size: 100}}
+          fields={[
+            {
+              label: "Project",
+              value: project?.projectName,
+            },
+            { label: "Project lead", value: project?.projectLead },
+          ]}
+        />
 
       {/* Description Section */}
-      <Card className={styles.middleRow}>
-        <p>Project description</p>
-        <h4>{project.projectDescription}</h4>
-      </Card>
+      <GridContainer
+          isGrid={false}
+          fields={[
+            {
+              label: "Project description",
+              value: project?.projectDescription,
+            }
+          ]}
+        />
 
       {/* Details Section */}
-      <Card className={styles.middleRow}>
-        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
-          <Col>
-            <p>Client</p>
-            <h4>{project.clientName}</h4>
-          </Col>
-          <Col>
-            <p>Planned start date</p>
-            <h4>{dayjs(project?.planned_start_date).format("DD/MM/YYYY")}</h4>
-          </Col>
-          <Col>
-            <p>Planned end date</p>
-            <h4>{dayjs(project?.planned_end_date).format("DD/MM/YYYY")}</h4>
-          </Col>
-        </Row>
-        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
-          <Col>
-            <p>Actual start date</p>
-            <h4>{dayjs(project?.actual_start_date).format("DD/MM/YYYY")}</h4>
-          </Col>
-          <Col>
-            <p>Actual end date</p>
-            <h4>{dayjs(project?.actual_end_date).format("DD/MM/YYYY")}</h4>
-          </Col>
-          <Col>
-            <p>Billing model</p>
-            <h4>{project.billing_model}</h4>
-          </Col>
-        </Row>
-        <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
-          <Col>
-            <p>Time entry</p>
-            <h4>{project.timeEntry}</h4>
-          </Col>
-          <Col>
-            <p>Status</p>
-            <h4>{project.status}</h4>
-          </Col>
-          <Col></Col>
-        </Row>
-      </Card>
+      <GridContainer
+          isGrid={true}
+          fields={[
+            {
+              label: "Client",
+              value: project?.clientName,
+            },
+            { label: "Planned start date", value: dayjs(project?.planned_start_date).format("DD/MM/YYYY") },
+            { label: "Planned end date", value: dayjs(project?.planned_end_date).format("DD/MM/YYYY") },
+            { label: "Actual start date", value: dayjs(project?.actual_start_date).format("DD/MM/YYYY") },
+            { label: "Actual end date", value: dayjs(project?.actual_end_date).format("DD/MM/YYYY") },
+            {
+              label: "Billing model",
+              value: project?.billing_model,
+            },
+            {
+              label: "Time entry",
+              value: project?.timeEntry,
+            },
+            {
+              label: "Status",
+              value: project?.status,
+            },
+            
+          ]}
+        />
     </div>
   );
 };

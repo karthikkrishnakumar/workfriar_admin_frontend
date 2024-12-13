@@ -12,17 +12,22 @@ export interface TeamMember {
   email?: string;
   start_date?: string | dayjs.Dayjs;
   end_date?: string | dayjs.Dayjs;
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
+  status: string;
 }
 
 // Interface of a team member's data
-export interface TimeLoggedResponse {
+export interface TimeLogged {
   _id: string;
   name: string;
   profile_pic?: string | null;
   email: string;
   time_logged: number;
   time_approved: number;
+}
+
+export interface TimeLoggedResponse {
+  data: TimeLogged[];
+  dateRange?: string;
 }
 
 /**
@@ -105,9 +110,19 @@ export default function useProjectTeamService() {
     }
   };
 
-  const fetchTimeLoggedByProjectId = async function (id: string): Promise<any> {
+  const fetchTimeLoggedByProjectId = async function (
+    id: string,
+    startDate: string,
+    endDate: string,
+    prev: boolean,
+    next: boolean
+  ): Promise<any> {
     const props: JSON = <JSON>(<unknown>{
       id,
+      startDate,
+      endDate,
+      prev,
+      next,
     });
     try {
       // Make an HTTP POST request
@@ -125,7 +140,7 @@ export default function useProjectTeamService() {
       //     message: body.message,
       //   };
       // }
-      const response = teamMembers;
+      const response = timeLoggedData;
       return response;
     } catch (error) {
       // Handle unexpected errors
@@ -337,24 +352,27 @@ const projectTeamData: ProjectTeamData[] = [
   },
 ];
 
-const timeLoggedData: TimeLoggedResponse[] = [
-  {
-    _id: "1",
-    name: "Alice",
-    email: "alice@gmail.com",
-    profile_pic: null,
+const timeLoggedData: TimeLoggedResponse = {
+  dateRange: "2024-11-01-2024-11-07",
+  data: [
+    {
+      _id: "1",
+      name: "Alice",
+      email: "alice@gmail.com",
+      profile_pic: null,
 
-    time_logged: 10,
-    time_approved: 10,
-  },
-  {
-    _id: "2",
-    name: "Bob",
-    email: "bob@gmail.com",
-    profile_pic:
-      "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+      time_logged: 10,
+      time_approved: 10,
+    },
+    {
+      _id: "2",
+      name: "Bob",
+      email: "bob@gmail.com",
+      profile_pic:
+        "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
 
-    time_logged: 10,
-    time_approved: 10,
-  },
-];
+      time_logged: 10,
+      time_approved: 10,
+    },
+  ],
+};

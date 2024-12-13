@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Button, Dropdown, message } from "antd";
-import type { MenuProps } from "antd";
+import { Dropdown, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-team.module.scss";
 import dayjs from "dayjs";
@@ -11,10 +10,14 @@ import EditProjectTeamModal from "../edit-project-team-modal/edit-project-team-m
 import { useRouter } from "next/navigation";
 import useProjectTeamService, {
   ProjectTeamData,
-  TeamMember,
 } from "../../services/project-team-service";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-
+import CustomTable, {
+  Column,
+  RowData,
+} from "@/themes/components/custom-table/custom-table";
+import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
+import Icons from "@/themes/images/icons/icons";
 const ProjectTeam: React.FC = () => {
   const router = useRouter();
   const {
@@ -23,6 +26,9 @@ const ProjectTeam: React.FC = () => {
     fetchProjectTeamDetails,
     updateProjectTeam,
   } = useProjectTeamService();
+  const [filteredProjectTeam, setFilteredProjectTeam] = useState<
+  RowData[]
+>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
@@ -30,12 +36,13 @@ const ProjectTeam: React.FC = () => {
     useState<ProjectTeamData | null>(null);
   const [projectTeamData, setProjectTeamData] = useState<ProjectTeamData[]>([]);
 
-  // useEffect hook to fetch forecast data based on the ID when the component mounts
+  // useEffect hook to fetch team data based on the ID when the component mounts
   useEffect(() => {
     const fetchDetails = async () => {
       try {
         const result = await fetchProjectTeamDetails(); // Make sure you pass the ID
         setProjectTeamData(result);
+        setFilteredProjectTeam(mapProjectTeamData(result));
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -119,132 +126,115 @@ const ProjectTeam: React.FC = () => {
     setIsAddModalOpen(false); // Close modal after submission
   };
 
-  const columns = [
-    {
-      title: "Project",
-      dataIndex: "ProjectName",
-      key: "ProjectName",
-      width: "30%",
-      render: (text: string, record: ProjectTeamData) => (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          {record.ProjectLogo ? (
-            <img
-              src={record.ProjectLogo}
-              alt={record.ProjectName}
-              className={styles.circleImage}
-            />
-          ) : (
-            <div className={styles.circle}>{text.charAt(0).toUpperCase()}</div>
-          )}
-          <span>{text}</span>
-        </div>
-      ),
-    },
-    {
-      title: "Team members",
-      dataIndex: "ProjectTeam",
-      key: "ProjectTeam",
-      width: "25%",
-      render: (team: TeamMember[]) => <AvatarGroup team={team} />,
-    },
+  const handleRowClick = (row: ProjectTeamData) => {
+    if (row._id) {
+      const rowId = row._id;
+      router.push(`/projects/project-details/${rowId}`);
+    }
+  };
+
+  const columns: Column[] = [
+    { title: "Project",key: "ProjectName", align: "left" },
+    {  title: "Team members", key: "ProjectTeam", align: "left" },
     {
       title: "Start and end date",
-      dataIndex: "actual_start_date",
-      key: "dates",
-      width: "30%",
-      render: (_: any, record: ProjectTeamData) => (
-        <>
-          {dayjs.isDayjs(record.start_date)
-            ? record.start_date.format("DD/MM/YYYY")
-            : record.start_date}{" "}
-          -{" "}
-          {dayjs.isDayjs(record.end_date)
-            ? record.end_date.format("DD/MM/YYYY")
-            : record.end_date}
-        </>
-      ),
+      key: "actual_dates",
+      align: "left",
+      width: 350,
     },
-
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: "10%",
-      render: (status: ProjectTeamData["status"], record: ProjectTeamData) => {
-        const menuItems: MenuProps["items"] = [
-          { key: "completed", label: getStatusText("completed") },
-          { key: "in_progress", label: getStatusText("in_progress") },
-          { key: "on_hold", label: getStatusText("on_hold") },
-          { key: "cancelled", label: getStatusText("cancelled") },
-          { key: "not_started", label: getStatusText("not_started") },
-        ];
-
-        const handleMenuClick = (e: { key: string }) => {
-          setEffectiveDateModal(true);
-          handleStatusChange(record._id, e.key as ProjectTeamData["status"]);
-        };
-
-        return (
-          <Dropdown
-            menu={{ items: menuItems, onClick: handleMenuClick }}
-            trigger={["click"]}
-          >
-            <Button type="text" className={styles.statusButton}>
-              {getStatusText(status)}
-              <span style={{ marginLeft: 0, fontSize: "8px" }}>▼</span>
-            </Button>
-          </Dropdown>
-        );
-      },
-    },
-    {
-      title: "",
-      key: "action",
-      width: "1%",
-      render: (record: ProjectTeamData) => {
-        const dynamicActionItems: MenuProps["items"] = [
-          {
-            key: "view",
-            label: <div className={styles.dropdownItem}>Details</div>,
-            onClick: () =>
-              router.push(`/projects/project-details/${record.project_id}`),
-          },
-          {
-            key: "edit",
-            label: <div className={styles.dropdownItem}>Edit</div>,
-            onClick: () => handleEditProjectTeam(record),
-          },
-        ];
-
-        return (
-          <Dropdown
-            menu={{ items: dynamicActionItems }}
-            trigger={["click"]}
-            placement="bottomRight"
-            dropdownRender={(menu) => (
-              <div className={styles.dropdownMenu}>{menu}</div>
-            )}
-          >
-            <Button
-              type="text"
-              icon={
-                <MoreOutlined style={{ fontSize: "18px", color: "black" }} />
-              }
-              className={styles.actionButton}
-            />
-          </Dropdown>
-        );
-      },
-    },
+    { title: "Status", key: "status", align: "left" },
+    { title: "", key: "action", align: "left", width: 40 },
   ];
+
+
+  // Function to map team data to RowData format for compatibility with the table
+  const mapProjectTeamData = (teams: ProjectTeamData[]): RowData[] => {
+
+
+    const handleStatusClick = (
+      e: { key: string },
+      team: ProjectTeamData
+    ) => {
+      setEffectiveDateModal(true);
+      handleStatusChange(team._id, e.key as ProjectTeamData["status"]);
+    };
+    const handleMenuClick = (
+      e: { key: string },
+      team: ProjectTeamData
+    ) => {
+      if (e.key === "Details") {
+        if (team._id) {
+          router.push(`/projects/project-details/${team._id}`);
+        }
+      } else if (e.key === "Edit") {
+        if (team._id) {
+          handleEditProjectTeam(team);
+        }
+      }
+    };
+    return teams.map((team) => ({
+      _id: team._id,
+      ProjectName: (
+        <span className={styles.team}>{team.ProjectName}</span>
+      ),
+      ProjectTeam: (
+        <span>
+          <AvatarGroup team={team.ProjectTeam}/>
+          </span>
+      ),
+      actual_dates: (
+        <span className={styles.dates}>
+          <>
+            {dayjs.isDayjs(team.start_date)
+              ? team.start_date.format("DD/MM/YYYY")
+              : team.start_date}{" "}
+            -{" "}
+            {dayjs.isDayjs(team.end_date)
+              ? team.end_date.format("DD/MM/YYYY")
+              : team.end_date}
+          </>
+        </span>
+      ),
+      status: (
+        <StatusDropdown
+          status={getStatusText(team.status)}
+          menuItems={[
+            { key: "completed", label: getStatusText("completed") },
+            { key: "in_progress", label: getStatusText("in_progress") },
+            { key: "on_hold", label: getStatusText("on_hold") },
+            { key: "cancelled", label: getStatusText("cancelled") },
+            { key: "not_started", label: getStatusText("not_started") },
+          ]}
+          onMenuClick={(e: any) => handleStatusClick(e, team)}
+          arrowIcon={Icons.arrowDownFilledGold}
+          className={styles.status}
+        />
+      ),
+      action: (
+        <span className={styles.actionCell}>
+          <Dropdown
+            menu={{
+              items: [
+                { key: "Details", label: "Details" },
+                { key: "Edit", label: "Edit" },
+              ],
+              onClick: (e) => handleMenuClick(e, team),
+            }}
+            trigger={["click"]}
+          >
+            <MoreOutlined className={styles.threeDotButton} />
+          </Dropdown>
+        </span>
+      ),
+    }));
+  };
 
   return (
     <div className={styles.tableWrapper}>
-      <Table
+       <CustomTable
         columns={columns}
-        dataSource={projectTeamData}
-        pagination={false}
-        className={styles.table}
+        data={filteredProjectTeam}
+        onRowClick={() => handleRowClick}
       />
       <EditProjectTeamModal
         isEditModalOpen={isEditModalOpen}

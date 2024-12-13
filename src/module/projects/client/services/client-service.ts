@@ -11,7 +11,7 @@ export interface ClientData {
   location: string;
   client_manager: string;
   billing_currency: string;
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
+  status: string;
 }
 
 /**

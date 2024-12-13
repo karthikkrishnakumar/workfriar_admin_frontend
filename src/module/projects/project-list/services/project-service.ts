@@ -17,8 +17,8 @@ export interface ProjectData {
   projectLead: string;
   projectDescription: string;
   billing_model: string;
-  timeEntry: "closed" | "opened";
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
+  timeEntry: string;
+  status: string;
 }
 
 /**

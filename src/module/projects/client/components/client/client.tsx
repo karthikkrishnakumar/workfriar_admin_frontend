@@ -1,22 +1,31 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Button, Dropdown, message } from "antd";
-import type { MenuProps } from "antd";
+import {message } from "antd";
 import styles from "./client.module.scss";
 import AddClientModal from "../add-client-modal/add-client-modal";
 import useClientService, { ClientData } from "../../services/client-service";
+import CustomTable, {
+  Column,
+  RowData,
+} from "@/themes/components/custom-table/custom-table";
+import Icons from "@/themes/images/icons/icons";
+import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 
 const Client: React.FC = () => {
   const { addClient, changeStatus, fetchClientDetails } = useClientService();
+  const [filteredClients, setFilteredClients] = useState<
+  RowData[]
+>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [clientData, setClientData] = useState<ClientData[]>([]);
 
-  // useEffect hook to fetch forecast data based on the ID when the component mounts
+  // useEffect hook to fetch client data based on the ID when the component mounts
   useEffect(() => {
     const fetchDetails = async () => {
       try {
         const result = await fetchClientDetails(); // Make sure you pass the ID
         setClientData(result);
+        setFilteredClients(mapClientData(result));
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -70,72 +79,64 @@ const Client: React.FC = () => {
     return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  const columns = [
-    {
-      title: "Client",
-      dataIndex: "client_name",
-      key: "client_name",
-      width: "25%",
-    },
-    {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
-      width: "20%",
-    },
+  const columns: Column[] = [
+    { title: "Client", key: "client_name", align: "left",width:300 },
+    { title: "Location", key: "location", align: "left" },
     {
       title: "Billing currency",
-      dataIndex: "billing_currency",
       key: "billing_currency",
-      width: "20%",
+      align: "left",
     },
-    {
-      title: "Client manager",
-      dataIndex: "client_manager",
-      key: "client_manager",
-      width: "20%",
-    },
-
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: "15%",
-      render: (status: ClientData["status"], record: ClientData) => {
-        const menuItems: MenuProps["items"] = [
-          { key: "completed", label: getStatusText("completed") },
-          { key: "in_progress", label: getStatusText("in_progress") },
-          { key: "on_hold", label: getStatusText("on_hold") },
-          { key: "cancelled", label: getStatusText("cancelled") },
-          { key: "not_started", label: getStatusText("not_started") },
-        ];
-
-        const handleMenuClick = (e: { key: string }) => {
-          handleStatusChange(record._id, e.key as ClientData["status"]);
-        };
-
-        return (
-          <Dropdown
-            menu={{ items: menuItems, onClick: handleMenuClick }}
-            trigger={["click"]}
-          >
-            <Button type="text" className={styles.statusButton}>
-              {getStatusText(status)}
-              <span style={{ marginLeft: 0, fontSize: "8px" }}>▼</span>
-            </Button>
-          </Dropdown>
-        );
-      },
-    },
+    { title: "Client manager", key: "client_manager", align: "left",width:300 },
+    { title: "Status", key: "status", align: "left" },
   ];
 
+  // Function to map client data to RowData format for compatibility with the table
+  const mapClientData = (clients: ClientData[]): RowData[] => {
+
+    const handleStatusClick = (
+      e: { key: string },
+      client: ClientData
+    ) => {
+      handleStatusChange(client._id, e.key as ClientData["status"]);
+    };
+    return clients.map((client) => ({
+      _id: client._id,
+      client_name: (
+        <span className={styles.client}>{client.client_name}</span>
+      ),
+      location: (
+        <span className={styles.client}>{client.location}</span>
+      ),
+      billing_currency: (
+        <span className={styles.client}>{client.billing_currency}</span>
+      ),
+      client_manager: (
+        <span className={styles.client}>{client.client_manager}</span>
+      ),
+      status: (
+        <StatusDropdown
+          status={getStatusText(client.status)}
+          menuItems={[
+            { key: "completed", label: getStatusText("completed") },
+            { key: "in_progress", label: getStatusText("in_progress") },
+            { key: "on_hold", label: getStatusText("on_hold") },
+            { key: "cancelled", label: getStatusText("cancelled") },
+            { key: "not_started", label: getStatusText("not_started") },
+          ]}
+          onMenuClick={(e: any) => handleStatusClick(e, client)}
+          arrowIcon={Icons.arrowDownFilledGold}
+          className={styles.status}
+        />
+      ),
+    }));
+  };
+  
   return (
     <div className={styles.tableWrapper}>
-      <Table
+      <CustomTable
         columns={columns}
-        dataSource={clientData}
-        pagination={false}
-        className={styles.table}
+        data={filteredClients}
       />
       <AddClientModal
         isAddModalOpen={isAddModalOpen}
