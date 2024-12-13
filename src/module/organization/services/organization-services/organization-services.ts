@@ -4,20 +4,19 @@ import http from "@/utils/http"; // Assuming you have a custom HTTP utility for 
  * Fetches employee data, employee projects data, and employees table data based on various conditions.
  */
 export default function useEmployeeData() {
-
   /**
    * Fetches employee details based on employee ID.
    * @param employeeId - ID of the employee to fetch data for.
    * @returns Employee data or throws an error if the request fails.
    */
   const fetchEmployeeData = async (id: string): Promise<any> => {
-    const props: JSON = <JSON>(<unknown> { id });
+    const props: JSON = <JSON>(<unknown>{ id });
 
     try {
       const { body } = await http().post("/api/admin/employee-details/", props);
       return {
         status: body.status,
-        data: body.data || null,  // Return the response data
+        data: body.data || null, // Return the response data
         message: body.message || "Successfully fetched employee data.",
         errors: body.errors || null,
       };
@@ -45,7 +44,7 @@ export default function useEmployeeData() {
     userId: string
   ): Promise<any> => {
     const limit = pageSize;
-    const props: JSON = <JSON>(<unknown> { page, limit, userId });
+    const props: JSON = <JSON>(<unknown>{ page, limit, userId });
 
     try {
       const { body } = await http().post(
@@ -53,11 +52,11 @@ export default function useEmployeeData() {
         props
       );
 
-      console.log(body,"project ")
+      console.log(body, "project ");
       return {
         status: body.status,
         data: body.data || null,
-        total:body.pagination.totalPages,
+        total: body.pagination.totalPages,
         message: body.message || "Successfully fetched employee projects data.",
         errors: body.errors || null,
       };
@@ -84,18 +83,15 @@ export default function useEmployeeData() {
     limit: number,
     tabKey: string
   ): Promise<any> => {
-    const props: JSON = <JSON>(<unknown> { page, limit, tabKey });
+    const props: JSON = <JSON>(<unknown>{ page, limit, tabKey });
 
     try {
-      const { body } = await http().post(
-        "/api/admin/employees-data",
-        props
-      );
+      const { body } = await http().post("/api/admin/employees-data", props);
 
       return {
         status: body.status,
         data: body.data || null,
-        total:body.pagination.totalPages,
+        total: body.pagination.totalPages,
         message: body.message || "Successfully fetched employee data.",
         errors: body.errors || null,
       };
@@ -115,4 +111,4 @@ export default function useEmployeeData() {
     fetchEmployeeProjectsData,
     fetchEmployeesData,
   };
-};
+}

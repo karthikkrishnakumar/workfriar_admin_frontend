@@ -7,15 +7,14 @@ import ButtonComponent from "@/themes/components/button/button";
 import ProjectTimeChart from "../project-time-chart/project-time-chart";
 
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import useDashboardServices, {
+import UseDashboardServices, {
   ProjectTimeChartProps,
-  ProjectTimeResponse,
 } from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
 const ProjectTimeChartCard: React.FC = () => {
   const [projectTimeData, setProjectTimeData] = useState<
-    ProjectTimeChartProps[] | null
-  >(null);
+    ProjectTimeChartProps[] | []
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,8 +22,7 @@ const ProjectTimeChartCard: React.FC = () => {
   useEffect(() => {
     const fetchProjectTimeData = async () => {
       try {
-        const data: ProjectTimeResponse =
-          await useDashboardServices().fetchProjectTimes();
+        const data = await UseDashboardServices().fetchProjectTimes();
         setProjectTimeData(data.data); // Set fetched data
       } catch (error) {
         setError("Error fetching project time data.");
@@ -39,6 +37,8 @@ const ProjectTimeChartCard: React.FC = () => {
   const handleClickAddEntry = () => {
     window.location.href = "/time-sheet";
   };
+
+  if (error) return <div>{error}</div>;
 
   return (
     <CardSection
@@ -57,13 +57,8 @@ const ProjectTimeChartCard: React.FC = () => {
       centerContent={
         loading ? (
           <SkeletonLoader count={1} avatar={false} paragraph={{ rows: 10 }} />
-        ) : error ? (
-          <div className={styles.error}>{error}</div>
         ) : (
-          <ProjectTimeChart
-            data={projectTimeData ? projectTimeData : []}
-            loading={loading}
-          />
+          <ProjectTimeChart data={projectTimeData} loading={loading} />
         )
       }
       className={styles.projectChartCard}

@@ -8,7 +8,7 @@ import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"
 import ButtonComponent from "@/themes/components/button/button";
 import TimeSheetSnapshotFilter from "../../filter-modal/timesheet-snapshot-filter/timesheet-snapshot-filter";
 import Icons from "@/themes/images/icons/icons";
-import useDashboardServices, {
+import UseDashboardServices, {
   StatsProps,
 } from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
@@ -18,14 +18,13 @@ const TimesheetSnapshotChartCard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
   // Function to fetch data
   const fetchData = async (year?: number, month?: number) => {
     setLoading(true);
     setError(null);
     try {
-      const fetchedStats = await useDashboardServices().fetchTimesheetChartData(
+      const fetchedStats = await UseDashboardServices().fetchTimesheetChartData(
         year,
         month
       );
@@ -45,12 +44,12 @@ const TimesheetSnapshotChartCard: React.FC = () => {
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
-    setSelectedMonth(null); // Reset month when year changes
+  
     fetchData(year); // Re-fetch data with the selected year
   };
 
   const handleMonthChange = (month: number) => {
-    setSelectedMonth(month);
+   
     if (selectedYear !== null) {
       fetchData(selectedYear, month); // Re-fetch data with the selected year and month
     }

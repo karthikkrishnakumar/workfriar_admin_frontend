@@ -7,9 +7,11 @@
   display: flex;
   flex-direction: column;
   align-items: left;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 15px;
-  padding-top: 10px;
+  padding-top: 20px;
+  height: 140px;
+  overflow: hidden;
 }
 
 /* 
@@ -64,8 +66,8 @@
   content: ""; // Creates a pseudo-element
   display: inline-block;
   width: 8px;
-  height: 7px;
-  border-radius: 50%;
+  height: 8px;
+  border-radius: 100%;
   background-color: var(--primary-golden-color-medium);
-  margin-right: 1rem;
+  margin-right: 0.5rem;
 }

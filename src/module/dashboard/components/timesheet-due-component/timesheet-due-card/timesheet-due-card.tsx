@@ -5,16 +5,14 @@ import CardSection from "../../card-section/card-section";
 import DateRangePicker from "@/themes/components/date-picker/date-picker";
 import Timesheet from "../timesheet-due/timesheet-due";
 import ButtonComponent from "@/themes/components/button/button";
-import {
-  TimesheetData,
-  useTimesheetDue,
-} from "@/module/dashboard/services/timesheet-due-services/timesheet-due-services";
+
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import TimeDueModal from "../../submit-timesheet-modal/submit-timesheet-modal";
+import UseDashboardServices, { TimesheetDue, TimesheetDueResponse } from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
 const TimeSheetDueCard: React.FC = () => {
   const [timesheetDueData, setTimesheetDueData] =
-    useState<TimesheetData | null>(null);
+    useState<TimesheetDue[] | []>([]);
   const [currentRange, setCurrentRange] = useState("");
   const [prev, setPrev] = useState(false); // New state for prev
   const [next, setNext] = useState(false); // New state for next
@@ -36,17 +34,17 @@ const TimeSheetDueCard: React.FC = () => {
         const startDate = parts.slice(0, 3).join("-"); // First part of the range
         const endDate = parts.slice(3, 6).join("-"); // Second part of the range
         console.log(startDate,endDate,"in timesheet ")
-        const data = await useTimesheetDue().fetchTimesheetData(
+        const data:TimesheetDueResponse = await UseDashboardServices().fetchTimesheetDueData(
           startDate,
           endDate,
           prev,
           next
         );
-        setTimesheetDueData(data);
+        setTimesheetDueData(data.data);
         setCurrentRange(data.range);
         // Calculate the total time (hours) based on the new data
         const totalHours =
-          data?.timesheetData?.days?.find(
+          data?.data?.find(
             (item: any) => item.dayOfWeek === "TOTAL"
           )?.hours ?? "0";
 
@@ -112,7 +110,7 @@ const TimeSheetDueCard: React.FC = () => {
           ) : error ? (
             <div className={styles.error}>{error}</div>
           ) : (
-            <Timesheet data={timesheetDueData?.timesheetData!} />
+            <Timesheet data={timesheetDueData} />
           )
         }
         bottomContent={
