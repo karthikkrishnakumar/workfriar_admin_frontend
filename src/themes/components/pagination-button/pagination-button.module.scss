@@ -1,0 +1,26 @@
+.paginationDiv {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  
+    .pagination {
+      color: red !important;
+  
+      :global(.ant-pagination-item-active) {
+        border-color: var(--primary-golden-color-dark) !important;
+        background-color: var(--primary-golden-color-dark) !important;
+        color: white !important;
+      }
+  
+      :global(.ant-pagination-item-active a) {
+        color: white !important;
+      }
+  
+      :global(.ant-pagination-item) {
+        border-color: transparent;
+        background-color: transparent;
+      }
+    }
+  }
+  

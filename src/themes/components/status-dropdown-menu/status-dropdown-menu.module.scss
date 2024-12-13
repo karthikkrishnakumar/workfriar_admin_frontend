@@ -1,0 +1,19 @@
+.statusDropdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--primary-golden-color-dark);
+
+//   &:hover {
+//     color: var(--primary-golden-color-medium);
+//   }
+
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0px;
+    color: var(--primary-golden-color-dark);
+  }
+}

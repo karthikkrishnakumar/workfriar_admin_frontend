@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import styles from "./organization-tabs.module.scss";
 import TabComponent from "@/themes/components/tabs/tabs";
 import OrganizationTable from "../organization-table/organization-table";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
 const OrganizationTabs: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -77,7 +78,10 @@ const OrganizationTabs: React.FC = () => {
   return (
     <div className={styles.organizationTabsWrapper}>
       {loading ? (
-        <div>Loading...</div> // You can add a skeleton loader here as well
+        <SkeletonLoader
+          paragraph={{ rows: 2 }}
+          classNameItem={styles.customSkeletonItem}
+        /> // You can add a skeleton loader here as well
       ) : (
         <TabComponent headings={tabs} onChange={handleTabChange} />
       )}
