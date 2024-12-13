@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import styles from "./notification-card.module.scss"; // Adjust the path as needed
 import CardSection from "../../card-section/card-section";
 import DashboardNotifications from "../notifications/dashboard-notifications";
-import { Notification, NotificationServices } from "@/module/dashboard/services/notifications-services/notifications-services";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
+import UseDashboardServices, { Notification } from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
 const NotificationCard: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]|[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,10 +16,10 @@ const NotificationCard: React.FC = () => {
     // Fetch notifications when the component mounts
     const fetchNotifications = async () => {
       try {
-        const fetchedNotifications = await NotificationServices(); // Pass the userID
-        setNotifications(fetchedNotifications);
+        const fetchedNotifications= await UseDashboardServices().fetchNotifications(); // Pass the userID
+        setNotifications(fetchedNotifications.data);
       } catch (err) {
-        console.error("Error fetching notifications:", err);
+        console.error("Error fetching notifications:", err);  
         setError("Failed to load notifications.");
       } finally {
         setIsLoading(false);
@@ -32,6 +32,8 @@ const NotificationCard: React.FC = () => {
   const handleClickAllnotification = ()=>{
     alert("under developing...")
   }
+
+  if(error) return <div>{error}</div>
 
   return (
     <CardSection
@@ -46,8 +48,6 @@ const NotificationCard: React.FC = () => {
       centerContent={
         isLoading ? (
           <SkeletonLoader count={2} paragraph={{ rows: 1 }} className={styles.customSkeleton}/>
-        ) : error ? (
-          <div className={styles.error}>{error}</div>
         ) : (
           <DashboardNotifications notifications={notifications} />
         )

@@ -58,15 +58,15 @@ const ProjectStatusReport: React.FC = () => {
         id: item._id,
         project: (
           <div className={styles.projectCell}>
-            <CustomAvatar name={item.project_name.project_name} size={50} />
+            <CustomAvatar name={item.project_name} size={50} />
             <div className={styles.projectName}>
-              {item.project_name.project_name}
+              {item.project_name}
             </div>
           </div>
         ),
         projectLead: (
           <div className={styles.projectLeadCell}>
-            <div className={styles.name}>{item.project_lead.full_name}</div>
+            <div className={styles.name}>{item.project_lead}</div>
           </div>
         ),
         date: (

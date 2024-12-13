@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
       </div>
       <div className={styles.bottomMainDiv}>
         {/* Project Snapshot */}
-        <TimeSheetDueCard />
+        <TimeSheetDueCard/>
         <div className={styles.additionalDiv}>
           {/* Notifications */}
           <NotificationCard />

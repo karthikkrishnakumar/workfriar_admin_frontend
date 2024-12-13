@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import styles from "./holiday-content.module.scss";
 import Icons from "@/themes/images/icons/icons";
+import { Holidays } from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
 interface HolidayProps {
-  holidays: { holidayName: string; holidayDate: string }[];
+  holidays:Holidays[];
 }
 
 const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
@@ -31,8 +32,8 @@ const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
         {Icons.arrowLeftGrey}
       </button>
       <div className={styles.holidaysDetialsDiv}>
-        <p className={styles.holidayTitle}>{currentHoliday?.holidayName}</p>
-        <p className={styles.holidayDate}>{currentHoliday?.holidayDate}</p>
+        <p className={styles.holidayTitle}>{currentHoliday?.holiday_name}</p>
+        <p className={styles.holidayDate}>{currentHoliday?.holiday_date}</p>
       </div>
       <button onClick={handleNext} className={styles.arrowButton}>
         {Icons.arrowRightGrey}

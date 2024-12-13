@@ -1,12 +1,6 @@
 import React from "react";
 import styles from "./dashboard-notifications.module.scss";
-
-interface Notification {
-id: string;
-  message: string;
-  time: string;
-  origin: string;
-}
+import { Notification } from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
 interface NotificationProps {
   notifications: Notification[] | [];
@@ -17,7 +11,7 @@ const DashboardNotifications: React.FC<NotificationProps> = ({
 }) => {
   return (
     <ul className={styles.notificationList}>
-      {notifications.map((notification) => (
+      {notifications?.map((notification) => (
         <li key={notification.id} className={styles.notificationItem}>
           <div className={styles.radioLabel}>
             <input
@@ -28,7 +22,9 @@ const DashboardNotifications: React.FC<NotificationProps> = ({
             />
             <div className={styles.notificationContent}>
               <div className={styles.notificationMessage}>
-                {notification.message}
+                {notification.message.length > 35
+                  ? `${notification.message.slice(0, 35)}...`
+                  : notification.message}
               </div>
             </div>
           </div>

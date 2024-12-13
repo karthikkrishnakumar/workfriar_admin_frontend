@@ -17,7 +17,7 @@ export const StatusGauge: React.FC<StatusGaugeProps> = ({ statusData }) => {
   const statuses = [
     { label: "Saved", value: 0, color: "#FFE3B8", colorClass: styles.saved },
     {
-      label: "Accepted",
+      label: "Approved",
       value: 0,
       color: "#FDB853",
       colorClass: styles.approved,

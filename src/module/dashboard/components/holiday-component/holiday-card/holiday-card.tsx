@@ -4,15 +4,14 @@ import React, { useEffect, useState } from "react";
 import styles from "./holiday-card.module.scss"; // Adjust the path as needed
 import CardSection from "../../card-section/card-section";
 import DashboardHoliday from "../holiday-content/holiday-content";
-import {
-  HolidayProps,
-  HolidayServices,
-} from "@/module/dashboard/services/holiday-services/holiday-services";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
+import UseDashboardServices, {
+  Holidays,
+} from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
 const HolidayCard: React.FC = () => {
-  const [holidayData, setHolidayData] = useState<HolidayProps[] | null>(null);
+  const [holidayData, setHolidayData] = useState<Holidays[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,8 +19,8 @@ const HolidayCard: React.FC = () => {
   useEffect(() => {
     const fetchHolidayData = async () => {
       try {
-        const data = await HolidayServices();
-        setHolidayData(data);
+        const data = await UseDashboardServices().fetchHolidays();
+        setHolidayData(data.data);
       } catch (error) {
         setError("Error fetching holiday data.");
       } finally {

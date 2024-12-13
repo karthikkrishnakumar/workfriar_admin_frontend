@@ -8,8 +8,9 @@ import styles from "./timesheet-due.module.scss";
  *
  * @param data - The timesheet data, which contains information about the days and hours worked.
  */
-interface TimesheetProps {
-  data: TimesheetData; // The timesheet data containing an array of days and hours worked.
+
+interface TimesheetDataProps {
+  data: TimesheetDue[] | []; // Array of days and their respective hours worked.
 }
 
 // Define types for TimesheetDay and TimesheetData
@@ -22,21 +23,11 @@ interface TimesheetProps {
  * @param dayOfWeek - The name of the day (e.g., "Monday").
  * @param disable
  */
-interface TimesheetDay {
+interface TimesheetDue {
   date: string; // The date of the day.
   hours: string; // The number of hours worked.
   dayOfWeek: string; // The day of the week (e.g., "Monday").
   disable: boolean; // Add this property
-}
-
-/**
- * Represents the overall timesheet data.
- *
- * @param days - An array of TimesheetDay objects representing each day's data.
- * @param total - An optional field for the total number of hours worked (e.g., "40").
- */
-interface TimesheetData {
-  days: TimesheetDay[] | []; // Array of days and their respective hours worked.
 }
 
 // The Timesheet component receives the 'data' prop and renders the timesheet grid
@@ -50,12 +41,12 @@ interface TimesheetData {
  * @returns JSX.Element - The rendered timesheet grid.
  */
 
-const Timesheet: React.FC<TimesheetProps> = ({ data }) => {
+const Timesheet: React.FC<TimesheetDataProps> = ({ data }) => {
   return (
     <div className={styles.timesheet}>
       {/* Grid for first 4 days */}
       <div className={styles.grid}>
-        {data?.days?.slice(0, 4).map((day, index) => {
+        {data?.slice(0, 4).map((day, index) => {
           // Determine if the date is empty
           const isMuted = day.disable;
 
@@ -88,7 +79,7 @@ const Timesheet: React.FC<TimesheetProps> = ({ data }) => {
 
       {/* Grid for next 4 days */}
       <div className={styles.grid}>
-        {data?.days?.slice(4, 8).map((day, index) => {
+        {data?.slice(4, 8).map((day, index) => {
           // Determine if the date is empty
           const isMuted = day.disable;
 
