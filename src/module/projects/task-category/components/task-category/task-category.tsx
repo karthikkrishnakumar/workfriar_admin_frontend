@@ -1,58 +1,65 @@
 "use client";
-import React, { useState } from "react";
-import { Table, Button, Dropdown, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Dropdown, Tag, message } from "antd";
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./task-category.module.scss";
 import AddTaskCategoryModal from "../add-task-category-modal/add-task-category-modal";
 import EditTaskCategoryModal from "../edit-task-category-modal/edit-task-category-modal";
-
-/**
- * Interface representing the TaskCategory data structure.
- * @interface TaskCategoryData
- */
-interface TaskCategoryData {
-  key: string;
-  task_category: string;
-  timeEntry: "closed" | "opened";
-}
+import useTaskCategoryService, {
+  TaskCategoryData,
+} from "../../services/task-category-service";
 
 const TaskCategory: React.FC = () => {
-  const data: TaskCategoryData[] = [
-    {
-      key: "1",
-      task_category: "Testing",
-      timeEntry: "closed",
-    },
-    {
-      key: "2",
-      task_category: "Development",
-      timeEntry: "closed",
-    },
-  ];
-
+  const {
+    addTaskCategory,
+    changeTimeEntry,
+    fetchTaskCategoryDetails,
+    updateTaskCategory,
+  } = useTaskCategoryService();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTaskCategory, setSelectedTaskCategory] =
     useState<TaskCategoryData | null>(null);
-  const [TaskCategoryData, setTaskCategoryData] =
-    useState<TaskCategoryData[]>(data);
+  const [TaskCategoryData, setTaskCategoryData] = useState<TaskCategoryData[]>(
+    []
+  );
+
+  // useEffect hook to fetch forecast data based on the ID when the component mounts
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchTaskCategoryDetails(); // Make sure you pass the ID
+        setTaskCategoryData(result);
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
+
+    fetchDetails();
+  }, []);
 
   /**
    * Toggles the time entry status between "closed" and "opened"
    * @param {string} key - The key of the TaskCategory to update
    */
-  const handleTimeEntryChange = (key: string) => {
-    setTaskCategoryData((prevData) =>
-      prevData.map((item) =>
-        item.key === key
-          ? {
-              ...item,
-              timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
-            }
-          : item
-      )
-    );
+  const handleTimeEntryChange = async (key: string) => {
+    try {
+      setTaskCategoryData((prevData) =>
+        prevData.map((item) =>
+          item._id === key
+            ? {
+                ...item,
+                timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
+              }
+            : item
+        )
+      );
+      const response = await changeTimeEntry(key);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
   };
 
   /**
@@ -68,8 +75,13 @@ const TaskCategory: React.FC = () => {
    * Handles the form submission from the EditTaskCategoryModal
    * @param {Record<string, any>} values - The updated values for the TaskCategory
    */
-  const handleEditTaskCategorySubmit = (values: Record<string, any>) => {
-    console.log("Updated TaskCategory Details:", values);
+  const handleEditTaskCategorySubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await updateTaskCategory(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsEditModalOpen(false); // Close modal after submission
   };
 
@@ -77,8 +89,13 @@ const TaskCategory: React.FC = () => {
    * Handles the form submission from the AddTaskCategoryModal
    * @param {Record<string, any>} values - The values for the new task category
    */
-  const handleAddTaskCategorySubmit = (values: Record<string, any>) => {
-    console.log("Updated TaskCategory Details:", values);
+  const handleAddTaskCategorySubmit = async (values: Record<string, any>) => {
+    try {
+      const response = await addTaskCategory(values);
+      console.log(response);
+    } catch (err) {
+      console.log("Failed.");
+    }
     setIsAddModalOpen(false); // Close modal after submission
   };
 
@@ -116,7 +133,7 @@ const TaskCategory: React.FC = () => {
             label: (
               <div
                 className={styles.dropdownItem}
-                onClick={() => handleTimeEntryChange(record.key)}
+                onClick={() => handleTimeEntryChange(record._id)}
               >
                 {record.timeEntry === "closed" ? "Open entry" : "Close entry"}
               </div>

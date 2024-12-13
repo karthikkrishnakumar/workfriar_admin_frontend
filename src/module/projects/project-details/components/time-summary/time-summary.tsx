@@ -1,56 +1,37 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, DatePicker} from "antd";
+import { Table, DatePicker, message } from "antd";
 import styles from "./time-summary.module.scss";
 import DateRangePicker from "@/themes/components/date-picker/date-picker";
 import Icons from "@/themes/images/icons/icons";
+import useProjectTeamService, {
+  TimeLoggedResponse,
+} from "@/module/projects/project-team/services/project-team-service";
 
 // Interface for the props passed to the TimeSummary component
 interface TimeSummaryProps {
   id: string;
 }
 
-// Interface of a team member's data
-interface TeamMember {
-  key: string;
-  name: string;
-  profile_pic?: string | null;
-  email: string;
-  time_logged: number;
-  time_approved: number;
-}
-
 const TimeSummary = ({ id }: TimeSummaryProps) => {
+  const { fetchTimeLoggedByProjectId } = useProjectTeamService();
   const [ProjectTeamData, setProjectTeamData] = useState<
-    TeamMember[] | undefined
+    TimeLoggedResponse[] | undefined
   >(undefined);
 
+  // useEffect hook to fetch forecast data based on the ID when the component mounts
   useEffect(() => {
-    if (id) {
-      const data: TeamMember[] = [
-        {
-          key: "1",
-          name: "Alice",
-          email: "alice@gmail.com",
-          profile_pic: null,
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchTimeLoggedByProjectId(id); // Make sure you pass the ID
+        setProjectTeamData(result);
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
 
-          time_logged: 10,
-          time_approved: 10,
-        },
-        {
-          key: "2",
-          name: "Bob",
-          email: "bob@gmail.com",
-          profile_pic:
-            "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-
-          time_logged: 10,
-          time_approved: 10,
-        },
-      ];
-      setProjectTeamData(data);
-    }
-  }, [id]);
+    fetchDetails();
+  }, []);
 
   const columns = [
     {
@@ -58,7 +39,7 @@ const TimeSummary = ({ id }: TimeSummaryProps) => {
       dataIndex: "name",
       key: "name",
       width: "30%",
-      render: (text: string, record: TeamMember) => (
+      render: (text: string, record: TimeLoggedResponse) => (
         <div style={{ display: "flex", alignItems: "center" }}>
           {record.profile_pic ? (
             <img
@@ -84,14 +65,18 @@ const TimeSummary = ({ id }: TimeSummaryProps) => {
       dataIndex: "time_logged",
       key: "time_logged",
       width: "30%",
-      render: (_: any, record: TeamMember) => <>{record.time_logged}hrs</>,
+      render: (_: any, record: TimeLoggedResponse) => (
+        <>{record.time_logged}hrs</>
+      ),
     },
     {
       title: "Time approved",
       dataIndex: "time_approved",
       key: "time_approved",
       width: "30%",
-      render: (_: any, record: TeamMember) => <>{record.time_approved}hrs</>,
+      render: (_: any, record: TimeLoggedResponse) => (
+        <>{record.time_approved}hrs</>
+      ),
     },
     {
       title: (
@@ -99,7 +84,10 @@ const TimeSummary = ({ id }: TimeSummaryProps) => {
           <DateRangePicker
             onDateChange={(startDate: Date, endDate: Date) => {
               console.log("Date range selected:", startDate, endDate);
-            } } datePickerData={[]}          />
+            }}
+            datePickerData={[]}
+          />
+
           <DatePicker
             onChange={(date, dateString) => {
               console.log("Selected Date:", date, dateString);

@@ -1,28 +1,13 @@
 "use client";
 import React from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import dayjs from "dayjs";
+import { ProjectTeamData } from "../../services/project-team-service";
 
 interface EditProjectTeamModalProps {
   isEditModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
   initialValues: ProjectTeamData | null;
-}
-
-interface TeamMember {
-  name: string;
-  profile_pic?: string | null;
-}
-
-interface ProjectTeamData {
-  key: string;
-  ProjectLogo: string;
-  ProjectName: string;
-  start_date: string | dayjs.Dayjs;
-  end_date: string | dayjs.Dayjs;
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
-  ProjectTeam: TeamMember[];
 }
 
 const EditProjectTeamModal: React.FC<EditProjectTeamModalProps> = ({

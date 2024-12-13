@@ -3,10 +3,8 @@ import { useState, useEffect } from "react";
 import styles from "./forecast-details.module.scss";
 import { Col, message, Row } from "antd";
 import GridContainer from "@/themes/components/grid-container/grid-container";
-import {
-  fetchProjectForecastDetailsById,
+import useProjectForecastService, {
   ProjectForecastData,
-  updateProjectForecast,
 } from "@/module/project-forecast/project-forecast/services/project-forecast/project-forecast";
 import EditForecastModal from "@/module/project-forecast/project-forecast/components/edit-forecast-modal/edit-forecast-modal";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
@@ -28,6 +26,8 @@ const ForecastDetails = ({
   isModalOpen,
   setModalOpen,
 }: ForecastDetailsProps) => {
+  const { fetchProjectForecastDetailsById, updateProjectForecast } =
+    useProjectForecastService();
   const [forecast, setForecast] = useState<ProjectForecastData | null>(null);
   const [selectedForecast, setSelectedForecast] =
     useState<ProjectForecastData | null>(null);
@@ -170,32 +170,34 @@ const ForecastDetails = ({
               value: forecast?.estimated_completion,
             },
           ]}
-          children={<div>
-            <Row gutter={[16, 16]} align="middle" className={styles.gridRow}>
-              <Col>
-                <p>Team member</p>
-              </Col>
-              <Col>
-                <p>Forecasted hours</p>
-              </Col>
-            </Row>
-      
-            {forecast?.team_forecast?.map((teamMember, index) => (
-              <Row
-                key={index}
-                gutter={[16, 16]}
-                align="middle"
-                className={styles.gridRow}
-              >
+          children={
+            <div>
+              <Row gutter={[16, 16]} align="middle" className={styles.gridRow}>
                 <Col>
-                  <h4>{teamMember.team_member_id}</h4>
+                  <p>Team member</p>
                 </Col>
                 <Col>
-                  <h4>{teamMember.forecast_hours} hrs</h4>
+                  <p>Forecasted hours</p>
                 </Col>
               </Row>
-            ))}
-          </div>}
+
+              {forecast?.team_forecast?.map((teamMember, index) => (
+                <Row
+                  key={index}
+                  gutter={[16, 16]}
+                  align="middle"
+                  className={styles.gridRow}
+                >
+                  <Col>
+                    <h4>{teamMember.team_member_id}</h4>
+                  </Col>
+                  <Col>
+                    <h4>{teamMember.forecast_hours} hrs</h4>
+                  </Col>
+                </Row>
+              ))}
+            </div>
+          }
         />
       </div>
       <EditForecastModal

@@ -1,28 +1,11 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
 import styles from "./project-details.module.scss";
-import { Card, Row, Col, Spin } from "antd";
-
-/**
- * Interface representing the project data structure.
- * This interface defines the shape of the project data.
- * @interface ProjectData
- */
-interface ProjectData {
-  id: string;
-  projectLogo: string;
-  projectName: string;
-  clientName: string;
-  planned_start_date: string;
-  planned_end_date: string;
-  actual_start_date: string;
-  actual_end_date: string;
-  projectLead: string;
-  projectDescription: string;
-  billing_model: string;
-  timeEntry: "closed" | "opened";
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
-}
+import { Card, Row, Col, Spin, message } from "antd";
+import useProjectService, {
+  ProjectData,
+} from "@/module/projects/project-list/services/project-service";
+import dayjs from "dayjs";
 
 /**
  * Interface representing the project details structure.
@@ -34,29 +17,23 @@ interface ProjectDetailsProps {
 }
 
 const ProjectDetails = ({ id }: ProjectDetailsProps) => {
+  const { fetchProjectDetailsById } = useProjectService();
   const [project, setProject] = useState<ProjectData | null>(null);
 
   // useEffect hook to fetch project data based on the ID when the component mounts
+
   useEffect(() => {
-    if (id) {
-      const projectData: ProjectData = {
-        id,
-        projectLogo: "",
-        projectName: "Example Project",
-        clientName: "Techfriar India",
-        planned_start_date: "11/10/2024",
-        planned_end_date: "02/05/2025",
-        actual_start_date: "11/10/2024",
-        actual_end_date: "02/05/2025",
-        projectLead: "Aswina Vinod",
-        projectDescription: "Detailed description of the project.",
-        billing_model: "Retainer",
-        timeEntry: "closed",
-        status: "in_progress",
-      };
-      setProject(projectData);
-    }
-  }, [id]);
+    const fetchDetails = async () => {
+      try {
+        const result = await fetchProjectDetailsById(id); // Make sure you pass the ID
+        setProject(result);
+      } catch (error) {
+        message.error("Failed to fetch project details.");
+      }
+    };
+
+    fetchDetails();
+  }, []);
 
   if (!project) {
     return (
@@ -79,7 +56,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
               />
             ) : (
               <div className={styles.circle}>
-                {project.projectName.charAt(0).toUpperCase()}
+                {project?.projectName?.charAt(0).toUpperCase()}
               </div>
             )}
           </Col>
@@ -109,21 +86,21 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
           </Col>
           <Col>
             <p>Planned start date</p>
-            <h4>{project.planned_start_date}</h4>
+            <h4>{dayjs(project?.planned_start_date).format("DD/MM/YYYY")}</h4>
           </Col>
           <Col>
             <p>Planned end date</p>
-            <h4>{project.planned_end_date}</h4>
+            <h4>{dayjs(project?.planned_end_date).format("DD/MM/YYYY")}</h4>
           </Col>
         </Row>
         <Row gutter={[16, 16]} align="middle" className={styles.lastRow}>
           <Col>
             <p>Actual start date</p>
-            <h4>{project.actual_start_date}</h4>
+            <h4>{dayjs(project?.actual_start_date).format("DD/MM/YYYY")}</h4>
           </Col>
           <Col>
             <p>Actual end date</p>
-            <h4>{project.actual_end_date}</h4>
+            <h4>{dayjs(project?.actual_end_date).format("DD/MM/YYYY")}</h4>
           </Col>
           <Col>
             <p>Billing model</p>

@@ -1,18 +1,19 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import styles from "./timesheet-chart-card.module.scss";
 import CardSection from "../../card-section/card-section";
 import { StatusGauge } from "../timesheet-snap-shot-chart/snap-shot-chart";
-import {
-  fetchTimesheetChartData,
-  StatsProps,
-} from "@/module/dashboard/services/timesheet-chart-services/timesheet-chart-services";
+
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
 import TimeSheetSnapshotFilter from "../../filter-modal/timesheet-snapshot-filter/timesheet-snapshot-filter";
+import Icons from "@/themes/images/icons/icons";
+import useDashboardServices, {
+  StatsProps,
+} from "@/module/dashboard/services/dashboard-services/dashboard-services";
 
 const TimesheetSnapshotChartCard: React.FC = () => {
-  const [stats, setStats] = useState<StatsProps | null>(null);
+  const [statusData, setStatusData] = useState<StatsProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -24,8 +25,11 @@ const TimesheetSnapshotChartCard: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const fetchedStats = await await fetchTimesheetChartData(year, month);
-      setStats(fetchedStats);
+      const fetchedStats = await useDashboardServices().fetchTimesheetChartData(
+        year,
+        month
+      );
+      setStatusData(fetchedStats?.data || []);
     } catch (err) {
       console.error("Error fetching timesheet stats:", err);
       setError("Failed to load timesheet data.");
@@ -60,6 +64,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
     setIsModalVisible(false); // Close the modal when required
   };
 
+  if (error) return <div>{error}</div>;
   return (
     <>
       <CardSection
@@ -71,6 +76,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
             <ButtonComponent
               filter={true}
               theme="filter"
+              content={Icons.filter}
               onClick={handleClickFilter}
             />
           )
@@ -89,14 +95,10 @@ const TimesheetSnapshotChartCard: React.FC = () => {
               className={styles.customSkeleton}
               classNameItem={styles.customSkeletonItem}
             />
-          ) : error ? (
-            <div className={styles.error}>{error}</div>
           ) : (
             <div className={styles.snapshotDetails}>
               <StatusGauge
-                saved={stats?.saved ?? 0}
-                approved={stats?.approved ?? 0}
-                rejected={stats?.rejected ?? 0}
+                statusData={statusData} // Pass the count dynamically
               />
             </div>
           )

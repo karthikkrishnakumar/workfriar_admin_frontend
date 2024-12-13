@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import dayjs from "dayjs";
+import { ProjectData } from "../../services/project-service";
 
 
 interface EditProjectModalProps {
@@ -9,21 +9,6 @@ interface EditProjectModalProps {
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
   initialValues: ProjectData | null;
-}
-interface ProjectData {
-  key: string;
-  projectLogo : string;
-  projectName: string;
-  clientName: string;
-  planned_start_date: string | dayjs.Dayjs;
-  planned_end_date: string | dayjs.Dayjs;
-  actual_start_date: string | dayjs.Dayjs;
-  actual_end_date: string | dayjs.Dayjs;
-  projectLead: string;
-  projectDescription: string;
-  billing_model: string,
-  timeEntry: "closed" | "opened";
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
 }
 
 const EditProjectModal: React.FC<EditProjectModalProps> = ({
