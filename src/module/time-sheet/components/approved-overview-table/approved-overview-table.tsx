@@ -3,30 +3,43 @@ import React, { useEffect, useState } from "react";
 import styles from "./approved-overdue-table.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import {
-  fetchApprovedTimesheets,
-  fetchApprovedWeeks,
-  fetchPastDueTimesheets,
-  fetchPastDueWeeks,
   OverViewTable,
   TimesheetDataTable,
   WeekDaysData,
-} from "../../services/time-sheet-services";
+} from "@/interfaces/timesheets/timesheets";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ApprovedTimesheetsTable from "./approved-timesheet-table/approved-timesheet-table";
+import { fetchApprovedTimesheets, fetchApprovedWeeks } from "../../services/time-sheet-services";
 
+/**
+ * Props for the ApprovedOverviewTable component.
+ */
 interface PastDueOverviewProps {
+  /**
+   * Optional prop to pass in table data for the overview.
+   * @default []
+   */
   tableData?: OverViewTable[];
 }
 
+/**
+ * Displays an overview table of approved timesheets with options to view detailed timesheet data.
+ * 
+ * @param {PastDueOverviewProps} props - The component's props
+ * @returns {JSX.Element} The rendered overview table or detailed view based on user interaction
+ */
 const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
-  tableData,
+  tableData = [],
 }) => {
-  const [table, setTable] = useState<OverViewTable[]>([]);
-  const [timeSheetTable,setTimesheetTable] = useState<TimesheetDataTable[]>([]);
+  const [table, setTable] = useState<OverViewTable[]>(tableData);
+  const [timeSheetTable, setTimesheetTable] = useState<TimesheetDataTable[]>([]);
   const [showDetailedView, setShowDetailedView] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [dates, setDates] = useState<WeekDaysData[]>([]);
 
+  /**
+   * Defines the columns for the overview table.
+   */
   const columns = [
     { title: "Time Period", key: "period", align: "left" as const },
     {
@@ -43,16 +56,29 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
     },
   ];
 
+  /**
+   * Fetches approved timesheets data for the given date range and sets the state for detailed view.
+   * 
+   * @param {string} dateRange - The date range for fetching the timesheet data
+   */
   const handleFetchTimesheets = (dateRange: string) => {
     setShowDetailedView(true);
     setLoading(true);
-    fetchApprovedTimesheets(dateRange,setTimesheetTable, setDates,setLoading);
+    fetchApprovedTimesheets(dateRange, setTimesheetTable, setDates, setLoading);
   };
 
+  /**
+   * Handles returning to the overview table from the detailed view.
+   */
   const handleBackToOverview = () => {
     setShowDetailedView(false);
-  }
+  };
 
+  /**
+   * Maps the data from the overview table and structures it for display.
+   * 
+   * @returns {Array<object>} An array of data objects representing each row in the overview table
+   */
   const data = table.map((element) => ({
     period: <span className={styles.dataCell}>{element.dateRange}</span>,
     loggedTime: (
@@ -77,6 +103,9 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
     ),
   }));
 
+  /**
+   * Fetches approved weeks (overview data) on initial load.
+   */
   useEffect(() => {
     setLoading(true);
     fetchApprovedWeeks(setTable, setLoading);
@@ -90,8 +119,12 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
           classNameItem={styles.customSkeleton}
         />
       ) : (
-        <ApprovedTimesheetsTable timesheetData={timeSheetTable} setTimeSheetData={setTimesheetTable} daysOfWeek={dates} backButtonFunction={handleBackToOverview}/>
-        // detailed view table shhould be here
+        <ApprovedTimesheetsTable 
+          timesheetData={timeSheetTable} 
+          setTimeSheetData={setTimesheetTable} 
+          daysOfWeek={dates} 
+          backButtonFunction={handleBackToOverview}
+        />
       ) : loading ? (
         <SkeletonLoader
           paragraph={{ rows: 15 }}

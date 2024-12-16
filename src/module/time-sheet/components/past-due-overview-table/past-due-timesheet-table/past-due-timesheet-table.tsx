@@ -11,14 +11,17 @@ import DropDownModal from "@/themes/components/drop-down-modal/drop-down-modal";
 import ProjectSelector from "../../project-selector/project-selector";
 import TaskSelector from "../../task-selector/task-selector";
 import {
+  CategoryList,
+  ProjectList,
   TimeEntry,
   TimesheetDataTable,
   WeekDaysData,
-} from "../../../services/time-sheet-services";
+} from "@/interfaces/timesheets/timesheets";
 import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
+ 
 
 interface PastDueTableProps {
   timesheetData?: TimesheetDataTable[];
@@ -40,8 +43,8 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
   const [showSubModal, setShowSubModal] = useState(false);
   const addButtonWrapperRef = useRef<HTMLDivElement>(null);
   const addButtonRef = useRef<HTMLButtonElement>(null);
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [selectedTask, setSelectedTask] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectList | null>(null);
+  const [selectedTask, setSelectedTask] = useState<CategoryList | null>(null);
   const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const textAreaOnclick = (rowIndex: number) => {
@@ -54,8 +57,8 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
   useEffect(() => {
     if (selectedProject && selectedTask) {
       const newRow: TimesheetDataTable = {
-        categoryName: selectedTask,
-        projectName: selectedProject,
+        categoryName: selectedTask.category,
+        projectName: selectedProject.project_name,
         taskDetail: "Add task description",
         dataSheet: daysOfWeek.map((day) => ({
           weekday: day.name,
@@ -173,7 +176,7 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
           onClose={() => setModalVisible(false)}
           parentRef={addButtonWrapperRef}
           showSubModal={showSubModal}
-          subModalContent={<TaskSelector setSelectedTask={setSelectedTask} />}
+          subModalContent={<TaskSelector projectId={selectedProject?.id} setSelectedTask={setSelectedTask} />}
         />
       </div>
     ),

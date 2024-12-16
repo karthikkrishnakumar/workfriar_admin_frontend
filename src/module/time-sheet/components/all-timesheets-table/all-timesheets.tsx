@@ -10,22 +10,28 @@ import ButtonComponent from "@/themes/components/button/button";
 import DropDownModal from "@/themes/components/drop-down-modal/drop-down-modal";
 import ProjectSelector from "../project-selector/project-selector";
 import TaskSelector from "../task-selector/task-selector";
-import {
-  TimeEntry,
-  TimesheetDataTable,
-  WeekDaysData,
-} from "../../services/time-sheet-services";
+
 import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
+import { CategoryList, ProjectList, TimeEntry, TimesheetDataTable, WeekDaysData } from "@/interfaces/timesheets/timesheets";
 
+/**
+ * Props for the AllTimesheetsTable component.
+ */
 interface AllTimeSheettableProps {
   timesheetData?: TimesheetDataTable[];
   setTimeSheetData: (data: TimesheetDataTable[]) => void;
   daysOfWeek: WeekDaysData[];
 }
 
+/**
+ * AllTimesheetsTable component displays and manages timesheet entries.
+ *
+ * @param {AllTimeSheettableProps} props - The component's props.
+ * @returns {JSX.Element} The rendered table component.
+ */
 const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
   timesheetData: initialTimesheetData = [],
   setTimeSheetData,
@@ -37,8 +43,8 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
   const [showSubModal, setShowSubModal] = useState(false);
   const addButtonWrapperRef = useRef<HTMLDivElement>(null);
   const addButtonRef = useRef<HTMLButtonElement>(null);
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [selectedTask, setSelectedTask] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectList | null>();
+  const [selectedTask, setSelectedTask] = useState<CategoryList | null>(null);
   const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const textAreaOnclick = (rowIndex: number) => {
@@ -47,12 +53,16 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
   };
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
 
-  // Add a new row when a project and task are selected
+  /**
+   * Adds a new row to the timesheet when a project and task are selected.
+   */
   useEffect(() => {
     if (selectedProject && selectedTask) {
       const newRow: TimesheetDataTable = {
-        categoryName: selectedTask,
-        projectName: selectedProject,
+        categoryName: selectedTask.category,
+        projectName: selectedProject.project_name,
+        project_id:selectedProject.id,
+        task_category_id:selectedTask._id,
         taskDetail: "Add task description",
         dataSheet: daysOfWeek.map((day) => ({
           weekday: day.name,
@@ -61,8 +71,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
           isHoliday: day.isHoliday,
           isDisabled: day.isDisabled,
         })),
-        status: "pending",
-        timesheetId: String(timesheetData.length + 1),
+        status: "in_progress",
       };
 
       const updatedData = [...timesheetData, newRow];
@@ -75,7 +84,13 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     }
   }, [selectedProject, selectedTask, timesheetData, setTimeSheetData]);
 
-  // Handle time input changes
+  /**
+   * Handles the time input change for a specific day in a specific row.
+   *
+   * @param {number} index - The index of the timesheet entry.
+   * @param {WeekDaysData} day - The day of the week for the time entry.
+   * @param {string} newTime - The new time value.
+   */
   const handleTimeChange = (
     index: number,
     day: WeekDaysData,
@@ -88,7 +103,12 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     setUnsavedChanges(true);
   };
 
-  // Calculate total hours for a row
+  /**
+   * Calculates the total hours worked for a specific row.
+   *
+   * @param {TimeEntry[]} entries - The time entries for a row.
+   * @returns {string} The total hours as a string in HH:MM format.
+   */
   const calculateTotalHours = (entries: TimeEntry[]) => {
     const totalMinutes = entries.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
@@ -97,7 +117,13 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     return minutesToTime(totalMinutes);
   };
 
-  // Map time entries to corresponding week days
+  /**
+   * Maps the time entries to corresponding week days for rendering.
+   *
+   * @param {TimeEntry[]} entries - The time entries.
+   * @param {number} index - The index of the timesheet entry.
+   * @returns {Record<string, ReactNode>} A map of week days to JSX time input components.
+   */
   const mapTimeEntriesToWeek = (
     entries: TimeEntry[],
     index: number
@@ -114,17 +140,19 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
           value={entry.hours}
           setValue={(newTime) => handleTimeChange(index, day, newTime)}
           disabled={entry.isDisabled}
-          tooltipContent={
-            entry.isDisabled ? "These dates are in next week" : ""
-          }
-          readOnly={timesheetData[index].status === "approved"? true : false}
+          tooltipContent={entry.isDisabled ? "These dates are in next week" : ""}
+          readOnly={timesheetData[index].status === "accepted" || timesheetData[index].status === "submitted" ? true : false}
         />
       );
     });
     return weekMap;
   };
 
-  // Handle row deletion
+  /**
+   * Deletes a row from the timesheet.
+   *
+   * @param {number} indexToDelete - The index of the row to delete.
+   */
   const handleDeleteRow = (indexToDelete: number) => {
     const updatedData = timesheetData.filter(
       (_, index) => index !== indexToDelete
@@ -133,21 +161,27 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     setTimeSheetData(updatedData);
   };
 
-  // Save button functionality
+  /**
+   * Saves the current timesheet data.
+   */
   const handleSave = () => {
     setTimeSheetData(timesheetData);
     setUnsavedChanges(false);
-    alert("Changes saved successfully!");
     console.log(timesheetData);
   };
 
-  // Submit button functionality
+  /**
+   * Submits the timesheet data after saving.
+   */
   const handleSubmit = () => {
     handleSave();
     alert("Timesheet data submitted successfully!");
   };
 
-  // Add row component
+  /**
+   * Adds a new row with default values for task, details, and time entries.
+   * @returns {Record<string, ReactNode>} The new row with default values.
+   */
   const addRow = () => ({
     task: (
       <div ref={addButtonWrapperRef} className={styles.addButtonWrapper}>
@@ -171,7 +205,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
           onClose={() => setModalVisible(false)}
           parentRef={addButtonWrapperRef}
           showSubModal={showSubModal}
-          subModalContent={<TaskSelector setSelectedTask={setSelectedTask} />}
+          subModalContent={<TaskSelector projectId={selectedProject?.id} setSelectedTask={setSelectedTask} />}
         />
       </div>
     ),
@@ -191,7 +225,11 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     action: <span>{Icons.deleteDisabled}</span>,
   });
 
-  // Calculate total hours by day
+  /**
+   * Calculates the total hours worked for each day across all rows.
+   *
+   * @returns {Record<string, number>} A map of day names to total minutes worked.
+   */
   const calculateTotalByDay = () => {
     const dailyTotals: Record<string, number> = {};
     daysOfWeek.forEach((day) => {
@@ -205,7 +243,10 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     return dailyTotals;
   };
 
-  // Total row component
+  /**
+   * Returns a row representing the total hours worked across all rows.
+   * @returns {Record<string, ReactNode>} The total row with hours calculated for each day.
+   */
   const totalRow = () => {
     const dailyTotals = calculateTotalByDay();
     const totalAllDays = Object.values(dailyTotals).reduce((a, b) => a + b, 0);
@@ -229,7 +270,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     };
   };
 
-  // Columns and final data
+  // Define the columns for the table
   const columns = [
     { title: "Task", key: "task", width: 140 },
     {
@@ -242,8 +283,8 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         <span
           className={
             day.isHoliday
-              ? `${styles.dateTitles} ${styles.holidayDateTitles}` // Apply holiday style
-              : styles.dateTitles // Default style
+              ? `${styles.dateTitles} ${styles.holidayDateTitles}`
+              : styles.dateTitles
           }
         >
           <p>{day.name}</p>
@@ -260,10 +301,11 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     },
   ];
 
+  // Prepare the data for the table rows
   const data = timesheetData.map((timesheet, index) => {
     const totalHours = calculateTotalHours(timesheet.dataSheet);
     const taskStatusClass =
-      timesheet.status === "approved"
+      timesheet.status === "accepted"
         ? styles.approved
         : timesheet.status === "rejected"
         ? styles.rejected
@@ -277,21 +319,19 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         </div>
       ),
       details: (
-          <TextAreaButton
-            buttonvalue={timesheet.taskDetail}
-            onclickFunction={() => textAreaOnclick(index)}
-            showTaskDetailModal={
-              editingRowIndex === index && showTaskDetailModal
-            }
-            value={timesheetData[index].taskDetail} 
-            setvalue={(newValue) => {
-              const updatedData = [...timesheetData];
-              updatedData[index].taskDetail = newValue;
-              setLocalTimesheetData(updatedData);
-              setTimeSheetData(updatedData);
-            }}
-            readOnly={timesheet.status === 'approved'}
-          />
+        <TextAreaButton
+          buttonvalue={timesheet.taskDetail}
+          onclickFunction={() => textAreaOnclick(index)}
+          showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
+          value={timesheetData[index].taskDetail} 
+          setvalue={(newValue) => {
+            const updatedData = [...timesheetData];
+            updatedData[index].taskDetail = newValue;
+            setLocalTimesheetData(updatedData);
+            setTimeSheetData(updatedData);
+          }}
+          readOnly={timesheet.status === 'accepted' || timesheet.status === "submitted"}
+        />
       ),
       ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
       total: (
@@ -300,7 +340,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         </span>
       ),
       action: (
-        <button className={styles.deleteButton} disabled={timesheet.status === "approved"}>
+        <button className={styles.deleteButton} disabled={timesheet.status === "accepted" || timesheet.status === "submitted"}>
           <span
             className={styles.deleteButton}
             role="button"

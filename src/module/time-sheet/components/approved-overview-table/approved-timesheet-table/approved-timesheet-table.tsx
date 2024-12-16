@@ -4,32 +4,51 @@ import React, { ReactNode, useState, useEffect, useRef } from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./approved-timesheet-table.module.scss";
 import TimeInput from "@/themes/components/time-input/time-input";
-import Icons from "@/themes/images/icons/icons";
 import TextAreaButton from "../../text-area-button/text-area-button";
-import ButtonComponent from "@/themes/components/button/button";
 import {
   TimeEntry,
   TimesheetDataTable,
   WeekDaysData,
-} from "../../../services/time-sheet-services";
+} from "@/interfaces/timesheets/timesheets";
 import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
 
+/**
+ * Props for the ApprovedTimesheetsTable component.
+ */
 interface PastDueTableProps {
+  /**
+   * List of timesheet data to display in the table.
+   * @default []
+   */
   timesheetData?: TimesheetDataTable[];
+  /**
+   * Function to update the timesheet data in the parent component.
+   */
   setTimeSheetData: (data: TimesheetDataTable[]) => void;
+  /**
+   * List of days of the week with details (name, date, etc.)
+   */
   daysOfWeek: WeekDaysData[];
+  /**
+   * Function to handle going back to the previous screen.
+   */
   backButtonFunction: () => void;
 }
 
+/**
+ * Displays a table of approved timesheets and allows for displaying timesheet data, including task details and weekly times.
+ * 
+ * @param {PastDueTableProps} props - The component's props
+ * @returns {JSX.Element} The rendered timesheet table
+ */
 const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
   timesheetData: initialTimesheetData = [],
   setTimeSheetData,
   daysOfWeek,
   backButtonFunction
-
 }) => {
   const [timesheetData, setLocalTimesheetData] =
     useState<TimesheetDataTable[]>(initialTimesheetData);
@@ -40,9 +59,12 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
   };
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
 
-
-
-  // Calculate total hours for a row
+  /**
+   * Calculates the total hours worked for a row based on time entries.
+   * 
+   * @param {TimeEntry[]} entries - The time entries for the row
+   * @returns {string} The total hours worked in HH:MM format
+   */
   const calculateTotalHours = (entries: TimeEntry[]) => {
     const totalMinutes = entries.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
@@ -51,7 +73,13 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     return minutesToTime(totalMinutes);
   };
 
-  // Map time entries to corresponding week days
+  /**
+   * Maps time entries for each day of the week to the corresponding time input fields.
+   * 
+   * @param {TimeEntry[]} entries - The time entries for the row
+   * @param {number} index - The index of the row in the table
+   * @returns {Record<string, ReactNode>} A mapping of weekday names to JSX time input components
+   */
   const mapTimeEntriesToWeek = (
     entries: TimeEntry[],
     index: number
@@ -67,9 +95,7 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
         <TimeInput
           value={entry.hours}
           disabled={entry.isDisabled}
-          tooltipContent={
-            entry.isDisabled ? "These dates are in next week" : ""
-          }
+          tooltipContent={entry.isDisabled ? "These dates are in next week" : ""}
           readOnly={true}
         />
       );
@@ -77,18 +103,19 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     return weekMap;
   };
 
-
-
-  // Save button functionality
-  
-
-  // Submit button functionality
+  /**
+   * Handles the submit action for the timesheet data.
+   * This function displays a success alert for demonstration purposes.
+   */
   const handleSubmit = () => {
-
     alert("Timesheet data submitted successfully!");
   };
 
-  // Calculate total hours by day
+  /**
+   * Calculates the total hours worked for each day of the week across all timesheets.
+   * 
+   * @returns {Record<string, number>} A mapping of day names to total minutes worked
+   */
   const calculateTotalByDay = () => {
     const dailyTotals: Record<string, number> = {};
     daysOfWeek.forEach((day) => {
@@ -102,7 +129,11 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     return dailyTotals;
   };
 
-  // Total row component
+  /**
+   * Generates a row for the table displaying the total hours worked across all timesheets.
+   * 
+   * @returns {Record<string, ReactNode>} The total row with hours calculated for each day
+   */
   const totalRow = () => {
     const dailyTotals = calculateTotalByDay();
     const totalAllDays = Object.values(dailyTotals).reduce((a, b) => a + b, 0);
@@ -126,7 +157,7 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     };
   };
 
-  // Columns and final data
+  // Define columns for the table
   const columns = [
     { title: "Task", key: "task", width: 140 },
     {
@@ -152,6 +183,7 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     { title: "Total", key: "total", width: 70 },
   ];
 
+  // Prepare data for the table
   const data = timesheetData.map((timesheet, index) => {
     const totalHours = calculateTotalHours(timesheet.dataSheet);
     const taskStatusClass =

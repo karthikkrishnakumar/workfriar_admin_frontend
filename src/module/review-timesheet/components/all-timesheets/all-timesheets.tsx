@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ReactNode, useRef } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./all-timesheets.module.scss";
 import TimeInput from "@/themes/components/time-input/time-input";
@@ -14,45 +14,71 @@ import {
   TimeEntry,
   TimesheetDataTable,
   WeekDaysData,
-} from "@/module/time-sheet/services/time-sheet-services";
+} from "@/interfaces/timesheets/timesheets";
 import { fetchAllTimeSheetsToReview } from "../../services/review-timesheet-services";
 import Icons from "@/themes/images/icons/icons";
 import { Dropdown } from "antd";
 import TextAreaButton from "@/module/time-sheet/components/text-area-button/text-area-button";
 
+/**
+ * Props for the ReviewAllTimesheetsTable component.
+ */
 interface AllTimeSheetTableProps {
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: Date | null; // Start date of the timesheet period
+  endDate: Date | null;   // End date of the timesheet period
 }
 
+/**
+ * ReviewAllTimesheetsTable component renders a timesheet table where users can review, edit, and take actions 
+ * (like approve or reject) on timesheet data.
+ */
 const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
   startDate,
   endDate,
 }) => {
-  const [timesheetData, setTimeSheetData] = useState<TimesheetDataTable[]>([]);
-  const [unsavedChanges, setUnsavedChanges] = useState(false);
-  const [daysOfWeek, setDaysOfWeek] = useState<WeekDaysData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false);
-  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+  const [timesheetData, setTimeSheetData] = useState<TimesheetDataTable[]>([]); // Stores the timesheet data
+  const [unsavedChanges, setUnsavedChanges] = useState(false); // Tracks unsaved changes
+  const [daysOfWeek, setDaysOfWeek] = useState<WeekDaysData[]>([]); // Days of the current week
+  const [loading, setLoading] = useState(false); // Loading state for fetching data
+  const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false); // Controls visibility of task details modal
+  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null); // Index of the row being edited
+
+  /**
+   * Handles the click on the task detail text area to toggle the modal visibility.
+   * @param rowIndex - Index of the row to edit
+   */
   const textAreaOnclick = (rowIndex: number) => {
     setEditingRowIndex(rowIndex);
     setTaskDetailModal(!showTaskDetailModal);
   };
+
+  /**
+   * Dropdown menu items for approve/reject actions.
+   */
   const menuItems = [
     { key: "approve", label: "Approve" },
     { key: "reject", label: "Reject" },
   ];
 
+  /**
+   * Handles the click on the dropdown menu actions.
+   * @param e - Menu event object
+   * @param id - Timesheet ID
+   */
   const handleMenuClick = (e: { key: string }, id?: string) => {
     if (e.key === "approve") {
-      // function to approve
+      // Function to approve the timesheet
     } else if (e.key === "reject") {
-      //  function to reject
+      // Function to reject the timesheet
     }
   };
 
-  // Handle time input changes
+  /**
+   * Handles time input changes in the table.
+   * @param index - Index of the row being edited
+   * @param day - Week day data
+   * @param newTime - New time value
+   */
   const handleTimeChange = (
     index: number,
     day: WeekDaysData,
@@ -66,7 +92,7 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
   };
 
   useEffect(() => {
-    // Fetch timesheet data based on start and end dates
+    // Fetch timesheet data whenever the start or end date changes
     fetchAllTimeSheetsToReview(
       startDate,
       endDate,
@@ -76,7 +102,11 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     );
   }, [startDate, endDate]);
 
-  // Calculate total hours for a row
+  /**
+   * Calculates the total hours for a row in the table.
+   * @param entries - Array of time entries
+   * @returns Total hours in HH:mm format
+   */
   const calculateTotalHours = (entries: TimeEntry[]) => {
     const totalMinutes = entries.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
@@ -85,7 +115,12 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     return minutesToTime(totalMinutes);
   };
 
-  // Map time entries to corresponding week days
+  /**
+   * Maps time entries to their corresponding week days for rendering in the table.
+   * @param entries - Array of time entries
+   * @param index - Index of the row
+   * @returns Object mapping week days to time input components
+   */
   const mapTimeEntriesToWeek = (
     entries: TimeEntry[],
     index: number
@@ -112,7 +147,10 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     return weekMap;
   };
 
-  // Calculate total hours by day
+  /**
+   * Calculates the total hours for each day across all rows.
+   * @returns Object mapping week days to total hours
+   */
   const calculateTotalByDay = () => {
     const dailyTotals: Record<string, number> = {};
     daysOfWeek.forEach((day) => {
@@ -126,7 +164,10 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     return dailyTotals;
   };
 
-  // Total row component
+  /**
+   * Generates the total row for the table.
+   * @returns Object representing the total row data
+   */
   const totalRow = () => {
     const dailyTotals = calculateTotalByDay();
     const totalAllDays = Object.values(dailyTotals).reduce((a, b) => a + b, 0);
@@ -150,20 +191,26 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     };
   };
 
-  // Save button functionality
+  /**
+   * Saves the changes made to the timesheet data.
+   */
   const handleSave = () => {
     setTimeSheetData(timesheetData);
     setUnsavedChanges(false);
     alert("Changes saved successfully!");
   };
 
-  // Submit button functionality
+  /**
+   * Submits the timesheet data after saving.
+   */
   const handleSubmit = () => {
     handleSave();
     alert("Timesheet data submitted successfully!");
   };
 
-  // Columns and final data
+  /**
+   * Table column definitions.
+   */
   const columns = [
     { title: "Task", key: "task", width: 140 },
     {
@@ -190,6 +237,9 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     { title: "", key: "action", width: 50 },
   ];
 
+  /**
+   * Processes timesheet data rows for rendering in the table.
+   */
   const data = timesheetData.map((timesheet, index) => {
     const totalHours = calculateTotalHours(timesheet.dataSheet);
     let isDisabled;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useState, useRef } from "react";
+import React, { ReactNode, useState } from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./rejected-timesheet-table.module.scss";
 import TimeInput from "@/themes/components/time-input/time-input";
@@ -11,31 +11,52 @@ import {
   TimeEntry,
   TimesheetDataTable,
   WeekDaysData,
-} from "../../../services/time-sheet-services";
+} from "@/interfaces/timesheets/timesheets";
 import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
 
+/**
+ * Interface for the props passed to the RejectedTimesheetsTable component.
+ * 
+ * @interface RejectedTableProps
+ * @property {TimesheetDataTable[]} [timesheetData] - Array of initial timesheet data (optional).
+ * @property {function} setTimeSheetData - Function to update the global timesheet data.
+ * @property {WeekDaysData[]} daysOfWeek - Array of weekdays with associated data.
+ * @property {function} backButtonFunction - Function to handle back button click.
+ */
 interface RejectedTableProps {
-  timesheetData?: TimesheetDataTable[];
-  setTimeSheetData: (data: TimesheetDataTable[]) => void;
-  daysOfWeek: WeekDaysData[];
-  backButtonFunction: () => void;
+  timesheetData?: TimesheetDataTable[]; // Array of initial timesheet data (optional).
+  setTimeSheetData: (data: TimesheetDataTable[]) => void; // Function to update the global timesheet data.
+  daysOfWeek: WeekDaysData[]; // Array of weekdays with associated data.
+  backButtonFunction: () => void; // Function to handle back button click.
 }
 
+/**
+ * RejectedTimesheetsTable component is responsible for rendering a table of rejected timesheets
+ * where users can edit task details, input time for each day of the week, and delete rows.
+ * 
+ * @param {RejectedTableProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered RejectedTimesheetsTable component.
+ */
 const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
   timesheetData: initialTimesheetData = [],
   setTimeSheetData,
   daysOfWeek,
   backButtonFunction,
 }) => {
-  const [timesheetData, setLocalTimesheetData] =
-    useState<TimesheetDataTable[]>(initialTimesheetData);
+  const [timesheetData, setLocalTimesheetData] = useState<TimesheetDataTable[]>(initialTimesheetData);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
 
-  // Handle time input changes and update status to "pending"
+  /**
+   * Handles time input changes and updates the timesheet status to "pending".
+   * 
+   * @param {number} index - The index of the row being updated.
+   * @param {WeekDaysData} day - The day of the week that is being updated.
+   * @param {string} newTime - The new time entered.
+   */
   const handleTimeChange = (
     index: number,
     day: WeekDaysData,
@@ -44,42 +65,51 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
     const updatedData = [...timesheetData];
     const dayIndex = daysOfWeek.indexOf(day);
 
-    // Update the specific time entry
     updatedData[index].dataSheet[dayIndex].hours = newTime;
 
-    // Set the status to "pending" if not already
     if (updatedData[index].status !== "pending") {
       updatedData[index].status = "pending";
     }
 
     setLocalTimesheetData(updatedData);
-    setUnsavedChanges(true); // Enable Save and Submit buttons
+    setUnsavedChanges(true);
   };
 
-  // Handle row deletion
+  /**
+   * Handles the deletion of a row in the timesheet table.
+   * 
+   * @param {number} indexToDelete - The index of the row to delete.
+   */
   const handleDeleteRow = (indexToDelete: number) => {
-    const updatedData = timesheetData.filter(
-      (_, index) => index !== indexToDelete
-    );
+    const updatedData = timesheetData.filter((_, index) => index !== indexToDelete);
     setLocalTimesheetData(updatedData);
     setTimeSheetData(updatedData);
-    setUnsavedChanges(true); // Enable Save and Submit buttons
+    setUnsavedChanges(true);
   };
 
-  // Save button functionality
+  /**
+   * Saves the current state of the timesheet data and resets the "unsaved changes" flag.
+   */
   const handleSave = () => {
     setTimeSheetData(timesheetData);
-    setUnsavedChanges(false); // Disable Save and Submit buttons
+    setUnsavedChanges(false);
     alert("Changes saved successfully!");
   };
 
-  // Submit button functionality
+  /**
+   * Submits the timesheet data by saving it and displaying a success message.
+   */
   const handleSubmit = () => {
     handleSave();
     alert("Timesheet data submitted successfully!");
   };
 
-  // Calculate total hours for a row
+  /**
+   * Calculates the total hours worked for a specific row based on the time entries.
+   * 
+   * @param {TimeEntry[]} entries - Array of time entries for the row.
+   * @returns {string} - Total hours formatted as "HH:MM".
+   */
   const calculateTotalHours = (entries: TimeEntry[]) => {
     const totalMinutes = entries.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
@@ -88,7 +118,11 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
     return minutesToTime(totalMinutes);
   };
 
-  // Calculate total hours by day
+  /**
+   * Calculates the total hours worked for each day of the week across all timesheets.
+   * 
+   * @returns {Record<string, number>} - Object mapping each day to the total minutes worked.
+   */
   const calculateTotalByDay = () => {
     const dailyTotals: Record<string, number> = {};
     daysOfWeek.forEach((day) => {
@@ -102,33 +136,38 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
     return dailyTotals;
   };
 
-  // Map time entries to corresponding week days
+  /**
+   * Maps the time entries to each day of the week and returns a record with JSX elements
+   * to render the TimeInput components for each day.
+   * 
+   * @param {TimeEntry[]} entries - Array of time entries for a specific timesheet row.
+   * @param {number} index - The index of the timesheet row.
+   * @returns {Record<string, ReactNode>} - Object mapping day names to corresponding TimeInput components.
+   */
   const mapTimeEntriesToWeek = (
     entries: TimeEntry[],
     index: number
   ): Record<string, ReactNode> => {
     const weekMap: Record<string, ReactNode> = {};
     daysOfWeek.forEach((day, dayIndex) => {
-      const entry = entries[dayIndex] || {
-        hours: "00:00",
-        isHoliday: false,
-        date: "",
-      };
+      const entry = entries[dayIndex] || { hours: "00:00", isHoliday: false, date: "" };
       weekMap[day.name] = (
         <TimeInput
           value={entry.hours}
           setValue={(newTime) => handleTimeChange(index, day, newTime)}
           disabled={entry.isDisabled}
-          tooltipContent={
-            entry.isDisabled ? "These dates are in next week" : ""
-          }
+          tooltipContent={entry.isDisabled ? "These dates are in next week" : ""}
         />
       );
     });
     return weekMap;
   };
 
-  // Total row component
+  /**
+   * Generates the total row for the table, displaying the total hours for each day and overall.
+   * 
+   * @returns {object} - Object representing the total row.
+   */
   const totalRow = () => {
     const dailyTotals = calculateTotalByDay();
     const totalAllDays = Object.values(dailyTotals).reduce((a, b) => a + b, 0);
@@ -152,21 +191,21 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
     };
   };
 
-  // Columns and final data
+  /**
+   * Defines the columns for the table, including task, day columns, and action buttons.
+   * 
+   * @returns {Array} - Array of column definitions.
+   */
   const columns = [
     { title: "Task", key: "task", width: 140 },
-    {
-      title: <span style={{ width: "100px" }}>Task Details</span>,
-      key: "details",
-      width: 155,
-    },
+    { title: <span style={{ width: "100px" }}>Task Details</span>, key: "details", width: 155 },
     ...daysOfWeek.map((day) => ({
       title: (
         <span
           className={
             day.isHoliday
-              ? `${styles.dateTitles} ${styles.holidayDateTitles}` // Apply holiday style
-              : styles.dateTitles // Default style
+              ? `${styles.dateTitles} ${styles.holidayDateTitles}`
+              : styles.dateTitles
           }
         >
           <p>{day.name}</p>
@@ -176,13 +215,14 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
       key: day.name,
     })),
     { title: "Total", key: "total", width: 70 },
-    {
-      title: "",
-      key: "action",
-      width: 50,
-    },
+    { title: "", key: "action", width: 50 },
   ];
 
+  /**
+   * Maps the timesheet data to table rows.
+   * 
+   * @returns {Array} - Array of table rows.
+   */
   const data = timesheetData.map((timesheet, index) => {
     const totalHours = calculateTotalHours(timesheet.dataSheet);
     const taskStatusClass =
@@ -190,7 +230,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
         ? styles.approved
         : timesheet.status === "rejected"
         ? styles.rejected
-        : styles.pending; // Add class for pending status
+        : styles.pending;
 
     return {
       task: (
@@ -209,7 +249,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
             const updatedData = [...timesheetData];
             updatedData[index].taskDetail = newValue;
             setLocalTimesheetData(updatedData);
-            setUnsavedChanges(true); // Enable Save and Submit buttons
+            setUnsavedChanges(true);
           }}
         />
       ),

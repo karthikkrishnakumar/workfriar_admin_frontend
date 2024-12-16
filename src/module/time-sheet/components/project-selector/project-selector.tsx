@@ -1,42 +1,75 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./project-selector.module.scss";
 import SearchBar from "@/themes/components/search-bar/search-bar";
 import Icons from "@/themes/images/icons/icons";
+import {
+  fetchProjects,
+} from "../../services/time-sheet-services";
+import { ProjectList } from "@/interfaces/timesheets/timesheets";
 
+/**
+ * Interface for the props of the ProjectSelector component.
+ *
+ * @interface ProjectSelectorProps
+ * @property {Function} [setSelectedProject] - Optional callback function to pass the selected project to the parent component.
+ * @property {boolean} showSubmodal - Boolean to control the visibility of the submodal.
+ * @property {Function} setShowSubmodal - Function to toggle the visibility of the submodal.
+ */
 interface ProjectSelectorProps {
-  setSelectedProject?: (project: string) => void;
+  setSelectedProject?: (project: ProjectList) => void;
   showSubmodal: boolean;
   setShowSubmodal: (status: boolean) => void;
 }
 
+/**
+ * ProjectSelector component allows the user to select a project from a list.
+ * It displays a search bar and a list of projects with the ability to select a project.
+ * Once a project is selected, the submodal visibility is toggled, and the selected project is passed to the parent.
+ *
+ * @component
+ * @example
+ * // Usage example:
+ * <ProjectSelector showSubmodal={showSubmodal} setShowSubmodal={setShowSubmodal} setSelectedProject={setSelectedProject} />
+ *
+ * @param {ProjectSelectorProps} props - Component properties.
+ * @returns {React.ReactElement} The rendered component.
+ */
 const ProjectSelector: React.FC<ProjectSelectorProps> = ({
   setSelectedProject,
   showSubmodal,
   setShowSubmodal,
 }) => {
-  const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
 
-  const toggleShowSubModal = (projectId: number, projectName: string) => {
+  /**
+   * Toggles the visibility of the submodal and sets the active project.
+   * Also passes the selected project to the parent component.
+   *
+   * @param {string} projectId - The ID of the selected project.
+   * @param {string} projectName - The name of the selected project.
+   */
+  const toggleShowSubModal = (projectId: string, projectName: string) => {
     setActiveProjectId(projectId); // Highlight active project
     setShowSubmodal(!showSubmodal); // Toggle submodal visibility
     if (setSelectedProject) {
-      setSelectedProject(projectName); // Pass selected project to parent
+      setSelectedProject({id: projectId, project_name: projectName}); // Pass selected project to parent
     }
   };
 
-  const projects = [
-    { id: 1, name: "Danti" },
-    { id: 2, name: "One View" },
-    { id: 3, name: "Soezy" },
-    { id: 4, name: "Overhead" },
-    { id: 5, name: "Unutilized" },
-  ];
+  const [projects, setProjects] = useState<ProjectList[]>([]);
+
+  /**
+   * Effect hook to fetch the list of projects from the service.
+   */
+  useEffect(() => {
+    fetchProjects(setProjects);
+  }, []);
 
   return (
     <div className={styles.projectSelectorWrapper}>
       <h2>Projects</h2>
-      <SearchBar placeholder="Search" />
+      <SearchBar value="" placeholder="Search" onChange={() => {}} />
       <ul>
         {projects.map((project) => (
           <li
@@ -44,10 +77,10 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
             className={`${styles.projectListItem} ${
               activeProjectId === project.id ? styles.active : ""
             }`}
-            onClick={() => toggleShowSubModal(project.id, project.name)} // Updated click handler
+            onClick={() => toggleShowSubModal(project.id, project.project_name)} // Updated click handler
           >
             <div className={styles.projectWrapper}>
-              {project.name}
+              {project.project_name}
               <span>{Icons.arrowRightGrey}</span>
             </div>
           </li>
