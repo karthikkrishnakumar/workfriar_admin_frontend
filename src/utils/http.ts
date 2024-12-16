@@ -54,6 +54,7 @@ const http = () => {
           error.response.data.status = false;
           return error.response;
         } else if (error.response) {
+          console.log(error)
           error.response.data = {
             status: false,
             message: "server error [010]",

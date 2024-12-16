@@ -24,3 +24,17 @@ export function toISODateFormatter(dateString: string): string {
     const [day, month, year] = dateString.split("/").map(Number);
     return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
+
+
+export function getWeekdayFromDate(dateString: string) {
+    const dateParts = dateString.split("/");
+    const month = parseInt(dateParts[0], 10) - 1;
+    const day = parseInt(dateParts[1], 10);
+    const year = parseInt(dateParts[2], 10);
+
+    const date = new Date(year, month, day);
+    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const weekday = weekdays[date.getDay()];
+
+    return weekday;
+}

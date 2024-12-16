@@ -2,7 +2,7 @@ import {
   TimeEntry,
   TimesheetDataTable,
   WeekDaysData,
-} from "@/module/time-sheet/services/time-sheet-services";
+} from "@/interfaces/timesheets/timesheets";
 import TimeInput from "@/themes/components/time-input/time-input";
 import {
   minutesToTime,
@@ -16,37 +16,60 @@ import ButtonComponent from "@/themes/components/button/button";
 import Icons from "@/themes/images/icons/icons";
 import TextAreaButton from "@/module/time-sheet/components/text-area-button/text-area-button";
 
+/**
+ * Props for the PendingDetailedView component.
+ */
 interface PendingDetailedViewProps {
-  timeSheetData: TimesheetDataTable[];
-  daysOfWeek: WeekDaysData[];
-  backButtonFunction: () => void;
+  timeSheetData: TimesheetDataTable[]; // Timesheet data for the pending view
+  daysOfWeek: WeekDaysData[]; // Days of the week to map data
+  backButtonFunction: () => void; // Callback for the back button
 }
+
+/**
+ * PendingDetailedView component displays a detailed breakdown of pending timesheets.
+ */
 const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
   timeSheetData,
   daysOfWeek,
   backButtonFunction,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false);
-  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false); // Tracks loading state
+  const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false); // Modal toggle for task details
+  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null); // Tracks the row being edited
+
+  /**
+   * Toggles the task detail modal for a specific row.
+   * @param rowIndex - The index of the row to edit
+   */
   const textAreaOnclick = (rowIndex: number) => {
     setEditingRowIndex(rowIndex);
     setTaskDetailModal(!showTaskDetailModal);
   };
+
+  // Menu items for the dropdown
   const menuItems = [
     { key: "approve", label: "Approve" },
     { key: "reject", label: "Reject" },
   ];
 
+  /**
+   * Handles actions from the dropdown menu (approve/reject).
+   * @param e - The event object containing the selected action key
+   * @param id - Optional timesheet ID
+   */
   const handleMenuClick = (e: { key: string }, id?: string) => {
     if (e.key === "approve") {
-      // function to approve
+      // Approve function logic here
     } else if (e.key === "reject") {
-      //  function to reject
+      // Reject function logic here
     }
   };
 
-  // Calculate total hours for a row
+  /**
+   * Calculates total hours for a row by summing the entries.
+   * @param entries - Array of time entries for a task
+   * @returns Total hours in "hh:mm" format
+   */
   const calculateTotalHours = (entries: TimeEntry[]) => {
     const totalMinutes = entries.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
@@ -55,7 +78,12 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
     return minutesToTime(totalMinutes);
   };
 
-  // Map time entries to corresponding week days
+  /**
+   * Maps time entries to the corresponding week days for display.
+   * @param entries - Time entries for a task
+   * @param index - Row index
+   * @returns Object mapping each weekday to its time entry component
+   */
   const mapTimeEntriesToWeek = (
     entries: TimeEntry[],
     index: number
@@ -81,7 +109,10 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
     return weekMap;
   };
 
-  // Calculate total hours by day
+  /**
+   * Calculates the total hours logged for each day of the week.
+   * @returns Object mapping each weekday to its total hours in minutes
+   */
   const calculateTotalByDay = () => {
     const dailyTotals: Record<string, number> = {};
     daysOfWeek.forEach((day) => {
@@ -95,7 +126,10 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
     return dailyTotals;
   };
 
-  // Total row component
+  /**
+   * Generates the "Total" row for the table, summing hours for all tasks and days.
+   * @returns Object representing the total row
+   */
   const totalRow = () => {
     const dailyTotals = calculateTotalByDay();
     const totalAllDays = Object.values(dailyTotals).reduce((a, b) => a + b, 0);
@@ -119,7 +153,7 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
     };
   };
 
-  // Columns and final data
+  // Define columns for the table
   const columns = [
     { title: "Task", key: "task", width: 140 },
     {
@@ -132,8 +166,8 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
         <span
           className={
             day.isHoliday
-              ? `${styles.dateTitles} ${styles.holidayDateTitles}` // Apply holiday style
-              : styles.dateTitles // Default style
+              ? `${styles.dateTitles} ${styles.holidayDateTitles}` // Holiday styling
+              : styles.dateTitles // Default styling
           }
         >
           <p>{day.name}</p>
@@ -146,9 +180,9 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
     { title: "", key: "action", width: 50 },
   ];
 
+  // Transform timesheet data into rows for the table
   const data = timeSheetData.map((timesheet, index) => {
     const totalHours = calculateTotalHours(timesheet.dataSheet);
-    let isDisabled;
     const taskStatusClass =
       timesheet.status === "approved"
         ? styles.approved
@@ -156,11 +190,8 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
         ? styles.rejected
         : "";
 
-    if (timesheet.status === "approved" || timesheet.status === "rejected") {
-      isDisabled = true;
-    } else {
-      isDisabled = false;
-    }
+    const isDisabled =
+      timesheet.status === "approved" || timesheet.status === "rejected";
 
     return {
       task: (
