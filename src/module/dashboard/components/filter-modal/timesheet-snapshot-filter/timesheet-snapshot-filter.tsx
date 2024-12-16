@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./timesheet-snapshot-filter.module.scss";
 import ModalComponent from "@/themes/components/modal/modal";
 import ButtonComponent from "@/themes/components/button/button";
+import TabbedComponent from "@/themes/components/tabbed-filter/tabbed-filter";
 
 interface TimeSheetSnapshotFilterProps {
   onYearChange: (year: number) => void;
@@ -29,101 +30,102 @@ const TimeSheetSnapshotFilter: React.FC<TimeSheetSnapshotFilterProps> = ({
   onMonthChange,
   onClose,
 }) => {
-  const [selectedTab, setSelectedTab] = useState<"year" | "month">("year");
-  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [tempYear, setTempYear] = useState<number | null>(null);
+  const [tempMonth, setTempMonth] = useState<number | null>(null);
 
-  // Temporary states for holding the values until "Apply" is clicked
-  const [tempYear, setTempYear] = useState<number>(selectedYear);
-  const [tempMonth, setTempMonth] = useState<number | null>(selectedMonth);
+  const currentYear = new Date().getFullYear();
 
-  const handleTabChange = (tab: "year" | "month") => {
-    setSelectedTab(tab);
-  };
+  // Synchronize temp values with selected values when modal is opened
+  useEffect(() => {
+    setTempYear(selectedYear);
+    setTempMonth(selectedMonth);
+  }, [selectedYear, selectedMonth]);
 
   const handleYearChange = (year: number) => {
-    setTempYear(year);  // Use temporary year state
+    setTempYear(year);
   };
 
   const handleMonthChange = (month: number) => {
-    setTempMonth(month);  // Use temporary month state
+    setTempMonth(month);
   };
 
   const handleApplyChange = () => {
-    // Apply the selected year and month when the "Apply" button is clicked
-    onYearChange(tempYear);
+    const finalYear = tempYear !== null ? tempYear : currentYear;
+
     if (tempMonth !== null) {
+      onYearChange(finalYear);
       onMonthChange(tempMonth);
+      setSelectedYear(finalYear);
+      setSelectedMonth(tempMonth);
+    } else if (tempYear !== null) {
+      onYearChange(tempYear);
+      setSelectedYear(tempYear);
     }
-    onClose();  // Close the modal after applying the filter
+
+    onClose(); // Close the modal
   };
+
+  const yearFilterContent = (
+    <div className={styles.yearFilter}>
+      {[
+        2030, 2029, 2028, 2027, 2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019,
+        2018, 2017, 2016,
+      ].map((year) => (
+        <label key={year} className={styles.radioLabel}>
+          <input
+            type="radio"
+            name="year"
+            value={year}
+            checked={tempYear === year}
+            onChange={() => handleYearChange(year)}
+            className={styles.radioInput}
+          />
+          {year}
+        </label>
+      ))}
+    </div>
+  );
+
+  const monthFilterContent = (
+    <div className={styles.monthFilter}>
+      {months.map((month, index) => (
+        <label key={index} className={styles.radioLabel}>
+          <input
+            type="radio"
+            name="month"
+            value={index + 1}
+            checked={tempMonth === index + 1}
+            onChange={() => handleMonthChange(index + 1)}
+            className={styles.radioInput}
+          />
+          {month}
+        </label>
+      ))}
+    </div>
+  );
 
   return (
     <ModalComponent
       isVisible={true}
       title={"Filter"}
       content={
-        <div className={styles.timeSheetSnapshotFilter}>
-          <div className={styles.tabs}>
-            <button
-              className={`${styles.tabButton} ${
-                selectedTab === "year" ? styles.activeTab : ""
-              }`}
-              onClick={() => handleTabChange("year")}
-            >
-              Year
-            </button>
-            <button
-              className={`${styles.tabButton} ${
-                selectedTab === "month" ? styles.activeTab : ""
-              }`}
-              onClick={() => handleTabChange("month")}
-            >
-              Month
-            </button>
-          </div>
-          {selectedTab === "year" && (
-            <div className={styles.yearFilter}>
-              {[2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016].map(
-                (year) => (
-                  <label key={year} className={styles.radioLabel}>
-                    <input
-                      type="radio"
-                      name="year"
-                      value={year}
-                      checked={tempYear === year}  // Use tempYear for checking
-                      onChange={() => handleYearChange(year)}
-                      className={styles.radioInput}
-                    />
-                    {year}
-                  </label>
-                )
-              )}
-            </div>
-          )}
-          {selectedTab === "month" && (
-            <div className={styles.monthFilter}>
-              {months.map((month, index) => (
-                <label key={index} className={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name="month"
-                    value={index}
-                    checked={tempMonth === index}  // Use tempMonth for checking
-                    onChange={() => handleMonthChange(index)}
-                    className={styles.radioInput}
-                  />
-                  {month}
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
+        <TabbedComponent
+          tabs={[
+            { name: "Year", content: yearFilterContent },
+            { name: "Month", content: monthFilterContent },
+          ]}
+        />
       }
       bottomContent={
         <>
           <ButtonComponent label="Cancel" theme="white" onClick={onClose} />
-          <ButtonComponent label="Apply" theme="black" onClick={handleApplyChange} />
+          <ButtonComponent
+            label="Apply"
+            theme="black"
+            onClick={handleApplyChange}
+          />
         </>
       }
       theme="normal"

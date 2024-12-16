@@ -86,9 +86,23 @@
     .rejected {
       border-left: 2px solid;
       padding-left: 4px;
-      &.saved { border-color: var(--primary-golden-color-light); }
-      &.approved { border-color: var(--primary-golden-color-medium); }
-      &.rejected { border-color: var(--primary-golden-color-dark); }
+      &.saved {
+        border-color: var(--primary-golden-color-light);
+      }
+      &.approved {
+        border-color: var(--primary-golden-color-medium);
+      }
+      &.rejected {
+        border-color: var(--primary-golden-color-dark);
+      }
     }
   }
+}
+
+.emptyWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; // Adjust as per container size
+  text-align: center;
 }

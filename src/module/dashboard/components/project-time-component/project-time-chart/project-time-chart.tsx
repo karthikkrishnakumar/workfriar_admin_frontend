@@ -10,8 +10,10 @@ import {
   Tooltip,
   Legend,
   ChartOptions,
+  TooltipItem,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { Empty } from "antd";
 import styles from "./project-time-chart.module.scss";
 import CustomScrollbar from "@/themes/components/custom-scrollbar/custom-scrollbar";
 
@@ -25,10 +27,26 @@ ChartJS.register(
   Legend
 );
 
+interface VisibleData {
+  tooltips: string[]; // Tooltip content as an array of strings
+  labels: string[]; // Labels for the chart (project names)
+  values: number[]; // Numeric values for the chart (hours in decimal)
+}
+
+// Define the structure for a single dataset in the chart
+interface Dataset {
+  data: number[]; // Data values for the chart
+  backgroundColor: string; // Bar color
+  hoverBackgroundColor?: string; // Optional hover color
+  tooltips?: string[]; // Tooltip data (not a native Chart.js property, but used here)
+  borderRadius?: number; // Optional bar border radius
+  barPercentage?: number; // Optional bar percentage for width control
+}
+
 // Define the shape of the data for the chart (project name and hours worked)
 interface ChartData {
   project_name: string;
-  hours: number;
+  hours: string;
 }
 
 interface ProjectTimeChartProps {
@@ -45,10 +63,11 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
   const [options, setOptions] = useState<ChartOptions<"bar"> | undefined>(
     undefined
   );
-  const [visibleData, setVisibleData] = useState<{
-    labels: string[];
-    values: number[];
-  }>({ labels: [], values: [] });
+  const [visibleData, setVisibleData] = useState<VisibleData>({
+    labels: [],
+    values: [],
+    tooltips: [],
+  });
 
   // Fetch data from the backend API on component mount
   useEffect(() => {
@@ -62,7 +81,8 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
         },
         tooltip: {
           callbacks: {
-            label: (context: any) => `${context.formattedValue} hr`,
+            label: (context: TooltipItem<"bar">) =>
+              `${context.raw} hr (${visibleData.tooltips[context.dataIndex!]})`,
           },
         },
       },
@@ -114,6 +134,10 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
     setOptions(newOptions);
   }, []);
 
+  const parseHoursToDecimal = (time: string): number => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours + minutes / 60;
+  };
   // Function to update visible data based on scroll position
   const updateVisibleData = useCallback(
     (position: number) => {
@@ -123,7 +147,8 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
 
         setVisibleData({
           labels: visibleItems.map((item) => item.project_name),
-          values: visibleItems.map((item) => item.hours),
+          values: visibleItems.map((item) => parseHoursToDecimal(item.hours)),
+          tooltips: visibleItems.map((item) => item.hours), // Keep original time for tooltips
         });
       }
     },
@@ -138,6 +163,7 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
         data: visibleData.values,
         backgroundColor: "#FDB853",
         hoverBackgroundColor: "#D4983F",
+        tooltips: visibleData.tooltips, // Include tooltips in dataset
         borderRadius: 0,
         barPercentage: Math.max(visibleData.values.length / 10),
       },
@@ -149,21 +175,32 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
     return <div className={styles.loader}>Loading chart data...</div>;
   }
 
-  // Show a "no data" message if there is no data to display
-  if (data.length === 0) {
-    return <div className={styles.noData}>No data available to display</div>;
+  if (data?.length === 0) {
+    return (
+      <div className={styles.noData}>
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="No project data available"
+        />
+      </div>
+    );
   }
 
   return (
     <div className={styles.chartContainer}>
-      <div className={styles.chartWrapper}>
+      <div
+        className={
+          data?.length < 6 ? `${styles.smallChart}` : styles.chartWrapper
+        }
+      >
         {/* Render the Bar chart */}
         <Bar data={chartData} options={options ?? undefined} />
       </div>
 
       {/* Use the new CustomScrollbar component */}
+
       <CustomScrollbar
-        totalItems={data.length}
+        totalItems={data?.length}
         visibleItemCount={ITEMS_TO_SHOW}
         onScrollPositionChange={updateVisibleData}
         className={styles.scrollTrackParentDiv}

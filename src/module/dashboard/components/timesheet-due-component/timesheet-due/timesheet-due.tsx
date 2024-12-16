@@ -21,13 +21,13 @@ interface TimesheetDataProps {
  * @param date - The date of the day (e.g., "2024-11-26").
  * @param hours - The number of hours worked on that day (e.g., "8").
  * @param dayOfWeek - The name of the day (e.g., "Monday").
- * @param disable
+ * @param isDisable
  */
 interface TimesheetDue {
   date: string; // The date of the day.
   hours: string; // The number of hours worked.
   dayOfWeek: string; // The day of the week (e.g., "Monday").
-  disable: boolean; // Add this property
+  isDisable: boolean; // Add this property
 }
 
 // The Timesheet component receives the 'data' prop and renders the timesheet grid
@@ -48,7 +48,7 @@ const Timesheet: React.FC<TimesheetDataProps> = ({ data }) => {
       <div className={styles.grid}>
         {data?.slice(0, 4).map((day, index) => {
           // Determine if the date is empty
-          const isMuted = day.disable;
+          const isMuted = day.isDisable;
 
           return (
             <div
@@ -81,7 +81,7 @@ const Timesheet: React.FC<TimesheetDataProps> = ({ data }) => {
       <div className={styles.grid}>
         {data?.slice(4, 8).map((day, index) => {
           // Determine if the date is empty
-          const isMuted = day.disable;
+          const isMuted = day.isDisable;
 
           return (
             <div
