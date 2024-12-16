@@ -1,43 +1,67 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./login-form.module.scss";
 import InputComponent from "@/themes/components/Input/Input";
 import ButtonComponent from "@/themes/components/button/button";
 import OtpForm from "../otp-form/otp-form";
-import { loginWithGoogle } from "../../services/login-services/login-services";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuthService } from "../../services/login-services/login-services";
 
 const LoginForm = () => {
   const [isOtp, setIsOtp] = useState(false);
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const { 
+    handleAppLogin, 
+    redirectToGoogleLogin, 
+    validateAdminToken
+  } = useAuthService();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
+  useEffect(() => {
+    const token = searchParams.get("token");
+    const errorParam = searchParams.get("error");
+
+    const processLogin = async () => {
+      if (token) {
+        const isAdmin = validateAdminToken(token);
+
+        if (isAdmin) {
+          const response = await handleAppLogin(token);
+
+          if (response.success) {
+            router.push("/dashboard");
+          } else {
+            setError(response.message || "Login failed.");
+          }
+        } else {
+          setError("You do not have admin privileges.");
+        }
+      } else if (errorParam) {
+        setError(errorParam || "Authentication failed.No account found");
+      }
+    };
+
+    processLogin();
+  }, [searchParams, handleAppLogin, validateAdminToken, router]);
+
   /**
    * Handles Google login.
    *
    */
-  const handleGoogleLogin = async () => {
-    try {
-      const response = await loginWithGoogle();
-      if (response.success) {
-        router.push("/dashboard"); // Redirect to the homepage
-      } else {
-        console.error("Login failed:", response.message || "Unknown error");
-      }
-    } catch (err) {
-      console.log("Failed to log in with Google.");
-    }
+  const handleGoogleLogin = () => {
+    redirectToGoogleLogin(); // Redirect to backend Google login endpoint
   };
 
   /**
    * Handles email submission to continue to OTP verification.
-   *
-   */
+   **/
   const handleContinueWithEmail = () => {
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setError("Please enter a valid email address.");

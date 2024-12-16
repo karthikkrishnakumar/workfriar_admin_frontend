@@ -73,7 +73,10 @@ const http = () => {
     const body = response.data;
     return { response, body };
   };
-  return { post };
+
+
+
+  return { post};
 };
 
 export default http;

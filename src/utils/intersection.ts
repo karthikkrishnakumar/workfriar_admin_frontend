@@ -2,6 +2,8 @@ import Iron from "@hapi/iron";
 import { parse, serialize } from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 
+
+
 const IntersectionSecret: string = process.env.INTERSECTION_SECRET
   ? process.env.INTERSECTION_SECRET
   : "<<<<<++++random++++secret++++string++++>>>>>>";
@@ -10,7 +12,7 @@ const IntersectionAge: number = process.env.INTERSECTION_AGE
   : 60 * 60 * 24 * 1000; // seconds * minute * hour * 1000;
 const IntersectionCookie: string = process.env.INTERSECTION_COOKIE
   ? process.env.INTERSECTION_COOKIE
-  : "soezy_intersection";
+  : "workfriar_intersection";
 
 /**
  * Interface for cookie data encryption
