@@ -2,24 +2,29 @@
 import React, { useState, useEffect } from "react";
 import styles from "./timesheet-due-card.module.scss";
 import CardSection from "../../card-section/card-section";
-import DateRangePicker from "@/themes/components/date-picker/date-picker";
 import Timesheet from "../timesheet-due/timesheet-due";
 import ButtonComponent from "@/themes/components/button/button";
-
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import TimeDueModal from "../../submit-timesheet-modal/submit-timesheet-modal";
-import UseDashboardServices, { TimesheetDue, TimesheetDueResponse } from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import UseDashboardServices, {
+  DatePickerData,
+  DatePickerResponse,
+  TimesheetDue,
+  TimesheetDueResponse,
+} from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import DateRangePicker from "@/themes/components/date-picker/date-picker";
 
 const TimeSheetDueCard: React.FC = () => {
-  const [timesheetDueData, setTimesheetDueData] =
-    useState<TimesheetDue[] | []>([]);
-  const [currentRange, setCurrentRange] = useState("");
-  const [prev, setPrev] = useState(false); // New state for prev
-  const [next, setNext] = useState(false); // New state for next
+  const [timesheetDueData, setTimesheetDueData] = useState<TimesheetDue[] | []>(
+    []
+  );
+  const [selectedStartDate, setSelectedStartDate] = useState<string>("");
+  const [selectedEndDate, setSelectedEndDate] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [totalTime, setTotalTime] = useState<string>("0");
+  const [datePickerData, setDatePickerData] = useState<DatePickerData[]>([]);
 
   const handleClickReview = () => {
     window.location.href = "/time-sheet";
@@ -30,23 +35,17 @@ const TimeSheetDueCard: React.FC = () => {
       setLoading(true); // Set loading to true before fetching
       setError(null); // Clear any previous errors
       try {
-        const parts = currentRange.split("-");
-        const startDate = parts.slice(0, 3).join("-"); // First part of the range
-        const endDate = parts.slice(3, 6).join("-"); // Second part of the range
-        console.log(startDate,endDate,"in timesheet ")
-        const data:TimesheetDueResponse = await UseDashboardServices().fetchTimesheetDueData(
-          startDate,
-          endDate,
-          prev,
-          next
-        );
+        const data: TimesheetDueResponse =
+          await UseDashboardServices().fetchTimesheetDueData(
+            selectedStartDate,
+            selectedEndDate
+          );
         setTimesheetDueData(data.data);
-        setCurrentRange(data.range);
+
         // Calculate the total time (hours) based on the new data
         const totalHours =
-          data?.data?.find(
-            (item: any) => item.dayOfWeek === "TOTAL"
-          )?.hours ?? "0";
+          data?.data?.find((item: any) => item.date === "TOTAL")?.hours ??
+          "00:00";
 
         setTotalTime(totalHours); // Update totalTime state with the fetched data
       } catch (error) {
@@ -57,8 +56,20 @@ const TimeSheetDueCard: React.FC = () => {
     };
 
     fetchData();
-  }, [prev, next]);
+  }, [selectedStartDate, selectedEndDate]);
 
+  useEffect(() => {
+    const fetchDatePicker = async () => {
+      try {
+        const datePickerResponse: DatePickerResponse =
+          await UseDashboardServices().fetchDatePickerData();
+        setDatePickerData(datePickerResponse.data);
+      } catch (error) {
+        console.error("Error fetching date picker data:", error);
+      }
+    };
+    fetchDatePicker();
+  }, []);
   // Handle the date change from the DateRangePicker
 
   const handleSubmitClick = () => {
@@ -70,34 +81,25 @@ const TimeSheetDueCard: React.FC = () => {
     setIsModalVisible(false);
   };
 
-  const handleDateChange = (data: {
-    startDate: string;
-    endDate: string;
-    prev: boolean;
-    next: boolean;
-  }) => {
-    setCurrentRange(`${data.startDate}-${data.endDate}`);
-    setPrev(data.prev);
-    setNext(data.next);
+  const handleDateChange = (startDate: string, endDate: string) => {
+    setSelectedStartDate(startDate);
+    setSelectedEndDate(endDate);
   };
+
+  if (error) return <div>{error}</div>;
 
   return (
     <>
       <CardSection
         title="Timesheet due"
         topRightContent={
-          loading ? (
-            <SkeletonLoader
-              count={1}
-              button={true}
-              classNameItem={styles.customSkeletonDatepicker}
-            />
-          ) : (
+          <div>
             <DateRangePicker
-              range={currentRange}
+              weekData={datePickerData}
               onDateChange={handleDateChange}
+              dateChangeType="pastDue"
             />
-          )
+          </div>
         }
         centerContent={
           loading ? (
@@ -107,8 +109,6 @@ const TimeSheetDueCard: React.FC = () => {
               className={styles.customSkeleton}
               classNameItem={styles.skeletonItem}
             />
-          ) : error ? (
-            <div className={styles.error}>{error}</div>
           ) : (
             <Timesheet data={timesheetDueData} />
           )

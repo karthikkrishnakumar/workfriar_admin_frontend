@@ -1,5 +1,7 @@
 // date-formater.ts
 
+import { DatePickerData } from "@/module/dashboard/services/dashboard-services/dashboard-services";
+
  // Format date (e.g., "Jan 1")
  export const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("en-US", {
@@ -12,54 +14,55 @@ export const formatYear = (date: string) => new Date(date).getFullYear();
 
 // Calculates start and end dates for a given week
 export const getWeekDates = (
-  weekData: { start: string; end: string; week: number }[],
+  weekData: DatePickerData[],
   weekIndex: number
 ) => {
   const selectedWeek = weekData[weekIndex];
-  const startDate = new Date(selectedWeek?.start);
-  const endDate = new Date(selectedWeek?.end);
+  const startDate =selectedWeek?.startDate;
+  const endDate =selectedWeek?.endDate;
   return { startDate, endDate };
 };
 
 // Finds the current week based on today's date
 export const findCurrentWeek = (
-  weekData: { start: string; end: string; week: number }[]
+  weekData:DatePickerData[]
 ): number => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   for (const week of weekData) {
-    const start = new Date(week.start);
-    const end = new Date(week.end);
+    const start = new Date(week.startDate);
+    const end = new Date(week.endDate);
     start.setHours(0, 0, 0, 0); // Ignore time in start date
     end.setHours(23, 59, 59, 999); // Include the entire day in the end date
-
     if (today >= start && today <= end) {
       return week.week;
     }
   }
-
-  return weekData[weekData.length-1].week; // Default to the first week if no match is found
+  return weekData[weekData.length-1]?.week; // Default to the first week if no match is found
 };
 
 // Determines which weeks should be disabled based on today's date
-
 export const getDisabledWeeks = (
-  weekData: { start: string; end: string }[]
+  weekData: DatePickerData[],
+  type?: "all" | "pastDue"
 ): boolean[] => {
   const today = new Date();
+  const limitDate = new Date(today.getMonth()+1)
   
   // Map the input data to the disabled weeks array
   const disabledWeeks = weekData.map((week) => {
-    const weekStart = new Date(week.start);
-    const disable = weekStart > today; // Disable weeks starting after today
-    return disable;
+    const weekStart = new Date(week.startDate);
+    if (type === "pastDue") {
+      return weekStart > today; // Disable weeks starting after today for pastDue
+    } else {
+      return weekStart < limitDate; // Disable weeks starting after limitDate for others
+    }
   });
-
+  
   // Check if all entries are false
   if (disabledWeeks.every((disable) => !disable)) {
-    disabledWeeks.push(true); // Add a `true` if all are false
+    disabledWeeks.push(true); // Add a true if all are false
   }
-
   return disabledWeeks;
 };
 
@@ -75,12 +78,10 @@ export const getFutureWeeks = (
     const disable = weekStart > oneMonthAdvance; // Disable weeks starting after today
     return disable;
   });
-
   // Check if all entries are false
   if (futureWeeks.every((disable) => !disable)) {
     futureWeeks.push(true); // Add a `true` if all are false
   }
-
   return futureWeeks;
 };
 

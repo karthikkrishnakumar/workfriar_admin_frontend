@@ -23,7 +23,7 @@ const DashboardNotifications: React.FC<NotificationProps> = ({
             <div className={styles.notificationContent}>
               <div className={styles.notificationMessage}>
                 {notification.message.length > 35
-                  ? `${notification.message.slice(0, 35)}...`
+                  ? `${notification.message}`
                   : notification.message}
               </div>
             </div>

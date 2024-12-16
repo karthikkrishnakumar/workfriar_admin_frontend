@@ -1,4 +1,5 @@
 import http from "@/utils/http";
+
 // Define the interface for project time chart data
 export interface ProjectTimeChartProps {
   project_name: string;
@@ -24,12 +25,11 @@ export interface TimesheetDue {
   dayOfWeek: string;
   date: string;
   hours: string;
-  disable: boolean;
+  isDisable: boolean;
 }
 export interface TimesheetDueResponse {
   status: string;
   data: TimesheetDue[];
-  range: string;
   message: string;
   errors: Error | null;
 }
@@ -61,6 +61,21 @@ export interface HolidayResponse {
   errors: Error | null;
 }
 
+export interface DatePickerData {
+  startDate: string;  // Start date in string format
+  endDate: string;    // End date in string format
+  week: number;   // Week number
+  label: string;  // Label associated with the date range
+}
+
+
+export interface DatePickerResponse{
+  status: string;
+  data: DatePickerData[];
+  message: string;
+  errors: Error | null;
+}
+
 /**
  * Fetches the project time data for a given date range.
  * @param startDate - The start date in ISO format (optional).
@@ -78,6 +93,7 @@ export default function UseDashboardServices() {
         "/api/timesheet/get-current-day-timesheets"
       );
 
+      console.log(body,"project times")
       // Return the project time data with additional details
       return {
         status: body.status,
@@ -120,11 +136,11 @@ export default function UseDashboardServices() {
   const fetchTimesheetDueData = async (
     startDate?: string,
     endDate?: string,
-    prev?: boolean,
-    next?: boolean
+    
   ): Promise<TimesheetDueResponse> => {
     try {
-      const props: JSON = <JSON>(<unknown>{ startDate, endDate, prev, next });
+      const props: JSON = <JSON>(<unknown>{ startDate, endDate});
+
       // Make an HTTP POST request to fetch the project time data
       const { body } = await http().post(
         "/api/timesheet/get-due-timesheets",
@@ -136,7 +152,6 @@ export default function UseDashboardServices() {
       return {
         status: body.status,
         data: body.data || null,
-        range: body.date_range,
         message: body.message || "Successfully fetched project time data.",
         errors: body.errors || null,
       };
@@ -183,11 +198,32 @@ export default function UseDashboardServices() {
     }
   };
 
+
+  const fetchDatePickerData = async (): Promise<DatePickerResponse> => {
+    try {
+      // Make an HTTP POST request to fetch the dashboard datepicker data
+      const { body } = await http().post("/api/user/getduedates");
+
+      console.log(body, "in services Datepicker");
+      // Return datepicker data with additional details
+      return {
+        status: body.status,
+        data: body.data || null,
+        message: body.message || "Successfully fetched Datepicker data.",
+        errors: body.errors || null,
+      };
+    } catch (error) {
+      console.error("Error fetching Datepicker data:", error);
+      throw error; // Rethrow the error if something goes wrong
+    }
+  }
+
   return {
     fetchProjectTimes,
     fetchTimesheetChartData,
     fetchTimesheetDueData,
     fetchNotifications,
     fetchHolidays,
+    fetchDatePickerData,
   };
 }

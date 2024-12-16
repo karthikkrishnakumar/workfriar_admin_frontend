@@ -1,6 +1,7 @@
 import React from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { Empty } from "antd";
 import styles from "./snap-shot-chart.module.scss";
 
 // Registering necessary chart.js components
@@ -39,6 +40,10 @@ export const StatusGauge: React.FC<StatusGaugeProps> = ({ statusData }) => {
       match.value = item.count;
     }
   });
+
+  // Check if there is any non-zero value in statuses
+  const isEmptyData =
+    !statusData || statuses.every((status) => status.value === 0);
 
   // Generate chart data dynamically based on statuses
   const data = {
@@ -84,13 +89,22 @@ export const StatusGauge: React.FC<StatusGaugeProps> = ({ statusData }) => {
         </div>
 
         {/* Chart rendering */}
-        <div className={styles.chartWrapper}>
-          <Doughnut
-            className={styles.halfDonutChart}
-            data={data}
-            options={options}
-          />
-        </div>
+       
+          {isEmptyData ? (
+            // Render empty illustration when no data is available
+            <div className={styles.emptyWrapper}>
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data Available" />
+            </div>
+          ) : (
+            <div className={styles.chartWrapper}>
+            <Doughnut
+              className={styles.halfDonutChart}
+              data={data}
+              options={options}
+            />
+            </div>
+          )}
+        
       </div>
     </div>
   );

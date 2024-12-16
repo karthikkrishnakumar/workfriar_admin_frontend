@@ -1,5 +1,5 @@
 .chartContainer {
-  padding: 20px 0px;
+  padding: 10px 0px;
   background-color: var(--primary-background-color);
   border-radius: 10px;
   display: flex;
@@ -30,8 +30,17 @@
 
 .chartWrapper {
   margin: 0px !important;
+  width: 100% !important;
   height: 100%;
-  max-height: 164px;
+  max-height: 178px;
+  padding: 0 !important;
+}
+
+.smallChart {
+  margin: 0px !important;
+  width: 100% !important;
+  height: 100%;
+  max-height: 198px;
   padding: 0 !important;
 }
 
@@ -63,13 +72,13 @@
   position: absolute;
   left: 0;
 
-    &:hover {
-      background-color: var(--primary-golden-color-medium);
-    }
+  &:hover {
+    background-color: var(--primary-golden-color-medium);
+  }
 
-    &:active {
-      cursor: grabbing;
-    }
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .loader,

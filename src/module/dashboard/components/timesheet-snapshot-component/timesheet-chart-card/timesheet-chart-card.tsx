@@ -19,6 +19,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
+
   // Function to fetch data
   const fetchData = async (year?: number, month?: number) => {
     setLoading(true);
@@ -49,11 +50,12 @@ const TimesheetSnapshotChartCard: React.FC = () => {
   };
 
   const handleMonthChange = (month: number) => {
-   
     if (selectedYear !== null) {
+      console.log(selectedYear,month,"year")
       fetchData(selectedYear, month); // Re-fetch data with the selected year and month
     }
   };
+
 
   const handleClickFilter = () => {
     setIsModalVisible(true); // Open the modal when the filter button is clicked
