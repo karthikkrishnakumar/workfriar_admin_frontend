@@ -1,8 +1,6 @@
 import Iron from "@hapi/iron";
-import { parse, serialize } from "cookie";
-import { NextApiRequest, NextApiResponse } from "next";
-
-
+import {  serialize } from "cookie";
+import { NextRequest, NextResponse } from "next/server";
 
 const IntersectionSecret: string = process.env.INTERSECTION_SECRET
   ? process.env.INTERSECTION_SECRET
@@ -28,7 +26,7 @@ interface encryptData {
  * @param jsonData : data to be encrypted
  * @returns encodeObject
  */
-async function encode(jsonData: Record<string, string>): Promise<string> {
+export async function encode(jsonData: Record<string, string>): Promise<string> {
   const createdAt = Date.now();
   // Create an encoded object with a max age that we can validate later for expiry
   const finalObject: encryptData = {
@@ -50,7 +48,7 @@ async function encode(jsonData: Record<string, string>): Promise<string> {
  * @param encodeObject : Encrypted data by hapi/iron
  * @returns decodeObject
  */
-async function decode(encodeObject: string): Promise<encryptData> {
+ async function decode(encodeObject: string): Promise<encryptData> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const decodeObject: encryptData = await Iron.unseal(
     encodeObject,
@@ -66,28 +64,26 @@ async function decode(encodeObject: string): Promise<encryptData> {
 }
 
 /**
- * Create a cookie object to be save
+ * Create a cookie object to be saved
  * @param cookieData : data to be embedded in cookie
  * @returns cookie
  */
-function createCookie(cookieData: string) {
+export function createCookie(cookieData: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const cookie = serialize(IntersectionCookie, cookieData, {
     maxAge: IntersectionAge / 1000,
     expires: new Date(Date.now() + IntersectionAge),
     httpOnly: true,
-    secure: true,
+    secure: false,
     path: "/",
-    sameSite: "none",
+    sameSite: "strict",
+    domain: '.localhost'
   });
-  // TODO: implement below mentioned logic on later.
-  // secure: process.env.NODE_ENV === 'production',
-  // sameSite: 'lax',
   return cookie;
 }
 
 /**
- * Create a cookie object to be clear
+ * Create a cookie object to clear the cookie
  * @returns cookie
  */
 function createClearCookie(cookieName: string) {
@@ -95,53 +91,60 @@ function createClearCookie(cookieName: string) {
   const cookie = serialize(cookieName, "", {
     maxAge: -1,
     httpOnly: true,
-    secure: true,
+    secure: false,
+    sameSite: 'lax',
     path: "/",
-    sameSite: "none",
+    domain: '.localhost'
   });
+  // TODO: implement below mentioned logic on later.
+  // secure: process.env.NODE_ENV === 'production',
+  // sameSite: 'lax',
+
   return cookie;
 }
 
 /**
- * retrive intersection cookie (IntersectionCookie) from given request
+ * Retrieve intersection cookie (IntersectionCookie) from the given request
  * @param request
  * @returns
  */
-export async function getCookie(request: NextApiRequest): Promise<encryptData> {
-  let cookies: Partial<{ [key: string]: string }>;
-  if (request.cookies) {
-    cookies = request.cookies;
-  } else {
-    const cookie: string = request.headers?.cookie as string;
-    cookies = parse(cookie || "");
+export async function getCookie(request: NextRequest): Promise<encryptData> {
+  const cookies = request.cookies;
+  const encodedCookie = cookies.get(IntersectionCookie)?.value; // Accessing the 'value' property
+
+  if (!encodedCookie) {
+    throw new Error("Cookie not found");
   }
-  const encodedCookie: string = cookies[IntersectionCookie] as string;
+
   const decodedCookie: encryptData = await decode(encodedCookie);
   return decodedCookie;
 }
 
+
 /**
- * Set cookie on the given request
- * @param response:NextApiResponse
- * @param cookieData:Record<string,string>
+ * Set cookie on the given response
+ * @param response: NextResponse
+ * @param cookieData: Record<string, string>
  * @returns
  */
 export async function setCookie(
-  response: NextApiResponse,
+  response: NextResponse,
   cookieData: Record<string, string>
-): Promise<NextApiResponse> {
+): Promise<NextResponse> {
+  console.log("entered cookie................................")
   const encryptedCookieData = await encode(cookieData);
   const cookie: string = createCookie(encryptedCookieData);
-  response.setHeader("Set-Cookie", cookie);
+  response.headers.set("Set-Cookie", cookie); // Use headers.set for NextResponse
+
   return response;
 }
 
 /**
- * Reset cookie on the given request
- * @param response :NextApiResponse
+ * Reset cookie on the given response
+ * @param response: NextResponse
  */
-export function resetCookie(response: NextApiResponse): NextApiResponse {
+export function resetCookie(response: NextResponse): NextResponse {
   const cookie: string = createClearCookie(IntersectionCookie);
-  response.setHeader("Set-Cookie", cookie);
+  response.headers.set("Set-Cookie", cookie); // Use headers.set for NextResponse
   return response;
 }

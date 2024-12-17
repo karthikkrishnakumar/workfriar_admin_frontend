@@ -7,17 +7,17 @@ import OtpForm from "../otp-form/otp-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthService } from "../../services/login-services/login-services";
 
-const LoginForm = () => {
+const LoginForm = () => { 
   const [isOtp, setIsOtp] = useState(false);
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const { 
     handleAppLogin, 
     redirectToGoogleLogin, 
-    validateAdminToken
   } = useAuthService();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,26 +30,25 @@ const LoginForm = () => {
 
     const processLogin = async () => {
       if (token) {
-        const isAdmin = validateAdminToken(token);
-
-        if (isAdmin) {
+          setLoading(true);
           const response = await handleAppLogin(token);
 
           if (response.success) {
+
             router.push("/dashboard");
+
           } else {
             setError(response.message || "Login failed.");
           }
-        } else {
-          setError("You do not have admin privileges.");
-        }
+          setLoading(false);
+        
       } else if (errorParam) {
         setError(errorParam || "Authentication failed.No account found");
       }
     };
 
     processLogin();
-  }, [searchParams, handleAppLogin, validateAdminToken, router]);
+  }, [searchParams, handleAppLogin, router]);
 
   /**
    * Handles Google login.
@@ -83,6 +82,7 @@ const LoginForm = () => {
         <ButtonComponent
           label="Continue with Google"
           onClick={handleGoogleLogin}
+          loading={loading} 
         />
         <div className={styles.divider}>
           <div className={styles.hr}></div>

@@ -1,6 +1,4 @@
 import jwt from "jsonwebtoken";
-import { setCookie } from "@/utils/intersection";
-import http from "@/utils/http";
 
 export const useAuthService = () => {
 
@@ -23,71 +21,73 @@ export const useAuthService = () => {
     }
   };
 
-  const handleAppLogin = async (
-    token: string
-  ): Promise<{ success: boolean; message?: string }> => { 'token jjklj'
-    try {
-      const payload = { token:`token ${token}` } as unknown as JSON;
-      // Send a POST request to the verification endpoint
-      const { body } = await http().post("/api/admin/auth/verify-admin",payload);
-      // If the API returns a successful resptonse
-      if (body.status && body.data) {
 
-        // Set the cookie with the token
-        await setCookie(body.response, {
-          token: body.data.token,
-        });
+  const handleAppLogin = async (token: string) => {
+  try {
+    // Validate the token and check if the user is an admin
+    const isAdmin = validateAdminToken(token);
 
-        return {
-          success: true,
-          message: "Login successful.",
-        };
+    if (isAdmin) {
+      // If the user is an admin, set the cookie
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+      
+
+      // Parse the response JSON
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        return { success: true, message: data.message || "Login successful", data };
+      } else {
+        return { success: false, message: data.message || "Failed to set cookie" };
       }
+    } else {
+      return { success: false, message: "You do not have admin privileges." };
+    }
+  } catch (error) {
+    console.error("Error in handleAppLogin:", error);
+    return { success: false, message: "An error occurred while processing login." };
+  }
+  };
 
-      return {
-        success: false,
-        message: body.message || "Login failed.",
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        message: error?.response?.data?.message || "An error occurred during login.",
-      };
+  const handleLogout = async () => {
+    try {
+      // Call the logout API route
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Redirect to login page after successful logout
+        window.location.href = "/";
+        return { success: true, message: data.message || "Logout successful" };
+      } else {
+        return { success: false, message: data.message || "Logout failed" };
+      }
+    } catch (error) {
+      console.error("Error in handleLogout:", error);
+      return { success: false, message: "An error occurred during logout." };
     }
   };
 
-  return { 
-    redirectToGoogleLogin, 
+  return {
     handleAppLogin,
-    validateAdminToken 
+    redirectToGoogleLogin,
+    validateAdminToken
   };
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// //the following functions are not  removed from the login page
 
 // /**
 //  * Sends an OTP to the provided email address.
