@@ -19,6 +19,7 @@ interface ButtonProps {
   filter?: boolean; // Add filter flag to props
   className?: string;
   content?: React.ReactNode; // Content prop for custom rendering
+  loading?: boolean;
 }
 
 const ButtonComponent: React.FC<ButtonProps> = ({
@@ -30,6 +31,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   filter = false, // Default to false if not provided
   className = "",
   content,
+  
 }) => {
   // Determine class based on the theme prop
   const getButtonClass = (theme: string) => {
