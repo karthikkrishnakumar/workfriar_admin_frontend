@@ -1,34 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import GridContainer from "@/themes/components/grid-container/grid-container";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import styles from "./employee-details.module.scss";
-import { useEmployeeData } from "../../services/organization-services/organization-services";
 
 interface EmployeeDetailsProps {
-  employeeId: string;
+  employeeData: any; // Receiving employee data as a prop
+  loading: boolean;
+  error: string | null;
 }
 
-const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({ employeeId }) => {
-  const [employeeData, setEmployeeData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const getEmployeeData = async () => {
-      try {
-        const data = await useEmployeeData().fetchEmployeeData(employeeId);
-        console.log(data);
-        setEmployeeData(data.data);
-      } catch (err: any) {
-        setError("Failed to fetch employee details");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getEmployeeData();
-  }, [employeeId]);
-
+const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({
+  employeeData,
+  loading,
+  error,
+}) => {
   // Fallback demo data
   const demoData = {
     avatar: {
@@ -64,7 +49,7 @@ const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({ employeeId }) => {
         ],
         fields_two: [
           { label: "Location", value: employeeData.location },
-          { label: "Phone number", value: employeeData.phone },
+          { label: "Phone number", value: employeeData.phone_number },
           { label: "Employee role", value: employeeData.role },
           { label: "Department", value: employeeData.department },
           { label: "Reporting Manager", value: employeeData.reporting_manager },

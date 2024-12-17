@@ -20,7 +20,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Client", path: "/projects/client", backButtonNeeded: false },
     { title: "Task Category", path: "/projects/task-category", backButtonNeeded: false },
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false },
-    { title: "Organization", path: "/organization", backButtonNeeded: false },
+    { title: "Organization", path: "/organization", backButtonNeeded: false ,actionButton: { label: "Add Employee", icon: Icons.plusLight, modalType: "addEmployeeModal" } },
     { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false },
     { title: "Timesheet Report", path: "/time-sheet-report", backButtonNeeded: false },
     { title: "Profile", path: "/profile", backButtonNeeded: true },
@@ -60,6 +60,7 @@ const ModuleHeaderWrapper = () => {
 
   return (
         <ModuleHeader title={title} isBackButtonNeeded={isBackButtonNeeded}  actionButton={actionButton ? { ...actionButton, onClick: openModalBasedOnPage } : null} />
+
   );
 };
 
