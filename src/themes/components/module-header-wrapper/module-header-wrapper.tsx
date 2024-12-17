@@ -14,6 +14,23 @@ const ModuleHeaderWrapper = () => {
 
   // Define the pages and their corresponding data
   const pages = [
+    { title: "Dashboard", path: "/dashboard", backButtonNeeded: false },
+    { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false },
+    { title: "Project List", path: "/projects", backButtonNeeded: false },
+    { title: "Client", path: "/projects/client", backButtonNeeded: false },
+    { title: "Task Category", path: "/projects/task-category", backButtonNeeded: false },
+    { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false },
+    { title: "Organization", path: "/organization", backButtonNeeded: false ,actionButton: { label: "Add Employee", icon: Icons.plusLight, modalType: "addEmployeeModal" } },
+    { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false },
+    { title: "Timesheet Report", path: "/time-sheet-report", backButtonNeeded: false },
+    { title: "Profile", path: "/profile", backButtonNeeded: true },
+    { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false },
+    { title: "Report details", path: "/project-status-report/report-details/[id]", backButtonNeeded: true  },
+    { title: "Review Timesheet", path: "/time-sheet/review-timesheet/[id]", backButtonNeeded: true  },
+    { title: "Admin Settings", path: "/settings", backButtonNeeded: false },
+    { title: "Permissions Settings", path: "/settings/permissions", backButtonNeeded: false },
+    { title: "Notifications", path: "/notifications", backButtonNeeded: false },
+    { title: "Employee Details", path: "/organization/employee-details/[id]", backButtonNeeded: true  },
 
     { title: "Dashboard", path: "/dashboard", backButtonNeeded: false, actionButton: null},
     { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false, actionButton: null},
@@ -31,6 +48,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Admin Settings", path: "/settings", backButtonNeeded: false,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } },
     { title: "Permissions Settings", path: "/settings/permissions/[id]", backButtonNeeded: false, actionButton: null},
     { title: "Notifications", path: "/notifications", backButtonNeeded: false, actionButton: null},
+
     { title: "Holidays", path: "/holidays", backButtonNeeded: true, actionButton: { label: "Add Holidays", icon: Icons.plusLight, modalType: "roleModal" }},
   ];
 
@@ -60,6 +78,7 @@ const ModuleHeaderWrapper = () => {
 
   return (
         <ModuleHeader title={title} isBackButtonNeeded={isBackButtonNeeded}  actionButton={actionButton ? { ...actionButton, onClick: openModalBasedOnPage } : null} />
+
   );
 };
 

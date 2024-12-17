@@ -38,11 +38,12 @@
     width: 100%;
     
   }
-  .avatarflexContainer {
+  .avatar{
     display: flex;
     margin-bottom: 20px;
-    justify-content: space-between;
-    gap: 16px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0px;
     width: 100%;
     
   }

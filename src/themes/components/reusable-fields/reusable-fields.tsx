@@ -59,6 +59,14 @@ const FormField: React.FC<FormFieldProps> = ({
     </div>
   );
 
+  console.log(value);
+
+  // Correctly handle onChange for different field types
+  const handleChange = (val: any) => {
+    if (onChange) {
+      onChange(val); // Pass the extracted value to the parent handler
+    }
+  };
   // Function to render the input field based on the type of field (select, datepicker, textarea, input)
 
   const renderField = () => {
@@ -67,7 +75,7 @@ const FormField: React.FC<FormFieldProps> = ({
         return (
           <Select
             value={value}
-            onChange={onChange}
+            onChange={handleChange}
             suffixIcon={suffixIcon || Icons.arrowDownOutline}
             className={`${styles.customSelect} ${className}`}
             placeholder={placeholder}
@@ -84,7 +92,7 @@ const FormField: React.FC<FormFieldProps> = ({
         return (
           <DatePicker
             value={value ? moment(value) : null}
-            onChange={onChange}
+            onChange={(date, dateString) => handleChange(dateString)}
             className={`${styles.customDatePicker} ${className}`}
             placeholder={placeholder ?? "dd/mm/yyyy"}
             suffixIcon={suffixIcon ?? Icons.calender}
@@ -94,8 +102,8 @@ const FormField: React.FC<FormFieldProps> = ({
       case "textarea": // If the field is a textarea
         return (
           <Input.TextArea
-            value={value}
-            onChange={onChange}
+            value={value || null}
+            onChange={(e) => handleChange(e.target.value)}
             placeholder={placeholder}
             rows={rows}
             className={`${styles.customTextarea} ${className}`}
@@ -107,7 +115,7 @@ const FormField: React.FC<FormFieldProps> = ({
         return (
           <Input
             value={value}
-            onChange={onChange}
+            onChange={(e) => handleChange(e.target.value)}
             placeholder={placeholder}
             className={`${styles.customInput} ${className}`}
           />
@@ -118,8 +126,7 @@ const FormField: React.FC<FormFieldProps> = ({
   return (
     // Form item that encapsulates the input field and label
     <Form.Item
-     label={<span style={{ color: '#6c757d' }}>{renderLabel()}</span>} 
-      name={name}
+      label={<span style={{ color: "#6c757d" }}>{renderLabel()}</span>}
       required={required}
       className={styles.formItems}
     >
