@@ -1,76 +1,71 @@
 .employeeProjectsWrapper {
-    overflow: scroll;
-    width: 100% !important;
-    padding-top: 20px;
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  overflow: scroll;
+  width: 100% !important;
+  padding-top: 20px;
+  &::-webkit-scrollbar {
+    display: none;
   }
-  
-  .tableWrapper {
-    min-width: 950px;
-  }
-  
-  .projectNameCell {
-    display: flex;
-    align-items: center;
-    padding-left: 15px;
-  }
-  
-  .projectNameSpan {
-    padding-left: 13px;
-    font-size: 16px;
-    color: var(--black);
-    transition: color 0.3s ease;
-  }
-  
-  .paginationDiv {
-    text-align: right;
-  }
-  
-  .projectClient,
-  .projectLead
-   {
-    padding-left: 13px;
-    font-size: 16px;
-    color: var(--black);
-  }
+}
 
-  .projectStatus {
-    font-size: 14px;
-    font-weight: 500;
+.tableWrapper {
+  min-width: 950px;
+}
+
+.projectNameCell {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+}
+
+.projectNameSpan {
+  padding-left: 12px;
+  font-size: 16px;
+  color: var(--black);
+  transition: color 0.3s ease;
+}
+
+.paginationDiv {
+  text-align: right;
+}
+
+.projectClient,
+.projectLead {
+  padding-left: 20px;
+  font-size: 16px;
+  color: var(--black);
+}
+
+.projectStatus {
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-golden-color-dark);
+  .arrow {
     display: flex;
-    gap:5px;
     align-items: center;
     justify-content: center;
-    color: var(--primary-golden-color-dark);
-    .arrow{
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 10px;
-    }
+    width: 10px;
   }
-  
-  
-  .projectDateRange {
-    padding-left: 15px;
-    font-size: 16px;
-    color: var(--black);
-  }
+}
 
-  .projectStatus {
-    padding-left: 5px;
-   
-  }
+.projectDateRange {
+  padding-left: 18px;
+  font-size: 16px;
+  color: var(--black);
+}
 
-  
-  .actionCell {
-    text-align: center;
-    cursor: pointer;
-  }
-  .threeDotButton{
-    color: var(--black);
-    font-size: 16px;
-  }
-  
+.projectStatus {
+  padding-left: 10px;
+}
+
+.actionCell {
+  text-align: center;
+  cursor: pointer;
+}
+.threeDotButton {
+  color: var(--black);
+  font-size: 16px;
+}

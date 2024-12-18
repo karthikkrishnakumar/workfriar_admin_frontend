@@ -4,12 +4,14 @@ import React, { useEffect, useState } from "react";
 import CustomTable, {
   RowData,
 } from "@/themes/components/custom-table/custom-table"; // Import the CustomTable
-import useEmployeeData from "../../services/organization-services/organization-services"; // Import the service function
+import UseEmployeeData, {
+  Project,
+} from "../../services/organization-services/organization-services"; // Import the service function
 import styles from "./employee-projects.module.scss"; // Optional: Add styling
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"; // Loading skeleton
 import { MoreOutlined } from "@ant-design/icons";
 import CustomAvatar from "@/themes/components/avatar/avatar";
-import { Dropdown } from "antd";
+import { Dropdown, message } from "antd";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
@@ -27,6 +29,55 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   const pageSize = 1;
 
   const menuItems = [{ key: "Details", label: "Details" }];
+
+  const handleStatusChange = async (project: Project, newStatus: string) => {
+    try {
+      // Update status on the backend
+      const response = await UseEmployeeData().updateProjectStatus(
+        project.id,
+        newStatus
+      );
+
+      // Check if the status update was successful
+      if (response?.status === true) {
+        // Update status in the frontend only if the service returns success
+        setProjects((prev) =>
+          prev.map((pro) =>
+            pro.id === project.id
+              ? {
+                  ...pro,
+                  status: (
+                    <StatusDropdown
+                      status={newStatus ? "Active" : "Inactive"}
+                      menuItems={[
+                        { key: "Completed", label: "Completed" },
+                        { key: "On Hold", label: "On Hold" },
+                        { key: "In Progress", label: "In Progress" },
+                        { key: "Cancelled", label: "Cancelled" },
+                        { key: "Not Started", label: "Not Started" },
+                      ]}
+                      onMenuClick={(key) => handleStatusChange(project, key)}
+                      arrowIcon={Icons.arrowDownFilledGold}
+                      className={styles.employeeStatus}
+                    />
+                  ),
+                }
+              : pro
+          )
+        );
+
+        message.success(
+          `Project status updated to "${newStatus}" for ${project.project_name}.`
+        );
+      } else {
+        message.error(`Failed to update status for ${project.project_name}.`);
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      message.error("An error occurred while updating project status.");
+    }
+  };
+
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: any[]): RowData[] => {
     return projects.map((project) => ({
@@ -37,11 +88,15 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
           <span className={styles.projectNameSpan}>{project.project_name}</span>
         </span>
       ),
-      client: <span className={styles.projectClient}>{project.client}</span>,
+      client: (
+        <span className={styles.projectClient}>
+          {project.client ? project.client : "--"}
+        </span>
+      ),
       dateRange: (
-        <span
-          className={styles.projectDateRange}
-        >{`${project.startDate} - ${project.endDate}`}</span>
+        <span className={styles.projectDateRange}>{`${
+          project.startDate ? project.startDate : "--/--/--"
+        } - ${project.endDate ? project.endDate : "--/--/--"}`}</span>
       ),
       projectLead: (
         <span className={styles.projectLead}>{project.project_lead}</span>
@@ -57,7 +112,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
             { key: "Not Started", label: <span>Not Started</span> },
           ]}
           onMenuClick={(key) => {
-            console.log(`Selected status: ${key} for project`, project);
+            handleStatusChange(project, key);
           }}
           arrowIcon={Icons.arrowDownFilledGold}
           className={styles.projectStatus}
@@ -82,7 +137,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   const getEmployeeProjects = async (page: number) => {
     setLoading(true);
     try {
-      const data = await useEmployeeData().fetchEmployeeProjectsData(
+      const data = await UseEmployeeData().fetchEmployeeProjectsData(
         page,
         pageSize,
         employeeId
@@ -106,7 +161,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
       title: "Project Name",
       key: "projectName",
       align: "left" as const,
-      width: 220,
+      width: 210,
     },
     { title: "Client", key: "client", align: "left" as const, width: 180 },
     {

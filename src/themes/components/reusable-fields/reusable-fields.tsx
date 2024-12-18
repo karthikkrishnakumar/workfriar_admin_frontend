@@ -36,6 +36,7 @@ export interface FormFieldProps {
   className?: string;
   rows?: number;
   suffixIcon?: React.ReactNode;
+  error?:any;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -50,6 +51,7 @@ const FormField: React.FC<FormFieldProps> = ({
   className,
   rows = 4,
   suffixIcon,
+  error,
 }) => {
   // Function to render the label with optional required indicator
   const renderLabel = () => (
@@ -124,11 +126,13 @@ const FormField: React.FC<FormFieldProps> = ({
   };
 
   return (
-    // Form item that encapsulates the input field and label
+    // Form item tha
     <Form.Item
       label={<span style={{ color: "#6c757d" }}>{renderLabel()}</span>}
       required={required}
       className={styles.formItems}
+      validateStatus={error ? "error" : ""}
+      help={error || null}
     >
       {renderField()}
       {/* Render the corresponding input field */}

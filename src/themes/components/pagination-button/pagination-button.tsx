@@ -8,7 +8,7 @@ interface PaginationComponentProps {
   current: number;
   onChange: (page: number) => void;
   showSizeChanger?: boolean;
-  className?:string;
+  className?: string;
 }
 
 const PaginationComponent: React.FC<PaginationComponentProps> = ({
@@ -17,8 +17,18 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
   current,
   onChange,
   showSizeChanger = false,
-  className
+  className,
 }) => {
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(total / pageSize);
+
+  // Hide the pagination if there are no items
+  if (total === 0) {
+    return null;
+  }
+
+  console.log(pageSize,current,total)
+
   return (
     <div className={styles.paginationDiv}>
       <Pagination
@@ -28,6 +38,17 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
         current={current}
         onChange={onChange}
         showSizeChanger={showSizeChanger}
+        itemRender={(page, type, originalElement) => {
+          if (type === "page") {
+            // Ensure page block updates dynamically
+            const isWithinRange =
+              page >= Math.max(current - 1, 1) &&
+              page <= Math.min(current + 1, totalPages);
+
+            return isWithinRange ? originalElement : null;
+          }
+          return originalElement;
+        }}
         style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
       />
     </div>

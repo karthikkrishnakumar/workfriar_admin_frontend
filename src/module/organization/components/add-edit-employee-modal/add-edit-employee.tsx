@@ -193,10 +193,22 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     { value: "UAE", label: "UAE" },
   ];
 
+  const [formErrors, setFormErrors] = React.useState<{ [key: string]: string }>(
+    {}
+  );
+
   // Handle Save action
   const handleSave = async () => {
     try {
-      // Call the service to add or edit employee data
+      setFormErrors({});
+
+      // Validate required fields manually
+      const validationErrors: { [key: string]: string } = {};
+
+      if (!formValues.department) {
+        validationErrors.department = "Department is required.";
+      }
+      // Construct the employee data object
       const employeeData: EmployeeData = {
         name: formValues.name,
         email: formValues.email,
@@ -208,7 +220,22 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
         profile_pic: formValues.avatar,
       };
 
-      await UseEmployeeData().addEmployee(employeeData);
+      // Call the service to add or edit employee data
+      const response = await UseEmployeeData().addEmployee(employeeData);
+
+      // Handle API validation errors
+      if (response?.errors) {
+        response.errors.forEach((err: { field: string; message: string }) => {
+          const fieldKey = err.field.replace(/\s+/g, "_").toLowerCase(); // Normalize field keys
+          validationErrors[fieldKey] = err.message;
+        });
+      }
+
+      // If there are validation errors, set them and stop further execution
+      if (Object.keys(validationErrors).length > 0) {
+        setFormErrors(validationErrors);
+        return;
+      }
 
       onClose && onClose(); // Close modal after successful save
     } catch (error) {
@@ -218,7 +245,8 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
   // Handle Save action
   const handleEdit = async () => {
     try {
-      // Call the service to add or edit employee data
+      // Call the
+      //  service to add or edit employee data
       const employeeData: EmployeeData = {
         id: formValues.id,
         name: formValues.name,
@@ -280,6 +308,8 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   value={formValues.name}
                   onChange={(value) => handleChange("name", value)}
                   placeholder="Enter employee name"
+                  error={formErrors.name}
+                  required
                 />
                 <FormField
                   type="input"
@@ -288,6 +318,8 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   value={formValues.email}
                   onChange={(value) => handleChange("email", value)}
                   placeholder="Enter email"
+                  error={formErrors.email}
+                  required
                 />
               </div>
 
@@ -300,6 +332,8 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   value={formValues.phone_number}
                   onChange={(value) => handleChange("phone_number", value)}
                   placeholder="Enter phone number"
+                  error={formErrors.phone_number}
+                  required
                 />
                 <FormField
                   type="select"
@@ -309,6 +343,8 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   onChange={(value) => handleChange("location", value)}
                   placeholder="Enter location"
                   options={locationOptions}
+                  error={formErrors.location}
+                  required
                 />
               </div>
 
@@ -322,15 +358,19 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   onChange={(value) => handleDepartmentChange(value)}
                   placeholder="Enter department"
                   options={departmentOptions}
+                  error={formErrors.department}
+                  required
                 />
                 <FormField
                   type="select"
                   label="Employee Role"
                   name="role"
-                  value={mode==="edit"?formValues.role:formValues.role_id}
+                  value={mode === "edit" ? formValues.role : formValues.role_id}
                   onChange={(value) => handleChange("role_id", value)}
                   placeholder="Select role"
                   options={roleOptions}
+                  error={formErrors.role_id}
+                  required
                 />
               </div>
 
@@ -344,6 +384,8 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   onChange={(value) => handleChange("reporting_manager", value)}
                   placeholder="Enter reporting manager"
                   options={reportingManagerOptions}
+                  error={formErrors.reporting_manager}
+                  required
                 />
 
                 <FormField
@@ -356,6 +398,8 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   options={
                     statusOptions.length > 0 ? statusOptions : statusFields
                   }
+                  error={formErrors.status}
+                  required
                 />
               </div>
             </Form>

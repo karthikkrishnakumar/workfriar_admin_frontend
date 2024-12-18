@@ -55,9 +55,18 @@
   gap: 16px;
 }
 
-.formItems {
-  width: 100%;
-}
+
+  .formItems {
+    width: 100%;
+
+    :global(.ant-form-item-explain-error) {
+      font-size: 11px !important;
+      color: #ff4d4f !important; // Optional: Customize the color
+      letter-spacing: 0.5px;
+    }
+  }
+
+
 .customSelect {
   border-radius: 8px;
   width: 100% !important;

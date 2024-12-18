@@ -175,7 +175,7 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
     return <div className={styles.loader}>Loading chart data...</div>;
   }
 
-  if (data?.length === 0) {
+  if ( !data ||data?.length === 0) {
     return (
       <div className={styles.noData}>
         <Empty
