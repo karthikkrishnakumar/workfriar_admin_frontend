@@ -24,10 +24,10 @@ const Client: React.FC = () => {
     const fetchDetails = async () => {
       try {
         const result = await fetchClientDetails(); // Make sure you pass the ID
-        setClientData(result);
-        setFilteredClients(mapClientData(result));
+        setClientData(result.data);
+        setFilteredClients(mapClientData(result.data));
       } catch (error) {
-        message.error("Failed to fetch project details.");
+        message.error("Failed to fetch client details.");
       }
     };
 

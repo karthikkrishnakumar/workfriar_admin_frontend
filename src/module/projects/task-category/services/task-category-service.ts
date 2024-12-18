@@ -6,9 +6,9 @@ import dayjs from "dayjs";
  * @interface TaskCategoryData
  */
 export interface TaskCategoryData {
-  _id: string;
-  task_category: string;
-  timeEntry: string;
+  id: string;
+  category: string;
+  timeentry: string;
 }
 
 /**
@@ -18,22 +18,15 @@ export default function useTaskCategoryService() {
   const fetchTaskCategoryDetails = async function (): Promise<any> {
     try {
       // Make an HTTP POST request
-      // const { body } = await http().post("/api");
-      // if (body.status) {
-      //   const response: any = {
-      //     status: body.status,
-      //     message: body.message,
-      //     data: body.data ? body.data : undefined,
-      //   };
-      //   return response;
-      // } else {
-      //   return {
-      //     status: false,
-      //     message: body.message,
-      //   };
-      // }
-      const response = taskCategoryDatas;
-      return response;
+      const { body } = await http().post("/api/user/getcategories");
+      
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message || "Task categories retrieved successfully.",
+        errors: body.errors || null,
+      };
     } catch (error) {
       // Handle unexpected errors
       return {
@@ -138,15 +131,3 @@ export default function useTaskCategoryService() {
   };
 }
 
-const taskCategoryDatas: TaskCategoryData[] = [
-  {
-    _id: "1",
-    task_category: "Testing",
-    timeEntry: "closed",
-  },
-  {
-    _id: "2",
-    task_category: "Development",
-    timeEntry: "opened",
-  },
-];

@@ -21,27 +21,22 @@ export default function useClientService() {
   const fetchClientDetails = async function (): Promise<any> {
     try {
       // Make an HTTP POST request
-      // const { body } = await http().post("/api");
-      // if (body.status) {
-      //   const response: any = {
-      //     status: body.status,
-      //     message: body.message,
-      //     data: body.data ? body.data : undefined,
-      //   };
-      //   return response;
-      // } else {
-      //   return {
-      //     status: false,
-      //     message: body.message,
-      //   };
-      // }
-      const response = clientData;
-      return response;
-    } catch (error) {
-      // Handle unexpected errors
+      const { body } = await http().post("/api/admin/all-clients");
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message || "Clients retrieved successfully.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Return a meaningful error response
       return {
         status: false,
-        message: "An error occurred. Please try again.",
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while fetching clients. Please try again.",
+        errors: error?.response?.data?.errors || null,
       };
     }
   };
@@ -110,22 +105,3 @@ export default function useClientService() {
     addClient,
   };
 }
-
-const clientData: ClientData[] = [
-  {
-    _id: "1",
-    client_name: "Techfriar Technologies",
-    location: "India",
-    client_manager: "Aswina Vinod",
-    billing_currency: "",
-    status: "completed",
-  },
-  {
-    _id: "2",
-    client_name: "Techfriar Technologies",
-    location: "Dubai",
-    client_manager: "Aswina Vinod",
-    billing_currency: "Dirham",
-    status: "completed",
-  },
-];

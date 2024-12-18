@@ -2,11 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dropdown, Tag, message } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import  {MoreOutlined}  from "@ant-design/icons";
 import styles from "./project-list.module.scss";
 import EditProjectModal from "../edit-project-modal/edit-project-modal";
 import AddProjectModal from "../add-project-modal/add-project-modal";
-import dayjs from "dayjs";
 import useProjectService, { ProjectData } from "../../services/project-service";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 import CustomTable, {
@@ -25,24 +24,20 @@ const ProjectList: React.FC = () => {
     fetchProjectDetails,
     updateProject,
   } = useProjectService();
-  const [filteredProject, setFilteredProject] = useState<
-  RowData[]
->([]);
+  const [filteredProject, setFilteredProject] = useState<RowData[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
-    null
-  );
+  const [selectedId, setSelectedId] = useState("");
   const [projectData, setProjectData] = useState<ProjectData[]>([]);
 
   // useEffect hook to fetch project data based on the ID when the component mounts
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const result = await fetchProjectDetails(); // Make sure you pass the ID
-        setProjectData(result);
-        setFilteredProject(mapProjectData(result));
+        const result = await fetchProjectDetails();
+        setProjectData(result.data);
+        setFilteredProject(mapProjectData(result.data));
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -50,6 +45,7 @@ const ProjectList: React.FC = () => {
 
     fetchDetails();
   }, []);
+
 
   /**
    * Toggles the time entry status between "closed" and "opened"
@@ -59,10 +55,11 @@ const ProjectList: React.FC = () => {
     try {
       setProjectData((prevData) => {
         const updatedData = prevData.map((item) =>
-          item._id === key
+          item.id === key
             ? {
                 ...item,
-                timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
+                timeEntry:
+                  item.open_for_time_entry === "closed" ? "opened" : "closed",
               }
             : item
         );
@@ -96,7 +93,7 @@ const ProjectList: React.FC = () => {
   ) => {
     setProjectData((prevData) =>
       prevData.map((item) =>
-        item._id === key ? { ...item, status: newStatus } : item
+        item.id === key ? { ...item, status: newStatus } : item
       )
     );
   };
@@ -105,24 +102,9 @@ const ProjectList: React.FC = () => {
    * Opens the edit modal with the selected project's data
    * @param {ProjectData} project - The project to edit
    */
-  const handleEditProject = (project: ProjectData) => {
-    setSelectedProject({
-      ...project,
-      planned_start_date: dayjs(project.planned_start_date, "DD/MM/YYYY"),
-      planned_end_date: dayjs(project.planned_end_date, "DD/MM/YYYY"),
-      actual_start_date: dayjs(project.actual_start_date, "DD/MM/YYYY"),
-      actual_end_date: dayjs(project.actual_end_date, "DD/MM/YYYY"),
-    });
+  const handleEditProject = async (project: ProjectData) => {
+    setSelectedId(project.id);
     setIsEditModalOpen(true);
-  };
-
-  /**
-   * Converts the status value to a readable format
-   * @param {string} status - The status value to convert
-   * @returns {string} - The formatted status string
-   */
-  const getStatusText = (status: ProjectData["status"]): string => {
-    return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   /**
@@ -130,9 +112,10 @@ const ProjectList: React.FC = () => {
    * @param {Record<string, any>} values - The updated values for the project
    */
   const handleEditProjectSubmit = async (values: Record<string, any>) => {
+    console.log(values)
     try {
-      const response = await updateProject(values);
-      console.log(response);
+      const response = await updateProject(selectedId,values);
+      console.log("response",response);
     } catch (err) {
       console.log("Failed.");
     }
@@ -155,15 +138,14 @@ const ProjectList: React.FC = () => {
   };
 
   const handleRowClick = (row: ProjectData) => {
-    if (row._id) {
-      const rowId = row._id;
+    if (row.id) {
+      const rowId = row.id;
       router.push(`/projects/project-details/${rowId}`);
     }
   };
 
-
   const columns: Column[] = [
-    { title: "Projects", key: "projectName", align: "left",width: 250, },
+    { title: "Projects", key: "projectName", align: "left", width: 250 },
     { title: "Client", key: "clientName", align: "left" },
     {
       title: "Actual Start & End Date",
@@ -177,129 +159,121 @@ const ProjectList: React.FC = () => {
     { title: "", key: "action", align: "left", width: 40 },
   ];
 
-    // Function to map project data to RowData format for compatibility with the table
-    const mapProjectData = (projects: ProjectData[]): RowData[] => {
-
-
-      const handleStatusClick = (
-        e: { key: string },
-        project: ProjectData
-      ) => {
-        setEffectiveDateModal(true);
-        handleStatusChange(project._id, e.key as ProjectData["status"]);
-      };
-      const handleMenuClick = (
-        e: { key: string },
-        project: ProjectData
-      ) => {
-        if (e.key === "Details") {
-          if (project._id) {
-            router.push(`/projects/project-details/${project._id}`);
-          }
-        } else if (e.key === "Edit") {
-          if (project._id) {
-            handleEditProject(project);
-          }
-        }
-        else if (e.key === "Update-timeEntry") {
-          if (project._id) {
-            handleTimeEntryChange(project._id);
-          }
-        }
-      };
-      return projects.map((project) => ({
-        _id: project._id,
-        projectName: (
-          <span className={styles.nameCell}>
-        <CustomAvatar name={project.projectName} size={50} src={project.projectLogo}/>
-        {/* Custom avatar */}
-        <span className={styles.project}>{project.projectName}</span>
-        {/* Employee name */}
-      </span>
-        ),
-        clientName: (
-          <span className={styles.project}>{project.clientName}</span>
-        ),
-        dates: (
-          <span className={styles.project}>
-            <>
-              {dayjs.isDayjs(project.actual_start_date)
-                ? project.actual_start_date.format("DD/MM/YYYY")
-                : project.actual_start_date}{" "}
-              -{" "}
-              {dayjs.isDayjs(project.actual_end_date)
-                ? project.actual_end_date.format("DD/MM/YYYY")
-                : project.actual_end_date}
-            </>
-          </span>
-        ),
-        projectLead: (
-          <span className={styles.project}>{project.projectLead}</span>
-        ),
-        timeEntry: (
-          <Tag
-            className={`${styles.timeEntryBtn} ${
-              styles[project.timeEntry]
-            }`}
-          >
-            {project.timeEntry
-              .replace(/_/g, " ")
-              .replace(/\b\w/g, (l) => l.toUpperCase())}
-          </Tag>
-        ),
-        status: (
-          <StatusDropdown
-            status={getStatusText(project.status)}
-            menuItems={[
-              { key: "completed", label: getStatusText("completed") },
-              { key: "in_progress", label: getStatusText("in_progress") },
-              { key: "on_hold", label: getStatusText("on_hold") },
-              { key: "cancelled", label: getStatusText("cancelled") },
-              { key: "not_started", label: getStatusText("not_started") },
-            ]}
-            onMenuClick={(e: any) => handleStatusClick(e, project)}
-            arrowIcon={Icons.arrowDownFilledGold}
-            className={styles.status}
-          />
-        ),
-        action: (
-          <span className={styles.actionCell}>
-            <Dropdown
-              menu={{
-                items: [
-                  { key: "Details", label: "Details" },
-                  { key: "Edit", label: "Edit" },
-                  {
-                    key: "Update-timeEntry",
-                    label:
-                      project.timeEntry === "closed"
-                        ? "Open entry"
-                        : "Close entry",
-                  },
-                ],
-                onClick: (e) => handleMenuClick(e, project),
-              }}
-              trigger={["click"]}
-            >
-              <MoreOutlined className={styles.threeDotButton} />
-            </Dropdown>
-          </span>
-        ),
-      }));
+  // Function to map project data to RowData format for compatibility with the table
+  const mapProjectData = (projects: ProjectData[]): RowData[] => {
+    const handleStatusClick = (e: { key: string }, project: ProjectData) => {
+      setEffectiveDateModal(true);
+      handleStatusChange(project.id, e.key as ProjectData["status"]);
     };
+    const handleMenuClick = (e: { key: string }, project: ProjectData) => {
+      if (e.key === "Details") {
+        if (project.id) {
+          router.push(`/projects/project-details/${project.id}`);
+        }
+      } else if (e.key === "Edit") {
+        if (project.id) {
+          handleEditProject(project);
+        }
+      } else if (e.key === "Update-timeEntry") {
+        if (project.id) {
+          handleTimeEntryChange(project.id);
+        }
+      }
+    };
+    return projects.map((project) => ({
+      _id: project.id,
+      projectName: (
+        <span className={styles.nameCell}>
+          <CustomAvatar
+            name={project.project_name}
+            size={50}
+            src={project?.project_logo}
+          />
+          {/* Custom avatar */}
+          <span className={styles.project}>{project.project_name}</span>
+          {/* Employee name */}
+        </span>
+      ),
+      clientName: <span className={styles.project}>{project.client_name}</span>,
+      dates: (
+        <span className={styles.project}>
+          <>
+            {project.actual_start_date && project.actual_end_date
+              ? `${project.actual_start_date} - ${project.actual_end_date}`
+              : "--"}
+          </>
+        </span>
+      ),
+      projectLead: (
+        <span className={styles.project}>{project.project_lead}</span>
+      ),
+      timeEntry: (
+        <Tag
+          className={`${styles.timeEntryBtn} ${
+            styles[project.open_for_time_entry]
+          }`}
+        >
+          {project.open_for_time_entry
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (l) => l.toUpperCase())}
+        </Tag>
+      ),
+      status: (
+        <StatusDropdown
+          status={project.status}
+          menuItems={[
+            { label: "Not Started", key: "Not Started" },
+            { label: "In Progress", key: "In Progress" },
+            { label: "On Hold", key: "On Hold" },
+            { label: "Cancelled", key: "Cancelled" },
+            { label: "Completed", key: "Completed" },
+          ]}
+          onMenuClick={(e: any) => handleStatusClick(e, project)}
+          arrowIcon={Icons.arrowDownFilledGold}
+          className={styles.status}
+        />
+      ),
+      action: (
+        <span className={styles.actionCell}>
+          <Dropdown
+            menu={{
+              items: [
+                { key: "Details", label: "Details" },
+                { key: "Edit", label: "Edit" },
+                {
+                  key: "Update-timeEntry",
+                  label:
+                    project.open_for_time_entry === "closed"
+                      ? "Open entry"
+                      : "Close entry",
+                },
+              ],
+              onClick: (e) => handleMenuClick(e, project),
+            }}
+            trigger={["click"]}
+          >
+            <MoreOutlined className={styles.threeDotButton} />
+          </Dropdown>
+        </span>
+      ),
+    }));
+  };
 
   return (
     <div className={styles.tableWrapper}>
-       <CustomTable
+      <CustomTable
         columns={columns}
         data={filteredProject}
         onRowClick={() => handleRowClick}
       />
       <EditProjectModal
         isEditModalOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        onClose={() => {
+          setIsEditModalOpen(false);
+        }}
         onSave={handleEditProjectSubmit}
-        initialValues={selectedProject}
+        id={selectedId}
+        // initialValues={selectedProject}
       />
       <AddProjectModal
         isAddModalOpen={isAddModalOpen}

@@ -36,8 +36,8 @@ const TaskCategory: React.FC = () => {
     const fetchDetails = async () => {
       try {
         const result = await fetchTaskCategoryDetails(); // Make sure you pass the ID
-        setTaskCategoryData(result);
-        setFilteredTaskCategory(mapCategoryData(result)); // Map the data to RowData format
+        setTaskCategoryData(result.data);
+        setFilteredTaskCategory(mapCategoryData(result.data)); // Map the data to RowData format
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -45,7 +45,6 @@ const TaskCategory: React.FC = () => {
 
     fetchDetails();
   }, []);
-
 
   /**
    * Toggles the time entry status between "closed" and "opened"
@@ -55,10 +54,10 @@ const TaskCategory: React.FC = () => {
     try {
       setTaskCategoryData((prevData) => {
         const updatedData = prevData.map((item) =>
-          item._id === key
+          item.id === key
             ? {
                 ...item,
-                timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
+                timeEntry: item.timeentry === "closed" ? "opened" : "closed",
               }
             : item
         );
@@ -116,26 +115,29 @@ const TaskCategory: React.FC = () => {
   ];
   // Function to map category data to RowData format for compatibility with the table
   const mapCategoryData = (categorys: TaskCategoryData[]): RowData[] => {
-    const handleMenuClick = (e: { key: string }, category: TaskCategoryData) => {
+    const handleMenuClick = (
+      e: { key: string },
+      category: TaskCategoryData
+    ) => {
       if (e.key === "Edit") {
-        if (category._id) {
+        if (category.id) {
           handleEditTaskCategory(category);
         }
       } else if (e.key === "Update-timeEntry") {
-        if (category._id) {
-          handleTimeEntryChange(category._id);
+        if (category.id) {
+          handleTimeEntryChange(category.id);
         }
       }
     };
     return categorys.map((category) => ({
-      _id: category._id,
+      _id: category.id,
       task_category: (
-        <span className={styles.category}>{category.task_category}</span>
+        <span className={styles.category}>{category.category}</span>
       ),
       timeEntry: (
-        <Tag className={`${styles.timeEntryBtn} ${styles[category.timeEntry]}`}>
-          {category.timeEntry.charAt(0).toUpperCase() +
-            category.timeEntry.slice(1)}
+        <Tag className={`${styles.timeEntryBtn} ${styles[category.timeentry]}`}>
+          {category.timeentry.charAt(0).toUpperCase() +
+            category.timeentry.slice(1)}
         </Tag>
       ),
       action: (
@@ -147,7 +149,7 @@ const TaskCategory: React.FC = () => {
                 {
                   key: "Update-timeEntry",
                   label:
-                    category.timeEntry === "closed"
+                    category.timeentry === "closed"
                       ? "Open entry"
                       : "Close entry",
                 },
