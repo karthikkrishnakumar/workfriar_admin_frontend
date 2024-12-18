@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 import useProjectListService, {
   ProjectData,
+  ProjectLead,
 } from "../../services/project-service";
 import { message } from "antd";
 import dayjs from "dayjs";
@@ -27,31 +28,27 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
     null
   );
   const [clientData, setClientData] = useState<ClientData[]>([]);
+  const [projectLeads, setProjectLeads] = useState<ProjectLead[]>([]);
   const [taskCategoryData, setTaskCategoryData] = useState<TaskCategoryData[]>(
     []
   );
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchClients = async () => {
+    const fetchDetails = async () => {
       try {
-        const result = await useClientService().fetchClientDetails(); // Make sure you pass the ID
-        setClientData(result.data);
+        const clients = await useClientService().fetchClientDetails(); // Make sure you pass the ID
+        setClientData(clients.data);
+        const categories = await useTaskCategoryService().fetchTaskCategoryDetails(); // Make sure you pass the ID
+        setTaskCategoryData(categories.data);
+        const projectLeads = await useProjectListService().fetchProjectLeads(); // Make sure you pass the ID
+        setProjectLeads(projectLeads.data);
       } catch (error) {
-        message.error("Failed to fetch client details.");
-      }
-    };
-    const fetchCategories = async () => {
-      try {
-        const result = await useTaskCategoryService().fetchTaskCategoryDetails(); // Make sure you pass the ID
-        setTaskCategoryData(result.data);
-      } catch (error) {
-        message.error("Failed to fetch client details.");
+        message.error("Failed to fetch details.");
       }
     };
 
-    fetchClients();
-    fetchCategories();
+    fetchDetails();
   }, []);
 
   useEffect(() => {
@@ -78,7 +75,8 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
             actual_end_date: result.data.actual_end_date
               ? dayjs(result.data.actual_end_date)
               : null,
-            project_lead: result.data?.project_lead.full_name,
+            client_name:result.data.client_name.client_name,
+            project_lead:result.data.project_lead.full_name
           };
 
           setSelectedProject(formattedResult);
@@ -192,7 +190,10 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                   name: "project_lead",
                   label: "Project lead",
                   type: "select",
-                  options: [{ label: "Aswina Vinod", value: "aswina_vinod" }],
+                  options: projectLeads.map((lead) => ({
+                    label: lead.full_name, 
+                    value: lead._id,
+                  })),
                   required: true,
                 },
                 

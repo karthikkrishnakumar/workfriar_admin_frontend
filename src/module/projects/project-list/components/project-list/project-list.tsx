@@ -6,7 +6,7 @@ import  {MoreOutlined}  from "@ant-design/icons";
 import styles from "./project-list.module.scss";
 import EditProjectModal from "../edit-project-modal/edit-project-modal";
 import AddProjectModal from "../add-project-modal/add-project-modal";
-import useProjectService, { ProjectData } from "../../services/project-service";
+import useProjectService, { ProjectDisplayData } from "../../services/project-service";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 import CustomTable, {
   Column,
@@ -15,6 +15,8 @@ import CustomTable, {
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 const ProjectList: React.FC = () => {
   const router = useRouter();
   const {
@@ -29,23 +31,25 @@ const ProjectList: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [selectedId, setSelectedId] = useState("");
-  const [projectData, setProjectData] = useState<ProjectData[]>([]);
+  const [projectData, setProjectData] = useState<ProjectDisplayData[]>([]);
+  const dispatch = useDispatch();
+  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
 
   // useEffect hook to fetch project data based on the ID when the component mounts
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        const result = await fetchProjectDetails();
-        setProjectData(result.data);
-        setFilteredProject(mapProjectData(result.data));
-      } catch (error) {
-        message.error("Failed to fetch project details.");
-      }
-    };
-
     fetchDetails();
   }, []);
 
+
+  const fetchDetails = async () => {
+    try {
+      const result = await fetchProjectDetails();
+      setProjectData(result.data);
+      setFilteredProject(mapProjectData(result.data));
+    } catch (error) {
+      message.error("Failed to fetch project details.");
+    }
+  };
 
   /**
    * Toggles the time entry status between "closed" and "opened"
@@ -89,7 +93,7 @@ const ProjectList: React.FC = () => {
    */
   const handleStatusChange = (
     key: string,
-    newStatus: ProjectData["status"]
+    newStatus: ProjectDisplayData["status"]
   ) => {
     setProjectData((prevData) =>
       prevData.map((item) =>
@@ -100,9 +104,9 @@ const ProjectList: React.FC = () => {
 
   /**
    * Opens the edit modal with the selected project's data
-   * @param {ProjectData} project - The project to edit
+   * @param {ProjectDisplayData} project - The project to edit
    */
-  const handleEditProject = async (project: ProjectData) => {
+  const handleEditProject = async (project: ProjectDisplayData) => {
     setSelectedId(project.id);
     setIsEditModalOpen(true);
   };
@@ -116,6 +120,7 @@ const ProjectList: React.FC = () => {
     try {
       const response = await updateProject(selectedId,values);
       console.log("response",response);
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
@@ -131,13 +136,14 @@ const ProjectList: React.FC = () => {
     try {
       const response = await addProject(values);
       console.log(response);
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
     setIsAddModalOpen(false); // Close modal after submission
   };
 
-  const handleRowClick = (row: ProjectData) => {
+  const handleRowClick = (row: ProjectDisplayData) => {
     if (row.id) {
       const rowId = row.id;
       router.push(`/projects/project-details/${rowId}`);
@@ -145,7 +151,7 @@ const ProjectList: React.FC = () => {
   };
 
   const columns: Column[] = [
-    { title: "Projects", key: "projectName", align: "left", width: 250 },
+    { title: "Projects", key: "projectName", align: "left", width: 200 },
     { title: "Client", key: "clientName", align: "left" },
     {
       title: "Actual Start & End Date",
@@ -156,16 +162,16 @@ const ProjectList: React.FC = () => {
     { title: "Project lead", key: "projectLead", align: "left" },
     { title: "Time entry", key: "timeEntry", align: "left" },
     { title: "Status", key: "status", align: "left" },
-    { title: "", key: "action", align: "left", width: 40 },
+    { title: "", key: "action", align: "left", width: 30 },
   ];
 
   // Function to map project data to RowData format for compatibility with the table
-  const mapProjectData = (projects: ProjectData[]): RowData[] => {
-    const handleStatusClick = (e: { key: string }, project: ProjectData) => {
+  const mapProjectData = (projects: ProjectDisplayData[]): RowData[] => {
+    const handleStatusClick = (e: { key: string }, project: ProjectDisplayData) => {
       setEffectiveDateModal(true);
-      handleStatusChange(project.id, e.key as ProjectData["status"]);
+      handleStatusChange(project.id, e.key as ProjectDisplayData["status"]);
     };
-    const handleMenuClick = (e: { key: string }, project: ProjectData) => {
+    const handleMenuClick = (e: { key: string }, project: ProjectDisplayData) => {
       if (e.key === "Details") {
         if (project.id) {
           router.push(`/projects/project-details/${project.id}`);
@@ -222,9 +228,9 @@ const ProjectList: React.FC = () => {
         <StatusDropdown
           status={project.status}
           menuItems={[
-            { label: "Not Started", key: "Not Started" },
-            { label: "In Progress", key: "In Progress" },
-            { label: "On Hold", key: "On Hold" },
+            { label: "Not started", key: "Not Started" },
+            { label: "In progress", key: "In Progress" },
+            { label: "On hold", key: "On Hold" },
             { label: "Cancelled", key: "Cancelled" },
             { label: "Completed", key: "Completed" },
           ]}
@@ -266,7 +272,7 @@ const ProjectList: React.FC = () => {
         data={filteredProject}
         onRowClick={() => handleRowClick}
       />
-      <EditProjectModal
+      {isEditModalOpen && (<EditProjectModal
         isEditModalOpen={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false);
@@ -274,12 +280,15 @@ const ProjectList: React.FC = () => {
         onSave={handleEditProjectSubmit}
         id={selectedId}
         // initialValues={selectedProject}
-      />
-      <AddProjectModal
-        isAddModalOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSave={handleAddProjectSubmit}
-      />
+      />)}
+      {isOpen && modalType === "roleModal" && (
+         <AddProjectModal
+         isAddModalOpen={isAddModalOpen}
+         onClose={() => setIsAddModalOpen(false)}
+         onSave={handleAddProjectSubmit}
+       />
+      )}
+     
       <ModalFormComponent
         isVisible={effectiveDateModal}
         title={"Effective date"}

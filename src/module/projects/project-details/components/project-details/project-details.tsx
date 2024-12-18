@@ -27,7 +27,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     const fetchDetails = async () => {
       try {
         const result = await fetchProjectDetailsById(id); // Make sure you pass the ID
-        setProject(result);
+        setProject(result.data);
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -49,15 +49,15 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
       <GridContainer
           isGrid={true}
           avatar={{
-            name: project?.projectName,
-            profile: project?.projectLogo || "",
+            name: project?.project_name,
+            profile: project?.project_logo || "",
             size: 100}}
           fields={[
             {
               label: "Project",
-              value: project?.projectName,
+              value: project?.project_name,
             },
-            { label: "Project lead", value: project?.projectLead },
+            { label: "Project lead", value: project?.project_lead?.full_name },
           ]}
         />
 
@@ -67,7 +67,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
           fields={[
             {
               label: "Project description",
-              value: project?.projectDescription,
+              value: project.description || "--",
             }
           ]}
         />
@@ -78,7 +78,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
           fields={[
             {
               label: "Client",
-              value: project?.clientName,
+              value: project?.client_name?.client_name,
             },
             { label: "Planned start date", value: dayjs(project?.planned_start_date).format("DD/MM/YYYY") },
             { label: "Planned end date", value: dayjs(project?.planned_end_date).format("DD/MM/YYYY") },
@@ -86,11 +86,11 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
             { label: "Actual end date", value: dayjs(project?.actual_end_date).format("DD/MM/YYYY") },
             {
               label: "Billing model",
-              value: project?.billing_model,
+              value: project?.billing_model || "--",
             },
             {
               label: "Time entry",
-              value: project?.timeEntry,
+              value: project?.open_for_time_entry,
             },
             {
               label: "Status",

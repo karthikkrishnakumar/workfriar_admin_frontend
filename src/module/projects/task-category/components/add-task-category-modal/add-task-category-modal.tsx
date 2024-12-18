@@ -10,6 +10,8 @@ const AddTaskCategoryModal: React.FC<AddModalProps> = ({
   onSave,
 }) => {
 
+  const values = {};
+
   return (
     <ModalFormComponent
       isVisible={isAddModalOpen}
@@ -17,19 +19,20 @@ const AddTaskCategoryModal: React.FC<AddModalProps> = ({
       title={"Add Task Category"}
       primaryButtonLabel={"Save"}
       secondaryButtonLabel={"Cancel"}
+      initialValues={values}
       onPrimaryClick={onSave}
       formRows={[
         {
           fields: [
             {
-              name: "task_category",
+              name: "category",
               label: "Task category",
               type: "text",
               required: true,
-              placeholder:"Enter task category"
+              placeholder: "Enter task category",
             },
             {
-              name: "time_entry",
+              name: "timeentry",
               label: "Time entry",
               type: "select",
               options: [
@@ -37,7 +40,7 @@ const AddTaskCategoryModal: React.FC<AddModalProps> = ({
                 { label: "Closed", value: "closed" },
               ],
               required: true,
-              placeholder:"Select time entry"
+              placeholder: "Select time entry",
             },
           ],
         },
