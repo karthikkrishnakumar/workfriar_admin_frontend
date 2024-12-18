@@ -66,15 +66,6 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
     }
   };
 
-  /**
-   * Converts the status value to a readable format
-   * @param {string} status - The status value to convert
-   * @returns {string} - The formatted status string
-   */
-  const getStatusText = (status: TeamMember["status"]): string => {
-    return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-  };
-
   const columns: Column[] = [
     { title: "Team member", key: "name", align: "left",width:300 },
     { title: "Email id", key: "email", align: "left" },
@@ -89,14 +80,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
 
   // Function to map member data to RowData format for compatibility with the table
   const mapMemberData = (members: TeamMember[]): RowData[] => {
-    /**
-     * Converts the status value to a readable format
-     * @param {string} status - The status value to convert
-     * @returns {string} - The formatted status string
-     */
-    const getStatusText = (status: TeamMember["status"]): string => {
-      return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-    };
+
 
     const handleStatusClick = (
       e: { key: string },
@@ -133,13 +117,10 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       ),
       status: (
         <StatusDropdown
-          status={getStatusText(member.status)}
+          status={member.status}
           menuItems={[
-            { key: "completed", label: getStatusText("completed") },
-            { key: "in_progress", label: getStatusText("in_progress") },
-            { key: "on_hold", label: getStatusText("on_hold") },
-            { key: "cancelled", label: getStatusText("cancelled") },
-            { key: "not_started", label: getStatusText("not_started") },
+            { key: "Active", label: "Active"},
+            { key: "Inactive", label: "Inactive" },
           ]}
           onMenuClick={(e: any) => handleStatusClick(e, member)}
           arrowIcon={Icons.arrowDownFilledGold}

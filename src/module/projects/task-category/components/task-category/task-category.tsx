@@ -16,12 +16,12 @@ import CustomTable, {
 const TaskCategory: React.FC = () => {
   const {
     addTaskCategory,
-    changeTimeEntry,
     fetchTaskCategoryDetails,
     updateTaskCategory,
   } = useTaskCategoryService();
+  const [selectedId, setSelectedId] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(true);
   const [filteredTaskCategory, setFilteredTaskCategory] = useState<RowData[]>(
     []
   );
@@ -33,40 +33,35 @@ const TaskCategory: React.FC = () => {
 
   // useEffect hook to fetch forecast data based on the ID when the component mounts
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        const result = await fetchTaskCategoryDetails(); // Make sure you pass the ID
-        setTaskCategoryData(result);
-        setFilteredTaskCategory(mapCategoryData(result)); // Map the data to RowData format
-      } catch (error) {
-        message.error("Failed to fetch project details.");
-      }
-    };
-
     fetchDetails();
   }, []);
 
+  const fetchDetails = async () => {
+    try {
+      const result = await fetchTaskCategoryDetails(); // Make sure you pass the ID
+      setTaskCategoryData(result.data);
+      setFilteredTaskCategory(mapCategoryData(result.data)); // Map the data to RowData format
+    } catch (error) {
+      message.error("Failed to fetch project details.");
+    }
+  };
 
   /**
    * Toggles the time entry status between "closed" and "opened"
    * @param {string} key - The key of the TaskCategory to update
    */
-  const handleTimeEntryChange = async (key: string) => {
+  const handleTimeEntryChange = async (category: TaskCategoryData) => {
     try {
-      setTaskCategoryData((prevData) => {
-        const updatedData = prevData.map((item) =>
-          item._id === key
-            ? {
-                ...item,
-                timeEntry: item.timeEntry === "closed" ? "opened" : "closed",
-              }
-            : item
-        );
-        setFilteredTaskCategory(mapCategoryData(updatedData)); // Re-map to RowData format
-        return updatedData;
-      });
-      const response = await changeTimeEntry(key);
+      const timeentry = category.timeentry === "closed"
+      ? "opened"
+      : "closed"
+      const payload = {
+        ...category,
+        timeentry:timeentry
+      } 
+      const response = await updateTaskCategory(payload);
       console.log(response);
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
@@ -78,6 +73,7 @@ const TaskCategory: React.FC = () => {
    */
   const handleEditTaskCategory = (TaskCategory: TaskCategoryData) => {
     setSelectedTaskCategory(TaskCategory);
+    setSelectedId(TaskCategory.id);
     setIsEditModalOpen(true);
   };
 
@@ -87,8 +83,14 @@ const TaskCategory: React.FC = () => {
    */
   const handleEditTaskCategorySubmit = async (values: Record<string, any>) => {
     try {
-      const response = await updateTaskCategory(values);
+      
+      const payload = {
+        ...values,
+        id:selectedId
+      } 
+      const response = await updateTaskCategory(payload);
       console.log(response);
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
@@ -103,6 +105,7 @@ const TaskCategory: React.FC = () => {
     try {
       const response = await addTaskCategory(values);
       console.log(response);
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
@@ -116,26 +119,29 @@ const TaskCategory: React.FC = () => {
   ];
   // Function to map category data to RowData format for compatibility with the table
   const mapCategoryData = (categorys: TaskCategoryData[]): RowData[] => {
-    const handleMenuClick = (e: { key: string }, category: TaskCategoryData) => {
+    const handleMenuClick = (
+      e: { key: string },
+      category: TaskCategoryData
+    ) => {
       if (e.key === "Edit") {
-        if (category._id) {
+        if (category.id) {
           handleEditTaskCategory(category);
         }
       } else if (e.key === "Update-timeEntry") {
-        if (category._id) {
-          handleTimeEntryChange(category._id);
+        if (category.id) {
+          handleTimeEntryChange(category);
         }
       }
     };
     return categorys.map((category) => ({
-      _id: category._id,
+      _id: category.id,
       task_category: (
-        <span className={styles.category}>{category.task_category}</span>
+        <span className={styles.category}>{category.category}</span>
       ),
       timeEntry: (
-        <Tag className={`${styles.timeEntryBtn} ${styles[category.timeEntry]}`}>
-          {category.timeEntry.charAt(0).toUpperCase() +
-            category.timeEntry.slice(1)}
+        <Tag className={`${styles.timeEntryBtn} ${styles[category.timeentry]}`}>
+          {category.timeentry.charAt(0).toUpperCase() +
+            category.timeentry.slice(1)}
         </Tag>
       ),
       action: (
@@ -147,7 +153,7 @@ const TaskCategory: React.FC = () => {
                 {
                   key: "Update-timeEntry",
                   label:
-                    category.timeEntry === "closed"
+                    category.timeentry === "closed"
                       ? "Open entry"
                       : "Close entry",
                 },

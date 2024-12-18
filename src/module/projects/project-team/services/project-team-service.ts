@@ -41,7 +41,7 @@ export interface ProjectTeamData {
   ProjectName: string;
   start_date: string | dayjs.Dayjs;
   end_date: string | dayjs.Dayjs;
-  status: "completed" | "in_progress" | "on_hold" | "cancelled" | "not_started";
+  status: string;
   ProjectTeam: TeamMember[];
 }
 
@@ -288,7 +288,7 @@ const teamMembers: TeamMember[] = [
 
     start_date: "11/10/2024",
     end_date: "02/05/2025",
-    status: "completed",
+    status: "Inactive",
   },
   {
     _id: "2",
@@ -299,7 +299,7 @@ const teamMembers: TeamMember[] = [
 
     start_date: "11/10/2024",
     end_date: "02/05/2025",
-    status: "completed",
+    status: "Inactive",
   },
 ];
 
@@ -315,7 +315,7 @@ const projectTeamData: ProjectTeamData[] = [
         name: "Alice",
         profile_pic:
           "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-        status: "completed",
+        status: "Inactive",
       },
       { _id: "2", name: "Bob", profile_pic: null, status: "completed" },
       { _id: "3", name: "Charlie", profile_pic: null, status: "completed" },
@@ -323,7 +323,7 @@ const projectTeamData: ProjectTeamData[] = [
     ],
     start_date: "11/10/2024",
     end_date: "02/05/2025",
-    status: "completed",
+    status: "Inactive",
   },
   {
     _id: "2",
@@ -332,20 +332,20 @@ const projectTeamData: ProjectTeamData[] = [
     ProjectName: "Platinum Hire",
     start_date: "15/11/2024",
     end_date: "03/06/2025",
-    status: "in_progress",
+    status: "Inactive",
     ProjectTeam: [
       {
         _id: "1",
         name: "Alice",
         profile_pic: null,
-        status: "completed",
+        status: "Inactive",
       },
       {
         _id: "2",
         name: "Bob",
         profile_pic:
           "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-        status: "completed",
+        status: "Inactive",
       },
       { _id: "3", name: "Charlie", profile_pic: null, status: "completed" },
     ],

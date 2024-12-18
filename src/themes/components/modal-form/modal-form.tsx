@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Select, DatePicker, Upload } from "antd";
+import { Modal, Form, Input, Select, DatePicker, Upload, Checkbox } from "antd";
 import { useState } from "react";
 import { RcFile } from "antd/es/upload";
 import styles from "./modal-form.module.scss";
@@ -10,7 +10,7 @@ import Icons from "@/themes/images/icons/icons";
 interface FormField {
   name: string;
   label: string;
-  type: "text" | "select" | "date" | "textarea" | "image";
+  type: "text" | "select" | "date" | "textarea" | "image" | "checkboxSelect";
   required?: boolean;
   options?: { label: string; value: string | number }[];
   placeholder?: string;
@@ -89,6 +89,16 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
             options={field.options}
             showSearch
           />
+        );
+        case "checkboxSelect": // New case for checkbox select
+        return (
+<Select
+          placeholder={field.placeholder}
+          mode="multiple"
+          options={field.options}
+          showSearch
+          style={{ width: "100%" }}
+        />
         );
       case "date":
         return (

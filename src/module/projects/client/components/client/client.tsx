@@ -24,10 +24,10 @@ const Client: React.FC = () => {
     const fetchDetails = async () => {
       try {
         const result = await fetchClientDetails(); // Make sure you pass the ID
-        setClientData(result);
-        setFilteredClients(mapClientData(result));
+        setClientData(result.data);
+        setFilteredClients(mapClientData(result.data));
       } catch (error) {
-        message.error("Failed to fetch project details.");
+        message.error("Failed to fetch client details.");
       }
     };
 
@@ -70,15 +70,6 @@ const Client: React.FC = () => {
     }
   };
 
-  /**
-   * Converts the status value to a readable format
-   * @param {string} status - The status value to convert
-   * @returns {string} - The formatted status string
-   */
-  const getStatusText = (status: ClientData["status"]): string => {
-    return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-  };
-
   const columns: Column[] = [
     { title: "Client", key: "client_name", align: "left",width:300 },
     { title: "Location", key: "location", align: "left" },
@@ -116,13 +107,13 @@ const Client: React.FC = () => {
       ),
       status: (
         <StatusDropdown
-          status={getStatusText(client.status)}
+          status={client.status}
           menuItems={[
-            { key: "completed", label: getStatusText("completed") },
-            { key: "in_progress", label: getStatusText("in_progress") },
-            { key: "on_hold", label: getStatusText("on_hold") },
-            { key: "cancelled", label: getStatusText("cancelled") },
-            { key: "not_started", label: getStatusText("not_started") },
+            { label: "Not started", key: "Not started" },
+            { label: "In progress", key: "In progress" },
+            { label: "On hold", key: "On hold" },
+            { label: "Cancelled", key: "Cancelled" },
+            { label: "Completed", key: "Completed" },
           ]}
           onMenuClick={(e: any) => handleStatusClick(e, client)}
           arrowIcon={Icons.arrowDownFilledGold}

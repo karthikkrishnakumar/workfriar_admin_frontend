@@ -17,9 +17,9 @@ const EditTaskCategoryModal: React.FC<EditTaskCategoryModalProps> = ({
   initialValues,
 }) => {
   const values = initialValues || {
-    key: "",
-    task_category: "",
-    timeEntry: "opened",
+    id: "",
+    category: "",
+    timeentry: "opened",
   };
 
   return (
@@ -35,14 +35,14 @@ const EditTaskCategoryModal: React.FC<EditTaskCategoryModalProps> = ({
         {
           fields: [
             {
-              name: "task_category",
+              name: "category",
               label: "Task category",
               type: "text",
               required: true,
-              placeholder: "Select task category",
+              placeholder: "Enter task category",
             },
             {
-              name: "timeEntry",
+              name: "timeentry",
               label: "Time entry",
               type: "select",
               options: [
