@@ -33,18 +33,32 @@ export interface EmployeeData {
   profile_pic: string | null; // The avatar can be null if not provided
 }
 
+interface ValidationError {
+  field: string;
+  message: string;
+}
 export interface AddUserResponse {
   status: string;
   data: EmployeeData;
   message: string;
-  errors: Error | null;
+  errors?: ValidationError[]; 
 }
 
 export interface EditUserResponse {
   status: string;
   data: EmployeeData;
   message: string;
-  errors: Error | null;
+  errors?: ValidationError[]; 
+}
+
+export interface Project {
+  id: string;
+  project_name: string;
+  client?: string;
+  startDate?: string;
+  endDate?: string;
+  project_lead: string;
+  status: string;
 }
 
 /**
@@ -100,11 +114,11 @@ export default function UseEmployeeData() {
         props
       );
 
-      console.log(body, "project ");
+     
       return {
         status: body.status,
         data: body.data || null,
-        total: body.pagination.totalPages,
+        total: body.pagination.totalItems,
         message: body.message || "Successfully fetched employee projects data.",
         errors: body.errors || null,
       };
@@ -135,11 +149,11 @@ export default function UseEmployeeData() {
 
     try {
       const { body } = await http().post("/api/admin/employees-data", props);
-
+      console.log(body,"cbshjab");
       return {
         status: body.status,
         data: body.data || null,
-        total: body.pagination.totalPages,
+        total: body.pagination.totalItems,
         message: body.message || "Successfully fetched employee data.",
         errors: body.errors || null,
       };
@@ -217,6 +231,44 @@ export default function UseEmployeeData() {
     }
   };
 
+  const updateEmployeeStatus = async (
+    id: string, newStatus: boolean
+  ): Promise<any> => {
+    const props: JSON = <JSON>(<unknown>{id,status: newStatus});
+
+    try {
+      const { body } = await http().post("/api/admin/update-employee-status", props);
+      return {
+        status: body.status,
+        data: body.data || null,
+        message: body.message || "Successfully edited employee data.",
+        errors: body.errors || null,
+      };
+    } catch (error) {
+      console.error("Error error editing employee data:", error);
+      throw error; // Rethrow the error if something goes wrong
+    }
+  };
+
+  const updateProjectStatus = async (
+    id: string, newStatus: string
+  ): Promise<any> => {
+    const props: JSON = <JSON>(<unknown>{id,status: newStatus});
+
+    try {
+      const { body } = await http().post("/api/admin/update-employee-projects-status", props);
+      return {
+        status: body.status,
+        data: body.data || null,
+        message: body.message || "Successfully edited employee data.",
+        errors: body.errors || null,
+      };
+    } catch (error) {
+      console.error("Error error editing employee data:", error);
+      throw error; // Rethrow the error if something goes wrong
+    }
+  };
+
   return {
     fetchEmployeeData,
     fetchEmployeeProjectsData,
@@ -224,5 +276,7 @@ export default function UseEmployeeData() {
     fetchRolesByDepartment,
     addEmployee,
     editEmployee,
+    updateEmployeeStatus,
+    updateProjectStatus
   };
 }

@@ -8,7 +8,7 @@ import CustomTable, {
 import UseEmployeeData from "../../services/organization-services/organization-services";
 import styles from "./organization-table.module.scss"; // Optional: Add styling
 import CustomAvatar from "@/themes/components/avatar/avatar"; // Avatar component import
-import { Dropdown } from "antd";
+import { Dropdown, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import { useRouter } from "next/navigation"; // Import Next.js router
@@ -40,11 +40,66 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
-  const pageSize = 1; // Number of rows per page
+  const pageSize = 3; // Number of rows per page
   const router = useRouter();
   const dispatch = useDispatch();
 
   const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
+
+  const handleStatusChange = async (employee: Employee, newStatus: boolean) => {
+    try {
+      // Update status on the backend
+      const response = await UseEmployeeData().updateEmployeeStatus(
+        employee.id,
+        newStatus
+      );
+
+      // Check if the status update was successful
+      if (response?.status === true) {
+        // Update status in the frontend only if the service returns success
+        setFilteredEmployees((prev) =>
+          prev.map((emp) =>
+            emp.id === employee.id
+              ? {
+                  ...emp,
+                  status: (
+                    <StatusDropdown
+                      status={newStatus ? "Active" : "Inactive"}
+                      menuItems={[
+                        { key: "active", label: <span>Active</span> },
+                        { key: "inactive", label: <span>Inactive</span> },
+                      ]}
+                      onMenuClick={(key) =>
+                        handleStatusChange(employee, key === "active")
+                      }
+                      arrowIcon={Icons.arrowDownFilledGold}
+                      className={styles.employeeStatus}
+                    />
+                  ),
+                }
+              : emp
+          )
+        );
+        message.success(
+          `Status updated to ${newStatus ? "Active" : "Inactive"} for ${
+            employee.name
+          }.`
+        );
+        console.log(`Status updated successfully for ${employee.name}`);
+      } else {
+        // Handle unsuccessful response
+        console.error(
+          "Failed to update status. Backend response was not successful."
+        );
+        message.error(
+          `Failed to update status for ${employee.name}. Please try again.`
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      message.error("An unexpected error occurred. Please try again.");
+    }
+  };
 
   const menuItems = [
     { key: "Details", label: "Details" },
@@ -88,7 +143,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
             { key: "inactive", label: <span>Inactive</span> },
           ]}
           onMenuClick={(key) => {
-            console.log(`Selected status: ${key} for employee`, employee);
+            handleStatusChange(employee, key === "active");
           }}
           arrowIcon={Icons.arrowDownFilledGold}
           className={styles.employeeStatus}
