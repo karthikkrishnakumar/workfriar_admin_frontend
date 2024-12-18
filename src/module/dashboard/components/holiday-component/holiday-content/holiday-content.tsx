@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import styles from "./holiday-content.module.scss";
 import Icons from "@/themes/images/icons/icons";
 import { Holidays } from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import { Empty } from "antd";
 
 interface HolidayProps {
-  holidays:Holidays[];
+  holidays:Holidays[] | [];
 }
 
 const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
@@ -26,7 +27,19 @@ const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
 
   const currentHoliday = holidays[currentIndex];
 
+  const isEmptyData = !holidays
+
   return (
+    <>
+    {isEmptyData ? (
+      // Render empty illustration when no data is available
+      <div className={styles.emptyWrapper}>
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="No Holidays Available"
+        />
+      </div>
+    ) : (
     <div className={styles.holidayCard}>
       <button onClick={handlePrev} className={styles.arrowButton}>
         {Icons.arrowLeftGrey}
@@ -39,6 +52,8 @@ const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
         {Icons.arrowRightGrey}
       </button>
     </div>
+    )}
+    </>
   );
 };
 

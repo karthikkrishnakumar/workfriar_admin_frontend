@@ -2,7 +2,6 @@ import Axios, { AxiosRequestConfig } from "axios";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-
 const axioClient = Axios.create({
   headers: {
     "X-Requested-With": "XMLHttpRequest",
@@ -24,8 +23,8 @@ const http = () => {
     hasFile?: boolean
   ) => {
     // const fullUrl = `${url}`;
-    const fullUrl = `http://localhost:3002${url}`;
-    console.log(fullUrl)
+    const fullUrl = `${backendUrl}${url}`;
+    console.log(fullUrl);
     let config: AxiosRequestConfig = {
       headers: {
         "Content-Type": "application/json",
@@ -54,7 +53,7 @@ const http = () => {
           error.response.data.status = false;
           return error.response;
         } else if (error.response) {
-          console.log(error)
+          console.log(error);
           error.response.data = {
             status: false,
             message: error?.response?.data.message,
@@ -75,9 +74,7 @@ const http = () => {
     return { response, body };
   };
 
-
-
-  return { post};
+  return { post };
 };
 
 export default http;

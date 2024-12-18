@@ -197,8 +197,6 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
         <Bar data={chartData} options={options ?? undefined} />
       </div>
 
-      {/* Use the new CustomScrollbar component */}
-
       <CustomScrollbar
         totalItems={data?.length}
         visibleItemCount={ITEMS_TO_SHOW}

@@ -1,6 +1,7 @@
 // components/Timesheet.tsx
 import React from "react";
 import styles from "./timesheet-due.module.scss";
+import { Empty } from "antd";
 
 // Define the TimesheetProps interface for the component's expected props
 /**
@@ -42,74 +43,96 @@ interface TimesheetDue {
  */
 
 const Timesheet: React.FC<TimesheetDataProps> = ({ data }) => {
+  const isEmptyData = data.length === 0;
+
   return (
-    <div className={styles.timesheet}>
-      {/* Grid for first 4 days */}
-      <div className={styles.grid}>
-        {data?.slice(0, 4).map((day, index) => {
-          // Determine if the date is empty
-          const isMuted = day.isDisable;
+    <>
+      {isEmptyData ? (
+        // Render empty illustration when no data is available
+        <div className={styles.emptyWrapper}>
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description="No Timesheet due Available"
+          />
+        </div>
+      ) : (
+        <div className={styles.timesheet}>
+          {/* Grid for first 4 days */}
+          <div className={styles.grid}>
+            {data?.slice(0, 4).map((day, index) => {
+              // Determine if the date is empty
+              const isMuted = day.isDisable;
 
-          return (
-            <div
-              key={index}
-              className={`${styles.day} ${isMuted ? styles.muted : ""}`}
-            >
-              <div
-                className={`${styles.dayOfWeek} ${
-                  isMuted ? styles.mutedDay : ""
-                }`}
-              >
-                {day.dayOfWeek}
-              </div>
-              <div
-                className={`${styles.date} ${isMuted ? styles.mutedDate : ""}`}
-              >
-                {day.date}
-              </div>
-              <div
-                className={`${styles.hours} ${isMuted ? styles.mutedHour : ""}`}
-              >
-                {day.hours}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              return (
+                <div
+                  key={index}
+                  className={`${styles.day} ${isMuted ? styles.muted : ""}`}
+                >
+                  <div
+                    className={`${styles.dayOfWeek} ${
+                      isMuted ? styles.mutedDay : ""
+                    }`}
+                  >
+                    {day.dayOfWeek}
+                  </div>
+                  <div
+                    className={`${styles.date} ${
+                      isMuted ? styles.mutedDate : ""
+                    }`}
+                  >
+                    {day.date}
+                  </div>
+                  <div
+                    className={`${styles.hours} ${
+                      isMuted ? styles.mutedHour : ""
+                    }`}
+                  >
+                    {day.hours}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-      {/* Grid for next 4 days */}
-      <div className={styles.grid}>
-        {data?.slice(4, 8).map((day, index) => {
-          // Determine if the date is empty
-          const isMuted = day.isDisable;
+          {/* Grid for next 4 days */}
+          <div className={styles.grid}>
+            {data?.slice(4, 8).map((day, index) => {
+              // Determine if the date is empty
+              const isMuted = day.isDisable;
 
-          return (
-            <div
-              key={index}
-              className={`${styles.day} ${isMuted ? styles.muted : ""}`}
-            >
-              <div
-                className={`${styles.dayOfWeek} ${
-                  isMuted ? styles.mutedDay : ""
-                }`}
-              >
-                {day.dayOfWeek}
-              </div>
-              <div
-                className={`${styles.date} ${isMuted ? styles.mutedDate : ""}`}
-              >
-                {day.date}
-              </div>
-              <div
-                className={`${styles.hours} ${isMuted ? styles.mutedHour : ""}`}
-              >
-                {day.hours}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+              return (
+                <div
+                  key={index}
+                  className={`${styles.day} ${isMuted ? styles.muted : ""}`}
+                >
+                  <div
+                    className={`${styles.dayOfWeek} ${
+                      isMuted ? styles.mutedDay : ""
+                    }`}
+                  >
+                    {day.dayOfWeek}
+                  </div>
+                  <div
+                    className={`${styles.date} ${
+                      isMuted ? styles.mutedDate : ""
+                    }`}
+                  >
+                    {day.date}
+                  </div>
+                  <div
+                    className={`${styles.hours} ${
+                      isMuted ? styles.mutedHour : ""
+                    }`}
+                  >
+                    {day.hours}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

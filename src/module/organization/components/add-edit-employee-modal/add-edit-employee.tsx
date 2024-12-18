@@ -203,7 +203,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
         phone_number: formValues.phone_number,
         location: formValues.location,
         role_id: formValues.role_id,
-        reporting_manager: formValues.reporting_manager_id,
+        reporting_manager: formValues.reporting_manager,
         status: formValues.status,
         profile_pic: formValues.avatar,
       };
@@ -327,7 +327,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   type="select"
                   label="Employee Role"
                   name="role"
-                  value={formValues.role}
+                  value={mode==="edit"?formValues.role:formValues.role_id}
                   onChange={(value) => handleChange("role_id", value)}
                   placeholder="Select role"
                   options={roleOptions}
