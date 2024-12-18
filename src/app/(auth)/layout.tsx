@@ -1,3 +1,4 @@
+import ReduxProvider from "@/redux/redux-provider";
 import styles from "../../themes/styles/page.module.css";
 
 export default function Layout({
@@ -16,7 +17,10 @@ export default function Layout({
       />
       
     </div>
+    <ReduxProvider>
     <div className={styles.layoutContent}>{children}</div>
+    </ReduxProvider>
+
   </div>
     
   );

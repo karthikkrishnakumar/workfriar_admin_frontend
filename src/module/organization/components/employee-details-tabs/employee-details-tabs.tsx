@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./employee-details-tabs.module.scss";
 import TabComponent from "@/themes/components/tabs/tabs";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
@@ -8,23 +8,49 @@ import ButtonComponent from "@/themes/components/button/button";
 import EmployeeDetails from "../employee-details/employee-details";
 import EmployeeProjects from "../employee-projects/employee-projects";
 import AddEditEmployeeModal from "../add-edit-employee-modal/add-edit-employee";
+import UseEmployeeData from "../../services/organization-services/organization-services";
 
 interface EmpoyeeDetailsTabProps {
   id: string;
 }
 
 const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
+  const [employeeData, setEmployeeData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [employeeLoading, setEmployeeLoading] = useState(true);
+
   setTimeout(() => {
     setLoading(false);
   }, 200);
+
+  useEffect(() => {
+    const getEmployeeData = async () => {
+      try {
+        const data = await UseEmployeeData().fetchEmployeeData(id);
+        setEmployeeData(data.data);
+      } catch (err: any) {
+        setError("Failed to fetch employee details");
+      } finally {
+        setEmployeeLoading(false);
+      }
+    };
+
+    getEmployeeData();
+  }, [id]);
 
   const tabs = [
     {
       key: "employee",
       label: <>Employee</>,
-      content: <EmployeeDetails employeeId={id} />, // Pass props to ProjectDetails
+      content: (
+        <EmployeeDetails
+          employeeData={employeeData}
+          loading={employeeLoading}
+          error={error}
+        />
+      ), // Pass props to ProjectDetails
     },
     {
       key: "employee-projects",
@@ -67,7 +93,11 @@ const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
       )}
 
       {isModalVisible && (
-        <AddEditEmployeeModal onClose={handleCloseModal} mode="edit" />
+        <AddEditEmployeeModal
+          onClose={handleCloseModal}
+          mode="edit"
+          employeeData={employeeData}
+        />
       )}
     </div>
   );

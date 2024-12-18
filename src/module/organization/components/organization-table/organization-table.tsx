@@ -5,7 +5,7 @@ import CustomTable, {
   Column,
   RowData,
 } from "@/themes/components/custom-table/custom-table"; // Adjust the path based on your project structure
-import { useEmployeeData } from "../../services/organization-services/organization-services";
+import UseEmployeeData from "../../services/organization-services/organization-services";
 import styles from "./organization-table.module.scss"; // Optional: Add styling
 import CustomAvatar from "@/themes/components/avatar/avatar"; // Avatar component import
 import { Dropdown } from "antd";
@@ -15,6 +15,10 @@ import { useRouter } from "next/navigation"; // Import Next.js router
 import Icons from "@/themes/images/icons/icons";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
+import { useDispatch, useSelector } from "react-redux";
+import AddEditEmployeeModal from "../add-edit-employee-modal/add-edit-employee";
+import { RootState } from "@/redux/store";
+import { closeModal } from "@/redux/slices/modalSlice";
 
 interface OrganizationTableProps {
   activeTab: string;
@@ -38,6 +42,9 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
   const pageSize = 1; // Number of rows per page
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
 
   const menuItems = [
     { key: "Details", label: "Details" },
@@ -106,7 +113,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await useEmployeeData().fetchEmployeesData(
+      const response = await UseEmployeeData().fetchEmployeesData(
         page,
         pageSize,
         activeTab
@@ -150,7 +157,6 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
     { title: "", key: "action", align: "left", width: 40 },
   ];
 
-  
   const handleRowClick = (row: Employee) => {
     if (row.id) {
       const rowId = row.id;
@@ -173,6 +179,10 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page); // Update the current page
+  };
+
+  const handleCloseModal = () => {
+    dispatch(closeModal());
   };
 
   return (
@@ -213,6 +223,8 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
           className={styles.customPagination}
         />
       </div>
+
+      {isOpen && <AddEditEmployeeModal mode="add" onClose={handleCloseModal} />}
     </>
   );
 };

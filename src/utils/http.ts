@@ -7,7 +7,7 @@ const axioClient = Axios.create({
   headers: {
     "X-Requested-With": "XMLHttpRequest",
   },
-  withCredentials: false,
+  withCredentials: true,
 });
 
 const http = () => {
@@ -74,7 +74,10 @@ const http = () => {
     const body = response.data;
     return { response, body };
   };
-  return { post };
+
+
+
+  return { post};
 };
 
 export default http;
