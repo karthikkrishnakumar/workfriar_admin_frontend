@@ -49,3 +49,13 @@
     white-space: nowrap;
   }
 }
+
+.emptyWrapper .ant-empty-image > svg g ellipse {
+  fill: gold !important; /* Change ellipse color */
+}
+.emptyWrapper .ant-empty-image > svg g g path:nth-of-type(1) {
+  fill: goldenrod !important; /* Change the first path color */
+}
+.emptyWrapper .ant-empty-image > svg g g path:nth-of-type(2) {
+  fill: darkgoldenrod !important; /* Change the second path color */
+}
