@@ -102,6 +102,7 @@ const TaskCategory: React.FC = () => {
    * @param {Record<string, any>} values - The values for the new task category
    */
   const handleAddTaskCategorySubmit = async (values: Record<string, any>) => {
+    console.log(values);
     try {
       const response = await addTaskCategory(values);
       console.log(response);

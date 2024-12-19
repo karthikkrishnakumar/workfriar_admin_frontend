@@ -16,7 +16,7 @@ const ModuleHeaderWrapper = () => {
   const pages = [
     { title: "Dashboard", path: "/dashboard", backButtonNeeded: false },
     { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false },
-    { title: "Project List", path: "/projects", backButtonNeeded: false },
+    { title: "Project List", path: "/projects", backButtonNeeded: false ,actionButton: { label: "Add Project", icon: Icons.plusLight, modalType: "addProjectModal" }},
     { title: "Client", path: "/projects/client", backButtonNeeded: false },
     { title: "Task Category", path: "/projects/task-category", backButtonNeeded: false },
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false },

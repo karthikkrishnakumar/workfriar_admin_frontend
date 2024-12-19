@@ -110,7 +110,7 @@ export default function useProjectListService() {
     payload: any
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-console.log(props);
+    
     try {
       // Make an HTTP POST request
       const { body } = await http().post(`/api/project/update/${id}`, props);
@@ -138,6 +138,7 @@ console.log(props);
       payload,
     });
     try {
+      console.log(props);
       // Make an HTTP POST request
       const { body } = await http().post("/api", props);
       if (body.status) {
@@ -191,31 +192,29 @@ console.log(props);
     }
   };
 
-  const addProject = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
+  const addProject = async function (
+    payload: any
+  ): Promise<any> {
+    const props: JSON = <JSON>(<unknown>payload);
+    console.log("props", props);
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/api", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error) {
-      // Handle unexpected errors
+      const { body } = await http().post(`/api/project/add`, props);
+      // Handle the API response and return filtered data
       return {
-        status: false,
-        message: "An error occurred. Please try again.",
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message,
+        errors: body.errors,
+      };
+    } catch (error: any) {
+      // Return a meaningful error response
+      return {
+        status: error,
+        message:
+          error?.response?.message ||
+          "An error occurred while adding the project.",
+        errors: error?.response?.data?.errors || null,
       };
     }
   };

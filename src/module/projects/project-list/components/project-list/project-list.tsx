@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dropdown, Tag, message } from "antd";
-import  {MoreOutlined}  from "@ant-design/icons";
+import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-list.module.scss";
-import EditProjectModal from "../edit-project-modal/edit-project-modal";
-import AddProjectModal from "../add-project-modal/add-project-modal";
-import useProjectService, { ProjectDisplayData } from "../../services/project-service";
+import ProjectModal from "../add-edit-project-modal/add-edit-project-modal";
+import useProjectService, {
+  ProjectDisplayData,
+} from "../../services/project-service";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
 import CustomTable, {
   Column,
@@ -17,6 +18,7 @@ import StatusDropdown from "@/themes/components/status-dropdown-menu/status-drop
 import Icons from "@/themes/images/icons/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { closeModal } from "@/redux/slices/modalSlice";
 const ProjectList: React.FC = () => {
   const router = useRouter();
   const {
@@ -28,7 +30,6 @@ const ProjectList: React.FC = () => {
   } = useProjectService();
   const [filteredProject, setFilteredProject] = useState<RowData[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   const [projectData, setProjectData] = useState<ProjectDisplayData[]>([]);
@@ -39,7 +40,6 @@ const ProjectList: React.FC = () => {
   useEffect(() => {
     fetchDetails();
   }, []);
-
 
   const fetchDetails = async () => {
     try {
@@ -134,13 +134,17 @@ const ProjectList: React.FC = () => {
 
   const handleAddProjectSubmit = async (values: Record<string, any>) => {
     try {
+      // const payload = {
+      //   ...values,
+      //   project_logo:''
+      // }
       const response = await addProject(values);
       console.log(response);
       fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
-    setIsAddModalOpen(false); // Close modal after submission
+    dispatch(closeModal());
   };
 
   const handleRowClick = (row: ProjectDisplayData) => {
@@ -167,11 +171,17 @@ const ProjectList: React.FC = () => {
 
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: ProjectDisplayData[]): RowData[] => {
-    const handleStatusClick = (e: { key: string }, project: ProjectDisplayData) => {
+    const handleStatusClick = (
+      e: { key: string },
+      project: ProjectDisplayData
+    ) => {
       setEffectiveDateModal(true);
       handleStatusChange(project.id, e.key as ProjectDisplayData["status"]);
     };
-    const handleMenuClick = (e: { key: string }, project: ProjectDisplayData) => {
+    const handleMenuClick = (
+      e: { key: string },
+      project: ProjectDisplayData
+    ) => {
       if (e.key === "Details") {
         if (project.id) {
           router.push(`/projects/project-details/${project.id}`);
@@ -272,23 +282,25 @@ const ProjectList: React.FC = () => {
         data={filteredProject}
         onRowClick={() => handleRowClick}
       />
-      {isEditModalOpen && (<EditProjectModal
-        isEditModalOpen={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-        }}
-        onSave={handleEditProjectSubmit}
-        id={selectedId}
-        // initialValues={selectedProject}
-      />)}
-      {isOpen && modalType === "roleModal" && (
-         <AddProjectModal
-         isAddModalOpen={isAddModalOpen}
-         onClose={() => setIsAddModalOpen(false)}
-         onSave={handleAddProjectSubmit}
-       />
+      {isEditModalOpen && (
+        <ProjectModal
+        type="edit"
+          isModalOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+          }}
+          onSave={handleEditProjectSubmit}
+          id={selectedId}
+          // initialValues={selectedProject}
+        />
       )}
-     
+      {isOpen && modalType === "addProjectModal" && (
+        <ProjectModal
+          isModalOpen={true}
+          onClose={() => dispatch(closeModal())}
+          onSave={handleAddProjectSubmit}
+        />
+      )}
       <ModalFormComponent
         isVisible={effectiveDateModal}
         title={"Effective date"}
