@@ -6,7 +6,6 @@ import styles from "./review-timesheet.module.scss";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import { TeamMember } from "@/module/approval-center/services/all-time-sheet-services";
-import { fetchUserData } from "../services/review-timesheet-services";
 
 interface ReviewTimesheetProps {
   id: string;
@@ -20,15 +19,15 @@ const ReviewTimesheet: React.FC<ReviewTimesheetProps> = ({ id }) => {
   const [employeeProfile, setEmployeeProfile] = useState<TeamMember>();
 
   useEffect(() => {
-    fetchUserData(
-      id,
-      setPendingCount,
-      setApprovedCount,
-      setRejectedCount,
-      setOverDueCount,
-      setloading,
-      setEmployeeProfile
-    );
+    // fetchUserData(
+    //   id,
+    //   setPendingCount,
+    //   setApprovedCount,
+    //   setRejectedCount,
+    //   setOverDueCount,
+    //   setloading,
+    //   setEmployeeProfile
+    // );
   }, []);
   return (
     <div className={styles.reviewTimesheetWrapper}>

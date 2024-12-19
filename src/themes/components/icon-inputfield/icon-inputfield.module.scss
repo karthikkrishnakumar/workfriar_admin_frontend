@@ -1,6 +1,8 @@
 .iconInputFieldLeftWrapper {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .iconInputFieldRightWrapper {
@@ -13,6 +15,11 @@
   outline: none;
   border: none;
   width: 100%;
+  padding: 0 7px;
+  font-size: var(--default-font-size);
+  line-height: 14px;
+
+
 }
 .inputfield:hover {
   background-color: transparent;
@@ -26,8 +33,10 @@
 }
 
 .icon {
-  width: 15px;
-  height: 15px;
+  padding-top: 2px;
+  display: flex;
+
+
 }
 
 .inputfield::placeholder {

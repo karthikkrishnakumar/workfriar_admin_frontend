@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import styles from "./project-selector.module.scss";
 import SearchBar from "@/themes/components/search-bar/search-bar";
 import Icons from "@/themes/images/icons/icons";
-import {
-  fetchProjects,
-} from "../../services/time-sheet-services";
 import { ProjectList } from "@/interfaces/timesheets/timesheets";
+import UseAllTimesheetsServices from "../../services/all-timesheet-services/all-time-sheet-services";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import { Empty } from "antd";
 
 /**
  * Interface for the props of the ProjectSelector component.
@@ -53,39 +53,62 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
     setActiveProjectId(projectId); // Highlight active project
     setShowSubmodal(!showSubmodal); // Toggle submodal visibility
     if (setSelectedProject) {
-      setSelectedProject({id: projectId, project_name: projectName}); // Pass selected project to parent
+      setSelectedProject({ id: projectId, project_name: projectName }); // Pass selected project to parent
     }
   };
 
   const [projects, setProjects] = useState<ProjectList[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchTask = async () => {
+    try {
+      setLoading(true);
+      const response =
+        await UseAllTimesheetsServices().fetchProjectsToAddNewTimesheet();
+      setProjects(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   /**
    * Effect hook to fetch the list of projects from the service.
    */
   useEffect(() => {
-    fetchProjects(setProjects);
+    fetchTask();
   }, []);
 
   return (
     <div className={styles.projectSelectorWrapper}>
       <h2>Projects</h2>
       <SearchBar value="" placeholder="Search" onChange={() => {}} />
-      <ul>
-        {projects.map((project) => (
-          <li
-            key={project.id}
-            className={`${styles.projectListItem} ${
-              activeProjectId === project.id ? styles.active : ""
-            }`}
-            onClick={() => toggleShowSubModal(project.id, project.project_name)} // Updated click handler
-          >
-            <div className={styles.projectWrapper}>
-              {project.project_name}
-              <span>{Icons.arrowRightGrey}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {loading ? (
+        <SkeletonLoader />
+      ) : projects.length === 0 ? (
+        <Empty />
+      ) : (
+        <>
+          <ul>
+            {projects?.map((project) => (
+              <li
+                key={project.id}
+                className={`${styles.projectListItem} ${
+                  activeProjectId === project.id ? styles.active : ""
+                }`}
+                onClick={() =>
+                  toggleShowSubModal(project.id, project.project_name)
+                } // Updated click handler
+              >
+                <div className={styles.projectWrapper}>
+                  {project.project_name}
+                  <span>{Icons.arrowRightGrey}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
       <button className={styles.addProjectButton}>
         <span>{Icons.plusGold}</span> Add Project
       </button>

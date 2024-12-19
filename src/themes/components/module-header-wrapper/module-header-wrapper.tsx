@@ -34,7 +34,7 @@ const ModuleHeaderWrapper = () => {
 
     { title: "Dashboard", path: "/dashboard", backButtonNeeded: false, actionButton: null},
     { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false, actionButton: null},
-    { title: "Project List", path: "/projects", backButtonNeeded: false, actionButton: null,  },
+    { title: "Project List", path: "/projects", backButtonNeeded: false, actionButton: { label: "Add Project", icon: Icons.plusLight, modalType: "projectModal" },  },
     { title: "Client", path: "/projects/client", backButtonNeeded: false, actionButton: null,  },
     { title: "Task Category", path: "/projects/task-category", backButtonNeeded: false, actionButton: null},
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false, actionButton: null},
@@ -45,7 +45,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false, actionButton: null},
     { title: "Report details", path: "/project-status-report/report-details/[id]", backButtonNeeded: true, actionButton: null},
     { title: "Review Timesheet", path: "/time-sheet/review-timesheet/[id]", backButtonNeeded: true, actionButton: null},
-    { title: "Admin Settings", path: "/settings", backButtonNeeded: false,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } },
+    { title: "Admin Settings", path: "/settings", backButtonNeeded: false,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } }, 
     { title: "Permissions Settings", path: "/settings/permissions/[id]", backButtonNeeded: false, actionButton: null},
     { title: "Notifications", path: "/notifications", backButtonNeeded: false, actionButton: null},
 

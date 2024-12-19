@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./text-area-button.module.scss";
 import Icons from "@/themes/images/icons/icons";
 import ModalComponent from "@/themes/components/modal/modal";
@@ -38,19 +38,24 @@ const TextAreaButton: React.FC<TextAreaButtonProps> = ({
   onclickFunction,
   disabled = false,
   showTaskDetailModal = false,
-  value = "",
+  value,
   setvalue,
   readOnly = false,
 }) => {
   // Local state for the text area value
-  const [textAreaValue, setTextAreaValue] = useState(value);
+  const [textAreaValue, setTextAreaValue] = useState<string>("");
+
+
+  useEffect(() => {
+    setTextAreaValue(value!); // Update local state when the value prop changes
+  },[value])
 
   /**
    * Handles saving the text area value and updating the parent component's state.
    */
   const handleSave = () => {
     if (setvalue) {
-      setvalue(textAreaValue); // Update parent state with the text area value
+      setvalue(textAreaValue!); // Update parent state with the text area value
     }
     if (onclickFunction) {
       onclickFunction(); // Close the modal

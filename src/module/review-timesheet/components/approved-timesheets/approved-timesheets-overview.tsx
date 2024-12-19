@@ -4,8 +4,8 @@ import styles from "./approved-timesheet-overview.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import { OverViewTable, TimesheetDataTable, WeekDaysData } from "@/interfaces/timesheets/timesheets";
-import { fetchApprovedTimesheets, fetchApprovedWeeks } from "../../services/review-timesheet-services";
 import ApprovedDetailedView from "./approved-timesheet-table/approved-detailed-view";
+import { isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
 
 /**
  * Props for the ApprovedOverviewTable component.
@@ -41,10 +41,10 @@ const ApprovedOverviewTable: React.FC<ApprovedOverviewProps> = ({
    * Fetches detailed timesheet data for a specific date range and switches to the detailed view.
    * @param dateRange - The selected date range for which to fetch timesheet data
    */
-  const handleFetchTimesheets = (dateRange: string) => {
+  const handleFetchTimesheets = (startDate: string, endDate:string) => {
     setShowDetailedView(true);
     setLoading(true);
-    fetchApprovedTimesheets(dateRange, setTimesheetTable, setDates, setLoading);
+    // fetchApprovedTimesheets(dateRange, setTimesheetTable, setDates, setLoading);
   };
 
   /**
@@ -58,10 +58,10 @@ const ApprovedOverviewTable: React.FC<ApprovedOverviewProps> = ({
    * Transforms the overview table data into a format suitable for rendering.
    */
   const data = table.map((element) => ({
-    period: <span className={styles.dataCell}>{element.dateRange}</span>,
+    period: <span className={styles.dataCell}>{isoTOenGB(element.startDate)}-{isoTOenGB(element.endDate)}</span>,
     loggedTime: (
       <span className={styles.dataCell}>
-        {element.loggedHours ? element.loggedHours : "--"} hr
+        {element.totalHours ? element.totalHours : "--"} hr
       </span>
     ),
     approvedTime: (
@@ -72,7 +72,7 @@ const ApprovedOverviewTable: React.FC<ApprovedOverviewProps> = ({
     action: (
       <span
         className={`${styles.dataCell} ${styles.actionDataCell}`}
-        onClick={() => handleFetchTimesheets(element.dateRange)}
+        onClick={() => handleFetchTimesheets(element.startDate, element.endDate)}
       >
         Details
       </span>
@@ -84,7 +84,7 @@ const ApprovedOverviewTable: React.FC<ApprovedOverviewProps> = ({
    */
   useEffect(() => {
     setLoading(true);
-    fetchApprovedWeeks(setTable, setLoading);
+    // fetchApprovedWeeks(setTable, setLoading);
   }, []);
 
   return (

@@ -2,6 +2,7 @@
 
 import React, { forwardRef, ReactNode, CSSProperties } from "react";
 import styles from "./custom-table.module.scss";
+import { Empty } from "antd";
 
 export interface Column {
   /**
@@ -63,7 +64,7 @@ interface CustomTableProps {
  * @returns {JSX.Element} The rendered table component.
  */
 const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
-  ({ columns, data, className ,onRowClick }, ref) => {
+  ({ columns, data, className, onRowClick }, ref) => {
     /**
      * Helper function to generate column-specific styles.
      * @param {Column} column - The column definition.
@@ -74,7 +75,8 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
 
       // Handle column width
       if (column.width) {
-        style.width = typeof column.width === "number" ? `${column.width}px` : column.width;
+        style.width =
+          typeof column.width === "number" ? `${column.width}px` : column.width;
         style.flexShrink = 0; // Prevent shrinking for fixed-width columns
       } else {
         style.flex = 1; // Allow flexible width distribution
@@ -92,10 +94,7 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
     };
 
     return (
-      <div
-        ref={ref}
-        className={`${styles.tableContainer} ${className || ""}`}
-      >
+      <div ref={ref} className={`${styles.tableContainer} ${className || ""}`}>
         {/* Table Header */}
         <div className={styles.tableHeader}>
           {columns.map((column) => (
@@ -110,8 +109,9 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
         </div>
 
         {/* Table Body */}
-        <div className={styles.tableBody}>
-          {data.map((row, index) => {
+        {data.length > 0 ? (
+          <div className={styles.tableBody}>
+          {data?.map((row, index) => {
             // Determine styling flags
             const isImportant = row.flag === "important";
             const rowOfTotal = row.flag === "rowOfTotal";
@@ -122,10 +122,10 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
               <div
                 key={index}
                 className={`${styles.dataRow} 
-                  ${isImportant ? styles.importantRow : ""} 
-                  ${rowOfTotal ? styles.rowOfTotal : ""} 
-                  ${isFirstRow ? styles.firstRow : ""} 
-                  ${isLastRow ? styles.lastRow : ""}`}
+                ${isImportant ? styles.importantRow : ""} 
+                ${rowOfTotal ? styles.rowOfTotal : ""} 
+                ${isFirstRow ? styles.firstRow : ""} 
+                ${isLastRow ? styles.lastRow : ""}`}
                 onClick={() => onRowClick && onRowClick(row)} // Trigger onRowClick if provided
                 role="button"
                 tabIndex={0}
@@ -144,6 +144,10 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
             );
           })}
         </div>
+          
+        ) : (
+          <Empty description="No Data available" />
+        )}
       </div>
     );
   }

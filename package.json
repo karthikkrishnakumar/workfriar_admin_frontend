@@ -20,7 +20,7 @@
     "cookie": "1.0.2",
     "date-fns": "4.1.0",
     "dayjs": "1.11.13",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "9.0.2",
     "moment": "2.30.1",
     "next": "14.2.5",
     "react": "19.0.0-rc-66855b96-20241106",
@@ -34,7 +34,7 @@
     "scss": "0.2.4"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.7",
+    "@types/jsonwebtoken": "9.0.7",
     "@types/lodash": "4.17.13",
     "@types/node": "20",
     "@types/react": "18",

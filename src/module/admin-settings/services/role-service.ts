@@ -40,7 +40,7 @@ export interface RoleResponse {
   status: boolean;
   message: string;
   data?: {
-    id: string;
+    roleId: string;
   };
 }
 
@@ -97,27 +97,15 @@ const useRoleService = () => {
     try {
       const { body } = await http().post(`${apiUrl}/all-roles`);
 
-      // Mock response
-      const mockResponse: ListRolesResponse = {
-        status: true,
-        message: "Roles fetched successfully",
-        roles: [
-          { roleId: "1", role: "CEO", department: "Management", no_of_users: 1, status: true },
-          { roleId: "2", role: "Product Manager", department: "Operations", no_of_users: 2, status: true },
-          { roleId: "3", role: "Accountant", department: "Finance", no_of_users: 2, status: false },
-          { roleId: "4", role: "Team Lead - Software Development", department: "Technical", no_of_users: 30, status: false },
-          { roleId: "5", role: "HR Manager", department: "HR", no_of_users: 3, status:false },
-          { roleId: "6", role: "HR Manager", department: "HR", no_of_users: 1, status:false },
-          { roleId: "7", role: "HR Manager", department: "HR", no_of_users: 1, status:true },
-          { roleId: "8", role: "HR Manager", department: "HR", no_of_users: 1, status:true },
-          { roleId: "9", role: "HR Manager", department: "HR", no_of_users: 5, status:false },
-          { roleId: "10", role: "HR Manager", department: "HR", no_of_users: 1, status:false },
-          { roleId: "11", role: "Jacob", department: "Jacob", no_of_users: 1, status:true },
-        ],
+      const ListRolesResponse: ListRolesResponse = {
+        status: body.status,
+        message: body.message,
+        roles: body.data
       };
-      return mockResponse;
+      return ListRolesResponse;
     } catch (error) {
       return {
+        
         status: false,
         message: "Failed to fetch roles. Please try again.",
       };
@@ -131,27 +119,19 @@ const useRoleService = () => {
    */
   const addRole = async (roleData: Role): Promise<RoleResponse> => {
     try {
-      const payload = {
-        role: roleData.role,
-        department: roleData.department,
-        permissions: roleData.permissions || [],
-        status: roleData.status,
-      };
-      console.log(apiUrl)
-      console.log(payload)
-
+      const payload: JSON = <JSON>(<unknown>roleData);
 
       const { body } = await http().post(`${apiUrl}/add-role`, payload);
-
-      // Mock response
-      const mockResponse: RoleResponse = {
-        status: true,
-        message: "Role added successfully",
-        data: {
-          id: "mock-id-123",
-        },
+      console.log("BODY IS ",body)
+      const RoleResponse: RoleResponse = {
+        status: body.status,
+        message: body.message,
+        data:{
+          roleId:body.data[0]._id
+        }
       };
-      return mockResponse;
+      // console.log(RoleResponse)
+      return RoleResponse;
       
     } catch (error) {
       return {
@@ -168,15 +148,18 @@ const useRoleService = () => {
    */
   const updateRole = async (roleData: Role): Promise<RoleResponse> => {
     try {
-      const payload: JSON = JSON.parse(JSON.stringify(roleData));
-      const { body } = await http().post(`${apiUrl}/update`, payload);
+      const payload: JSON = <JSON>(<unknown>roleData);
+
+      console.log(payload)
+
+      const { body } = await http().post(`${apiUrl}/update-role`, payload);
 
       // Mock response
-      const mockResponse: RoleResponse = {
-        status: true,
-        message: "Role status updated successfully",
+      const RoleResponse: RoleResponse = {
+        status: body.status,
+        message: body.message,
       };
-      return mockResponse;
+      return RoleResponse;
     } catch (error) {
       return {
         status: false,
@@ -187,18 +170,16 @@ const useRoleService = () => {
 
   
 
-
   const deleteRole = async (roleId: string): Promise<RoleResponse> => {
     try {
-      const payload = { roleId };
-      const { body } = await http().post(`${apiUrl}/delete`, payload);
+      const payload: JSON= <JSON>(<unknown>{ "roleId": roleId })
+      const { body } = await http().post(`${apiUrl}/delete-role`, payload);
 
-      // Mock response
-      const mockResponse: RoleResponse = {
-        status: true,
-        message: "Role deleted successfully",
+      const deleteResponse: RoleResponse = {
+        status: body.status,
+        message: body.message,
       };
-      return mockResponse; // Replace this with `return body;` for real API responses
+      return deleteResponse; 
     } catch (error) {
       return { status: false, message: "Failed to delete role. Please try again." };
     }
@@ -213,16 +194,19 @@ const useRoleService = () => {
    */
   const fetchPermissionsByRoleId = async (roleId: string) :Promise<PermissionResponse> => {
     try {
-      const { body } = await http().post(`${apiUrl}/permissions/list`, { roleId });
+
+      const payload: JSON= <JSON>(<unknown>{ "roleId": roleId })
+
+      const { body } = await http().post(`${apiUrl}/all-roll-permissions`,  payload );
 
       // Mock response for demonstration
-      const mockResponse = {
-        status: true,
-        message: "Permissions fetched successfully",
-        data: MOCK_PERMISSIONS.data,
+      const permissionResponse = {
+        status: body.status,
+        message: body.message,
+        data: body.data,
       };
 
-      return mockResponse; // Replace `mockResponse` with `body` for real API responses
+      return permissionResponse; 
     } catch (error) {
       return {
         status: false,
@@ -239,16 +223,16 @@ const useRoleService = () => {
    */
   const updatePermissionsByRoleId = async (roleId: string, permissions: Permission[]) :Promise<PermissionResponse> => {
     try {
-      const payload = { roleId, permissions };
-      const { body } = await http().post(`${apiUrl}/permissions/update`, payload);
+      const payload:JSON= <JSON>(<unknown>{ roleId, permissions });
+      console.log("ddddd",payload)
+      const { body } = await http().post(`${apiUrl}/update-role`, payload);
 
-      // Mock response for demonstration
-      const mockResponse = {
-        status: true,
-        message: "Permissions updated successfully",
+      const permissionsResponse = {
+        status: body.status,
+        message: body.message,
       };
 
-      return mockResponse; // Replace `mockResponse` with `body` for real API responses
+      return permissionsResponse; 
     } catch (error) {
       return {
         status: false,
@@ -265,16 +249,15 @@ const useRoleService = () => {
  */
   const fetchAllUsers = async (): Promise<UserResponse> => {
     try {
-      const { body } = await http().post(`${apiUrl}/users/list`);
+      const { body } = await http().post(`${apiUrl}/list-all-employees`);
 
-      // Mock response for demonstration
-      const mockResponse = {
-        status: true,
-        message: "Users fetched successfully",
-        data: MOCK_USERS.data,
+      const userResponse = {
+        status: body.status,
+        message: body.message,
+        data: body.data,
       };
 
-      return mockResponse; // Replace `mockResponse` with `body` for real API responses
+      return userResponse; 
     } catch (error) {
       return {
         status: false,
@@ -282,7 +265,7 @@ const useRoleService = () => {
       };
     }
   };
-
+//modify and change the 
 
   /**
  * Service to fetch users mapped to a specific role.
@@ -318,16 +301,17 @@ const useRoleService = () => {
  */
   const mapUsersToRole = async (roleId: string, userIds: string[]): Promise<UserResponse> => {
     try {
-      const payload = { roleId, userIds };
-      const { body } = await http().post(`${apiUrl}/roles/map-users`, payload);
+      const payload:JSON= <JSON>(<unknown>{ roleId, userIds });
+      console.log("map users paylad",payload)
 
-      // Mock response for demonstration
-      const mockResponse = {
-        status: true,
-        message: "Users mapped to role successfully",
+      const { body } = await http().post(`${apiUrl}/map-role`, payload);
+
+      const mapUsersResponse = {
+        status: body.status,
+        message: body.message,
       };
 
-      return mockResponse; // Replace `mockResponse` with `body` for real API responses
+      return mapUsersResponse; 
     } catch (error) {
       return {
         status: false,

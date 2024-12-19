@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import styles from "./overdue-timesheets.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import { fetchOverdueWeeks } from "../../services/review-timesheet-services";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Icons from "@/themes/images/icons/icons";
 import { OverViewTable } from "@/interfaces/timesheets/timesheets";
+import { isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
 
 /**
  * Props for the OverdueTable component.
@@ -37,9 +37,10 @@ const OverdueTable: React.FC<OverdueProps> = () => {
   /**
    * Handles the action to send a notification for a specific time period.
    * Displays a success toast message when the notification is sent.
-   * @param dateRange - The selected date range for which to send a notification
+   * @param startDate- The selected date range for which to send a notification
+   * @param endDate - The selected date range for which to send a notification
    */
-  const handleSendNotification = (dateRange: string) => {
+  const handleSendNotification = (dateRange: string, endDate:string) => {
     toast(
       <p className={styles.toastMessage}>
         <span className={styles.tickMark}>{Icons.whiteTick}</span> Notification sent successfully
@@ -58,10 +59,10 @@ const OverdueTable: React.FC<OverdueProps> = () => {
    * Transforms the overdue table data into a format suitable for rendering.
    */
   const data = table.map((element) => ({
-    period: <span className={styles.dataCell}>{element.dateRange}</span>,
+    period: <span className={styles.dataCell}>{isoTOenGB(element.startDate)}-{isoTOenGB(element.endDate)}</span>,
     loggedTime: (
       <span className={styles.dataCell}>
-        {element.loggedHours ? element.loggedHours : "--"} hr
+        {element.totalHours ? element.totalHours : "--"} hr
       </span>
     ),
     approvedTime: (
@@ -72,7 +73,7 @@ const OverdueTable: React.FC<OverdueProps> = () => {
     action: (
       <span
         className={`${styles.dataCell} ${styles.actionDataCell}`}
-        onClick={() => handleSendNotification(element.dateRange)}
+        onClick={() => handleSendNotification(element.startDate,element.endDate)}
       >
         Notify
       </span>
@@ -84,7 +85,7 @@ const OverdueTable: React.FC<OverdueProps> = () => {
    */
   useEffect(() => {
     setLoading(true);
-    fetchOverdueWeeks(setTable, setLoading);
+    // fetchOverdueWeeks(setTable, setLoading);
   }, []);
 
   return (

@@ -6,6 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     const { token } = await request.json(); // Parse JSON body
 
+
     if (!token) {
       return NextResponse.json(
         { success: false, message: "Token is required." },
@@ -19,7 +20,12 @@ export async function POST(request: NextRequest) {
       message: "Cookie set successfully",
     });
 
-    await setCookie(response, { token });
+    // const cookieData = `token ${token}`
+
+    // console.log(cookieData)
+
+    const res  = await setCookie(response, {token} );
+    console.log(res)
 
     return response;
   } catch (error) {

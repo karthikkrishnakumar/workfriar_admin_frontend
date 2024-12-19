@@ -66,7 +66,7 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
     const payload = {
       roleId: roleId,
       userIds: selectedUserIds,
-    };
+    }; 
     console.log(payload)
 
 

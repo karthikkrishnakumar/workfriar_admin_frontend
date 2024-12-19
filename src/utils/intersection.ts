@@ -48,7 +48,7 @@ export async function encode(jsonData: Record<string, string>): Promise<string> 
  * @param encodeObject : Encrypted data by hapi/iron
  * @returns decodeObject
  */
- async function decode(encodeObject: string): Promise<encryptData> {
+async function decode(encodeObject: string): Promise<encryptData> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const decodeObject: encryptData = await Iron.unseal(
     encodeObject,
