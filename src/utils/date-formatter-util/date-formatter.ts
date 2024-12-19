@@ -25,6 +25,18 @@ export function toISODateFormatter(dateString: string): string {
     return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
+export const normalizedDateString = (dateString: string):string => {
+    // Split the input string by hyphen
+    const parts = dateString.split("-");
+    
+    // Ensure the day and month have leading zeros
+    const year = parts[0]; // Year remains unchanged
+    const month = parts[1].padStart(2, "0"); // Ensure two digits for month
+    const day = parts[2].padStart(2, "0"); // Ensure two digits for day
+
+    return `${year}-${month}-${day}`;
+}
+
 
 export function getWeekdayFromDate(dateString: string) {
     const dateParts = dateString.split("/");
@@ -37,4 +49,9 @@ export function getWeekdayFromDate(dateString: string) {
     const weekday = weekdays[date.getDay()];
 
     return weekday;
+}
+
+export function isoTOenGB(dateString:string) {
+    const date = dateString.split('T')[0];
+    return date.replaceAll('-','/')
 }

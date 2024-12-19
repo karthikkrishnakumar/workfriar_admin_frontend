@@ -57,18 +57,18 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
   useEffect(() => {
     if (selectedProject && selectedTask) {
       const newRow: TimesheetDataTable = {
-        categoryName: selectedTask.category,
-        projectName: selectedProject.project_name,
-        taskDetail: "Add task description",
-        dataSheet: daysOfWeek.map((day) => ({
-          weekday: day.name,
+        category_name: selectedTask.category,
+        project_name: selectedProject.project_name,
+        task_detail: "Add task description",
+        data_sheet: daysOfWeek.map((day) => ({
+          day_of_week: day.name,
           date: day.date,
           hours: "00:00",
-          isHoliday: day.isHoliday,
-          isDisabled: day.isDisabled,
+          is_holiday: day.isHoliday,
+          is_disable: day.isDisabled,
         })),
         status: "pending",
-        timesheetId: String(timesheetData.length + 1),
+        timesheet_id: String(timesheetData.length + 1),
       };
 
       const updatedData = [...timesheetData, newRow];
@@ -89,14 +89,14 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
   ) => {
     const updatedData = [...timesheetData];
     const dayIndex = daysOfWeek.indexOf(day);
-    updatedData[index].dataSheet[dayIndex].hours = newTime;
+    updatedData[index].data_sheet[dayIndex].hours = newTime;
     setLocalTimesheetData(updatedData);
     setUnsavedChanges(true);
   };
 
   // Calculate total hours for a row
   const calculateTotalHours = (entries: TimeEntry[]) => {
-    const totalMinutes = entries.reduce(
+    const totalMinutes = entries?.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
       0
     );
@@ -119,9 +119,9 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
         <TimeInput
           value={entry.hours}
           setValue={(newTime) => handleTimeChange(index, day, newTime)}
-          disabled={entry.isDisabled}
+          disabled={entry.is_disable}
           tooltipContent={
-            entry.isDisabled ? "These dates are in next week" : ""
+            entry.is_disable ? "These dates are in next week" : ""
           }
         />
       );
@@ -202,7 +202,7 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
     daysOfWeek.forEach((day) => {
       dailyTotals[day.name] = timesheetData.reduce((total, timesheet) => {
         const dayIndex = daysOfWeek.indexOf(day);
-        const dayEntry = timesheet.dataSheet[dayIndex];
+        const dayEntry = timesheet.data_sheet[dayIndex];
         return total + timeToMinutes(dayEntry?.hours || "00:00");
       }, 0);
     });
@@ -265,8 +265,8 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
     },
   ];
 
-  const data = timesheetData.map((timesheet, index) => {
-    const totalHours = calculateTotalHours(timesheet.dataSheet);
+  const data = timesheetData?.map((timesheet, index) => {
+    const totalHours = calculateTotalHours(timesheet.data_sheet);
     const taskStatusClass =
       timesheet.status === "approved"
         ? styles.approved
@@ -277,25 +277,25 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
     return {
       task: (
         <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
-          <span className={styles.taskName}>{timesheet.categoryName}</span>
-          <span className={styles.projectName}>{timesheet.projectName}</span>
+          <span className={styles.taskName}>{timesheet.category_name}</span>
+          <span className={styles.projectName}>{timesheet.project_name}</span>
         </div>
       ),
       details: (
         <TextAreaButton
-          buttonvalue={timesheet.taskDetail}
+          buttonvalue={timesheet.task_detail}
           onclickFunction={() => textAreaOnclick(index)}
           showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
-          value={timesheetData[index].taskDetail}
+          value={timesheetData[index].task_detail}
           setvalue={(newValue) => {
             const updatedData = [...timesheetData];
-            updatedData[index].taskDetail = newValue;
+            updatedData[index].task_detail = newValue;
             setLocalTimesheetData(updatedData);
             setTimeSheetData(updatedData);
           }}
         />
       ),
-      ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
+      ...mapTimeEntriesToWeek(timesheet.data_sheet, index),
       total: (
         <span className={styles.rowWiseTotal}>
           <p>{totalHours}</p>

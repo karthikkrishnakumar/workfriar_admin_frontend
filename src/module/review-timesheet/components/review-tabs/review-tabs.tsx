@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import TabComponent from "@/themes/components/tabs/tabs";
-import DateRangePicker from "@/themes/components/date-picker/date-picker";
-import { fetchDateData } from "@/module/time-sheet/services/time-sheet-services";
+import DateRangePicker, { DatePickerData } from "@/themes/components/date-picker/date-picker";
 import ReviewAllTimesheetsTable from "../all-timesheets/all-timesheets";
 import PendingOverviewTable from "../pending-timesheets/pending-timesheets-overview";
 import ApprovedOverviewTable from "../approved-timesheets/approved-timesheets-overview";
@@ -32,6 +31,8 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
+  const [weeks,setWeeks] = useState<DatePickerData[]>([]);
+
   // State for managing the count of past-due timesheets
   const [pastDueCount, setPastDueCount] = useState<number>(1);
 
@@ -51,17 +52,8 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
 
   // Fetch date data for the date range picker when the component mounts
   useEffect(() => {
-    const fetchDatePicker = async () => {
-      try {
-        // Fetch data for date picker options (e.g., start/end dates, week numbers)
-        const DatePickerData = await fetchDateData();
-        setDatePickerData(DatePickerData); // Set the date picker data
-      } catch (error) {
-        console.error("Error fetching date picker data:", error); // Log any errors
-      }
-    };
-
-    fetchDatePicker(); // Invoke the fetching function on component mount
+    // fetch dates
+    // fetchWeeks(setWeeks);
   }, []);
 
   // Define the tabs for the review page, each with a key, label, and content
@@ -134,8 +126,10 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
         subHeading={
           // Date range picker displayed as a subheading
           <DateRangePicker
-            datePickerData={datePickerData} // Pass the fetched date picker data
-            onDateChange={handleDateChange} // Set the handler for date changes
+          weekData={weeks}
+          onDateChange={()=>{
+          }}
+
           />
         }
       />
