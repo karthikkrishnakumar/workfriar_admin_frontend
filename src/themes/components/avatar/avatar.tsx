@@ -31,7 +31,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
         size={size}
         {...restProps}
       >
-        {name.charAt(0).toUpperCase()}
+        {name? name.charAt(0).toUpperCase():""}
       </AntAvatar>
     );
   }

@@ -30,13 +30,13 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
           <GridContainer
             isGrid={true}
             avatar={{
-              name: project?.project_name.project_name,
+              name: project?.project_name,
               profile: project?.project_name.project_logo,
               size: 80,
             }}
             fields={[
-              { label: "Project name", value: project?.project_name.project_name },
-              { label: "Project lead", value: project?.project_lead.full_name },
+              { label: "Project name", value: project?.project_name },
+              { label: "Project lead", value: project?.project_lead },
             ]}
           />
 

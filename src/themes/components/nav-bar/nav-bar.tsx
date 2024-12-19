@@ -33,6 +33,13 @@ const NavBar = () => {
         {navBarNavigation.navigationLinks.map((link) => {
           const DefaultIcon = Icons[link.defaultIcon]; // Get the default icon based on the icon name
           const ActiveIcon = Icons[link.activeIcon]; // Get the active icon based on the icon name
+          const dropdownItems =
+            link.label === "Reports" // Example for adding dropdown items to the "Reports" block
+              ? [
+                  { label: "Timesheet report", onClick: () => console.log("Timesheet report clicked") },
+                  { label: "Project status report", onClick: () => console.log("Project status report clicked") },
+                ]
+              : undefined;
 
           return (
             <NavBlock
@@ -41,7 +48,8 @@ const NavBar = () => {
               defaultIcon={DefaultIcon} // Pass the corresponding default icon to the NavBlock
               activeIcon={ActiveIcon} // Pass the corresponding active icon to the NavBlock
               activeStatus={navBarNavigation.getActiveStatus(link.path, pathname)} // Set active status based on the current pathname
-              collapsible={link.collapsible}
+              collapsible={!!dropdownItems}
+              dropdownItems={dropdownItems}
               onClickFunction={() => handleNavClick(link.path)} // Call handleNavClick when a nav block is clicked
             />
           );
