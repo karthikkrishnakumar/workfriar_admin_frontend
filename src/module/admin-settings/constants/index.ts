@@ -14,7 +14,7 @@ export const statusOptions = [
 export const CATEGORIES = [
   "Timesheet",
   "Projects",
-  "Task category",
+  "Task Category",
   "Project Team",
   "Clients",
   "Users",

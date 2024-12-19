@@ -102,7 +102,7 @@ const RoleListingTable: React.FC = () => {
         width: "22%",
         render: (_, record) => (
           <span>
-            {record.users === 1 ? "1 employee" : `${record.usersCount} employees`}
+            {record.no_of_users === 1 ? "1 employee" : `${record.no_of_users} employees`}
           </span>
         ),
       },

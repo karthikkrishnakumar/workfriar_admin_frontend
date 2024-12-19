@@ -49,6 +49,7 @@ const RoleForm: React.FC<RoleFormProps> = ({
     );
   };
 
+
   const handleContinueToPermissions = async () => {
 
     if (roleData.roleId) {
@@ -61,7 +62,7 @@ const RoleForm: React.FC<RoleFormProps> = ({
           router.push(`/settings/permissions/${roleData.roleId}`);
         } else {
           // Handle failure, show an error message with antd message component
-          message.error("Failed to update role.yohoooooooooooo");
+          message.error("Failed to update role.");
         }
       } else {
         // No changes, navigate directly to the permissions page
@@ -70,13 +71,12 @@ const RoleForm: React.FC<RoleFormProps> = ({
     } else {
       // If the role does not have an ID (add case), wait for onSave to complete
       const response = await onSave(); // Wait for the save action to complete
-      if (response?.status && response?.data?.id) {
+      console.log("resssssss",response)
+      if (response?.status && response?.data?.roleId) {
+
         // If the role is added successfully and an ID is returned, navigate to the permissions page
-        router.push(`/settings/permissions/${response.data.id}`);
-      } else {
-        // Handle failure, show an error message with antd message component
-        message.error("Failed to add role or ID is missing.");
-      }
+        router.push(`/settings/permissions/${response.data.roleId}`);
+      } 
     }
   };
 
@@ -111,9 +111,9 @@ const RoleForm: React.FC<RoleFormProps> = ({
           <CustomSelect
             options={statusOptions.map((option) => ({
               ...option,
-              value: option.value.toString(),
+              value: option.value,
             }))}
-            value={roleData.status.toString()}
+            value={roleData.status}
             onChange={handleChange("status")}
             placeholder="Select status"
           />
