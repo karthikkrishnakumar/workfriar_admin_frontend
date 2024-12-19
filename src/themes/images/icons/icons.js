@@ -785,8 +785,8 @@ const Icons = {
   // search
   search: (
     <svg
-      width="16"
-      height="15"
+      width="18"
+      height="18"
       viewBox="0 0 16 15"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -800,8 +800,8 @@ const Icons = {
       <defs>
         <clipPath id="clip0_95_11591">
           <rect
-            width="15"
-            height="15"
+            width="40"
+            height="40"
             fill="white"
             transform="translate(0.53125)"
           />

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Skeleton, message } from "antd"; // Import Skeleton and message from Ant Design
+import { Skeleton, message } from "antd";
 import CheckboxComponent from "@/themes/components/checkbox/checkbox";
 import Table from "@/themes/components/table/table";
 import ButtonComponent from "@/themes/components/button/button";
@@ -23,17 +23,16 @@ const UpdateRolePermissionsTable = () => {
     review: boolean;
     delete: boolean;
   }[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Fetch permissions for the role
     if (roleId) {
       setLoading(true); 
       fetchPermissionsByRoleId(roleId).then((response) => {
         if (response.data && response.data.length > 0) {
           setPermissions(mapPermissionsToState(response.data));
         } else {
-          setPermissions(getDefaultPermissions()); // Set default permissions
+          setPermissions(getDefaultPermissions());
         }
         setLoading(false); 
       }).catch(() => {
@@ -68,33 +67,60 @@ const UpdateRolePermissionsTable = () => {
       delete: false,
     }));
 
-  // Handle checkbox changes
+  // Handle checkbox changes with auto-check view for other actions
   const handleCheckboxChange = (field: string, key: string, checked: boolean) => {
     setPermissions((prev) =>
-      prev.map((item) =>
-        item.key === key ? { ...item, [field]: checked } : item
-      )
+      prev.map((item) => {
+        if (item.key === key) {
+          // If unchecking view, uncheck all other actions
+          if (field === 'view' && !checked) {
+            return { 
+              ...item, 
+              view: false,
+              createEdit: false,
+              review: false,
+              delete: false
+            };
+          }
+          
+          // If any action other than view is checked, ensure view is true
+          const newView = field === 'view' 
+            ? checked 
+            : (checked || item.createEdit || item.review || item.delete);
+          
+          return { 
+            ...item, 
+            [field]: checked,
+            view: newView
+          };
+        }
+        return item;
+      })
     );
   };
 
-  // Save permissions
+  // Save permissions - only send categories with at least one action checked
   const handleSave = async () => {
-    const updatedPermissions = permissions.map(({ category, ...actions }) => ({
-      category,
-      actions: {
-        view: actions.view,
-        edit: actions.createEdit,
-        review: actions.review,
-        delete: actions.delete,
-      },
-    }));
+    const updatedPermissions = permissions
+      .filter(({ view, createEdit, review, delete: deleteAction }) => 
+        view || createEdit || review || deleteAction
+      )
+      .map(({ category, view, createEdit, review, delete: deleteAction }) => ({
+        category,
+        actions: {
+          view: view,
+          edit: createEdit,
+          review: review,
+          delete: deleteAction,
+        },
+      }));
 
     try {
       const response = await updatePermissionsByRoleId(roleId, updatedPermissions);
+
       if (response.status) {
-        console.log(updatedPermissions)
         message.success('Permissions updated successfully!');
-        router.back(); // Navigate back after successful update
+        router.back();
       } else {
         message.error('Failed to update permissions');
       }
@@ -178,16 +204,16 @@ const UpdateRolePermissionsTable = () => {
         <Skeleton active paragraph={{ rows: 5 }} />
       ) : (
         <>
-        <Table
-          columns={columns}
-          dataSource={permissions}
-          className={styles.permissionTable}
-        />
-        <div className={styles.actions}>
-        <ButtonComponent label="Cancel" theme="white" onClick={handleCancel} />
-        <ButtonComponent label="Update" theme="black" onClick={handleSave} />
-        </div>
-      </>
+          <Table
+            columns={columns}
+            dataSource={permissions}
+            className={styles.permissionTable}
+          />
+          <div className={styles.actions}>
+            <ButtonComponent label="Cancel" theme="white" onClick={handleCancel} />
+            <ButtonComponent label="Update" theme="black" onClick={handleSave} />
+          </div>
+        </>
       )}
     </>
   );
