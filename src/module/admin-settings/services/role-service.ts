@@ -301,16 +301,17 @@ const useRoleService = () => {
  */
   const mapUsersToRole = async (roleId: string, userIds: string[]): Promise<UserResponse> => {
     try {
-      const payload = { roleId, userIds };
-      const { body } = await http().post(`${apiUrl}/roles/map-users`, payload);
+      const payload:JSON= <JSON>(<unknown>{ roleId, userIds });
+      console.log("map users paylad",payload)
 
-      // Mock response for demonstration
-      const mockResponse = {
-        status: true,
-        message: "Users mapped to role successfully",
+      const { body } = await http().post(`${apiUrl}/map-role`, payload);
+
+      const mapUsersResponse = {
+        status: body.status,
+        message: body.message,
       };
 
-      return mockResponse; // Replace `mockResponse` with `body` for real API responses
+      return mapUsersResponse; 
     } catch (error) {
       return {
         status: false,
