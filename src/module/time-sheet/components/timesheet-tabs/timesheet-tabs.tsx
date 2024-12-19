@@ -4,16 +4,23 @@ import React, { useEffect, useState } from "react";
 import styles from "./timesheet-tabs.module.scss";
 import TabComponent from "@/themes/components/tabs/tabs";
 import AllTimesheetsTable from "../all-timesheets-table/all-timesheets";
-import DateRangePicker from "@/themes/components/date-picker/date-picker";
+import DateRangePicker, {
+  DatePickerData,
+} from "@/themes/components/date-picker/date-picker";
 
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import {
-  fetchTimesheets
-} from "../../services/time-sheet-services";
 import PastDueOverviewTable from "../past-due-overview-table/past-due-overview-table";
 import RejectedOverviewTable from "../rejected-overview-table/rejected-overview-table";
 import ApprovedOverviewTable from "../approved-overview-table/approved-overview-table";
-import { TimesheetDataTable, WeekDaysData } from "@/interfaces/timesheets/timesheets";
+import {
+  TimesheetDataTable,
+  WeekDateEntry,
+  WeekDaysData,
+} from "@/interfaces/timesheets/timesheets";
+import { fetchWeeks } from "@/module/review-timesheet/services/review-timesheet-services";
+import UseAllTimesheetsServices from "../../services/all-timesheet-services/all-time-sheet-services";
+import { dateStringToMonthDate } from "@/utils/date-formatter-util/date-formatter";
+import { timesheetData } from "../../../../../public/test-data/timesheet-data";
 
 /**
  * The TimesheetsTabs component displays a tabbed interface with different views of timesheet data.
@@ -24,63 +31,90 @@ import { TimesheetDataTable, WeekDaysData } from "@/interfaces/timesheets/timesh
  */
 const TimesheetsTabs = () => {
   const [loading, setLoadig] = useState(true); // State to handle loading state of the component
-
-  const [currentRange, setCurrentRange] = useState(""); // Date range for filtering timesheets
-  const [prev, setPrev] = useState(false); // State to track if previous range should be displayed
-  const [next, setNext] = useState(false); // State to track if next range should be displayed
-  const [timeSheetData, setTimeSheetdata] = useState<TimesheetDataTable[]>([]); // Store timesheet data
-  const [pastDueCount, setPastDueCount] = useState<number>(1); // Count of past due items
-  const [approvedCount, setApprovedCount] = useState<number>(4); // Count of approved items
-  const [rejectedCount, setRejectedCount] = useState<number>(2); // Count of rejected items
-  const [datePickerData, setDatePickerData] = useState<{ start: string; end: string; week: number }[]>([]); // Data for the date picker
-  const [dates, setDates] = useState<WeekDaysData[]>([]); // Store week days data for the selected range
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [timeSheetData, setTimeSheetdata] = useState<
+    TimesheetDataTable[] | undefined
+  >([]); // Store timesheet data
+  const [timesheetLoading, setTimesheetLoading] = useState<boolean>(true); // State to handle loading state of the timesheet data
+  const [pastDueCount, setPastDueCount] = useState<number>(0); // Count of past due items
+  const [approvedCount, setApprovedCount] = useState<number>(0); // Count of approved items
+  const [rejectedCount, setRejectedCount] = useState<number>(0); // Count of rejected items
+  const [datePickerData, setDatePickerData] = useState<
+    { start: string; end: string; week: number }[]
+  >([]); // Data for the date picker
+  const [dates, setDates] = useState<WeekDaysData[] | undefined>([]); // Store week days data for the selected range
   const [activeTabKey, setActiveTabKey] = useState<string>("1"); // State to track active tab
+  const [weeks, setWeeks] = useState<DatePickerData[]>([]);
 
   /**
    * Handles date range changes and updates state variables for filtering.
    * 
-   * @param {object} data - The new date range data
-   * @param {string} data.startDate - The start date of the range
-   * @param {string} data.endDate - The end date of the range
-   * @param {boolean} data.prev - Whether the previous range should be displayed
-   * @param {boolean} data.next - Whether the next range should be displayed
+
+   * @param {string} startDate - The start date of the range
+   * @param {string} endDate - The end date of the range
    */
-  const handleDateChange = (data: {
-    startDate: string;
-    endDate: string;
-    prev: boolean;
-    next: boolean;
-  }) => {
-    setCurrentRange(`${data.startDate}-${data.endDate}`); // Update the date range
-    setPrev(data.prev); // Update prev state
-    setNext(data.next); // Update next state
+  const handleDateChange = (startDate: string, endDate: string) => {
+    setStartDate(startDate);
+    setEndDate(endDate);
   };
 
   /**
    * Fetches timesheet data based on the current date range and updates the state.
    */
-  useEffect(() => {
-    const parts = currentRange.split("-"); // Split the date range into start and end
-    const startDate = parts.slice(0, 3).join("-"); // First part of the range
-    const endDate = parts.slice(3, 6).join("-"); // Second part of the range
+  const fetchAllTimesheet = async (startDate: string, endDate: string) => {
+    setTimesheetLoading(true);
+    try {
+      const response = await UseAllTimesheetsServices().fetchAllTimesheets(
+        startDate,
+        endDate
+      );
 
-    fetchTimesheets(setTimeSheetdata, setDates, startDate, endDate); // Fetch data based on the range
+      console.log(response);
+
+      setTimeSheetdata(response?.data);
+      const uniqueDates: WeekDaysData[] = (
+        response.weekDates as Partial<WeekDateEntry>[]
+      ).map((day) => ({
+        name: day.day_of_week!,
+        date: day.date!,
+        isHoliday: day.is_holiday!,
+        formattedDate: dateStringToMonthDate(day.date!),
+        isDisabled: day.is_disable!,
+      }));
+
+      setDates(uniqueDates);
+      setTimesheetLoading(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /**
+   * Fetches timesheet counts
+   */
+  const fetchTimeSheetsCount = async () => {
+    try {
+      const response = await UseAllTimesheetsServices().fetchTimesheetsCounts();
+      setPastDueCount(response.data.totalSaved);
+      setApprovedCount(response.data.totalApproved);
+      setRejectedCount(response.data.totalRejected);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllTimesheet(startDate, endDate); // Fetch data when startDate and endDate change
     setLoadig(false); // Set loading to false after data is fetched
-  }, [prev, next]);
+  }, [startDate, endDate]);
 
   /**
    * Fetches data for the date picker (though the actual fetch logic is not implemented).
    */
   useEffect(() => {
-    const fetchDatePicker = async () => {
-      try {
-        // You can implement fetching logic here
-      } catch (error) {
-        console.error("Error fetching date picker data:", error);
-      }
-    };
-
-    fetchDatePicker(); // Fetch date picker data
+    fetchWeeks(setWeeks);
+    fetchTimeSheetsCount();
   }, []);
 
   /**
@@ -91,11 +125,16 @@ const TimesheetsTabs = () => {
     {
       key: "1",
       label: <>All Timesheets</>,
-      content: (
+      content: timesheetLoading ? (
+        <SkeletonLoader
+          paragraph={{ rows: 10 }}
+          classNameItem={styles.customSkeleton}
+        />
+      ) : (
         <AllTimesheetsTable
-          timesheetData={timeSheetData}
+          timesheetData={timeSheetData!}
           setTimeSheetData={setTimeSheetdata}
-          daysOfWeek={dates}
+          daysOfWeek={dates!}
         />
       ),
     },
@@ -159,8 +198,8 @@ const TimesheetsTabs = () => {
             headings={tabs} // Pass the tabs array to TabComponent
             subHeading={
               <DateRangePicker
-                range={currentRange} // Pass current date range
-                onDateChange={handleDateChange} // Handle date change
+                weekData={weeks}
+                onDateChange={handleDateChange}
               />
             }
           />

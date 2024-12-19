@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import styles from "./rejected-timesheets-overview.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import { fetchRejectedTimesheets, fetchRejectedWeeks } from "../../services/review-timesheet-services";
 import RejectedDetailedView from "./rejected-timesheet-table/rejected-detailed-view";
 import { OverViewTable, TimesheetDataTable, WeekDaysData } from "@/interfaces/timesheets/timesheets";
+import { isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
 
 // Interface for props that RejectedOverviewTable expects
 interface RejectedOverviewProps {
@@ -40,11 +40,11 @@ const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
   ];
 
   // Fetch timesheet data for the selected date range
-  const handleFetchTimesheets = (dateRange: string) => {
+  const handleFetchTimesheets = (startDate: string,  endaDate:string) => {
     setShowDetailedView(true); // Show detailed view
     setLoading(true); // Set loading state to true while fetching
     // Fetch timesheet data and set the state
-    fetchRejectedTimesheets(dateRange, setTimesheetTable, setDates, setLoading);
+    // fetchRejectedTimesheets(dateRange, setTimesheetTable, setDates, setLoading);
   };
 
   // Handle the back button to return to the overview table
@@ -54,10 +54,10 @@ const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
 
   // Map the data from the overview table to a format that can be displayed in the table
   const data = table.map((element) => ({
-    period: <span className={styles.dataCell}>{element.dateRange}</span>, // Date range for the period
+    period: <span className={styles.dataCell}>{isoTOenGB(element.startDate)}-{isoTOenGB(element.endDate)}</span>, // Date range for the period
     loggedTime: (
       <span className={styles.dataCell}>
-        {element.loggedHours ? element.loggedHours : "--"} hr
+        {element.totalHours? element.totalHours : "--"} hr
       </span>
     ), // Display logged hours or default "--" if not available
     approvedTime: (
@@ -69,7 +69,7 @@ const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
       <span
         className={`${styles.dataCell} ${styles.actionDataCell}`}
         onClick={() => {
-          handleFetchTimesheets(element.dateRange); // Fetch detailed data on click
+          handleFetchTimesheets(element.startDate,element.endDate); // Fetch detailed data on click
         }}
       >
         Details
@@ -81,7 +81,7 @@ const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
   useEffect(() => {
     setLoading(true); // Set loading state to true
     // Fetch rejected weeks and set the table data
-    fetchRejectedWeeks(setTable, setLoading);
+    // fetchRejectedWeeks(setTable, setLoading);
   }, []);
 
   return (

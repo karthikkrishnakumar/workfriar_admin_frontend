@@ -65,7 +65,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
     const updatedData = [...timesheetData];
     const dayIndex = daysOfWeek.indexOf(day);
 
-    updatedData[index].dataSheet[dayIndex].hours = newTime;
+    updatedData[index].data_sheet[dayIndex].hours = newTime;
 
     if (updatedData[index].status !== "pending") {
       updatedData[index].status = "pending";
@@ -128,7 +128,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
     daysOfWeek.forEach((day) => {
       dailyTotals[day.name] = timesheetData.reduce((total, timesheet) => {
         const dayIndex = daysOfWeek.indexOf(day);
-        const dayEntry = timesheet.dataSheet[dayIndex];
+        const dayEntry = timesheet.data_sheet[dayIndex];
         return total + timeToMinutes(dayEntry?.hours || "00:00");
       }, 0);
     });
@@ -155,8 +155,8 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
         <TimeInput
           value={entry.hours}
           setValue={(newTime) => handleTimeChange(index, day, newTime)}
-          disabled={entry.isDisabled}
-          tooltipContent={entry.isDisabled ? "These dates are in next week" : ""}
+          disabled={entry.is_disable}
+          tooltipContent={entry.is_disable ? "These dates are in next week" : ""}
         />
       );
     });
@@ -223,8 +223,8 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
    * 
    * @returns {Array} - Array of table rows.
    */
-  const data = timesheetData.map((timesheet, index) => {
-    const totalHours = calculateTotalHours(timesheet.dataSheet);
+  const data = timesheetData?.map((timesheet, index) => {
+    const totalHours = calculateTotalHours(timesheet.data_sheet);
     const taskStatusClass =
       timesheet.status === "approved"
         ? styles.approved
@@ -235,25 +235,25 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
     return {
       task: (
         <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
-          <span className={styles.taskName}>{timesheet.categoryName}</span>
-          <span className={styles.projectName}>{timesheet.projectName}</span>
+          <span className={styles.taskName}>{timesheet.category_name}</span>
+          <span className={styles.projectName}>{timesheet.project_name}</span>
         </div>
       ),
       details: (
         <TextAreaButton
-          buttonvalue={timesheet.taskDetail}
+          buttonvalue={timesheet.task_detail}
           onclickFunction={() => setEditingRowIndex(index)}
           showTaskDetailModal={editingRowIndex === index}
-          value={timesheetData[index].taskDetail}
+          value={timesheetData[index].task_detail}
           setvalue={(newValue) => {
             const updatedData = [...timesheetData];
-            updatedData[index].taskDetail = newValue;
+            updatedData[index].task_detail = newValue;
             setLocalTimesheetData(updatedData);
             setUnsavedChanges(true);
           }}
         />
       ),
-      ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
+      ...mapTimeEntriesToWeek(timesheet.data_sheet, index),
       total: (
         <span className={styles.rowWiseTotal}>
           <p>{totalHours}</p>

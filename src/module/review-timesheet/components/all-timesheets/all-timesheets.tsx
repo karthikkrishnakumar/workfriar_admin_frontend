@@ -15,7 +15,6 @@ import {
   TimesheetDataTable,
   WeekDaysData,
 } from "@/interfaces/timesheets/timesheets";
-import { fetchAllTimeSheetsToReview } from "../../services/review-timesheet-services";
 import Icons from "@/themes/images/icons/icons";
 import { Dropdown } from "antd";
 import TextAreaButton from "@/module/time-sheet/components/text-area-button/text-area-button";
@@ -86,20 +85,20 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
   ) => {
     const updatedData = [...timesheetData];
     const dayIndex = daysOfWeek.indexOf(day);
-    updatedData[index].dataSheet[dayIndex].hours = newTime;
+    updatedData[index].data_sheet[dayIndex].hours = newTime;
     setTimeSheetData(updatedData);
     setUnsavedChanges(true);
   };
 
   useEffect(() => {
     // Fetch timesheet data whenever the start or end date changes
-    fetchAllTimeSheetsToReview(
-      startDate,
-      endDate,
-      setTimeSheetData,
-      setLoading,
-      setDaysOfWeek
-    );
+    // fetchAllTimeSheetsToReview(
+    //   startDate,
+    //   endDate,
+    //   setTimeSheetData,
+    //   setLoading,
+    //   setDaysOfWeek
+    // );
   }, [startDate, endDate]);
 
   /**
@@ -136,9 +135,9 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
         <TimeInput
           value={entry.hours}
           setValue={(newTime) => handleTimeChange(index, day, newTime)}
-          disabled={entry.isDisabled}
+          disabled={entry.is_disable}
           tooltipContent={
-            entry.isDisabled ? "These dates are in next week" : ""
+            entry.is_disable ? "These dates are in next week" : ""
           }
           readOnly={true}
         />
@@ -156,7 +155,7 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     daysOfWeek.forEach((day) => {
       dailyTotals[day.name] = timesheetData.reduce((total, timesheet) => {
         const dayIndex = daysOfWeek.indexOf(day);
-        const dayEntry = timesheet.dataSheet[dayIndex];
+        const dayEntry = timesheet.data_sheet[dayIndex];
         return total + timeToMinutes(dayEntry?.hours || "00:00");
       }, 0);
     });
@@ -241,7 +240,7 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
    * Processes timesheet data rows for rendering in the table.
    */
   const data = timesheetData.map((timesheet, index) => {
-    const totalHours = calculateTotalHours(timesheet.dataSheet);
+    const totalHours = calculateTotalHours(timesheet.data_sheet);
     let isDisabled;
     const taskStatusClass =
       timesheet.status === "approved"
@@ -259,20 +258,20 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     return {
       task: (
         <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
-          <span className={styles.taskName}>{timesheet.categoryName}</span>
-          <span className={styles.projectName}>{timesheet.projectName}</span>
+          <span className={styles.taskName}>{timesheet.category_name}</span>
+          <span className={styles.projectName}>{timesheet.project_name}</span>
         </div>
       ),
       details: (
         <TextAreaButton
-          buttonvalue={timesheet.taskDetail}
+          buttonvalue={timesheet.task_detail}
           readOnly={true}
           onclickFunction={() => textAreaOnclick(index)}
           showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
-          value={timesheetData[index].taskDetail}
+          value={timesheetData[index].task_detail}
         />
       ),
-      ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
+      ...mapTimeEntriesToWeek(timesheet.data_sheet, index),
       total: (
         <span className={styles.rowWiseTotal}>
           <p>{totalHours}</p>

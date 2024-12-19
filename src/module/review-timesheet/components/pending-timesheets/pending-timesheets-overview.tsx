@@ -4,8 +4,8 @@ import styles from "./pending-timesheets-overview.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import { OverViewTable, TimesheetDataTable, WeekDaysData } from "@/interfaces/timesheets/timesheets";
-import { fetchPendingTimesheets, fetchPendingWeeks } from "../../services/review-timesheet-services";
 import PendingDetailedView from "./pending-timesheet-table/pending-detailed-view";
+import { isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
 
 /**
  * `PendingOverviewTable` component is responsible for displaying an overview of pending timesheets.
@@ -48,12 +48,13 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({ tableData }) => 
    * Fetches the detailed timesheet data based on the selected date range.
    * This function is triggered when the user clicks the "Details" button in the overview table.
    * 
-   * @param {string} dateRange - The selected date range for fetching timesheet data
+   * @param {string} startDate - The selected date range for fetching timesheet data
+   * @param {string} endaDate - The selected date range for fetching timesheet data
    */
-  const handleFetchTimesheets = (dateRange: string) => {
+  const handleFetchTimesheets = (startDate: string, endDate:string) => {
     setShowDetailedView(true); // Switch to the detailed view
     setLoading(true); // Set loading state to true while fetching data
-    fetchPendingTimesheets(dateRange, setTimesheetTable, setDates, setLoading); // Fetch the data using the service
+    // fetchPendingTimesheets(dateRange, setTimesheetTable, setDates, setLoading); // Fetch the data using the service
   };
 
   /**
@@ -65,10 +66,10 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({ tableData }) => 
 
   // Mapping the overview data to fit the table structure
   const data = table.map((element) => ({
-    period: <span className={styles.dataCell}>{element.dateRange}</span>,
+    period: <span className={styles.dataCell}>{isoTOenGB(element.startDate)}-{isoTOenGB(element.endDate)}</span>,
     loggedTime: (
       <span className={styles.dataCell}>
-        {element.loggedHours ? element.loggedHours : "--"} hr
+        {element.totalHours ? element.totalHours : "--"} hr
       </span>
     ),
     approvedTime: (
@@ -80,7 +81,7 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({ tableData }) => 
       <span
         className={`${styles.dataCell} ${styles.actionDataCell}`}
         onClick={() => {
-          handleFetchTimesheets(element.dateRange); // Trigger detailed view on click
+          handleFetchTimesheets(element.startDate,element.endDate); // Trigger detailed view on click
         }}
       >
         Details
@@ -91,7 +92,7 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({ tableData }) => 
   // Fetch the initial overview data on component mount
   useEffect(() => {
     setLoading(true); // Set loading state while fetching data
-    fetchPendingWeeks(setTable, setLoading); // Fetch the weeks data for the overview table
+    // fetchPendingWeeks(setTable, setLoading); // Fetch the weeks data for the overview table
   }, []);
 
   return (

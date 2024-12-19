@@ -122,9 +122,9 @@ const ApprovedDetailedView: React.FC<ApprovedDetailedViewProps> = ({
       weekMap[day.name] = (
         <TimeInput
           value={entry.hours}
-          disabled={entry.isDisabled}
+          disabled={entry.is_disable}
           tooltipContent={
-            entry.isDisabled ? "These dates are in next week" : ""
+            entry.is_disable ? "These dates are in next week" : ""
           }
           readOnly={true}
         />
@@ -142,7 +142,7 @@ const ApprovedDetailedView: React.FC<ApprovedDetailedViewProps> = ({
     daysOfWeek.forEach((day) => {
       dailyTotals[day.name] = timeSheetData.reduce((total, timesheet) => {
         const dayIndex = daysOfWeek.indexOf(day);
-        const dayEntry = timesheet.dataSheet[dayIndex];
+        const dayEntry = timesheet.data_sheet[dayIndex];
         return total + timeToMinutes(dayEntry?.hours || "00:00");
       }, 0);
     });
@@ -210,7 +210,7 @@ const ApprovedDetailedView: React.FC<ApprovedDetailedViewProps> = ({
    * Data for each row in the table.
    */
   const data = timeSheetData.map((timesheet, index) => {
-    const totalHours = calculateTotalHours(timesheet.dataSheet);
+    const totalHours = calculateTotalHours(timesheet.data_sheet);
     let isDisabled;
     const taskStatusClass =
       timesheet.status === "approved"
@@ -224,20 +224,20 @@ const ApprovedDetailedView: React.FC<ApprovedDetailedViewProps> = ({
     return {
       task: (
         <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
-          <span className={styles.taskName}>{timesheet.categoryName}</span>
-          <span className={styles.projectName}>{timesheet.projectName}</span>
+          <span className={styles.taskName}>{timesheet.category_name}</span>
+          <span className={styles.projectName}>{timesheet.project_name}</span>
         </div>
       ),
       details: (
         <TextAreaButton
-          buttonvalue={timesheet.taskDetail}
+          buttonvalue={timesheet.task_detail}
           readOnly={true}
           onclickFunction={() => textAreaOnclick(index)}
           showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
-          value={timeSheetData[index].taskDetail}
+          value={timeSheetData[index].task_detail}
         />
       ),
-      ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
+      ...mapTimeEntriesToWeek(timesheet.data_sheet, index),
       total: (
         <span className={styles.rowWiseTotal}>
           <p>{totalHours}</p>

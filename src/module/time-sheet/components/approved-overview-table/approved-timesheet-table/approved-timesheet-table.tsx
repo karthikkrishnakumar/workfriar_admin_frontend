@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useState, useEffect, useRef } from "react";
+import React, { ReactNode, useState} from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./approved-timesheet-table.module.scss";
 import TimeInput from "@/themes/components/time-input/time-input";
@@ -65,12 +65,12 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
    * @param {TimeEntry[]} entries - The time entries for the row
    * @returns {string} The total hours worked in HH:MM format
    */
-  const calculateTotalHours = (entries: TimeEntry[]) => {
-    const totalMinutes = entries.reduce(
+  const calculateTotalHours = (entries?: TimeEntry[]) => {
+    const totalMinutes = entries?.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
       0
     );
-    return minutesToTime(totalMinutes);
+    return minutesToTime(totalMinutes!);
   };
 
   /**
@@ -82,7 +82,6 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
    */
   const mapTimeEntriesToWeek = (
     entries: TimeEntry[],
-    index: number
   ): Record<string, ReactNode> => {
     const weekMap: Record<string, ReactNode> = {};
     daysOfWeek.forEach((day, dayIndex) => {
@@ -94,8 +93,8 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
       weekMap[day.name] = (
         <TimeInput
           value={entry.hours}
-          disabled={entry.isDisabled}
-          tooltipContent={entry.isDisabled ? "These dates are in next week" : ""}
+          disabled={entry.is_disable}
+          tooltipContent={entry.is_disable ? "These dates are in next week" : ""}
           readOnly={true}
         />
       );
@@ -103,13 +102,6 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     return weekMap;
   };
 
-  /**
-   * Handles the submit action for the timesheet data.
-   * This function displays a success alert for demonstration purposes.
-   */
-  const handleSubmit = () => {
-    alert("Timesheet data submitted successfully!");
-  };
 
   /**
    * Calculates the total hours worked for each day of the week across all timesheets.
@@ -119,9 +111,9 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
   const calculateTotalByDay = () => {
     const dailyTotals: Record<string, number> = {};
     daysOfWeek.forEach((day) => {
-      dailyTotals[day.name] = timesheetData.reduce((total, timesheet) => {
+      dailyTotals[day.name] = timesheetData?.reduce((total, timesheet) => {
         const dayIndex = daysOfWeek.indexOf(day);
-        const dayEntry = timesheet.dataSheet[dayIndex];
+        const dayEntry = timesheet.data_sheet[dayIndex];
         return total + timeToMinutes(dayEntry?.hours || "00:00");
       }, 0);
     });
@@ -184,10 +176,11 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
   ];
 
   // Prepare data for the table
-  const data = timesheetData.map((timesheet, index) => {
-    const totalHours = calculateTotalHours(timesheet.dataSheet);
+  const data = timesheetData.length === 0 ? [] :
+  timesheetData.map((timesheet, index) => {
+    const totalHours = calculateTotalHours(timesheet.data_sheet);
     const taskStatusClass =
-      timesheet.status === "approved"
+      timesheet.status === "accepted"
         ? styles.approved
         : timesheet.status === "rejected"
         ? styles.rejected
@@ -196,26 +189,26 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     return {
       task: (
         <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
-          <span className={styles.taskName}>{timesheet.categoryName}</span>
-          <span className={styles.projectName}>{timesheet.projectName}</span>
+          <span className={styles.taskName}>{timesheet.category_name}</span>
+          <span className={styles.projectName}>{timesheet.project_name}</span>
         </div>
       ),
       details: (
         <TextAreaButton
-          buttonvalue={timesheet.taskDetail}
+          buttonvalue={timesheet.task_detail}
           onclickFunction={() => textAreaOnclick(index)}
           showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
-          value={timesheetData[index].taskDetail}
+          value={timesheetData[index].task_detail}
           setvalue={(newValue) => {
             const updatedData = [...timesheetData];
-            updatedData[index].taskDetail = newValue;
+            updatedData[index].task_detail = newValue;
             setLocalTimesheetData(updatedData);
             setTimeSheetData(updatedData);
           }}
           readOnly={true}
         />
       ),
-      ...mapTimeEntriesToWeek(timesheet.dataSheet, index),
+      ...mapTimeEntriesToWeek(timesheet.data_sheet),
       total: (
         <span className={styles.rowWiseTotal}>
           <p>{totalHours}</p>

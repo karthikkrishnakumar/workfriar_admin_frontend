@@ -16,6 +16,7 @@
         white-space: normal;
         word-wrap: break-word;
         text-align: left;
+        line-height: 20px;
         flex: 1;
         display: -webkit-box;
         /* Enable the line-clamp feature */
@@ -26,6 +27,7 @@
         overflow: hidden;
         /* Hide overflowing text */
         text-overflow: ellipsis;
+        height: 100%;
     }
 
     .editIcon {

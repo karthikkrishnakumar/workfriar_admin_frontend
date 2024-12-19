@@ -23,7 +23,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({
 
       <ButtonComponent
         theme="filter"
-        label="Review Timsheet"
+        label="Review Timesheet"
         className={styles.goldenButton}
         onClick={onClickFunction}
       />
