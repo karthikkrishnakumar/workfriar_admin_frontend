@@ -294,7 +294,7 @@ const ProjectList: React.FC = () => {
           // initialValues={selectedProject}
         />
       )}
-      {isOpen && modalType === "addProjectModal" && (
+      {isOpen && modalType === "addModal" && (
         <ProjectModal
           isModalOpen={true}
           onClose={() => dispatch(closeModal())}
