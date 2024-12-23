@@ -30,7 +30,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false ,actionButton: { label: "Add Project Team", icon: Icons.plusLight, modalType: "addModal" }},
     { title: "Admin Settings", path: "/settings", backButtonNeeded: false,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } }, 
     { title: "Permissions Settings", path: "/settings/permissions/[id]", backButtonNeeded: true, actionButton: null},
-    { title: "Notifications", path: "/notifications", backButtonNeeded: false, actionButton: null},
+    { title: "Notifications", path: "/notifications", backButtonNeeded: true, actionButton: null},
     { title: "Employee Details", path: "/organization/employee-details/[id]", backButtonNeeded: true ,actionButton: null  },
     { title: "Holidays", path: "/holidays", backButtonNeeded: true, actionButton: { label: "Add Holidays", icon: Icons.plusLight, modalType: "roleModal" }},
   ];
