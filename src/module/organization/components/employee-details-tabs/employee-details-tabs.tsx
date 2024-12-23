@@ -25,18 +25,18 @@ const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
     setLoading(false);
   }, 200);
 
-  useEffect(() => {
-    const getEmployeeData = async () => {
-      try {
-        const data = await UseEmployeeData().fetchEmployeeData(id);
-        setEmployeeData(data.data);
-      } catch (err: any) {
-        setError("Failed to fetch employee details");
-      } finally {
-        setEmployeeLoading(false);
-      }
-    };
+  const getEmployeeData = async () => {
+    try {
+      const data = await UseEmployeeData().fetchEmployeeData(id);
+      setEmployeeData(data.data);
+    } catch (err: any) {
+      setError("Failed to fetch employee details");
+    } finally {
+      setEmployeeLoading(false);
+    }
+  };
 
+  useEffect(() => {
     getEmployeeData();
   }, [id]);
 
@@ -65,6 +65,7 @@ const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
 
   const handleCloseModal = () => {
     setIsModalVisible(false); // Close the modal when required
+    getEmployeeData();
   };
 
   return (

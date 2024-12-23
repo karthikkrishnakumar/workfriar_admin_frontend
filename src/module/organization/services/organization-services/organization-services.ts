@@ -28,9 +28,9 @@ export interface EmployeeData {
   phone_number: string;
   location: string;
   role_id: string;
-  reporting_manager: string;
+  reporting_manager_id: string;
   status: string;
-  profile_pic: string | null; // The avatar can be null if not provided
+  profile_pic?: File | null; // The avatar can be null if not provided
 }
 
 interface ValidationError {
@@ -193,7 +193,7 @@ export default function UseEmployeeData() {
   };
 
   const addEmployee = async (data: EmployeeData): Promise<AddUserResponse> => {
-    const props: JSON = <JSON>(<unknown>{ data });
+    const props: JSON = <JSON>(<unknown>data);
     console.log(data, "in add service");
     try {
       const { body } = await http().post("/api/admin/addemployee", props);
@@ -213,11 +213,12 @@ export default function UseEmployeeData() {
   const editEmployee = async (
     data: EmployeeData
   ): Promise<EditUserResponse> => {
-    const props: JSON = <JSON>(<unknown>{data});
+    const props: JSON = <JSON>(<unknown>data);
+    const hasFile:boolean = <boolean>(true)
 
-    console.log(data)
+    console.log(data,"data edit ")
     try {
-      const { body } = await http().post("/api/admin/editemployee", props);
+      const { body } = await http().post("/api/admin/editemployee", props, hasFile);
       console.log(body, "hai");
       return {
         status: body.status,

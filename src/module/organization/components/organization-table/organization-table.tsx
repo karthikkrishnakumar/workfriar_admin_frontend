@@ -238,6 +238,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
 
   const handleCloseModal = () => {
     dispatch(closeModal());
+    fetchData(currentPage)
   };
 
   return (
