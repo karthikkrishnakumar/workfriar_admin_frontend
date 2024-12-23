@@ -99,7 +99,7 @@ const RoleForm: React.FC<RoleFormProps> = ({
           </label>
           <CustomSelect
             options={departmentOptions}
-            value={roleData.department}
+            value={roleData.department || undefined}
             onChange={handleChange("department")}
             placeholder="Select department"
           />

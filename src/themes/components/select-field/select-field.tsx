@@ -25,13 +25,11 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 }) => {
   return (
     <div className={styles.customSelectContainer}>
-      {" "}
-      {/* Apply container class */}
       <Select
-        value={value}
+        value={value || undefined} // Ensure falsy values like empty string or false are treated as undefined
         onChange={onChange}
         placeholder={placeholder}
-        className={styles.customSelect} // Apply select styling
+        className={styles.customSelect}
       >
         {options.map((option) => (
           <Option key={option.value.toString()} value={option.value}>
@@ -42,5 +40,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     </div>
   );
 };
+
 
 export default CustomSelect;

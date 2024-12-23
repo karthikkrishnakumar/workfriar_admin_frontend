@@ -6,6 +6,17 @@
   border-radius: 24px;
   transition: background-color 0.3s ease, color 0.3s ease;
   margin-left: 10px;
+
+  &:hover {
+    .iconWrapper {
+      .defaultIcon {
+        opacity: 0;
+      }
+      .hoverIcon {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 .black {
@@ -112,4 +123,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.iconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .defaultIcon {
+    display: inline-block;
+    transition: opacity 0.3s ease;
+    line-height: 0px;
+  }
+
+  .hoverIcon {
+    display: inline-block;
+    position: absolute;
+    opacity: 0;
+    line-height: 0px;
+    transition: opacity 0.3s ease;
+  }
 }

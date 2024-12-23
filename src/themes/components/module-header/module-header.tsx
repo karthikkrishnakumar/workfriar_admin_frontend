@@ -45,7 +45,9 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
               label={actionButton.label}
               theme="black"
               onClick={actionButton.onClick}
-              content={actionButton.icon}
+              // content={actionButton.icon}
+              defaultIcon={actionButton.icon}
+              hoverIcon={Icons.plusDark}
               className={styles.addButton}
             />
           )}

@@ -150,7 +150,6 @@ const useRoleService = () => {
     try {
       const payload: JSON = <JSON>(<unknown>roleData);
 
-      console.log(payload)
 
       const { body } = await http().post(`${apiUrl}/update-role`, payload);
 
