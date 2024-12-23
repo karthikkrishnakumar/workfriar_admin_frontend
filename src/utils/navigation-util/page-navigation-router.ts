@@ -11,7 +11,7 @@ interface NavigationLinks {
 export class NavBarNavigationClass {
     public navigationLinks: NavigationLinks[] = [
       { path: "/dashboard", label: "DashBoard", defaultIcon: "dashboardOutline", activeIcon: "dashboardFilled", collapsible: false },
-      { path: "/time-sheet", label: "TimeSheet", defaultIcon: "timeSheetOutline", activeIcon: "timeSheetFilled", collapsible: true },
+      { path: "/time-sheet", label: "Timesheet", defaultIcon: "timeSheetOutline", activeIcon: "timeSheetFilled", collapsible: true },
       { path: "/projects", label: "Projects", defaultIcon: "projectsOutline", activeIcon: "projectsFilled", collapsible: true },
       { path: "/organization", label: "Organization", defaultIcon: "organizationOutline", activeIcon: "organizationFilled", collapsible: false },
       { path: "/project-forecast", label: "Project Forecast", defaultIcon: "projectForeCastOutline", activeIcon: "projectForeCastFilled", collapsible: false },

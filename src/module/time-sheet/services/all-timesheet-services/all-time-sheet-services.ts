@@ -133,6 +133,7 @@ export default function UseAllTimesheetsServices() {
             const status = "accepted";
             const props: JSON = <JSON>(<unknown>{ startDate, endDate, status });
             const { body } = await http().post("/api/admin/getduetimesheet", props);
+            console.log(body);
             return {
                 status: body.status,
                 data: body.data || null,
@@ -254,6 +255,7 @@ export default function UseAllTimesheetsServices() {
                 errors: body.errors || null,
             };
         } catch (error) {
+            console.error(error);
             throw error;
         }
     };

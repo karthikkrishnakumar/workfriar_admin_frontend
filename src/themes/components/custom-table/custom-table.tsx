@@ -109,7 +109,7 @@ const CustomTable = forwardRef<HTMLDivElement, CustomTableProps>(
         </div>
 
         {/* Table Body */}
-        {data.length > 0 ? (
+        {data?.length > 0 ? (
           <div className={styles.tableBody}>
           {data?.map((row, index) => {
             // Determine styling flags

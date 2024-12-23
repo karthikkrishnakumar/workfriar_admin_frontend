@@ -39,6 +39,16 @@ export const getDropdownItems = (label: string): DropdownItem[] | undefined => {
         path: "/manage-projects",
       },
     ],
+    Timesheet: [
+      {
+        label: "Timesheet",
+        path: "/time-sheet"
+      },
+      {
+        label: "Approval Center",
+        path: "/time-sheet/approval-center"
+      }
+    ]
   };
 
   return dropdownConfig[label];
@@ -46,5 +56,5 @@ export const getDropdownItems = (label: string): DropdownItem[] | undefined => {
 
 // Helper function to determine if a navigation item should be collapsible
 export const isCollapsibleItem = (label: string): boolean => {
-  return ["Reports", "Settings", "Projects"].includes(label);
+  return ["Reports", "Settings", "Projects", "Timesheet"].includes(label);
 };

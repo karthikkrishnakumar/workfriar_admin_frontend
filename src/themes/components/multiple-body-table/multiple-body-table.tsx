@@ -2,6 +2,7 @@
 
 import React, { forwardRef, ReactNode, CSSProperties } from "react";
 import styles from "./multiple-body-table.module.scss";
+import { Empty } from "antd";
 
 interface Column {
   /**
@@ -100,6 +101,9 @@ const MultipleBodytable = forwardRef<HTMLDivElement, CustomTableProps>(
     };
 
     return (
+    <>
+    {
+      data.length > 0 ? (
       <div ref={ref} className={`${styles.tableContainer} ${className || ""}`}>
         {/* Table Header */}
         {!hideColumn && (
@@ -157,7 +161,9 @@ const MultipleBodytable = forwardRef<HTMLDivElement, CustomTableProps>(
             </div>
           ))}
         </div>
-      </div>
+      </div>) : <Empty />
+    }
+    </>
     );
   }
 );
