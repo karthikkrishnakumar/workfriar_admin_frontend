@@ -16,10 +16,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+console.log(request.cookies)
+
   // Login page logic
   if (pathname === "/") {
     // Redirect to dashboard if already logged in
     if (request.cookies.has(IntersectionCookie)) {
+      console.log("cookie is there")
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
