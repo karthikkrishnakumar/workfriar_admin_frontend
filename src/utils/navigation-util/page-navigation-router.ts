@@ -15,7 +15,7 @@ export class NavBarNavigationClass {
       { path: "/projects", label: "Projects", defaultIcon: "projectsOutline", activeIcon: "projectsFilled", collapsible: true },
       { path: "/organization", label: "Organization", defaultIcon: "organizationOutline", activeIcon: "organizationFilled", collapsible: false },
       { path: "/project-forecast", label: "Project Forecast", defaultIcon: "projectForeCastOutline", activeIcon: "projectForeCastFilled", collapsible: false },
-      { path: "/project-forecast", label: "Subscriptions", defaultIcon: "subscriptionsOutline", activeIcon: "subscriptionsFilled", collapsible: true },
+      { path: "/subscription", label: "Subscriptions", defaultIcon: "subscriptionsOutline", activeIcon: "subscriptionsFilled", collapsible: true },
       { path: "/project-status-report", label: "Reports", defaultIcon: "reportsOutline", activeIcon: "reportsFilled", collapsible: true },
     ];
   
