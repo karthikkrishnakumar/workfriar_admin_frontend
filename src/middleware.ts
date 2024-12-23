@@ -16,7 +16,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-console.log(request.cookies)
 
   // Login page logic
   if (pathname === "/") {

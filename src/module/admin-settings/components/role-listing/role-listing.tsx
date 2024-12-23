@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Skeleton, message } from "antd";
+import { message } from "antd";
 import Table, { ColumnType } from "@/themes/components/table/table";
 import DropdownMenu from "@/themes/components/dropdown-menu/dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
@@ -14,6 +14,7 @@ import { RootState } from "@/redux/store";
 import AddRoleModal from "../role-modal/add-role-modal/add-role-modal";
 import DeleteRoleModal from "../role-modal/delete-role-modal/delete-role-modal";
 import { closeModal } from "@/redux/slices/modalSlice";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
 const RoleListingTable: React.FC = () => {
   const { listRoles, updateRole } = useRoleService();
@@ -29,10 +30,9 @@ const RoleListingTable: React.FC = () => {
     setLoading(true);
     const response = await listRoles();
     if (response.status) {
-      // Ensure each role has a unique key
       const rolesWithKeys = (response.roles || []).map(role => ({
         ...role,
-        key: role.roleId // Using roleId as the unique key
+        key: role.roleId?.toString() // Ensure key is a string
       }));
       setRoles(rolesWithKeys);
     } else {
@@ -51,7 +51,7 @@ const RoleListingTable: React.FC = () => {
 
     if (response.status) {
       setRoles((prevRoles) =>
-        prevRoles.map((r) => (r.roleId === role.roleId ? { ...r, key: role.roleId, status: newStatus } : r))
+        prevRoles.map((r) => (r.roleId === role.roleId ? { ...r, status: newStatus } : r))
       );
       message.success("Role status updated successfully!");
     } else {
@@ -98,8 +98,8 @@ const RoleListingTable: React.FC = () => {
         dataIndex: "users",
         key: "users",
         width: "22%",
-        render: (_, record) => (
-          <span key={`users-${record.roleId}`}>
+        render: (_, record: Role) => (
+          <span>
             {record.no_of_users === 1 ? "1 employee" : `${record.no_of_users} employees`}
           </span>
         ),
@@ -109,17 +109,16 @@ const RoleListingTable: React.FC = () => {
         dataIndex: "status",
         key: "status",
         width: "22%",
-        render: (_, record) => (
+        render: (_, record: Role) => (
           <DropdownMenu
-            key={`status-${record.roleId}`}
             menuItems={[
               {
-                key: `active-${record.roleId}`,
+                key: `status-active-${record.roleId}`,
                 label: "Active",
                 onClick: () => handleStatusChange(record, true),
               },
               {
-                key: `inactive-${record.roleId}`,
+                key: `status-inactive-${record.roleId}`,
                 label: "Inactive",
                 onClick: () => handleStatusChange(record, false),
               },
@@ -140,18 +139,29 @@ const RoleListingTable: React.FC = () => {
       {
         key: "actions",
         width: "4%",
-        render: (_, record) => (
+        render: (_, record: Role) => (
           <DropdownMenu
-            key={`actions-${record.roleId}`}
             menuItems={[
-              { key: `edit-${record.roleId}`, label: "Edit", onClick: () => handleMenuClick("edit", record) },
+              { 
+                key: `action-edit-${record.roleId}`, 
+                label: "Edit", 
+                onClick: () => handleMenuClick("edit", record) 
+              },
               {
-                key: `update-permissions-${record.roleId}`,
+                key: `action-permissions-${record.roleId}`,
                 label: "Update Role Permissions",
                 onClick: () => handleMenuClick("update-permissions", record),
               },
-              { key: `map-user-${record.roleId}`, label: "Map User", onClick: () => handleMenuClick("map-user", record) },
-              { key: `delete-${record.roleId}`, label: "Delete", onClick: () => handleMenuClick("delete", record) },
+              { 
+                key: `action-map-${record.roleId}`, 
+                label: "Map User", 
+                onClick: () => handleMenuClick("map-user", record) 
+              },
+              { 
+                key: `action-delete-${record.roleId}`, 
+                label: "Delete", 
+                onClick: () => handleMenuClick("delete", record) 
+              },
             ]}
             icon={Icons.threeDots}
             wrapperClassName={styles.actionTriggerWrapper}
@@ -166,9 +176,18 @@ const RoleListingTable: React.FC = () => {
   return (
     <>
       {loading ? (
-        <Skeleton active paragraph={{ rows: 6 }} />
+        <SkeletonLoader
+          paragraph={{ rows: 8 }}
+          classNameItem={styles.customSkeleton}
+        />
       ) : (
-        <Table columns={columns} dataSource={roles} rowKey="roleId" />
+        <Table 
+          columns={columns} 
+          dataSource={roles} 
+          rowKey={(record) => record.roleId.toString()}
+          loading={loading} 
+          skeletonRows={5}
+        />
       )}
 
       {isOpen && modalType === "roleModal" && (

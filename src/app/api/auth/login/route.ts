@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
     // console.log(cookieData)
 
     const res  = await setCookie(response, {token} );
-    console.log(res)
 
     return response;
   } catch (error) {

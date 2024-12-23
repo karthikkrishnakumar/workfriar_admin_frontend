@@ -1,5 +1,5 @@
 import React from "react";
-import { Table as AntTable } from "antd";
+import { Table as AntTable, Skeleton } from "antd";
 import type { TableProps as AntTableProps } from "antd";
 import styles from "./table.module.scss";
 
@@ -18,7 +18,8 @@ interface TableProps {
   loading?: boolean;
   className?: string;
   maxHeight?: number;
-  rowKey?: string | ((record: any) => string); // Added rowKey prop
+  rowKey?: string | ((record: any) => string);
+  skeletonRows?: number;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -27,26 +28,47 @@ const Table: React.FC<TableProps> = ({
   loading = false,
   className,
   maxHeight = 450,
-  rowKey, // Add rowKey to destructured props
+  rowKey,
+  skeletonRows = 5
 }) => {
   const formattedColumns = columns.map((column) => ({
     ...column,
     className: `${styles.column} ${column.className || ""}`.trim(),
   }));
 
+  // Create skeleton data for loading state
+  const skeletonData = React.useMemo(() => {
+    if (!loading) return undefined;
+
+    return Array(skeletonRows).fill(null).map((_, index) => ({
+      key: `skeleton-${index}`,
+      ...Object.fromEntries(
+        columns.map(col => [
+          col.dataIndex || col.key,
+          <Skeleton 
+            key={`skeleton-${index}-${col.key}`}
+            paragraph={false}
+            title={{ width: '100%' }}
+            active
+          />
+        ])
+      )
+    }));
+  }, [loading, columns, skeletonRows]);
+
   return (
     <div className={`${styles.tableWrapper} ${className || ""}`.trim()}>
       <AntTable
         columns={formattedColumns}
-        dataSource={dataSource}
-        loading={loading}
+        dataSource={loading ? skeletonData : dataSource}
+        loading={false} // We disable default loading since we're handling it ourselves
         pagination={false}
         className={`${styles.table}`}
         scroll={{ 
           x: "max-content", 
           y: maxHeight  
         }}
-        rowKey={rowKey} // Pass rowKey to AntTable
+        rowKey={rowKey}
       />
     </div>
   );
