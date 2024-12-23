@@ -1,34 +1,47 @@
-"use client";
-
 import React, { ReactNode, useState } from "react";
-import classNames from "classnames"; // Utility for conditional classnames
+import classNames from "classnames";
+import { Dropdown, Menu } from "antd";
 import styles from "./nav-block.module.scss";
 import Icons from "@/themes/images/icons/icons";
 
 interface NavBlockProps {
-  title: string;  // Title of block
-  activeStatus: boolean; // Active status of the block
-  defaultIcon: ReactNode; // Default icon for the block
-  activeIcon: ReactNode;  // Icon while active
-  collapsible: boolean;  // Whether the block is collaps
-  onClickFunction?: () => void;  // function for onclick
+  title: string;
+  activeStatus: boolean;
+  defaultIcon: ReactNode;
+  activeIcon: ReactNode;
+  collapsible: boolean;
+  dropdownItems?: { label: string; onClick: () => void }[];
+  onClickFunction?: () => void;
+  isDropdownSelected?: boolean; // New prop to track if any dropdown item is selected
 }
 
-/**
- * A reusable navigation block component that displays icons, titles, and supports hover and active states.
- *
- * @param {NavBlockProps} props - Props passed to the component.
- * @returns {JSX.Element} The rendered NavBlock component.
- */
 const NavBlock: React.FC<NavBlockProps> = ({
   title,
   activeStatus,
   defaultIcon,
   activeIcon,
   collapsible,
+  dropdownItems,
   onClickFunction,
+  isDropdownSelected,
 }) => {
-  const [isHovered, setIsHovered] = useState(false); // Tracks hover state
+  const [isHovered, setIsHovered] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const menu = (
+    <Menu
+      className={styles.blackThemeMenu}
+      onMouseLeave={() => {
+        setIsDropdownOpen(false);
+      }}
+    >
+      {dropdownItems?.map((item, index) => (
+        <Menu.Item key={index} onClick={item.onClick}>
+          {item.label}
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -36,30 +49,57 @@ const NavBlock: React.FC<NavBlockProps> = ({
     }
   };
 
+  // Only show active state if the item is active and not overridden by a dropdown selection
+  const isActive = activeStatus && (!collapsible || !isDropdownSelected);
+
   return (
     <div
       className={classNames(styles.navBlockWrapper, {
-        [styles.active]: activeStatus,
+        [styles.active]: isActive,
       })}
-      role="button" // Indicate it's interactive
-      tabIndex={0} // Make it focusable
-      aria-pressed={activeStatus} // Provide accessible information about active state
-      onMouseEnter={() => setIsHovered(true)} // Sets hover state to true on mouse enter
-      onMouseLeave={() => setIsHovered(false)} // Resets hover state on mouse leave
-      onClick={onClickFunction} // Handles click events
-      onKeyDown={handleKeyPress} // Handle keyboard interaction
+      role="button"
+      tabIndex={0}
+      aria-pressed={isActive || isDropdownOpen}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClickFunction}
+      onKeyDown={handleKeyPress}
     >
       <div className={styles.titleAndIcon}>
-        <span>{isHovered || activeStatus ? activeIcon : defaultIcon}</span>
+        <span className={styles.defaultIcon}>
+          {!(isHovered || isActive) && defaultIcon}
+        </span>
+        <span className={styles.dynamicIcon}>
+          {(isHovered || isActive || isDropdownOpen) && activeIcon}
+        </span>
         <h2>{title}</h2>
       </div>
-      <span>
-        {collapsible
-          ? isHovered || activeStatus
-            ? Icons.arrowRightDark
-            : Icons.arrowRightLight
-          : ""}
-      </span>
+      {collapsible && (
+        <span
+          className={styles.dropdownSpan}
+          onMouseEnter={() => {
+            setIsDropdownOpen(true);
+          }}
+        >
+          <Dropdown
+            overlay={menu}
+            trigger={["click"]}
+            className={styles.dropdownStyle}
+            overlayStyle={{
+              zIndex: 1900,
+              position: "fixed",
+            }}
+            onOpenChange={(open) => setIsDropdownOpen(open)}
+            placement="bottomLeft"
+          >
+            <span>
+              {isHovered || isActive || isDropdownOpen
+                ? Icons.arrowRightDark
+                : Icons.arrowRightLight}
+            </span>
+          </Dropdown>
+        </span>
+      )}
     </div>
   );
 };

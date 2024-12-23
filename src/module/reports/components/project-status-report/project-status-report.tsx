@@ -7,7 +7,11 @@ import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./project-status-report.module.scss";
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import useProjectStatusServices from "../../services/project-status-report/project-status-report-services";
+import UseProjectStatusServices from "../../services/project-status-report/project-status-report-services";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { closeModal } from "@/redux/slices/modalSlice";
+import AddReport from "../add-edit-report-modal/add-edit-report-modal";
 
 const ProjectStatusReport: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
@@ -16,6 +20,9 @@ const ProjectStatusReport: React.FC = () => {
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
   const pageSize = 1; // Number of rows per page
   const router = useRouter();
+  const dispatch = useDispatch();
+  
+ const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
 
   const columns = [
     { title: "Project", key: "project", align: "left" as const, width: 220 },
@@ -52,10 +59,9 @@ const ProjectStatusReport: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const reports = await useProjectStatusServices().fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
-      console.log(reports, "reports");
+      const reports = await UseProjectStatusServices().fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
       const formattedData = reports.data.map((item: any) => ({
-        id: item._id,
+        id: item.id,
         project: (
           <div className={styles.projectCell}>
             <CustomAvatar name={item.project_name} size={50} />
@@ -124,6 +130,10 @@ const ProjectStatusReport: React.FC = () => {
     setCurrentPage(page); // Update the current page
   };
 
+   const handleCloseModal = () => {
+      dispatch(closeModal());
+    };
+
   return (
     <>
       <div className={styles.projectStatusReport}>
@@ -163,6 +173,8 @@ const ProjectStatusReport: React.FC = () => {
           style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
         />
       </div>
+
+      {isOpen && <AddReport mode="add" onClose={handleCloseModal} />}
     </>
   );
 };

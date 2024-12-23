@@ -9,7 +9,7 @@ import ProjectDetails from "../project-report-details/project-report-datails";
 
 import { message } from "antd";
 import AddEditReport from "../add-edit-report-modal/add-edit-report-modal";
-import useProjectStatusServices from "../../services/project-status-report/project-status-report-services";
+import UseProjectStatusServices from "../../services/project-status-report/project-status-report-services";
 
 interface ReportTabProps {
   id: string;
@@ -34,7 +34,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const result = await useProjectStatusServices().fetchProjectDetails(id); // Make sure you pass the ID
+        const result = await UseProjectStatusServices().fetchProjectDetails(id); // Make sure you pass the ID
         setProject(result.data);
       } catch (error) {
         setError("Failed to fetch project details.");
@@ -90,7 +90,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
       )}
 
       {isModalVisible && (
-        <AddEditReport onClose={handleCloseModal} mode="edit" />
+        <AddEditReport onClose={handleCloseModal} mode="edit" reportData={project}/>
       )}
     </div>
   );

@@ -1,10 +1,46 @@
 import http from "@/utils/http"; // Assuming you have a custom HTTP utility for API calls
 
+// Type definitions for the report data and response
+export interface ReportData {
+  project_name: string;
+  project_lead: string;
+  planned_start_date: string;
+  planned_end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
+  reporting_period: string;
+  progress: string;
+  comments: string;
+  accomplishments: string;
+  goals: string;
+  blockers: string;
+}
+interface ValidationError {
+  field: string;
+  message: string;
+}
+interface AddProjectStatusReportResponse {
+  status: boolean;
+  message: string;
+  errors?: ValidationError;
+  data?: ReportData;
+}
+export interface DropDownData {
+  id: string;
+  name: string;
+}
+interface DropDownResponse {
+  status: boolean;
+  data: DropDownData[];
+  message: string;
+  errors: string[] | null;
+}
+
+
 /**
  * Service functions to handle project-related API calls.
  */
-export default function useProjectStatusServices() {
-
+export default function UseProjectStatusServices() {
   /**
    * Fetches the project details based on the provided project ID.
    * @param id - The ID of the project to fetch details for.
@@ -16,11 +52,10 @@ export default function useProjectStatusServices() {
     try {
       // Send a POST request to fetch project details
       const { body } = await http().post(
-        `/api/project-status-report/get-report/${id}`,
+        `/api/project-status-report/get-report/${id}`
       );
 
-  
-      console.log(body)
+      console.log(body);
       // Handle the API response and return the report details
       return {
         status: body.status,
@@ -46,7 +81,10 @@ export default function useProjectStatusServices() {
    * @param limit - Number of items per page.
    * @returns Project status report details or throws an error if the request fails.
    */
-  const fetchProjectStatusReport = async (page: number, limit: number): Promise<any> => {
+  const fetchProjectStatusReport = async (
+    page: number,
+    limit: number
+  ): Promise<any> => {
     const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
 
     try {
@@ -76,8 +114,82 @@ export default function useProjectStatusServices() {
     }
   };
 
+  const addProjectStatusReport = async (
+    reportData?: ReportData // Optional parameter for report data if saving
+  ): Promise<AddProjectStatusReportResponse> => {
+    const props: JSON = <JSON>(<unknown>{ reportData }); // Adding report data to request payload
+
+    try {
+      // If reportData is passed, it's used for saving the report
+      if (reportData) {
+        const { body } = await http().post(
+          "/api/project-status-report/add-report", // Endpoint for saving the report
+          props
+        );
+
+        // Return success response
+        return {
+          status: body.status,
+          message: body.message || "Project status report saved successfully.",
+          errors: body.errors || null,
+        };
+      }
+
+      // If no reportData is passed, it fetches the list of reports
+      const { body } = await http().post(
+        "/api/project-status-report/add-report", // Endpoint for fetching reports
+        props
+      );
+
+      // Return fetched data response
+      return {
+        status: body.status,
+        data: body.data.reports || [], // Return the reports data
+        message: body.message || "Successfully added project status reports.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Handle errors and return meaningful response
+      return {
+        status: false,
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while processing the project status report. Please try again.",
+        errors: error?.response?.data?.errors || null,
+      };
+    }
+  };
+
+  async function fetchDropdownData(type: string): Promise<DropDownResponse> {
+    try {
+      // Call the API with the provided type to get project or lead data
+      const response = await http().post(`/api/project-status-report/dropdown/${type}`);
+      const body = response.body;
+  
+      // Return the fetched data response formatted as DropDownResponse
+      return {
+        status: body.status,
+        data: body.data || [],
+        message: body.message || "Data fetched successfully.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Handle and return errors in a structured format
+      return {
+        status: false,
+        data: [],
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while fetching dropdown data. Please try again.",
+        errors: error?.response?.data?.errors || null,
+      };
+    }
+  };
+  
   return {
     fetchProjectDetails,
     fetchProjectStatusReport,
+    addProjectStatusReport,
+    fetchDropdownData,
   };
 }

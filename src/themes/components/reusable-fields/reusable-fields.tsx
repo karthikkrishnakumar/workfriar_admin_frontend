@@ -90,11 +90,11 @@ const FormField: React.FC<FormFieldProps> = ({
           </Select>
         );
 
-      case "datepicker": // If the field is a date picker
+        case "datepicker": // If the field is a date picker
         return (
           <DatePicker
-            value={value ? moment(value) : null}
-            onChange={(date, dateString) => handleChange(dateString)}
+            value={value ? moment(value, "YYYY-MM-DD") : null} // Ensure the value is in correct moment format
+            onChange={(date, dateString) => handleChange(dateString)} // Pass the formatted date string
             className={`${styles.customDatePicker} ${className}`}
             placeholder={placeholder ?? "dd/mm/yyyy"}
             suffixIcon={suffixIcon ?? Icons.calender}
@@ -105,7 +105,7 @@ const FormField: React.FC<FormFieldProps> = ({
         return (
           <Input.TextArea
             value={value || null}
-            onChange={(e) => handleChange(e.target.value)}
+            onChange={(value) => handleChange(value)}
             placeholder={placeholder}
             rows={rows}
             className={`${styles.customTextarea} ${className}`}
