@@ -8,7 +8,6 @@ import CustomAvatar from "@/themes/components/avatar/avatar";
 import UseEmployeeData, {
   GetRolesResponse,
   FormValueData,
-  EmployeeData,
 } from "../../services/organization-services/organization-services";
 
 interface FormValues {
@@ -66,6 +65,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     profile_pic: null,
   });
 
+  console.log(employeeData,"employeeData")
   const fetchDepartmentData = async (department: string) => {
     try {
       const response: GetRolesResponse =
@@ -182,9 +182,10 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
         reporting_manager_name: employeeData.reporting_manager || "",
         department: employeeData.department || "",
         status: employeeData.status ? "active" : "inactive",
+        profile_pic:employeeData.profile_pic_path
       };
       setFormValues(initialFormValues);
-
+      setAvatarSrc(initialFormValues.profile_pic)
       if (employeeData.department) {
         fetchDepartmentData(employeeData.department);
       }
@@ -420,7 +421,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   type="select"
                   label="Reporting Manager"
                   name="reportingManager"
-                  value={formValues.reporting_manager_id}
+                  value={formValues.reporting_manager_name}
                   onChange={handleReportingManagerChange}
                   placeholder="Enter reporting manager"
                   options={reportingManagerOptions}

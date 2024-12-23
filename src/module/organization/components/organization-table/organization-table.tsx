@@ -32,6 +32,7 @@ interface Employee {
   role: string;
   reporting_manager: string;
   status: boolean;
+  profile_pic_path:string;
 }
 
 const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
@@ -114,7 +115,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
       id: employee.id,
       name: (
         <span className={styles.nameCell}>
-          <CustomAvatar name={employee.name} size={50} />
+          <CustomAvatar name={employee.name} src={employee.profile_pic_path ?? undefined} size={50} />
           {/* Custom avatar */}
           <button
             className={styles.employeeName}
@@ -174,6 +175,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
         activeTab
       ); // Fetch data using the service
       console.log(response);
+
       setFilteredEmployees(mapEmployeeData(response.data)); // Map the data to RowData format
 
       setTotalRecords(response.total);

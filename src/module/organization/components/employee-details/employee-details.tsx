@@ -40,7 +40,7 @@ const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({
     ? {
         avatar: {
           name: employeeData.name,
-          profile: employeeData.profile || "",
+          profile: employeeData.profile_pic_path || "",
           size: 100,
         },
         fields_one: [

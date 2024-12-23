@@ -6,6 +6,7 @@ import { AvatarProps } from 'antd/es/avatar';
 interface CustomAvatarProps extends AvatarProps {
   name?: string;
   profile?:string
+  src?:string|undefined;
 }
 
 const CustomAvatar: React.FC<CustomAvatarProps> = ({ 
@@ -16,6 +17,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
   size = 40, 
   ...restProps 
 }) => {
+  console.log(src,"haii")
   // If no image is provided, generate an avatar with the first letter
   if (!src && name) {
     return (

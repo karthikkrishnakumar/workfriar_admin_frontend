@@ -42,7 +42,7 @@ const GridContainer: React.FC<GridContainerProps> = ({
           {avatar && (
             <CustomAvatar
               name={avatar.name}
-              profile={avatar.profile}
+              src={avatar.profile}
               size={avatar.size}
             />
           )}
