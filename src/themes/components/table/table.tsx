@@ -1,5 +1,6 @@
 import React from "react";
 import { Table as AntTable } from "antd";
+import type { TableProps as AntTableProps } from "antd";
 import styles from "./table.module.scss";
 
 export interface ColumnType {
@@ -16,7 +17,8 @@ interface TableProps {
   dataSource?: any[];
   loading?: boolean;
   className?: string;
-  maxHeight?: number; // Optional prop to set maximum height
+  maxHeight?: number;
+  rowKey?: string | ((record: any) => string); // Added rowKey prop
 }
 
 const Table: React.FC<TableProps> = ({
@@ -24,7 +26,8 @@ const Table: React.FC<TableProps> = ({
   dataSource,
   loading = false,
   className,
-  maxHeight = 450, 
+  maxHeight = 450,
+  rowKey, // Add rowKey to destructured props
 }) => {
   const formattedColumns = columns.map((column) => ({
     ...column,
@@ -43,6 +46,7 @@ const Table: React.FC<TableProps> = ({
           x: "max-content", 
           y: maxHeight  
         }}
+        rowKey={rowKey} // Pass rowKey to AntTable
       />
     </div>
   );

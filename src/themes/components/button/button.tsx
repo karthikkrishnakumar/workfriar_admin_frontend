@@ -19,6 +19,8 @@ interface ButtonProps {
   filter?: boolean; // Add filter flag to props
   className?: string;
   content?: React.ReactNode; // Content prop for custom rendering
+  defaultIcon?: React.ReactNode; // Icon to display by default
+  hoverIcon?: React.ReactNode; // Icon to display on hover
   loading?: boolean;
 }
 
@@ -31,6 +33,8 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   filter = false, // Default to false if not provided
   className = "",
   content,
+  defaultIcon,
+  hoverIcon,
   
 }) => {
   // Determine class based on the theme prop
@@ -86,6 +90,10 @@ const ButtonComponent: React.FC<ButtonProps> = ({
       onClick={onClick}
       icon={content}
     >
+      <span className={styles.iconWrapper}>
+        <span className={styles.defaultIcon}>{defaultIcon}</span>
+        <span className={styles.hoverIcon}>{hoverIcon}</span>
+      </span>
       {label}
     </Button>
   );
