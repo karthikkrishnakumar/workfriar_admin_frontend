@@ -3,6 +3,8 @@
 import TabComponent from '@/themes/components/tabs/tabs';
 import React, { useEffect, useState } from 'react'
 import AllHolidays from '../all-holidays/all-holidays';
+import IndianHolidays from '../indian-holidays/indian-holidays';
+import DubaiHolidays from '../dubai-holidays/dubai-holidays';
 
 const HolidayTabs = () => {
     const [num,setNum] = useState('2024');
@@ -21,7 +23,7 @@ const HolidayTabs = () => {
               Techfriar India
             </>
           ),
-          content:<></>,
+          content:<IndianHolidays year={num}/>,
         },
         {
           key: "3",
@@ -30,7 +32,7 @@ const HolidayTabs = () => {
               Techfriar Dubai
             </>
           ),
-          content: <></>,
+          content: <DubaiHolidays year={num}/>,
         },
       ];
 
@@ -40,9 +42,9 @@ const HolidayTabs = () => {
 
   
   return (
-    <div>
+    <>
       <TabComponent  headings={tabs}/>
-    </div>
+    </>
   )
 }
 
