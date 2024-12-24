@@ -6,8 +6,9 @@ import ButtonComponent from "@/themes/components/button/button";
 import OtpForm from "../otp-form/otp-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthService } from "../../services/auth-service/auth-service";
+import { Spin } from "antd";
 
-const LoginForm = () => { 
+const LoginForm = () => {
   const [isOtp, setIsOtp] = useState(false);
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -15,10 +16,7 @@ const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { 
-    handleAppLogin, 
-    redirectToGoogleLogin, 
-  } = useAuthService();
+  const { handleAppLogin, redirectToGoogleLogin } = useAuthService();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -29,38 +27,34 @@ const LoginForm = () => {
     const errorParam = searchParams.get("error");
 
     const processLogin = async () => {
+
       if (token) {
-          setLoading(true);
-          const response = await handleAppLogin(token);
+      setLoading(true);
 
-          if (response.success) {
+        const response = await handleAppLogin(token);
 
-            router.push("/dashboard");
+        if (response.success) {
+          router.push("/dashboard");
+        } else {
+          setError(response.message || "Login failed.");
+          setLoading(false)
 
-          } else {
-            setError(response.message || "Login failed.");
-          }
-          setLoading(false);
-        
+        }
       } else if (errorParam) {
-        setError(errorParam || "Authentication failed.No account found");
+        setLoading(true);
+        setError(errorParam || "Authentication failed. No account found.");
+        setLoading(false);
+
       }
     };
 
     processLogin();
   }, [searchParams, handleAppLogin, router]);
 
-  /**
-   * Handles Google login.
-   *
-   */
   const handleGoogleLogin = () => {
     redirectToGoogleLogin(); // Redirect to backend Google login endpoint
   };
 
-  /**
-   * Handles email submission to continue to OTP verification.
-   **/
   const handleContinueWithEmail = () => {
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setError("Please enter a valid email address.");
@@ -74,15 +68,18 @@ const LoginForm = () => {
   }
 
   return (
-    <div>
+    <div className={styles.container}>
+      {loading && (
+        <div className={styles.loaderOverlay}>
+          <Spin size="large" className={styles.customspinner} />
+        </div>
+      )}
       <div className={styles.form}>
         <h3>Log In</h3>
-
         <img src="/Google.svg" alt="Icon" className={styles.icon} />
         <ButtonComponent
           label="Continue with Google"
           onClick={handleGoogleLogin}
-          loading={loading} 
         />
         <div className={styles.divider}>
           <div className={styles.hr}></div>

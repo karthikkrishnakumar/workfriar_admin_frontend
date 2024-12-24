@@ -1,3 +1,4 @@
+import { formatDateforNotifications, formatTimeTo12Hour } from "@/utils/date-formatter-util/date-formatter";
 import http from "@/utils/http";
 
 /**
@@ -29,14 +30,9 @@ export interface NotificationGroup {
 export interface NotificationResponse {
   success: boolean;
   message: string;
-  data?: {
-    date: string;
-    notifications: {
-      message: string;
-      time: string;
-    }[];
-  }[];
+  data?: NotificationGroup[];
 }
+
 
 /**
  * Service for managing notifications in the system.
@@ -52,18 +48,20 @@ const useNotificationService = () => {
   const fetchNotifications = async (): Promise<NotificationResponse> => {
     try {
       const { body } = await http().post(`${apiUrl}/all-notifications`);
-      console.log(body)
+
       const NotificationResponse: NotificationResponse = {
         success: body.success,
         message: body.message,
         data: body.data?.map((group: any) => ({
-          date: group.date,
-          notifications: group.notifications.map((item: any) => ({
-            message: item,
-            time: new Date().toLocaleTimeString(), // Mock time for now
+          date: group.date, // Format the date
+          items: group.notifications.map((item: any) => ({
+            message: item.message,
+            time: item.time, 
           })),
         })),
       };
+
+
       return NotificationResponse;
     } catch (error) {
       return {
