@@ -208,6 +208,7 @@ const UpdateRolePermissionsTable = () => {
             columns={columns}
             dataSource={permissions}
             className={styles.permissionTable}
+            loading={true}
           />
           <div className={styles.actions}>
             <ButtonComponent label="Cancel" theme="white" onClick={handleCancel} />
