@@ -71,7 +71,6 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
       roleId: roleId,
       userIds: selectedUserIds,
     }; 
-    console.log(payload)
 
 
     const response = await mapUsersToRole(payload.roleId, payload.userIds);

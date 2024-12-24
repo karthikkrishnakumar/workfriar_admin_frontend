@@ -86,7 +86,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching project time data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };
@@ -103,7 +102,6 @@ export default function UseDashboardServices() {
         props
       );
 
-      console.log(body, "snapshot");
       // Return the project time data with additional details
       return {
         status: body.status,
@@ -112,7 +110,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching project time data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };
@@ -131,7 +128,6 @@ export default function UseDashboardServices() {
         props
       );
 
-      console.log(body, "timesheet due");
       // Return the project time data with additional details
       return {
         status: body.status,
@@ -141,7 +137,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching project time data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };
@@ -159,7 +154,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching notifications data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };
@@ -169,7 +163,6 @@ export default function UseDashboardServices() {
       // Make an HTTP POST request to fetch the dashboard notifiaction data
       const { body } = await http().post("/api/holiday/get-next");
 
-      console.log(body, "in services");
       // Return notification data with additional details
       return {
         status: body.status,
@@ -178,7 +171,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching notifications data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };

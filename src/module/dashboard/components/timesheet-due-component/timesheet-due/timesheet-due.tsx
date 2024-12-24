@@ -43,7 +43,6 @@ interface TimesheetDue {
  */
 
 const Timesheet: React.FC<TimesheetDataProps> = ({ data }) => {
-  console.log(data)
   const isEmptyData = !data ||data?.length === 0;
 
   return (

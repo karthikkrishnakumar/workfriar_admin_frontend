@@ -131,7 +131,6 @@
     response: NextResponse,
     cookieData: Record<string, string>
   ): Promise<NextResponse> {
-    console.log("entered cookie................................")
     const encryptedCookieData = await encode(cookieData);
     const cookie: string = createCookie(encryptedCookieData);
     response.headers.set("Set-Cookie", cookie); // Use headers.set for NextResponse

@@ -20,15 +20,11 @@ export async function POST(request: NextRequest) {
       message: "Cookie set successfully",
     });
 
-    // const cookieData = `token ${token}`
-
-    // console.log(cookieData)
 
     const res  = await setCookie(response, {token} );
 
     return response;
   } catch (error) {
-    console.error("Error in POST /api/set-cookie:", error);
     return NextResponse.json(
       { success: false, message: "Failed to set cookie" },
       { status: 500 }

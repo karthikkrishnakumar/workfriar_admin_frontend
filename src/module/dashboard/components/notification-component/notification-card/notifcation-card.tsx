@@ -19,7 +19,6 @@ const NotificationCard: React.FC = () => {
         const fetchedNotifications= await UseDashboardServices().fetchNotifications(); // Pass the userID
         setNotifications(fetchedNotifications.data);
       } catch (err) {
-        console.error("Error fetching notifications:", err);  
         setError("Failed to load notifications.");
       } finally {
         setIsLoading(false);

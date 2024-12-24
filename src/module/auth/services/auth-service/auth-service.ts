@@ -50,7 +50,6 @@
         return { success: false, message: "You do not have admin privileges." };
       }
     } catch (error) {
-      console.error("Error in handleAppLogin:", error);
       return { success: false, message: "An error occurred while processing login." };
     }
     };
@@ -75,7 +74,6 @@
           return { success: false, message: data.message || "Logout failed" };
         }
       } catch (error) {
-        console.error("Error in handleLogout:", error);
         return { success: false, message: "An error occurred during logout." };
       }
     };

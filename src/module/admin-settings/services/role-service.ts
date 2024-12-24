@@ -128,7 +128,6 @@ const useRoleService = () => {
       const payload: JSON = <JSON>(<unknown>roleData);
 
       const { body } = await http().post(`${apiUrl}/add-role`, payload);
-      console.log("BODY IS ",body)
       const RoleResponse: RoleResponse = {
         status: body.status,
         message: body.message,
@@ -136,7 +135,6 @@ const useRoleService = () => {
           roleId:body.data[0]._id
         }
       };
-      // console.log(RoleResponse)
       return RoleResponse;
       
     } catch (error) {
@@ -229,7 +227,6 @@ const useRoleService = () => {
   const updatePermissionsByRoleId = async (roleId: string, permissions: Permission[]) :Promise<PermissionResponse> => {
     try {
       const payload:JSON= <JSON>(<unknown>{ roleId, permissions });
-      console.log("ddddd",payload)
       const { body } = await http().post(`${apiUrl}/update-role`, payload);
 
       const permissionsResponse = {
@@ -283,7 +280,6 @@ const useRoleService = () => {
       const mappedUsers = cachedUsers.filter(
         (user) => user.roles?.includes(roleId) ?? false
       );
-      // console.log(mappedUsers)
       const mappedUsersResponse = {
         status: true,
         message: "Mapped users fetched successfully",
@@ -309,7 +305,6 @@ const useRoleService = () => {
   const mapUsersToRole = async (roleId: string, userIds: string[]): Promise<UserResponse> => {
     try {
       const payload:JSON= <JSON>(<unknown>{ roleId, userIds });
-      console.log("map users paylad",payload)
 
       const { body } = await http().post(`${apiUrl}/map-role`, payload);
 

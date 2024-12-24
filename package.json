@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@ant-design/charts": "2.2.3",
-    "@hapi/iron": "^7.0.1",
+    "@hapi/iron": "7.0.1",
     "@reduxjs/toolkit": "2.4.0",
     "@types/chart.js": "2.9.41",
     "antd": "5.22.2",
