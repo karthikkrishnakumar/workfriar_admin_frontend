@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Form } from "antd";
+import { Form, message } from "antd";
 import styles from "./add-edit-employee.module.scss";
 import ModalComponent from "@/themes/components/modal/modal";
 import FormField from "@/themes/components/reusable-fields/reusable-fields";
@@ -8,21 +8,8 @@ import CustomAvatar from "@/themes/components/avatar/avatar";
 import UseEmployeeData, {
   GetRolesResponse,
   FormValueData,
-  EmployeeData,
 } from "../../services/organization-services/organization-services";
 
-/**
- * FormValues defines the structure of the form data.
- * @typedef {Object} FormValues
- * @property {string} employeeName - Employee's name.
- * @property {string} email - Employee's email address.
- * @property {string} phoneNumber - Employee's phone number.
- * @property {string} location - Employee's location.
- * @property {string} role - Employee's role.
- * @property {string} reportingManager - Reporting manager's name.
- * @property {string} department - Employee's department.
- * @property {string} status - Employee's status.
- */
 interface FormValues {
   id: string;
   name: string;
@@ -30,23 +17,19 @@ interface FormValues {
   phone_number: string;
   location: string;
   role_id: string;
-  reporting_manager: string;
+  role_name: string;
+  reporting_manager_id: string;
+  reporting_manager_name: string;
   department: string;
   status: string;
-  [key: string]: string; // Allow indexing with string keys
+  profile_pic?: File | null;
+  [key: string]: string | File | null | undefined;
 }
 
-/**
- * AddEditEmployeeModal component allows adding or editing a report.
- * @param {Object} props - The component props.
- * @param {function} props.onClose - Function to close the modal.
- * @param {"add" | "edit"} props.mode - Defines the mode as either "add" or "edit".
- * @param {Object} [props.employeeData] - Data to pre-fill the form when in "edit" mode.
- */
 interface AddEditEmployeeProps {
   onClose?: () => void;
-  mode: "add" | "edit"; // Add or Edit mode
-  employeeData?: any; // Optional employee data for editing
+  mode: "add" | "edit";
+  employeeData?: any;
 }
 
 interface SelectData {
@@ -61,53 +44,75 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
 }) => {
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [roleOptions, setRoleOptions] = useState<SelectData[]>([]);
+  const [reportingManagerOptions, setReportingManagerOptions] = useState<
+    SelectData[]
+  >([]);
+  const [statusOptions, setStatusOptions] = useState<SelectData[]>([]);
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [formValues, setFormValues] = useState<FormValues>({
     id: "",
     name: "",
     email: "",
     phone_number: "",
     location: "",
-    role: "",
     role_id: "",
-    reporting_manager: "",
+    role_name: "",
     reporting_manager_id: "",
+    reporting_manager_name: "",
     department: "",
     status: "",
+    profile_pic: null,
   });
 
-  const [roleOptions, setRoleOptions] = useState<SelectData[]>([]);
-  const [reportingManagerOptions, setReportingManagerOptions] = useState<
-    SelectData[]
-  >([]);
-  const [statusOptions, setStatusOptions] = useState<SelectData[]>([]);
-
+  console.log(employeeData,"employeeData")
   const fetchDepartmentData = async (department: string) => {
     try {
       const response: GetRolesResponse =
         await UseEmployeeData().fetchRolesByDepartment(department);
       const roles = response.data;
 
-      console.log(roles);
-
-      // Filter and format active roles
       const activeRoles = roles
-        .filter((role: FormValueData) => role.role) // Include only active roles
+        .filter((role: FormValueData) => role.role)
         .map((role: FormValueData) => ({
           value: role._id,
           label: role.role,
         }));
       setRoleOptions(activeRoles);
 
-      // Format reporting managers from users.full_name
       const reportingManagers = roles
-        .filter((role: FormValueData) => role.users[0]?.full_name)
-        .map((role: FormValueData, index) => ({
-          value: role.users[index]?.id,
-          label: role.users[index]?.full_name,
+        .filter((role: FormValueData) => role.users && role.users[0]?.full_name)
+        .map((role: FormValueData) => ({
+          value: role.users[0]?.id,
+          label: role.users[0]?.full_name,
         }));
       setReportingManagerOptions(reportingManagers);
+
+      if (mode === "edit") {
+        const selectedRole = activeRoles.find(
+          (role) => role.value === formValues.role_id
+        );
+        const selectedManager = reportingManagers.find(
+          (manager) => manager.value === formValues.reporting_manager_id
+        );
+
+        if (selectedRole) {
+          setFormValues((prev) => ({
+            ...prev,
+            role_name: selectedRole.label,
+          }));
+        }
+
+        if (selectedManager) {
+          setFormValues((prev) => ({
+            ...prev,
+            reporting_manager_name: selectedManager.label,
+          }));
+        }
+      }
+
       const status = roles
-        .filter((role: FormValueData) => role.status)
+        .filter((role: FormValueData) => role.status !== undefined)
         .map((role: FormValueData) => ({
           value: role.status ? "active" : "inactive",
           label: role.status ? "Active" : "Inactive",
@@ -125,42 +130,67 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     }));
   };
 
+  const handleRoleChange = (value: string) => {
+    const selectedRole = roleOptions.find((role) => role.value === value);
+    setFormValues((prev) => ({
+      ...prev,
+      role_id: value,
+      role_name: selectedRole?.label ?? "",
+    }));
+  };
+
+  const handleReportingManagerChange = (value: string) => {
+    const selectedManager = reportingManagerOptions.find(
+      (manager) => manager.value === value
+    );
+    setFormValues((prev) => ({
+      ...prev,
+      reporting_manager_id: value,
+      reporting_manager_name: selectedManager?.label ?? "",
+    }));
+  };
+
   const handleDepartmentChange = (value: string) => {
     handleChange("department", value);
-    console.log(value);
     if (value) {
       fetchDepartmentData(value);
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        role_id: "",
+        role_name: "",
+        reporting_manager_id: "",
+        reporting_manager_name: "",
+        status: "",
+      }));
     } else {
-      setRoleOptions([]); // Reset role options if no department is selected
+      setRoleOptions([]);
       setReportingManagerOptions([]);
     }
   };
 
-  // Update form values if in "edit" mode and employeeData is available
   useEffect(() => {
     if (mode === "edit" && employeeData) {
-      console.log("Setting form values from employeeData:", employeeData);
-      setFormValues({
+      const initialFormValues = {
         id: employeeData.id || "",
         name: employeeData.name || "",
         email: employeeData.email || "",
         phone_number: employeeData.phone_number || "",
         location: employeeData.location || "",
-        role: employeeData.role || "",
         role_id: employeeData.role_id || "",
-        reporting_manager: employeeData.reporting_manager || "",
+        role_name: employeeData.role || "",
         reporting_manager_id: employeeData.reporting_manager_id || "",
+        reporting_manager_name: employeeData.reporting_manager || "",
         department: employeeData.department || "",
         status: employeeData.status ? "active" : "inactive",
-      });
+        profile_pic:employeeData.profile_pic_path
+      };
+      setFormValues(initialFormValues);
+      setAvatarSrc(initialFormValues.profile_pic)
+      if (employeeData.department) {
+        fetchDepartmentData(employeeData.department);
+      }
     }
   }, [mode, employeeData]);
-
-  console.log(formValues);
-
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -168,13 +198,100 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
-          setAvatarSrc(reader.result as string); // Update avatar preview
+          setAvatarSrc(reader.result as string);
         }
       };
-      reader.readAsDataURL(file); // Convert file to base64
+      reader.readAsDataURL(file);
+      setFormValues((prev) => ({
+        ...prev,
+        profile_pic: file,
+      }));
     }
   };
 
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const prepareSubmitData = () => {
+    return {
+      id: formValues.id || "",
+      name: formValues.name,
+      email: formValues.email,
+      phone_number: formValues.phone_number,
+      location: formValues.location,
+      role_id: formValues.role_id,
+      reporting_manager_id: formValues.reporting_manager_id,
+      status: formValues.status,
+      profile_pic: formValues.profile_pic,
+    };
+  };
+
+  console.log(formValues);
+  const handleSave = async () => {
+    try {
+      setFormErrors({});
+      const validationErrors: { [key: string]: string } = {};
+
+      if (!formValues.department) {
+        validationErrors.department = "Department is required.";
+      }
+
+      const employeeData = prepareSubmitData();
+      const response = await UseEmployeeData().addEmployee(employeeData);
+
+      if (response?.errors) {
+        response.errors.forEach((err: { field: string; message: string }) => {
+          const fieldKey = err.field.replace(/\s+/g, "_").toLowerCase();
+          validationErrors[fieldKey] = err.message;
+        });
+      }
+
+      if (Object.keys(validationErrors).length > 0) {
+        setFormErrors(validationErrors);
+        return;
+      }
+
+      onClose && onClose();
+    } catch (error) {
+      console.error("Error saving employee:", error);
+    }
+  };
+
+  const handleEdit = async () => {
+    try {
+      setFormErrors({});
+      const validationErrors: { [key: string]: string } = {};
+
+      if (!formValues.department) {
+        validationErrors.department = "Department is required.";
+      }
+
+      const employeeData = prepareSubmitData();
+      const response = await UseEmployeeData().editEmployee(employeeData);
+
+      if (response?.errors) {
+        response.errors.forEach((err: { field: string; message: string }) => {
+          const fieldKey = err.field.replace(/\s+/g, "_").toLowerCase();
+          validationErrors[fieldKey] = err.message;
+        });
+      }
+
+      if (Object.keys(validationErrors).length > 0) {
+        setFormErrors(validationErrors);
+        return;
+      }
+
+      if (response.status) message.success(response.message);
+      else message.error(response.message);
+
+      onClose && onClose();
+    } catch (error) {
+      console.error("Error editing employee:", error);
+    }
+  };
+
+  // Constants for options
   const statusFields = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
@@ -187,85 +304,12 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     { value: "Operations", label: "Operations" },
     { value: "Technical", label: "Technical" },
   ];
+
   const locationOptions = [
     { value: "India", label: "India" },
     { value: "UK", label: "UK" },
     { value: "UAE", label: "UAE" },
   ];
-
-  const [formErrors, setFormErrors] = React.useState<{ [key: string]: string }>(
-    {}
-  );
-
-  // Handle Save action
-  const handleSave = async () => {
-    try {
-      setFormErrors({});
-
-      // Validate required fields manually
-      const validationErrors: { [key: string]: string } = {};
-
-      if (!formValues.department) {
-        validationErrors.department = "Department is required.";
-      }
-      // Construct the employee data object
-      const employeeData: EmployeeData = {
-        name: formValues.name,
-        email: formValues.email,
-        phone_number: formValues.phone_number,
-        location: formValues.location,
-        role_id: formValues.role_id,
-        reporting_manager: formValues.reporting_manager,
-        status: formValues.status,
-        profile_pic: formValues.avatar,
-      };
-
-      // Call the service to add or edit employee data
-      const response = await UseEmployeeData().addEmployee(employeeData);
-
-      // Handle API validation errors
-      if (response?.errors) {
-        response.errors.forEach((err: { field: string; message: string }) => {
-          const fieldKey = err.field.replace(/\s+/g, "_").toLowerCase(); // Normalize field keys
-          validationErrors[fieldKey] = err.message;
-        });
-      }
-
-      // If there are validation errors, set them and stop further execution
-      if (Object.keys(validationErrors).length > 0) {
-        setFormErrors(validationErrors);
-        return;
-      }
-
-      onClose && onClose(); // Close modal after successful save
-    } catch (error) {
-      console.error("Error saving employee:", error);
-    }
-  };
-  // Handle Save action
-  const handleEdit = async () => {
-    try {
-      // Call the
-      //  service to add or edit employee data
-      const employeeData: EmployeeData = {
-        id: formValues.id,
-        name: formValues.name,
-        email: formValues.email,
-        phone_number: formValues.phone_number,
-        location: formValues.location,
-        role_id: formValues.role_id,
-        reporting_manager: formValues.reporting_manager_id,
-        status: formValues.status,
-        profile_pic: formValues.avatar,
-      };
-
-      await UseEmployeeData().editEmployee(employeeData);
-
-      onClose && onClose(); // Close modal after successful save
-    } catch (error) {
-      console.error("Error saving employee:", error);
-    }
-  };
 
   return (
     <div>
@@ -299,7 +343,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   />
                 </div>
               </div>
-              {/* Avatar and Employee Name */}
+
               <div className={styles.flexContainer}>
                 <FormField
                   type="input"
@@ -323,7 +367,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                 />
               </div>
 
-              {/* Employee Info */}
               <div className={styles.flexContainer}>
                 <FormField
                   type="input"
@@ -348,14 +391,13 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                 />
               </div>
 
-              {/* Role, Reporting Manager, Department, Status */}
               <div className={styles.flexContainer}>
                 <FormField
                   type="select"
                   label="Department"
                   name="department"
                   value={formValues.department}
-                  onChange={(value) => handleDepartmentChange(value)}
+                  onChange={handleDepartmentChange}
                   placeholder="Enter department"
                   options={departmentOptions}
                   error={formErrors.department}
@@ -365,8 +407,8 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   type="select"
                   label="Employee Role"
                   name="role"
-                  value={mode === "edit" ? formValues.role : formValues.role_id}
-                  onChange={(value) => handleChange("role_id", value)}
+                  value={formValues.role_id}
+                  onChange={handleRoleChange}
                   placeholder="Select role"
                   options={roleOptions}
                   error={formErrors.role_id}
@@ -374,20 +416,18 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                 />
               </div>
 
-              {/* Status */}
               <div className={styles.flexContainer}>
                 <FormField
                   type="select"
                   label="Reporting Manager"
                   name="reportingManager"
-                  value={formValues.reporting_manager}
-                  onChange={(value) => handleChange("reporting_manager", value)}
+                  value={formValues.reporting_manager_name}
+                  onChange={handleReportingManagerChange}
                   placeholder="Enter reporting manager"
                   options={reportingManagerOptions}
                   error={formErrors.reporting_manager}
                   required
                 />
-
                 <FormField
                   type="select"
                   label="Status"

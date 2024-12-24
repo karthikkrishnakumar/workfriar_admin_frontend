@@ -83,7 +83,7 @@ const NavBlock: React.FC<NavBlockProps> = ({
         >
           <Dropdown
             overlay={menu}
-            trigger={["click"]}
+            trigger={["click","hover"]}
             className={styles.dropdownStyle}
             overlayStyle={{
               zIndex: 1900,
