@@ -23,6 +23,7 @@ import {
   WeekDaysData,
 } from "@/interfaces/timesheets/timesheets";
 import UseAllTimesheetsServices from "../../services/all-timesheet-services/all-time-sheet-services";
+import { message } from "antd";
 
 /**
  * Props for the AllTimesheetsTable component.
@@ -78,7 +79,6 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
   }, [timesheetData]);
 
   const setTaskDetail = (newValue: string) => {
-    console.log("wef",editingRowId,newValue);
     setLocalTimesheetData((previous) =>
       previous.map((data) =>
         data.local_id === editingRowId
@@ -86,8 +86,6 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
           : data
       )
     );
-
-
   };
 
   /**
@@ -200,10 +198,14 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
    *
    * @param {number} indexToDelete - The index of the row to delete.
    */
-  const handleDeleteRow = (idToDelete: number) => {
+  const handleDeleteRow = async(idToDelete: number, timesheetId?:string) => {
     const updatedData = localTimesheetData.filter(
       (data) => data.local_id !== idToDelete
     );
+    if(timesheetId){
+      const response = await UseAllTimesheetsServices().deleteTimesheet(timesheetId);
+      console.log(response);
+    }
     setLocalTimesheetData(updatedData);
     setTimeSheetData(updatedData);
   };
@@ -215,17 +217,23 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
     setTimeSheetData(localTimesheetData);
     setUnsavedChanges(false);
     const response = await UseAllTimesheetsServices().saveAllTimesheets(localTimesheetData);
-    console.log(response);
-    console.log("saved", localTimesheetData);
+    setTimeSheetData(response.data!);
+    if(response.status === true){
+      message.success("Timesheet saved successfully");
+    }else{
+      message.error("Error on saving timesheet");
+    }
   };
 
   /**
    * Submits the timesheet data after saving.
    */
-  const handleSubmit = () => {
-    handleSave();
-    alert("Timesheet data submitted successfully!");
+  const handleSubmit = async() => {
+    const response = await UseAllTimesheetsServices().submitAllTimesheets(timesheetData);
+    console.log(response)
   };
+
+
 
   /**
    * Adds a new row with default values for task, details, and time entries.
@@ -406,7 +414,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
             role="button"
             tabIndex={0}
             style={{ cursor: "pointer" }}
-            onClick={() => handleDeleteRow(index)}
+            onClick={() => handleDeleteRow(timesheet.local_id!,timesheet.timesheet_id)}
           >
             {Icons.deleteActive}
           </span>

@@ -82,9 +82,7 @@ export interface PostResponses {
     status: boolean;
     message: string;
     errors?: Error | null;
-    data?: [
-        string
-    ];
+    data?: TimesheetDataTable[];
 }
 
 export interface WeekDateEntry {

@@ -185,11 +185,11 @@ export default function UseAllTimesheetsServices() {
             const props: JSON = <JSON>(<unknown>{ timesheets });
             const { body } = await http().post("/api/timesheet/save-timesheets", props);
 
-            console.log(body);
 
             return {
                 status: body.status,
                 message: body.message,
+                data: body.data
             };
         } catch (error) {
             console.error(error);
@@ -245,7 +245,7 @@ export default function UseAllTimesheetsServices() {
      * Fetches projects available to add a new timesheet.
      * @returns A promise that resolves to the response containing projects list.
      */
-    const fetchProjectsToAddNewTimesheet = async (): Promise<FetchProjectsResponse> => { 
+    const fetchProjectsToAddNewTimesheet = async (): Promise<FetchProjectsResponse> => {
         try {
             const { body } = await http().post('/api/project/list-projects-by-user');
             return {
@@ -260,6 +260,42 @@ export default function UseAllTimesheetsServices() {
         }
     };
 
+
+    /**
+     * Submit all provided timesheets.
+     * @param timesheet - An array of timesheet data to save.
+     * @returns A promise that resolves to the response of the save operation.
+     */
+    const submitAllTimesheets = async (timesheet: TimesheetDataTable[]): Promise<PostResponses> => {
+        try {
+            const timesheets = timesheet.map((task) => task.timesheet_id);
+            const props: JSON = <JSON>(<unknown>{ timesheets });
+            const { body } = await http().post('/api/timesheet/submit-timesheets', props);
+            return body;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    /**
+     * Saves all provided timesheets.
+     * @param timesheetId - An array of timesheet data to save.
+     * @returns A promise that resolves to the response of the save operation.
+     */
+    const deleteTimesheet = async (timesheetId: string): Promise<PostResponses> => {
+        try {
+            const props: JSON = <JSON>(<unknown>{ timesheetId });
+            const { body } = await http().post('/api/timesheet/delete-timesheet', props);
+            return body;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+
+
     return {
         fetchAllTimesheets,
         fetchApprovedWeeks,
@@ -271,6 +307,8 @@ export default function UseAllTimesheetsServices() {
         fetchRejectedWeeks,
         fetchRejectedTimesheets,
         fetchTaskCategories,
-        fetchProjectsToAddNewTimesheet
+        fetchProjectsToAddNewTimesheet,
+        submitAllTimesheets,
+        deleteTimesheet
     };
 }

@@ -1,25 +1,26 @@
-export interface TeamMember {
-    id: string;
-    name: string;
-    avatar?: string;
-}
+import { FetchTeamMembersResponse } from "@/interfaces/approval-center/approval-center";
+import http from "@/utils/http";
 
-async function fetchTeamMembers(setTeamMemebers:(members:TeamMember[]) =>void):Promise<void>{
-    try{
-        const response = {
-            status: true,
-            message: 'Team members fetched successfully',
-            data: [
-                {id: '1', name: 'John Doe', avatar:'https://cdn-icons-png.flaticon.com/512/6596/6596121.png'},
-                {id: '2', name: 'Jane Smith'},
-                {id: '3', name: 'Michael Johnson'},
-            ]   
+export default function UseApprovalCenterServices() {
+    
+    const fetchTeamMembers = async ():Promise<FetchTeamMembersResponse> => {
+        try{
+            const { body } = await http().post("/api/admin/teammemberswithtimesheet");
+            return {
+                status: body.status,
+                message: body.message,
+                data: body.data
+            }
+        }catch(error){
+            console.error(error)
+            throw error;
         }
+    }
 
-        setTeamMemebers(response.data)
-    }catch(err){
-        console.error('Error fetching team members:', err);
+
+    return {
+        fetchTeamMembers
     }
 }
 
-export {fetchTeamMembers};
+
