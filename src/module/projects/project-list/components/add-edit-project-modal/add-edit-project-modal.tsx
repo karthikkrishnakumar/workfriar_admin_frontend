@@ -11,20 +11,22 @@ import useClientService, { ClientData } from "@/module/projects/client/services/
 import useTaskCategoryService, {TaskCategoryData} from "@/module/projects/task-category/services/task-category-service";
 
 
-interface ProjectModalProps {
+export interface ModalProps {
   isModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
   id?: string;
   type?:string;
+  formErrors?: ProjectData | null;
 }
 
-const ProjectModal: React.FC<ProjectModalProps> = ({
+const ProjectModal: React.FC<ModalProps> = ({
   isModalOpen,
   onClose,
   onSave,
   id,
-  type
+  type,
+  formErrors
 }) => {
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
     null
@@ -66,19 +68,20 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
           const formattedResult: ProjectData = {
             ...result.data,
             planned_start_date: result.data.planned_start_date
-              ? dayjs(result.data.planned_start_date)
+              ? dayjs(result.data.planned_start_date, "DD/MM/YYYY")
               : null,
             planned_end_date: result.data.planned_end_date
-              ? dayjs(result.data.planned_end_date)
+              ? dayjs(result.data.planned_end_date, "DD/MM/YYYY")
               : null,
             actual_start_date: result.data.actual_start_date
-              ? dayjs(result.data.actual_start_date)
+              ? dayjs(result.data.actual_start_date, "DD/MM/YYYY")
               : null,
             actual_end_date: result.data.actual_end_date
-              ? dayjs(result.data.actual_end_date)
+              ? dayjs(result.data.actual_end_date, "DD/MM/YYYY")
               : null,
-            client_name:result.data.client_name.client_name,
-            project_lead:result.data.project_lead.full_name
+            client_name:result.data.client_name._id,
+            client_id:result.data.client_name._id,
+            project_lead:result.data.project_lead._id
           };
 
           setSelectedProject(formattedResult);
@@ -97,7 +100,6 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
 
   return (
     <>
-     {console.log(selectedProject?.planned_start_date)}
       {!loading  && (
         <ModalFormComponent
           isVisible={isModalOpen}
@@ -107,6 +109,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
           secondaryButtonLabel={"Cancel"}
           initialValues={selectedProject || {}}
           onPrimaryClick={onSave}
+          formErrors={formErrors|| {}}
           formRows={[
             {
               fields: [
@@ -253,7 +256,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
                     { label: "Cancelled", value: "Cancelled" },
                     { label: "Completed", value: "Completed" },
                   ],
-                  required: true,
+                  // required: true,
                 },
               ],
             },

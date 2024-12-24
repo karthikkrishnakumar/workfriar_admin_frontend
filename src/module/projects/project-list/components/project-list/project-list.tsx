@@ -6,6 +6,7 @@ import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-list.module.scss";
 import ProjectModal from "../add-edit-project-modal/add-edit-project-modal";
 import useProjectService, {
+  ProjectData,
   ProjectDisplayData,
 } from "../../services/project-service";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
@@ -19,6 +20,8 @@ import Icons from "@/themes/images/icons/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
+
+
 const ProjectList: React.FC = () => {
   const router = useRouter();
   const {
@@ -32,7 +35,12 @@ const ProjectList: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [selectedId, setSelectedId] = useState("");
-  const [projectData, setProjectData] = useState<ProjectDisplayData[]>([]);
+  const [selectedProject, setSelectedProject] = useState<ProjectDisplayData | null>(
+    null
+  );
+  const [formErrors, setFormErrors] = useState<ProjectData | null>(
+    null
+  );
   const dispatch = useDispatch();
   const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
 
@@ -44,63 +52,36 @@ const ProjectList: React.FC = () => {
   const fetchDetails = async () => {
     try {
       const result = await fetchProjectDetails();
-      setProjectData(result.data);
       setFilteredProject(mapProjectData(result.data));
     } catch (error) {
       message.error("Failed to fetch project details.");
     }
   };
 
-  /**
-   * Toggles the time entry status between "closed" and "opened"
-   * @param {string} key - The key of the project to update
-   */
-  const handleTimeEntryChange = async (key: string) => {
-    try {
-      setProjectData((prevData) => {
-        const updatedData = prevData.map((item) =>
-          item.id === key
-            ? {
-                ...item,
-                timeEntry:
-                  item.open_for_time_entry === "closed" ? "opened" : "closed",
-              }
-            : item
-        );
-        setFilteredProject(mapProjectData(updatedData)); // Re-map to RowData format
-        return updatedData;
-      });
-      const response = await changeTimeEntry(key);
-      console.log(response);
-    } catch (err) {
-      console.log("Failed.");
-    }
-  };
 
   const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
+    const payload={
+      ...values,
+      id:selectedProject?.id,
+      timeEntry: selectedProject?.open_for_time_entry === "closed"
+      ? "opened"
+      : "closed"
+    }
     try {
-      const response = await changeStatus(values);
-      console.log(response);
+      const response = await changeTimeEntry(payload);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
+      fetchDetails();
+      setEffectiveDateModal(false);
     } catch (err) {
       console.log("Failed.");
     }
   };
 
-  /**
-   * Changes the project status
-   * @param {string} key - The key of the project to update
-   * @param {string} newStatus - The new status to set
-   */
-  const handleStatusChange = (
-    key: string,
-    newStatus: ProjectDisplayData["status"]
-  ) => {
-    setProjectData((prevData) =>
-      prevData.map((item) =>
-        item.id === key ? { ...item, status: newStatus } : item
-      )
-    );
-  };
 
   /**
    * Opens the edit modal with the selected project's data
@@ -117,9 +98,21 @@ const ProjectList: React.FC = () => {
    */
   const handleEditProjectSubmit = async (values: Record<string, any>) => {
     console.log(values)
+    const payload={
+      ...values,
+      categories:values.category,
+      project_logo:values.project_logo
+    }
     try {
-      const response = await updateProject(selectedId,values);
-      console.log("response",response);
+      const response = await updateProject(selectedId,payload);
+      console.log(response);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        setFormErrors(response.errors);
+        message.error(response.message)
+      }
       fetchDetails();
     } catch (err) {
       console.log("Failed.");
@@ -133,14 +126,24 @@ const ProjectList: React.FC = () => {
    */
 
   const handleAddProjectSubmit = async (values: Record<string, any>) => {
+    const payload={
+      ...values,
+      categories:values.category,
+      project_logo:values.project_logo
+    }
     try {
-      // const payload = {
-      //   ...values,
-      //   project_logo:''
-      // }
-      const response = await addProject(values);
-      console.log(response);
+      const response = await addProject(payload);
+      console.log(response)
+      console.log(response.errors)
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        setFormErrors(response.errors);
+        message.error(response.message)
+      }
       fetchDetails();
+      console.log(formErrors)
     } catch (err) {
       console.log("Failed.");
     }
@@ -171,13 +174,43 @@ const ProjectList: React.FC = () => {
 
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: ProjectDisplayData[]): RowData[] => {
+
+      const handleStatusChange = async (
+    projectId: string,
+    status: string,
+  ) => {
+    try {
+      const payload = {projectId, status}
+      const response = await changeStatus(payload);
+      console.log(response);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
+      fetchDetails();
+    } catch (err) {
+      console.log("Failed.");
+    }
+  };
+
     const handleStatusClick = (
-      e: { key: string },
-      project: ProjectDisplayData
+      status: string ,
+      id: string
+    ) => {
+      // setEffectiveDateModal(true);
+      handleStatusChange(id, status);
+    };
+
+    const handleTimeEntryClick = (
+     project:ProjectDisplayData
     ) => {
       setEffectiveDateModal(true);
-      handleStatusChange(project.id, e.key as ProjectDisplayData["status"]);
+      setSelectedProject(project);
     };
+
+    
     const handleMenuClick = (
       e: { key: string },
       project: ProjectDisplayData
@@ -192,7 +225,7 @@ const ProjectList: React.FC = () => {
         }
       } else if (e.key === "Update-timeEntry") {
         if (project.id) {
-          handleTimeEntryChange(project.id);
+          handleTimeEntryClick(project);
         }
       }
     };
@@ -206,7 +239,7 @@ const ProjectList: React.FC = () => {
             src={project?.project_logo}
           />
           {/* Custom avatar */}
-          <span className={styles.project}>{project.project_name}</span>
+          <span className={styles.project} onClick={()=>handleRowClick(project)}>{project.project_name}</span>
           {/* Employee name */}
         </span>
       ),
@@ -244,7 +277,7 @@ const ProjectList: React.FC = () => {
             { label: "Cancelled", key: "Cancelled" },
             { label: "Completed", key: "Completed" },
           ]}
-          onMenuClick={(e: any) => handleStatusClick(e, project)}
+          onMenuClick={(e: any) => handleStatusClick(e, project.id)}
           arrowIcon={Icons.arrowDownFilledGold}
           className={styles.status}
         />
@@ -277,6 +310,7 @@ const ProjectList: React.FC = () => {
 
   return (
     <div className={styles.tableWrapper}>
+      
       <CustomTable
         columns={columns}
         data={filteredProject}
@@ -291,14 +325,16 @@ const ProjectList: React.FC = () => {
           }}
           onSave={handleEditProjectSubmit}
           id={selectedId}
-          // initialValues={selectedProject}
+          formErrors={formErrors}
         />
       )}
       {isOpen && modalType === "addModal" && (
+        
         <ProjectModal
           isModalOpen={true}
           onClose={() => dispatch(closeModal())}
           onSave={handleAddProjectSubmit}
+          formErrors={formErrors}
         />
       )}
       <ModalFormComponent
@@ -308,7 +344,7 @@ const ProjectList: React.FC = () => {
           {
             fields: [
               {
-                name: "effective_date",
+                name: "closeDate",
                 label: "Effective date",
                 type: "date",
                 required: true,

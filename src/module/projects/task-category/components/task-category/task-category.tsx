@@ -12,8 +12,13 @@ import CustomTable, {
   Column,
   RowData,
 } from "@/themes/components/custom-table/custom-table";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { closeModal } from "@/redux/slices/modalSlice";
 
 const TaskCategory: React.FC = () => {
+  const dispatch = useDispatch();
+  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
   const {
     addTaskCategory,
     fetchTaskCategoryDetails,
@@ -21,15 +26,11 @@ const TaskCategory: React.FC = () => {
   } = useTaskCategoryService();
   const [selectedId, setSelectedId] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(true);
   const [filteredTaskCategory, setFilteredTaskCategory] = useState<RowData[]>(
     []
   );
   const [selectedTaskCategory, setSelectedTaskCategory] =
     useState<TaskCategoryData | null>(null);
-  const [taskCategoryData, setTaskCategoryData] = useState<TaskCategoryData[]>(
-    []
-  );
 
   // useEffect hook to fetch forecast data based on the ID when the component mounts
   useEffect(() => {
@@ -38,8 +39,7 @@ const TaskCategory: React.FC = () => {
 
   const fetchDetails = async () => {
     try {
-      const result = await fetchTaskCategoryDetails(); // Make sure you pass the ID
-      setTaskCategoryData(result.data);
+      const result = await fetchTaskCategoryDetails(); 
       setFilteredTaskCategory(mapCategoryData(result.data)); // Map the data to RowData format
     } catch (error) {
       message.error("Failed to fetch project details.");
@@ -60,7 +60,12 @@ const TaskCategory: React.FC = () => {
         timeentry:timeentry
       } 
       const response = await updateTaskCategory(payload);
-      console.log(response);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
       fetchDetails();
     } catch (err) {
       console.log("Failed.");
@@ -89,7 +94,12 @@ const TaskCategory: React.FC = () => {
         id:selectedId
       } 
       const response = await updateTaskCategory(payload);
-      console.log(response);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
       fetchDetails();
     } catch (err) {
       console.log("Failed.");
@@ -106,11 +116,17 @@ const TaskCategory: React.FC = () => {
     try {
       const response = await addTaskCategory(values);
       console.log(response);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
       fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
-    setIsAddModalOpen(false); // Close modal after submission
+    dispatch(closeModal())
   };
 
   const columns: Column[] = [
@@ -172,17 +188,22 @@ const TaskCategory: React.FC = () => {
   return (
     <div className={styles.tableWrapper}>
       <CustomTable columns={columns} data={filteredTaskCategory} />
-      <EditTaskCategoryModal
-        isEditModalOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSave={handleEditTaskCategorySubmit}
-        initialValues={selectedTaskCategory}
-      />
+      {isEditModalOpen && (
+             <EditTaskCategoryModal
+             isEditModalOpen={isEditModalOpen}
+             onClose={() => setIsEditModalOpen(false)}
+             onSave={handleEditTaskCategorySubmit}
+             initialValues={selectedTaskCategory}
+           />
+      )}
+            {isOpen && modalType === "addModal" && (
       <AddTaskCategoryModal
-        isAddModalOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSave={handleAddTaskCategorySubmit}
-      />
+      isAddModalOpen={true}
+      onClose={() => dispatch(closeModal())}
+      onSave={handleAddTaskCategorySubmit}
+    />
+      )}
+
     </div>
   );
 };

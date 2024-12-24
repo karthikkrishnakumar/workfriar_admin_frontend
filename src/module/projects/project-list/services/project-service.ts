@@ -110,10 +110,11 @@ export default function useProjectListService() {
     payload: any
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-    
+    console.log("props",props)
+    const hasFile:boolean = <boolean>true;
     try {
       // Make an HTTP POST request
-      const { body } = await http().post(`/api/project/update/${id}`, props);
+      const { body } = await http().post(`/api/project/update/${id}`, props,hasFile);
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -134,60 +135,59 @@ export default function useProjectListService() {
   };
 
   const changeStatus = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
+    const props: JSON = <JSON>(<unknown>
+      payload
+    );
     try {
       console.log(props);
       // Make an HTTP POST request
-      const { body } = await http().post("/api", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error) {
+      const { body } = await http().post(`/api/project/updatestatus`, props);
+      console.log(body);
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message,
+        errors: body.errors,
+      };
+    } catch (error:any) {
+      console.log(error);
       // Handle unexpected errors
       return {
-        status: false,
-        message: "An error occurred. Please try again.",
+        status: error,
+        message:
+          error?.response?.message ||
+          "An error occurred while updating the status.",
+        errors: error?.response?.data?.errors || null,
       };
     }
   };
 
-  const changeTimeEntry = async function (id: string): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      id,
-    });
+  const changeTimeEntry = async function (payload:any): Promise<any> {
+    const props: JSON = <JSON>(<unknown>
+     payload
+    );
     try {
+      console.log(props)
       // Make an HTTP POST request
-      const { body } = await http().post("/api", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error) {
+      const { body } = await http().post("/api/project/changetimeentry", props);
+      console.log(body);
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message,
+        errors: body.errors,
+      };
+    } catch (error:any) {
+      console.log(error);
       // Handle unexpected errors
       return {
-        status: false,
-        message: "An error occurred. Please try again.",
+        status: error,
+        message:
+          error?.response?.message ||
+          "An error occurred while updating the status.",
+        errors: error?.response?.data?.errors || null,
       };
     }
   };
@@ -196,10 +196,10 @@ export default function useProjectListService() {
     payload: any
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-    console.log("props", props);
+    const hasFile:boolean = <boolean>true;
     try {
       // Make an HTTP POST request
-      const { body } = await http().post(`/api/project/add`, props);
+      const { body } = await http().post(`/api/project/add`, props, hasFile);
       // Handle the API response and return filtered data
       return {
         status: body.status,

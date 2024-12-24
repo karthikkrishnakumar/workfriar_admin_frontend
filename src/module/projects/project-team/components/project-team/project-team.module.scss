@@ -20,6 +20,11 @@
     }
 }
 
+.nameCell {
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+}
 .actionCell {
     text-align: center;
     cursor: pointer;
@@ -35,6 +40,8 @@
     font-size: 16px;
     color: var(--black);
     height: 40px;
+    display: flex;
+    align-items: center;
 }
 
 .team {

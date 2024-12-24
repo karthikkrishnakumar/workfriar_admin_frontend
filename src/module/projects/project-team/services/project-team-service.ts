@@ -8,21 +8,22 @@ import dayjs from "dayjs";
 export interface TeamMember {
   name: string;
   profile_pic?: string | null;
-  _id: string;
+  id: string;
   email?: string;
   start_date?: string | dayjs.Dayjs;
   end_date?: string | dayjs.Dayjs;
-  status: string;
+  status?: string;
 }
 
 // Interface of a team member's data
 export interface TimeLogged {
   _id: string;
-  name: string;
+  team_member: string;
   profile_pic?: string | null;
   email: string;
-  time_logged: number;
-  time_approved: number;
+  total_time: number;
+  approved_time: number;
+  submitted_or_rejected_time:number;
 }
 
 export interface TimeLoggedResponse {
@@ -35,14 +36,15 @@ export interface TimeLoggedResponse {
  * @interface ProjectTeamData
  */
 export interface ProjectTeamData {
-  _id: string;
-  ProjectLogo: string;
+  id: string;
+  projectlogo: string;
   project_id: string;
-  ProjectName: string;
+  projectname: string;
   start_date: string | dayjs.Dayjs;
   end_date: string | dayjs.Dayjs;
   status: string;
-  ProjectTeam: TeamMember[];
+  date:string
+  teamMembers: TeamMember[];
 }
 
 /**
@@ -83,29 +85,29 @@ export default function useProjectTeamService() {
   };
 
   const fetchProjectTeamDetails = async function (): Promise<any> {
+    // const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
+
     try {
       // Make an HTTP POST request
-      // const { body } = await http().post("/api");
-      // if (body.status) {
-      //   const response: any = {
-      //     status: body.status,
-      //     message: body.message,
-      //     data: body.data ? body.data : undefined,
-      //   };
-      //   return response;
-      // } else {
-      //   return {
-      //     status: false,
-      //     message: body.message,
-      //   };
-      // }
+      const { body } = await http().post("/api/admin/getallprojectteam");
+      console.log(body)
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message || "Project teams retrieved successfully.",
+        errors: body.errors || null,
+      };
       const response = projectTeamData;
       return response;
-    } catch (error) {
-      // Handle unexpected errors
+    } catch (error: any) {
+      // Return a meaningful error response
       return {
         status: false,
-        message: "An error occurred. Please try again.",
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while fetching project teams. Please try again.",
+        errors: error?.response?.data?.errors || null,
       };
     }
   };
@@ -267,6 +269,33 @@ export default function useProjectTeamService() {
     }
   };
 
+  const fetchProjects = async function (): Promise<any> {
+    // const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
+
+    try {
+      // Make an HTTP POST request
+      const type="projects";
+      const { body } = await http().post(`/api/project-status-report/dropdown/${type}`);
+      console.log(body);
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], 
+        message: body.message || "Projects retrieved successfully.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Return a meaningful error response
+      return {
+        status: false,
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while fetching projects. Please try again.",
+        errors: error?.response?.data?.errors || null,
+      };
+    }
+  };
+
   return {
     fetchProjectTeamByProjectId,
     fetchProjectTeamDetails,
@@ -275,6 +304,7 @@ export default function useProjectTeamService() {
     updateProjectTeam,
     addProjectTeam,
     fetchTimeLoggedByProjectId,
+    fetchProjects
   };
 }
 
@@ -309,7 +339,7 @@ const projectTeamData: ProjectTeamData[] = [
     project_id: "1",
     ProjectLogo: "",
     ProjectName: "Diamond Lease",
-    ProjectTeam: [
+    teamMembers: [
       {
         _id: "1",
         name: "Alice",
@@ -357,22 +387,23 @@ const timeLoggedData: TimeLoggedResponse = {
   data: [
     {
       _id: "1",
-      name: "Alice",
+      team_member: "Alice",
       email: "alice@gmail.com",
       profile_pic: null,
 
-      time_logged: 10,
-      time_approved: 10,
+      total_time: 10,
+      approved_time: 10,
+      submitted_or_rejected_time:10
     },
     {
       _id: "2",
-      name: "Bob",
+      team_member: "Bob",
       email: "bob@gmail.com",
       profile_pic:
         "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-
-      time_logged: 10,
-      time_approved: 10,
+      total_time: 10,
+      approved_time: 10,
+      submitted_or_rejected_time:10
     },
   ],
 };

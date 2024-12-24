@@ -173,3 +173,24 @@
   color: #555;
   line-height: 22.4px;
 }
+
+.checkbox .ant-checkbox-inner {
+  background-color: yellow; /* Yellow box */
+  border-color: yellow; /* Yellow border */
+}
+
+.checkbox {
+  :global(.ant-checkbox-checked .ant-checkbox-inner){
+    background-color:  var(--Primary-dark, #D4983F);
+    border-color: var(--Primary-dark, #D4983F);
+    &:hover{
+      background-color:  var(--Primary-dark, #D4983F);
+      border-color: var(--Primary-dark, #D4983F);
+    }
+    :global(.ant-checkbox-inner){
+      background-color:  var(--Primary-dark, #D4983F);
+      border-color: var(--Primary-dark, #D4983F);
+    }
+  }
+
+} 
