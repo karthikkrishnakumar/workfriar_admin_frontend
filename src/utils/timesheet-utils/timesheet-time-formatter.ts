@@ -28,7 +28,7 @@ export const timeToMinutes = (time: string): number => {
     daysOfWeek.forEach((day) => {
       dailyTotals[day.name] = timesheetData.reduce((total, timesheet) => {
         const dayIndex = daysOfWeek.indexOf(day);
-        const dayEntry = timesheet.dataSheet[dayIndex];
+        const dayEntry = timesheet.data_sheet[dayIndex];
         return total + timeToMinutes(dayEntry?.hours || "00:00");
       }, 0);
     });

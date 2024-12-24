@@ -53,7 +53,9 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
       </div>
       
       <div className={styles.rightContainer}>
-        <SearchBar placeholder="Search"/>
+        <SearchBar placeholder="Search" value={""} onChange={function (value: string): void {
+          throw new Error("Function not implemented.");
+        } }/>
         <ProfilePreview />
       </div>
     </div>

@@ -55,7 +55,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
   ) => {
     setProjectTeamData((prevData = []) =>
       prevData.map((item) =>
-        item._id === key ? { ...item, status: newStatus } : item
+        item.id === key ? { ...item, status: newStatus } : item
       )
     );
     try {
@@ -86,14 +86,14 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       e: { key: string },
       member: TeamMember
     ) => {
-      handleStatusChange(member._id, e.key as TeamMember["status"]);
+      handleStatusChange(member.id, e.key as TeamMember["status"]);
     };
 
     return members.map((member) => ({
-      _id: member._id,
+      _id: member.id,
       name: (
         <span className={styles.nameCell}>
-        <CustomAvatar name={member.name} size={50} src={member.profile_pic}/>
+        <CustomAvatar name={member.name} size={50} src={member.profile_pic || undefined}/>
         {/* Custom avatar */}
         <span className={styles.member}>{member.name}</span>
         {/* Employee name */}
@@ -117,7 +117,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       ),
       status: (
         <StatusDropdown
-          status={member.status}
+          status={member.status || ""}
           menuItems={[
             { key: "Active", label: "Active"},
             { key: "Inactive", label: "Inactive" },

@@ -46,11 +46,11 @@ interface Dataset {
 // Define the shape of the data for the chart (project name and hours worked)
 interface ChartData {
   project_name: string;
-  hours: string;
+  hours: number;
 }
 
 interface ProjectTimeChartProps {
-  data: ChartData[];
+  data: ChartData[] | [];
   loading: boolean;
 }
 
@@ -147,8 +147,10 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
 
         setVisibleData({
           labels: visibleItems.map((item) => item.project_name),
-          values: visibleItems.map((item) => parseHoursToDecimal(item.hours)),
-          tooltips: visibleItems.map((item) => item.hours), // Keep original time for tooltips
+          values: visibleItems.map((item) =>
+            parseHoursToDecimal(item.hours.toString())
+          ),
+          tooltips: visibleItems.map((item) => item.hours.toString()), // Keep original time for tooltips
         });
       }
     },
@@ -175,7 +177,7 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
     return <div className={styles.loader}>Loading chart data...</div>;
   }
 
-  if ( !data ||data?.length === 0) {
+  if (!data || data?.length === 0) {
     return (
       <div className={styles.noData}>
         <Empty

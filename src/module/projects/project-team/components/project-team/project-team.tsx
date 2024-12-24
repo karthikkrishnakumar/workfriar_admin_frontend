@@ -153,7 +153,7 @@ const ProjectTeam: React.FC = () => {
 
   // Function to map team data to RowData format for compatibility with the table
   const mapProjectTeamData = (teams: ProjectTeamData[]): RowData[] => {
-    console.log("Team members for team:", teams.teamMembers);
+    
 
     const handleStatusClick = (
       e: { key: string },
