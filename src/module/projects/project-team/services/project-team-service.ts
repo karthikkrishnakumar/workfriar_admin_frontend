@@ -66,22 +66,17 @@ export default function useProjectTeamService() {
      console.log(props);
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/admin/getforecast", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error:any) {
-      // Handle unexpected errors
+      const { body } = await http().post("/api/admin/getprojectteam", props);
+      console.log(body)
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message || "Project team retrieved successfully.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Return a meaningful error response
       return {
         status: false,
         message:
@@ -91,7 +86,6 @@ export default function useProjectTeamService() {
       };
     }
   };
-
   const fetchProjectTeamDetails = async function (): Promise<any> {
     // const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
 
