@@ -175,12 +175,11 @@ const RoleListingTable: React.FC = () => {
 
   return (
     <>
-
-        <Table 
+      <Table 
           columns={columns} 
           dataSource={roles} 
           rowKey={(record) => record.roleId.toString()}
-          loading={true} 
+          loading={loading} 
           skeletonRows={5}
         />
       {isOpen && modalType === "roleModal" && (

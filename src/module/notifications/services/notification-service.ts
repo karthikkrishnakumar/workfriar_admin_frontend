@@ -43,7 +43,7 @@ export interface NotificationResponse {
  * Contains methods for listing all notifications.
  */
 const useNotificationService = () => {
-  const apiUrl = "/user";
+  const apiUrl = "/api/user";
 
   /**
    * Service to fetch all notifications.
@@ -52,6 +52,7 @@ const useNotificationService = () => {
   const fetchNotifications = async (): Promise<NotificationResponse> => {
     try {
       const { body } = await http().post(`${apiUrl}/all-notifications`);
+      console.log(body)
       const NotificationResponse: NotificationResponse = {
         success: body.success,
         message: body.message,

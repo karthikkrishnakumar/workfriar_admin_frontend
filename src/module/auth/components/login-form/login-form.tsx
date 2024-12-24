@@ -5,7 +5,7 @@ import InputComponent from "@/themes/components/Input/Input";
 import ButtonComponent from "@/themes/components/button/button";
 import OtpForm from "../otp-form/otp-form";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuthService } from "../../services/login-services/login-services";
+import { useAuthService } from "../../services/auth-service/auth-service";
 
 const LoginForm = () => { 
   const [isOtp, setIsOtp] = useState(false);

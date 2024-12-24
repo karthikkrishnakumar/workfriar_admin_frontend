@@ -1,11 +1,25 @@
 import ModalComponent from "@/themes/components/modal/modal";
 import styles from "./logout-modal.module.scss";
 import ButtonComponent from "@/themes/components/button/button";
+import { useAuthService } from "@/module/auth/services/auth-service/auth-service";
+const { 
+  handleLogout
+} = useAuthService();
+
 interface LogoutModalProps {
   onClose: () => void; // Function to handle closing the modal
 }
 
 const LogoutModal: React.FC<LogoutModalProps> = ({ onClose }) => {
+  /**
+   * Handles  logout.
+   *
+   */
+  const handleUserLogout = () => {
+    handleLogout(); 
+  };
+
+
   return (
     <div className={styles.LoginForm}>
       <div>
@@ -20,7 +34,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ onClose }) => {
           bottomContent={
             <div>
               <ButtonComponent theme="white" label="Cancel" onClick={onClose} />
-              <ButtonComponent theme="danger" label="Logout" />
+              <ButtonComponent theme="danger" label="Logout" onClick={handleUserLogout}/>
             </div>
           }
           onClose={onClose}

@@ -28,7 +28,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Client", path: "/projects/client", backButtonNeeded: false,actionButton: { label: "Add Client", icon: Icons.plusLight, modalType: "addModal" }},
     { title: "Task Category", path: "/projects/task-category", backButtonNeeded: false ,actionButton: { label: "Add Task Category", icon: Icons.plusLight, modalType: "addModal" }},
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false ,actionButton: { label: "Add Project Team", icon: Icons.plusLight, modalType: "addModal" }},
-    { title: "Admin Settings", path: "/settings", backButtonNeeded: false,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } }, 
+    { title: "Admin Settings", path: "/settings", backButtonNeeded: true,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } }, 
     { title: "Permissions Settings", path: "/settings/permissions/[id]", backButtonNeeded: true, actionButton: null},
     { title: "Notifications", path: "/notifications", backButtonNeeded: true, actionButton: null},
     { title: "Employee Details", path: "/organization/employee-details/[id]", backButtonNeeded: true ,actionButton: null  },
