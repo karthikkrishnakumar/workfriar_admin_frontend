@@ -32,7 +32,7 @@ interface Employee {
   role: string;
   reporting_manager: string;
   status: boolean;
-  profile_pic_path:string;
+  profile_pic_path: string;
 }
 
 const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
@@ -44,8 +44,10 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const pageSize = 3; // Number of rows per page
   const router = useRouter();
   const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [employeeData, setEmployeeData] = useState<any>(null);
 
-  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
+  const { isOpen } = useSelector((state: RootState) => state.modal);
 
   const handleStatusChange = async (employee: Employee, newStatus: boolean) => {
     try {
@@ -115,7 +117,11 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
       id: employee.id,
       name: (
         <span className={styles.nameCell}>
-          <CustomAvatar name={employee.name} src={employee.profile_pic_path ?? undefined} size={50} />
+          <CustomAvatar
+            name={employee.name}
+            src={employee.profile_pic_path ?? undefined}
+            size={50}
+          />
           {/* Custom avatar */}
           <button
             className={styles.employeeName}
@@ -220,17 +226,16 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
       router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
     }
   };
-  const handleMenuClick = (e: { key: string }, employee: Employee) => {
+  const handleMenuClick = async (e: { key: string }, employee: Employee) => {
     if (e.key === "Details") {
       if (employee.id) {
         const rowId = employee.id;
         router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
       }
     } else if (e.key === "Edit") {
-      if (employee.id) {
-        const rowId = employee.id;
-        router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
-      }
+      setIsModalOpen(true);
+      const data = await UseEmployeeData().fetchEmployeeData(employee.id);
+      setEmployeeData(data.data);
     }
   };
 
@@ -240,7 +245,8 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
 
   const handleCloseModal = () => {
     dispatch(closeModal());
-    fetchData(currentPage)
+    setIsModalOpen(false);
+    fetchData(currentPage);
   };
 
   return (
@@ -283,6 +289,13 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
       </div>
 
       {isOpen && <AddEditEmployeeModal mode="add" onClose={handleCloseModal} />}
+      {isModalOpen && (
+        <AddEditEmployeeModal
+          mode="edit"
+          onClose={handleCloseModal}
+          employeeData={employeeData}
+        />
+      )}
     </>
   );
 };
