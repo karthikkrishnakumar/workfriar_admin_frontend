@@ -32,27 +32,31 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
   const [mappedUsers, setMappedUsers] = useState<User[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]); 
 
-  // Fetch all users and mapped users
   useEffect(() => {
     const fetchUsers = async () => {
-      const response: UserResponse = await fetchAllUsers(); 
+      const response: UserResponse = await fetchAllUsers();
       if (response?.data) {
         setUsers(response.data);
       }
     };
-
+  
     const fetchMappedUsersList = async () => {
-      const response: UserResponse = await fetchMappedUsers(roleId); 
+      const response: UserResponse = await fetchMappedUsers(roleId);
       if (response?.data) {
         setMappedUsers(response.data);
       }
     };
-
-    if (isVisible) {
-      fetchUsers();
-      fetchMappedUsersList();
-    }
+  
+    const fetchData = async () => {
+      if (isVisible) {
+        await fetchUsers(); // Wait for users to be fetched
+        await fetchMappedUsersList(); // Then fetch mapped users
+      }
+    };
+  
+    fetchData();
   }, [isVisible, roleId]);
+  
 
   // Handle user selection change
   const handleUserChange = (updatedUsers: UserCheckbox[]) => {
@@ -67,7 +71,6 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
       roleId: roleId,
       userIds: selectedUserIds,
     }; 
-    console.log(payload)
 
 
     const response = await mapUsersToRole(payload.roleId, payload.userIds);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Skeleton, message } from "antd";
+import { message } from "antd";
 import Table, { ColumnType } from "@/themes/components/table/table";
 import DropdownMenu from "@/themes/components/dropdown-menu/dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
@@ -14,24 +14,27 @@ import { RootState } from "@/redux/store";
 import AddRoleModal from "../role-modal/add-role-modal/add-role-modal";
 import DeleteRoleModal from "../role-modal/delete-role-modal/delete-role-modal";
 import { closeModal } from "@/redux/slices/modalSlice";
-
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
 const RoleListingTable: React.FC = () => {
   const { listRoles, updateRole } = useRoleService();
   const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeModal, setActiveModal] = useState<"add" | "edit" | "map-user" | "delete" | null>(null);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const router = useRouter();
   const dispatch = useDispatch();
   const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
   
-  //fetch roles from the service 
   const fetchRoles = useCallback(async () => {
     setLoading(true);
     const response = await listRoles();
     if (response.status) {
-      setRoles(response.roles || []);
+      const rolesWithKeys = (response.roles || []).map(role => ({
+        ...role,
+        key: role.roleId?.toString() // Ensure key is a string
+      }));
+      setRoles(rolesWithKeys);
     } else {
       message.error(response.message || "Failed to fetch roles.");
     }
@@ -40,9 +43,8 @@ const RoleListingTable: React.FC = () => {
 
   useEffect(() => {
     fetchRoles();
-  }, []);
+  }, [fetchRoles]);
 
- //handle the updation of status field of  role data
   const handleStatusChange = async (role: Role, newStatus: boolean) => {
     const updatedRole = { ...role, status: newStatus };
     const response = await updateRole(updatedRole);
@@ -64,8 +66,8 @@ const RoleListingTable: React.FC = () => {
         setActiveModal("edit");
         break;
       case "update-permissions":
-      router.push(`/settings/permissions/${role?.roleId}`);
-      break;
+        router.push(`/settings/permissions/${role?.roleId}`);
+        break;
       case "map-user":
         setActiveModal("map-user");
         break;
@@ -76,10 +78,6 @@ const RoleListingTable: React.FC = () => {
         break;
     }
   };
-
-  // const handleCloseModal = () => {
-  //   dispatch(closeModal());
-  // };
 
   const columns: ColumnType[] = useMemo(
     () => [
@@ -100,7 +98,7 @@ const RoleListingTable: React.FC = () => {
         dataIndex: "users",
         key: "users",
         width: "22%",
-        render: (_, record) => (
+        render: (_, record: Role) => (
           <span>
             {record.no_of_users === 1 ? "1 employee" : `${record.no_of_users} employees`}
           </span>
@@ -111,16 +109,16 @@ const RoleListingTable: React.FC = () => {
         dataIndex: "status",
         key: "status",
         width: "22%",
-        render: (_, record) => (
+        render: (_, record: Role) => (
           <DropdownMenu
             menuItems={[
               {
-                key: "active",
+                key: `status-active-${record.roleId}`,
                 label: "Active",
                 onClick: () => handleStatusChange(record, true),
               },
               {
-                key: "inactive",
+                key: `status-inactive-${record.roleId}`,
                 label: "Inactive",
                 onClick: () => handleStatusChange(record, false),
               },
@@ -141,17 +139,29 @@ const RoleListingTable: React.FC = () => {
       {
         key: "actions",
         width: "4%",
-        render: (_, record) => (
+        render: (_, record: Role) => (
           <DropdownMenu
             menuItems={[
-              { key: "edit", label: "Edit", onClick: () => handleMenuClick("edit", record) },
+              { 
+                key: `action-edit-${record.roleId}`, 
+                label: "Edit", 
+                onClick: () => handleMenuClick("edit", record) 
+              },
               {
-                key: "update-permissions",
+                key: `action-permissions-${record.roleId}`,
                 label: "Update Role Permissions",
                 onClick: () => handleMenuClick("update-permissions", record),
               },
-              { key: "map-user", label: "Map User", onClick: () => handleMenuClick("map-user", record) },
-              { key: "delete", label: "Delete", onClick: () => handleMenuClick("delete", record) },
+              { 
+                key: `action-map-${record.roleId}`, 
+                label: "Map User", 
+                onClick: () => handleMenuClick("map-user", record) 
+              },
+              { 
+                key: `action-delete-${record.roleId}`, 
+                label: "Delete", 
+                onClick: () => handleMenuClick("delete", record) 
+              },
             ]}
             icon={Icons.threeDots}
             wrapperClassName={styles.actionTriggerWrapper}
@@ -165,28 +175,25 @@ const RoleListingTable: React.FC = () => {
 
   return (
     <>
-      {loading ? (
-        <Skeleton active paragraph={{ rows: 6 }} />
-      ) : (
-        <Table columns={columns} dataSource={roles} />
-      )}
-
+      <Table 
+          columns={columns} 
+          dataSource={roles} 
+          rowKey={(record) => record.roleId.toString()}
+          loading={loading} 
+          skeletonRows={5}
+        />
       {isOpen && modalType === "roleModal" && (
         <AddRoleModal
           isVisible
           departmentOptions={departmentOptions}
           statusOptions={statusOptions}
-          onClose={() =>{
-            setActiveModal(null)
+          onClose={() => {
+            setActiveModal(null);
             dispatch(closeModal());
           }}
           onRoleAdded={fetchRoles}
         />
       )}
-      
-      {/* <button className={styles.addButton} onClick={() => setActiveModal("add")}>
-        Add Role
-      </button> */}
 
       {activeModal === "edit" && selectedRole && (
         <EditRoleModal
@@ -195,7 +202,7 @@ const RoleListingTable: React.FC = () => {
           departmentOptions={departmentOptions}
           statusOptions={statusOptions}
           onClose={() => setActiveModal(null)}
-          onRoleUpdated={fetchRoles} 
+          onRoleUpdated={fetchRoles}
         />
       )}
 
@@ -213,7 +220,7 @@ const RoleListingTable: React.FC = () => {
           isVisible
           roleData={selectedRole}
           onClose={() => setActiveModal(null)}
-          onRoleDeleted={fetchRoles} 
+          onRoleDeleted={fetchRoles}
         />
       )}
     </>

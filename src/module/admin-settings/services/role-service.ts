@@ -10,13 +10,17 @@ import { MOCK_MAPPED_USERS, MOCK_PERMISSIONS, MOCK_USERS } from "../constants";
  * @param no_of_users - The number of no_of_users assigned to this role
  * @param status - The current status of the role (active or inactive)
  */
-export interface Role {
+export interface Role extends BaseRecord {
   roleId?: string;
   role: string;
   department: string;
   permissions?: Permission[];
-  no_of_users?: number;
+  no_of_users?: number | string;
   status: boolean;
+}
+
+export interface BaseRecord {
+  isSkeletonData?: boolean;
 }
 
 /**
@@ -74,6 +78,7 @@ export interface PermissionResponse {
 export interface User{
   id: string;
   name: string;
+  roles?: string[];
 }
 
 export interface UserResponse {
@@ -88,6 +93,7 @@ export interface UserResponse {
  */
 const useRoleService = () => {
   const apiUrl = "/api/admin";
+  let cachedUsers: User[] = []; 
 
   /**
    * Service to list all roles.
@@ -122,7 +128,6 @@ const useRoleService = () => {
       const payload: JSON = <JSON>(<unknown>roleData);
 
       const { body } = await http().post(`${apiUrl}/add-role`, payload);
-      console.log("BODY IS ",body)
       const RoleResponse: RoleResponse = {
         status: body.status,
         message: body.message,
@@ -130,7 +135,6 @@ const useRoleService = () => {
           roleId:body.data[0]._id
         }
       };
-      // console.log(RoleResponse)
       return RoleResponse;
       
     } catch (error) {
@@ -150,7 +154,6 @@ const useRoleService = () => {
     try {
       const payload: JSON = <JSON>(<unknown>roleData);
 
-      console.log(payload)
 
       const { body } = await http().post(`${apiUrl}/update-role`, payload);
 
@@ -224,7 +227,6 @@ const useRoleService = () => {
   const updatePermissionsByRoleId = async (roleId: string, permissions: Permission[]) :Promise<PermissionResponse> => {
     try {
       const payload:JSON= <JSON>(<unknown>{ roleId, permissions });
-      console.log("ddddd",payload)
       const { body } = await http().post(`${apiUrl}/update-role`, payload);
 
       const permissionsResponse = {
@@ -250,11 +252,11 @@ const useRoleService = () => {
   const fetchAllUsers = async (): Promise<UserResponse> => {
     try {
       const { body } = await http().post(`${apiUrl}/list-all-employees`);
-
+      cachedUsers = body.data;
       const userResponse = {
         status: body.status,
         message: body.message,
-        data: body.data,
+        data: cachedUsers,
       };
 
       return userResponse; 
@@ -265,7 +267,7 @@ const useRoleService = () => {
       };
     }
   };
-//modify and change the 
+
 
   /**
  * Service to fetch users mapped to a specific role.
@@ -274,16 +276,17 @@ const useRoleService = () => {
  */
   const fetchMappedUsers = async (roleId: string): Promise<UserResponse> => {
     try {
-      const { body } = await http().post(`${apiUrl}/roles/${roleId}/mapped-users`);
-
-      // Mock response for demonstration
-      const mockResponse = {
+      // Filter users mapped to the specific role
+      const mappedUsers = cachedUsers.filter(
+        (user) => user.roles?.includes(roleId) ?? false
+      );
+      const mappedUsersResponse = {
         status: true,
         message: "Mapped users fetched successfully",
-        data: MOCK_MAPPED_USERS.data,
+        data: mappedUsers,
       };
 
-      return mockResponse; // Replace `mockResponse` with `body` for real API responses
+      return mappedUsersResponse;
     } catch (error) {
       return {
         status: false,
@@ -302,7 +305,6 @@ const useRoleService = () => {
   const mapUsersToRole = async (roleId: string, userIds: string[]): Promise<UserResponse> => {
     try {
       const payload:JSON= <JSON>(<unknown>{ roleId, userIds });
-      console.log("map users paylad",payload)
 
       const { body } = await http().post(`${apiUrl}/map-role`, payload);
 

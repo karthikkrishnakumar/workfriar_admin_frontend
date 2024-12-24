@@ -11,7 +11,6 @@ interface EmployeeListProps {
 const EmployeeList: React.FC<EmployeeListProps> = ({ employeeList }) => {
   const router = useRouter();
   const handleRouting = (id: string) => {
-    console.log(id);
     router.push(`/time-sheet/review-timesheet/${id}`);
   };
   return (

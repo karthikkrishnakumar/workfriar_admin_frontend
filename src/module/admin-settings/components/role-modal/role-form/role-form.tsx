@@ -71,7 +71,6 @@ const RoleForm: React.FC<RoleFormProps> = ({
     } else {
       // If the role does not have an ID (add case), wait for onSave to complete
       const response = await onSave(); // Wait for the save action to complete
-      console.log("resssssss",response)
       if (response?.status && response?.data?.roleId) {
 
         // If the role is added successfully and an ID is returned, navigate to the permissions page
@@ -99,7 +98,7 @@ const RoleForm: React.FC<RoleFormProps> = ({
           </label>
           <CustomSelect
             options={departmentOptions}
-            value={roleData.department}
+            value={roleData.department || undefined}
             onChange={handleChange("department")}
             placeholder="Select department"
           />

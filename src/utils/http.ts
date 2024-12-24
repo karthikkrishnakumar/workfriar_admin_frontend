@@ -52,7 +52,6 @@ const http = () => {
           error.response.data.status = false;
           return error.response;
         } else if (error.response) {
-          console.error(error);
           error.response.data = {
             status: false,
             message: error?.response?.data.message,
