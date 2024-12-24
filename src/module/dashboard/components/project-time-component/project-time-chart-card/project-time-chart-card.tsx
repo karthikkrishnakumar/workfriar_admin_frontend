@@ -58,7 +58,7 @@ const ProjectTimeChartCard: React.FC = () => {
         loading ? (
           <SkeletonLoader count={1} avatar={false} paragraph={{ rows: 10 }} />
         ) : (
-          <ProjectTimeChart data={projectTimeData} loading={loading} />
+          <ProjectTimeChart data={projectTimeData.length>0?projectTimeData:[]} loading={loading} />
         )
       }
       className={styles.projectChartCard}

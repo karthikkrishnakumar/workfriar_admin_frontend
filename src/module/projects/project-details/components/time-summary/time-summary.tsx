@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { DatePicker, message } from "antd";
 import styles from "./time-summary.module.scss";
-import DateRangePicker from "@/themes/components/date-picker/date-picker";
 import Icons from "@/themes/images/icons/icons";
 import useProjectTeamService, {
   TimeLogged,
@@ -74,8 +73,7 @@ const [next, setNext] = useState(false); // New state for next
     { title: "Time approved", key: "time_approved", align: "left" },
     {      title: (
       <div className={styles.datePickerDiv}>
-        <DateRangePicker range={currentRange}
-              onDateChange={handleDateChange}/>
+       
 
         <DatePicker
           onChange={(date, dateString) => {
@@ -99,7 +97,7 @@ const [next, setNext] = useState(false); // New state for next
     _id: member._id,
     name: (
       <span className={styles.nameCell}>
-      <CustomAvatar name={member.team_member} size={50} src={member.profile_pic}/>
+      <CustomAvatar name={member.team_member} size={50} src={member.profile_pic || undefined}/>
       {/* Custom avatar */}
       <span className={styles.member}>{member.team_member}</span>
       {/* Employee name */}

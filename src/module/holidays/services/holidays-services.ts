@@ -1,4 +1,3 @@
-import { holidaysData } from "@/app/api/dashboard/data/holidays";
 import { HolidaysResponse } from "@/interfaces/holidays/holidays";
 import http from "@/utils/http";
 
