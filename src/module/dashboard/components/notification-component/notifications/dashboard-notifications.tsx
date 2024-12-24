@@ -10,7 +10,7 @@ interface NotificationProps {
 const DashboardNotifications: React.FC<NotificationProps> = ({
   notifications = [],
 }) => {
-  const isEmptyData = notifications.length===0;
+  const isEmptyData = notifications?.length===0;
 
   return (
     <ul className={styles.notificationList}>
