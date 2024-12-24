@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {message } from "antd";
+import { Dropdown, message } from "antd";
+import { MoreOutlined } from "@ant-design/icons";
 import styles from "./client.module.scss";
-import AddClientModal from "../add-client-modal/add-client-modal";
+import ClientModal from "../add-edit-client-modal/add-edit-client-modal";
 import useClientService, { ClientData } from "../../services/client-service";
 import CustomTable, {
   Column,
@@ -10,29 +11,36 @@ import CustomTable, {
 } from "@/themes/components/custom-table/custom-table";
 import Icons from "@/themes/images/icons/icons";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { closeModal } from "@/redux/slices/modalSlice";
 
 const Client: React.FC = () => {
-  const { addClient, changeStatus, fetchClientDetails } = useClientService();
+  const dispatch = useDispatch();
+  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
+  const { addClient, editClient, changeStatus, fetchClientDetails } = useClientService();
   const [filteredClients, setFilteredClients] = useState<
   RowData[]
 >([]);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [clientData, setClientData] = useState<ClientData[]>([]);
+const [selectedId, setSelectedId] = useState("");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [clientData, setClientData] = useState<ClientData| null>(null);
 
   // useEffect hook to fetch client data based on the ID when the component mounts
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        const result = await fetchClientDetails(); // Make sure you pass the ID
-        setClientData(result.data);
-        setFilteredClients(mapClientData(result.data));
-      } catch (error) {
-        message.error("Failed to fetch client details.");
-      }
-    };
+
 
     fetchDetails();
   }, []);
+
+  const fetchDetails = async () => {
+    try {
+      const result = await fetchClientDetails(); 
+      setFilteredClients(mapClientData(result.data));
+    } catch (error) {
+      message.error("Failed to fetch client details.");
+    }
+  };
 
   /**
    * Handles the form submission from the AddClientModal
@@ -42,10 +50,39 @@ const Client: React.FC = () => {
     try {
       const response = await addClient(values);
       console.log(response);
+      fetchDetails();
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
     } catch (err) {
       console.log("Failed.");
     }
-    setIsAddModalOpen(false); // Close modal after submission
+    dispatch(closeModal())
+  };
+
+  const handleEditClientSubmit = async (values: Record<string, any>) => {
+    const payload={
+      ...values,
+      _id:selectedId
+    }
+    try {
+
+      const response = await editClient(payload);
+      console.log(response);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
+      fetchDetails();
+    } catch (err) {
+      console.log("Failed.");
+    }
+    setIsEditModalOpen(false);
   };
 
   /**
@@ -54,20 +91,34 @@ const Client: React.FC = () => {
    * @param {string} newStatus - The new status to set
    */
   const handleStatusChange = async (
-    key: string,
-    newStatus: ClientData["status"]
+    _id: string,
+    status: string,
   ) => {
-    setClientData((prevData) =>
-      prevData.map((item) =>
-        item._id === key ? { ...item, status: newStatus } : item
-      )
-    );
     try {
-      const response = await changeStatus(key);
-      console.log(response);
+      const payload = {_id, status}
+      const response = await changeStatus(payload);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
+  };
+
+  const handleEditProject = async (client: ClientData) => {
+    const filteredClient = {
+      ...client,
+      location: client.location_id,
+      client_manager: client.client_manager_id,
+      billing_currency:client.billing_currency_id
+    }
+    setClientData(filteredClient);
+    setSelectedId(client._id);
+    setIsEditModalOpen(true);
   };
 
   const columns: Column[] = [
@@ -80,16 +131,28 @@ const Client: React.FC = () => {
     },
     { title: "Client manager", key: "client_manager", align: "left",width:300 },
     { title: "Status", key: "status", align: "left" },
+    { title: "", key: "action", align: "left", width: 30 },
   ];
 
   // Function to map client data to RowData format for compatibility with the table
   const mapClientData = (clients: ClientData[]): RowData[] => {
 
-    const handleStatusClick = (
+    const handleMenuClick = (
       e: { key: string },
       client: ClientData
     ) => {
-      handleStatusChange(client._id, e.key as ClientData["status"]);
+      if (e.key === "Edit") {
+        if (client._id) {
+          handleEditProject(client);
+        }
+      } 
+    };
+
+    const handleStatusClick = (
+      status: string ,
+      id: string
+    ) => {
+      handleStatusChange(id, status);
     };
     return clients.map((client) => ({
       _id: client._id,
@@ -109,16 +172,28 @@ const Client: React.FC = () => {
         <StatusDropdown
           status={client.status}
           menuItems={[
-            { label: "Not started", key: "Not started" },
-            { label: "In progress", key: "In progress" },
-            { label: "On hold", key: "On hold" },
-            { label: "Cancelled", key: "Cancelled" },
-            { label: "Completed", key: "Completed" },
+            { label: "Active", key: "Active" },
+            { label: "Inactive", key: "Inactive" },
           ]}
-          onMenuClick={(e: any) => handleStatusClick(e, client)}
+          onMenuClick={(e: any) => handleStatusClick(e, client._id)}
           arrowIcon={Icons.arrowDownFilledGold}
           className={styles.status}
         />
+      ),
+      action: (
+        <span className={styles.actionCell}>
+          <Dropdown
+            menu={{
+              items: [
+                { key: "Edit", label: "Edit" },
+              ],
+              onClick: (e) => handleMenuClick(e, client),
+            }}
+            trigger={["click"]}
+          >
+            <MoreOutlined className={styles.threeDotButton} />
+          </Dropdown>
+        </span>
       ),
     }));
   };
@@ -129,11 +204,25 @@ const Client: React.FC = () => {
         columns={columns}
         data={filteredClients}
       />
-      <AddClientModal
-        isAddModalOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSave={handleAddClientSubmit}
-      />
+      {isOpen && modalType === "addModal" && (
+      <ClientModal
+      isModalOpen={true}
+      onClose={() => dispatch(closeModal())}
+      onSave={handleAddClientSubmit}
+    />
+      )}
+      {isEditModalOpen && (
+        <ClientModal
+        type="edit"
+          isModalOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+          }}
+          onSave={handleEditClientSubmit}
+          initialValues={clientData}
+        />
+      )}
+9
     </div>
   );
 };

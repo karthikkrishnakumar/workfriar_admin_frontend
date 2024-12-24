@@ -99,9 +99,9 @@ const [next, setNext] = useState(false); // New state for next
     _id: member._id,
     name: (
       <span className={styles.nameCell}>
-      <CustomAvatar name={member.name} size={50} src={member.profile_pic}/>
+      <CustomAvatar name={member.team_member} size={50} src={member.profile_pic}/>
       {/* Custom avatar */}
-      <span className={styles.member}>{member.name}</span>
+      <span className={styles.member}>{member.team_member}</span>
       {/* Employee name */}
     </span>
     ),
@@ -109,10 +109,10 @@ const [next, setNext] = useState(false); // New state for next
       <span className={styles.member}>{member.email}</span>
     ),
     time_logged: (
-      <span className={styles.member}>{member.time_logged} hrs</span>
+      <span className={styles.member}>{member.total_time} hrs</span>
     ),
     time_approved: (
-      <span className={styles.member}>{member.time_approved} hrs</span>
+      <span className={styles.member}>{member.approved_time} hrs</span>
     ),
     
   }));

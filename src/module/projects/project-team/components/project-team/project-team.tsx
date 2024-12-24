@@ -5,8 +5,7 @@ import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-team.module.scss";
 import dayjs from "dayjs";
 import AvatarGroup from "@/themes/components/avatar-group/avatar-group";
-import AddProjectTeamModal from "../add-project-team-modal/add-project-team-modal";
-import EditProjectTeamModal from "../edit-project-team-modal/edit-project-team-modal";
+import ProjectTeamModal from "../add-edit-project-team-modal/add-edit-project-team-modal";
 import { useRouter } from "next/navigation";
 import useProjectTeamService, {
   ProjectTeamData,
@@ -18,8 +17,15 @@ import CustomTable, {
 } from "@/themes/components/custom-table/custom-table";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { closeModal } from "@/redux/slices/modalSlice";
+import CustomAvatar from "@/themes/components/avatar/avatar";
+
 const ProjectTeam: React.FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
   const {
     addProjectTeam,
     changeStatus,
@@ -30,7 +36,6 @@ const ProjectTeam: React.FC = () => {
   RowData[]
 >([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [selectedProjectTeam, setSelectedProjectTeam] =
     useState<ProjectTeamData | null>(null);
@@ -38,18 +43,17 @@ const ProjectTeam: React.FC = () => {
 
   // useEffect hook to fetch team data based on the ID when the component mounts
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        const result = await fetchProjectTeamDetails(); // Make sure you pass the ID
-        setProjectTeamData(result);
-        setFilteredProjectTeam(mapProjectTeamData(result));
-      } catch (error) {
-        message.error("Failed to fetch project details.");
-      }
-    };
 
     fetchDetails();
   }, []);
+  const fetchDetails = async () => {
+    try {
+      const result = await fetchProjectTeamDetails(); 
+      setFilteredProjectTeam(mapProjectTeamData(result.data));
+    } catch (error) {
+      message.error("Failed to fetch project details.");
+    }
+  };
 
   const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
     try {
@@ -71,7 +75,7 @@ const ProjectTeam: React.FC = () => {
   ) => {
     setProjectTeamData((prevData) =>
       prevData.map((item) =>
-        item._id === key ? { ...item, status: newStatus } : item
+        item.id === key ? { ...item, status: newStatus } : item
       )
     );
   };
@@ -123,12 +127,12 @@ const ProjectTeam: React.FC = () => {
     } catch (err) {
       console.log("Failed.");
     }
-    setIsAddModalOpen(false); // Close modal after submission
+    dispatch(closeModal())
   };
 
   const handleRowClick = (row: ProjectTeamData) => {
-    if (row._id) {
-      const rowId = row._id;
+    if (row.id) {
+      const rowId = row.project_id;
       router.push(`/projects/project-details/${rowId}`);
     }
   };
@@ -149,49 +153,60 @@ const ProjectTeam: React.FC = () => {
 
   // Function to map team data to RowData format for compatibility with the table
   const mapProjectTeamData = (teams: ProjectTeamData[]): RowData[] => {
-
+    console.log("Team members for team:", teams.teamMembers);
 
     const handleStatusClick = (
       e: { key: string },
       team: ProjectTeamData
     ) => {
       setEffectiveDateModal(true);
-      handleStatusChange(team._id, e.key as ProjectTeamData["status"]);
+      handleStatusChange(team.id, e.key as ProjectTeamData["status"]);
     };
     const handleMenuClick = (
       e: { key: string },
       team: ProjectTeamData
     ) => {
       if (e.key === "Details") {
-        if (team._id) {
-          router.push(`/projects/project-details/${team._id}`);
+        if (team.id) {
+          router.push(`/projects/project-details/${team.id}`);
         }
       } else if (e.key === "Edit") {
-        if (team._id) {
+        if (team.id) {
           handleEditProjectTeam(team);
         }
       }
     };
-    return teams.map((team) => ({
-      _id: team._id,
+    return teams?.map((team) => ({
+      
+      _id: team.id,
       ProjectName: (
-        <span className={styles.team}>{team.ProjectName}</span>
+        <span className={styles.nameCell}>
+        <CustomAvatar
+          name={team.projectname}
+          size={50}
+          src={team?.projectlogo}
+        />
+        {/* Custom avatar */}
+        <span className={styles.team} onClick={()=>handleRowClick(team)}>{team.projectname}</span>
+        {/* Employee name */}
+      </span>
       ),
       ProjectTeam: (
         <span>
-          <AvatarGroup team={team.ProjectTeam}/>
+          <AvatarGroup team={team.teamMembers}/>
           </span>
       ),
       actual_dates: (
         <span className={styles.dates}>
           <>
-            {dayjs.isDayjs(team.start_date)
+            {/* {dayjs.isDayjs(team.start_date)
               ? team.start_date.format("DD/MM/YYYY")
               : team.start_date}{" "}
             -{" "}
             {dayjs.isDayjs(team.end_date)
               ? team.end_date.format("DD/MM/YYYY")
-              : team.end_date}
+              : team.end_date} */}
+              {team.date}
           </>
         </span>
       ),
@@ -236,17 +251,24 @@ const ProjectTeam: React.FC = () => {
         data={filteredProjectTeam}
         onRowClick={() => handleRowClick}
       />
-      <EditProjectTeamModal
-        isEditModalOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSave={handleEditProjectTeamSubmit}
-        initialValues={selectedProjectTeam}
-      />
-      <AddProjectTeamModal
-        isAddModalOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSave={handleAddProjectTeamSubmit}
-      />
+      {isEditModalOpen && (
+      <ProjectTeamModal
+      isModalOpen={isEditModalOpen}
+      onClose={() => setIsEditModalOpen(false)}
+      onSave={handleEditProjectTeamSubmit}
+      initialValues={selectedProjectTeam}
+      type="edit"
+    />
+      )}
+
+
+     {isOpen && modalType === "addModal" && (
+      <ProjectTeamModal
+      isModalOpen={true}
+      onClose={() => dispatch(closeModal())}
+      onSave={handleAddProjectTeamSubmit}
+    />
+      )}
       <ModalFormComponent
         isVisible={effectiveDateModal}
         title={"Effective date"}

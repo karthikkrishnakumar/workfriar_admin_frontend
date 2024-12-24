@@ -11,18 +11,22 @@ import useClientService, { ClientData } from "@/module/projects/client/services/
 import useTaskCategoryService, {TaskCategoryData} from "@/module/projects/task-category/services/task-category-service";
 
 
-interface EditProjectModalProps {
-  isEditModalOpen: boolean;
+export interface ModalProps {
+  isModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
-  id: string;
+  id?: string;
+  type?:string;
+  formErrors?: ProjectData | null;
 }
 
-const EditProjectModal: React.FC<EditProjectModalProps> = ({
-  isEditModalOpen,
+const ProjectModal: React.FC<ModalProps> = ({
+  isModalOpen,
   onClose,
   onSave,
   id,
+  type,
+  formErrors
 }) => {
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
     null
@@ -52,7 +56,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (isEditModalOpen) {
+    if (type=="edit" && id) {
       const fetchDetails = async () => {
         setLoading(true); // Set loading to true before fetching
         try {
@@ -64,19 +68,20 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
           const formattedResult: ProjectData = {
             ...result.data,
             planned_start_date: result.data.planned_start_date
-              ? dayjs(result.data.planned_start_date)
+              ? dayjs(result.data.planned_start_date, "DD/MM/YYYY")
               : null,
             planned_end_date: result.data.planned_end_date
-              ? dayjs(result.data.planned_end_date)
+              ? dayjs(result.data.planned_end_date, "DD/MM/YYYY")
               : null,
             actual_start_date: result.data.actual_start_date
-              ? dayjs(result.data.actual_start_date)
+              ? dayjs(result.data.actual_start_date, "DD/MM/YYYY")
               : null,
             actual_end_date: result.data.actual_end_date
-              ? dayjs(result.data.actual_end_date)
+              ? dayjs(result.data.actual_end_date, "DD/MM/YYYY")
               : null,
-            client_name:result.data.client_name.client_name,
-            project_lead:result.data.project_lead.full_name
+            client_name:result.data.client_name._id,
+            client_id:result.data.client_name._id,
+            project_lead:result.data.project_lead._id
           };
 
           setSelectedProject(formattedResult);
@@ -91,20 +96,20 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
     } else {
       setSelectedProject(null); // Reset selected project when modal is closed
     }
-  }, [isEditModalOpen, id]);
+  }, [isModalOpen, id]);
 
   return (
     <>
-     {console.log(clientData,taskCategoryData)}
-      {!loading && selectedProject && (
+      {!loading  && (
         <ModalFormComponent
-          isVisible={isEditModalOpen}
+          isVisible={isModalOpen}
           onClose={onClose}
-          title={"Edit Project"}
+          title={type === "edit" ? "Edit Project" : "Add Project"}
           primaryButtonLabel={"Save"}
           secondaryButtonLabel={"Cancel"}
-          initialValues={selectedProject}
+          initialValues={selectedProject || {}}
           onPrimaryClick={onSave}
+          formErrors={formErrors|| {}}
           formRows={[
             {
               fields: [
@@ -122,6 +127,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                   label: "Project",
                   type: "text",
                   required: true,
+                  placeholder:"Enter project name"
                 },
                 {
                   name: "client_name",
@@ -132,6 +138,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                     value: client._id,
                   })),
                   required: true,
+                  placeholder:"Select client"
                 },
               ],
             },
@@ -143,6 +150,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                   type: "textarea",
                   required: true,
                   isExtended: true,
+                  placeholder:"Enter description"
                 },
               ],
             },
@@ -181,6 +189,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                   name: "category",
                   label: "Task category",
                   type: "checkboxSelect",
+                  placeholder:"Select categories",
                   options: taskCategoryData.map((category) => ({
                     label: category.category, 
                     value: category.id,
@@ -195,6 +204,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                     value: lead._id,
                   })),
                   required: true,
+                  placeholder:"Select project lead"
                 },
                 
               ],
@@ -205,6 +215,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                   name: "billing_model",
                   label: "Billing model",
                   type: "select",
+                  placeholder:"Select billing model",
                   options: [
                     {
                       label: "Bill time (time and materials)",
@@ -222,6 +233,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                   name: "open_for_time_entry",
                   label: "Time entry",
                   type: "select",
+                  placeholder:"Select time entry",
                   options: [
                     { label: "Opened", value: "opened" },
                     { label: "Closed", value: "closed" },
@@ -236,6 +248,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                   name: "status",
                   label: "Status",
                   type: "select",
+                  placeholder:"Select status",
                   options: [
                     { label: "Not Started", value: "Not Started" },
                     { label: "In Progress", value: "In Progress" },
@@ -243,7 +256,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                     { label: "Cancelled", value: "Cancelled" },
                     { label: "Completed", value: "Completed" },
                   ],
-                  required: true,
+                  // required: true,
                 },
               ],
             },
@@ -254,4 +267,4 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
   );
 };
 
-export default EditProjectModal;
+export default ProjectModal;

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { RcFile } from "antd/es/upload";
 import styles from "./modal-form.module.scss";
 import Icons from "@/themes/images/icons/icons";
+import CustomSelect from "../select-field/select-field";
 
 /**
  * Interface for defining a single form field's properties.
@@ -39,6 +40,7 @@ interface ModalFormProps {
   onSecondaryClick?: () => void;
   onClose?: () => void;
   initialValues?: Record<string, any>;
+  formErrors?: Record<string, any>; 
   children?: React.ReactNode;
 }
 
@@ -52,12 +54,14 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   onSecondaryClick,
   onClose,
   initialValues = {},
+  formErrors,
   children,
 }) => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string | null>(
     initialValues?.image || null
   );
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const projectName = initialValues.projectName || "Project";
 
   /**
@@ -66,6 +70,13 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      if (imageFile) {
+        // Replace the filename with the actual File object
+        values.project_logo = imageFile;
+      }
+      
+      console.log('Submitting with file:', imageFile); // Debug log
+      console.log('Final form values:', values); 
       onPrimaryClick?.(values);
     } catch (error) {
       console.error("Form validation failed:", error);
@@ -77,29 +88,66 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
    */
   const handleClose = () => {
     form.resetFields();
+    setImageFile(null); 
     onClose?.();
   };
 
   const renderField = (field: FormField) => {
     switch (field.type) {
+      
       case "select":
         return (
           <Select
             placeholder={field.placeholder}
             options={field.options}
             showSearch
+            value={form.getFieldValue(field.name)}
           />
         );
-        case "checkboxSelect": // New case for checkbox select
-        return (
-<Select
-          placeholder={field.placeholder}
-          mode="multiple"
-          options={field.options}
-          showSearch
-          style={{ width: "100%" }}
-        />
-        );
+        case "checkboxSelect":
+          return (
+            <Select
+              mode="multiple"
+              placeholder={field.placeholder || "Select options"}
+              options={field.options}
+              value={form.getFieldValue(field.name) || []} // Ensure it's an array
+              onChange={(selectedValues) => {
+                form.setFieldValue(field.name, selectedValues);
+              }}
+              dropdownRender={(menu) => (
+                <div>
+                  {field.options?.map((option) => (
+                    <div
+                      key={option.value}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "5px 10px",
+                      }}
+                    >
+                      <Checkbox
+                        checked={form
+                          .getFieldValue(field.name)
+                          ?.includes(option.value)} // Check based on initial values
+                        onChange={(e) => {
+                          const currentValue = form.getFieldValue(field.name) || [];
+                          const newValue = e.target.checked
+                            ? [...currentValue, option.value]
+                            : currentValue.filter(
+                                (val: string | number) => val !== option.value
+                              );
+                          form.setFieldValue(field.name, newValue); // Update form value
+                        }}
+                        className={styles.checkbox}
+                      />
+                      <span style={{ marginLeft: "8px" }}>{option.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            />
+          );
+        
       case "date":
         return (
           <DatePicker
@@ -125,12 +173,18 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
             </div>
             <Upload
               showUploadList={false}
+              
               beforeUpload={(file: RcFile) => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                  setImageUrl(reader.result as string);
-                };
-                reader.readAsDataURL(file);
+                // Convert the image to a base64 string for form submission
+                const previewUrl = URL.createObjectURL(file);
+                setImageUrl(previewUrl);
+                
+                // Store the actual file object
+                setImageFile(file);
+                
+                // Set a placeholder value in form
+                form.setFieldValue(field.name, file.name);
+
                 return false;
               }}
               accept="image/*"
@@ -205,6 +259,8 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
                         )
                       }
                       style={field.type === "image" ? { marginBottom: 0 } : {}}
+                      help={formErrors?.[field.name]} // Dynamically render the error message
+                      validateStatus={formErrors?.[field.name] ? "error" : undefined}
                     >
                       {renderField(field)}
                     </Form.Item>
