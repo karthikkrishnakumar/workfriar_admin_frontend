@@ -1,48 +1,62 @@
 "use client";
-import React from "react";
-import { usePathname , useRouter } from "next/navigation"; // To get the current pathname
+import React, { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import styles from "./nav-bar.module.scss";
-import Icons from "@/themes/images/icons/icons"; // Importing icons
+import Icons from "@/themes/images/icons/icons";
 import NavBlock from "../nav-block/nav-block";
-import { NavBarNavigationClass } from "@/utils/navigation-util/page-navigation-router"; // Import the navigation class
+import { NavBarNavigationClass } from "@/utils/navigation-util/page-navigation-router";
+import {
+  getDropdownItems,
+  isCollapsibleItem,
+} from "@/utils/nav-dropdown-menu/nav-dropdown-menu";
 
-/**
- * A navigation bar component that includes a logo and a list of navigation blocks.
- *
- * @returns {JSX.Element} The rendered NavBar component.
- */
 const NavBar = () => {
-  const router = useRouter(); // Get router instance for navigation from next/navigation
-  const pathname = usePathname(); // Get the current path to determine active status
-  const navBarNavigation = new NavBarNavigationClass(); // Create an instance of the navigation class
+  const router = useRouter();
+  const pathname = usePathname();
+  const navBarNavigation = new NavBarNavigationClass();
+  const [dropdownSelected, setDropdownSelected] = useState(false);
 
   const handleNavClick = (path: string) => {
-    navBarNavigation.navigateTo(path, router.push); // Call navigateTo and pass the router.push method
+    setDropdownSelected(false); // Reset dropdown selection when clicking main nav items
+    navBarNavigation.navigateTo(path, router.push);
+  };
+
+  const handleDropdownClick = (path: string) => {
+    setDropdownSelected(true); // Set dropdown selection when clicking dropdown items
+    window.location.href = path;
   };
 
   return (
     <div className={styles.navBarWrapper}>
-      {/* Logo Section */}
       <div className={styles.logo}>
-        <span>{Icons.workFriarLogo}</span> {/* Workfriar logo */}
-        <h2>Workfriar</h2> {/* Company name */}
+        <span>{Icons.workFriarLogo}</span>
+        <h2>Workfriar</h2>
       </div>
 
-      {/* Navigation List Section */}
       <div className={styles.navList}>
         {navBarNavigation.navigationLinks.map((link) => {
-          const DefaultIcon = Icons[link.defaultIcon]; // Get the default icon based on the icon name
-          const ActiveIcon = Icons[link.activeIcon]; // Get the active icon based on the icon name
+          const DefaultIcon = Icons[link.defaultIcon];
+          const ActiveIcon = Icons[link.activeIcon];
+          const isCollapsible = isCollapsibleItem(link.label);
+          const dropdownItems = getDropdownItems(link.label)?.map((item) => ({
+            ...item,
+            onClick: () => handleDropdownClick(item.path),
+          }));
 
           return (
             <NavBlock
               key={link.label}
               title={link.label}
-              defaultIcon={DefaultIcon} // Pass the corresponding default icon to the NavBlock
-              activeIcon={ActiveIcon} // Pass the corresponding active icon to the NavBlock
-              activeStatus={navBarNavigation.getActiveStatus(link.path, pathname)} // Set active status based on the current pathname
-              collapsible={link.collapsible}
-              onClickFunction={() => handleNavClick(link.path)} // Call handleNavClick when a nav block is clicked
+              defaultIcon={DefaultIcon}
+              activeIcon={ActiveIcon}
+              activeStatus={navBarNavigation.getActiveStatus(
+                link.path,
+                pathname
+              )}
+              collapsible={isCollapsible}
+              dropdownItems={dropdownItems}
+              onClickFunction={() => handleNavClick(link.path)}
+              isDropdownSelected={dropdownSelected} // Pass the dropdown selection state
             />
           );
         })}

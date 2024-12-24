@@ -1,4 +1,4 @@
-.dataCell{
+.dataCell {
     padding: 17px;
     font-size: 16px;
     font-weight: var(--default-font-weight);
@@ -6,13 +6,37 @@
 }
 
 
-.holidayHeading{
+.holidayHeading {
     font-size: var(--heading-2-size);
     font-weight: var(--sub-heading-font-weight);
     color: var(--primary-font-color-dark);
     padding: 10px;
 }
 
-.allHolidayWrapper{
-    padding-bottom: 50px;
+.allHolidaysWrapper {
+    margin-bottom: 50px;
+}
+
+.actionButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+.allHolidaysWrapper:global(.ant-dropdown-menu-submenu > .ant-dropdown-menu){
+    width: 150px !important;
+    height: 88px !important;
+}
+
+.ant-dropdown-placement-bottomRight {
+    width: 150px !important;
+    height: 88px !important;
+}
+
+.customSkeleton{
+    background-color: rgba(123, 121, 121, 0.085)!important;
 }

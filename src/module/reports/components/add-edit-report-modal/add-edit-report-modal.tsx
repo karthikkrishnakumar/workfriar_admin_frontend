@@ -4,6 +4,8 @@ import styles from "./add-edit-report-modal.module.scss";
 import ModalComponent from "@/themes/components/modal/modal";
 import FormField from "@/themes/components/reusable-fields/reusable-fields"; // Import the new FormField component
 import ButtonComponent from "@/themes/components/button/button";
+import UseProjectStatusServices from "../../services/project-status-report/project-status-report-services";
+import moment from "moment";
 
 /**
  * FormValues defines the structure of the form data.
@@ -39,6 +41,11 @@ interface AddReportProps {
   reportData?: any; // Optional report data for editing
 }
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
 const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
   const [formValues, setFormValues] = useState<FormValues>({
     project: "",
@@ -48,18 +55,51 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
     textareas: ["", "", ""],
   });
 
+  const [projects, setProjects] = useState<SelectOption[]>([]);
+  const [projectLeads, setProjectLeads] = useState<SelectOption[]>([]);
+
+  useEffect(() => {
+    const fetchDropdownOptions = async () => {
+      try {
+        const services = UseProjectStatusServices();
+        const [projectsData, leadsData] = await Promise.all([
+          services.fetchDropdownData("projects"),
+          services.fetchDropdownData("leads"),
+        ]);
+
+        setProjects(
+          projectsData.data?.map((proj) => ({
+            value: proj.id,
+            label: proj.name,
+          })) || []
+        );
+
+        setProjectLeads(
+          leadsData.data?.map((lead) => ({
+            value: lead.id,
+            label: lead.name,
+          })) || []
+        );
+      } catch (error) {
+        console.error("Error fetching dropdown options:", error);
+      }
+    };
+
+    fetchDropdownOptions();
+  }, []);
+
   // Update form values if in "edit" mode and reportData is available
   useEffect(() => {
     if (mode === "edit" && reportData) {
       setFormValues({
-        project: reportData.project || "",
-        projectLead: reportData.projectLead || "",
+        project: reportData.project_name || "",
+        projectLead: reportData.project_lead || "",
         dates: [
-          reportData.dates?.plannedStartDate || "",
-          reportData.dates?.plannedEndDate || "",
-          reportData.dates?.actualStartDate || "",
-          reportData.dates?.actualEndDate || "",
-          reportData.dates?.reportingPeriod || "",
+          reportData.planned_start_date || "",
+          reportData.planned_end_date || "",
+          reportData.actual_start_date || "",
+          reportData.actual_end_date || "",
+          reportData.reporting_period || "",
         ],
         progress: reportData.progress || "",
         textareas: [
@@ -71,13 +111,15 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
     }
   }, [mode, reportData]);
 
+  // or dayjs if using dayjs
+
   const handleChange = (field: string, value: any, index?: number) => {
     setFormValues((prev) => {
       const newState = { ...prev };
       if (index !== undefined) {
         if (field === "dates") {
           const newDates = [...prev.dates];
-          newDates[index] = value ? value.format("YYYY-MM-DD") : "";
+          newDates[index] = value ? moment(value).format("YYYY-MM-DD") : ""; // Format date
           newState.dates = newDates;
         } else if (field === "textareas") {
           const newTextareas = [...prev.textareas];
@@ -91,25 +133,52 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
     });
   };
 
+  const handleSave = async () => {
+    if (mode === "add") {
+      const reportDataToSave = {
+        project_name: formValues.project,
+        project_lead: formValues.projectLead,
+        planned_start_date: formValues.dates[0],
+        planned_end_date: formValues.dates[1],
+        actual_start_date: formValues.dates[2],
+        actual_end_date: formValues.dates[3],
+        reporting_period: formValues.dates[4],
+        progress: formValues.progress,
+        comments: formValues.textareas[0],
+        accomplishments: formValues.textareas[1],
+        goals: formValues.textareas[2],
+        blockers: formValues.textareas[3],
+      };
+
+      try {
+        // Call the service to save the report
+        const response =
+          await UseProjectStatusServices().addProjectStatusReport(
+            reportDataToSave
+          );
+        if (response.status) {
+          console.log("Report saved successfully!");
+          onClose(); // Close the modal after saving
+        } else {
+          console.error("Failed to save report");
+        }
+      } catch (error) {
+        console.error("Error saving report", error);
+      }
+    }
+  };
+
   // Select options configuration
   const selectFields = [
     {
       label: "Project",
       name: "project",
-      options: [
-        { value: "project1", label: "Project 1" },
-        { value: "project2", label: "Project 2" },
-        { value: "project3", label: "Project 3" },
-      ],
+      options: projects,
     },
     {
       label: "Project Lead",
       name: "projectLead",
-      options: [
-        { value: "lead1", label: "Lead 1" },
-        { value: "lead2", label: "Lead 2" },
-        { value: "lead3", label: "Lead 3" },
-      ],
+      options: projectLeads,
     },
   ];
 
@@ -179,7 +248,7 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
                   name="progress"
                   required
                   value={formValues.progress}
-                  onChange={(e) => handleChange("progress", e.target.value)}
+                  onChange={(value) => handleChange("progress", value)}
                   placeholder="Enter progress"
                 />
               </div>
@@ -192,7 +261,9 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
                   label={field.label}
                   name={field.name}
                   value={formValues.textareas[field.index]} // Access the value dynamically for textareas
-                  onChange={(e) => handleChange("textareas", e, field.index)}
+                  onChange={(value) =>
+                    handleChange("textareas", value, field.index)
+                  }
                   placeholder={`Enter ${field.label.toLowerCase()}`}
                   rows={field.index === 1 ? 3 : 4} // Customize rows based on field type
                 />
@@ -203,11 +274,7 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
         bottomContent={
           <>
             <ButtonComponent label="Cancel" theme="white" onClick={onClose} />
-            <ButtonComponent
-              label="Save"
-              theme="black"
-              onClick={() => console.log(formValues)}
-            />
+            <ButtonComponent label="Save" theme="black" onClick={handleSave} />
           </>
         }
         className={styles.modalDiv}

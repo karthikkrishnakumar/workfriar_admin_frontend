@@ -14,23 +14,24 @@ const ModuleHeaderWrapper = () => {
 
   // Define the pages and their corresponding data
   const pages = [
-    { title: "Dashboard", path: "/dashboard", backButtonNeeded: false },
-    { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false },
+
+    { title: "Dashboard", path: "/dashboard", backButtonNeeded: false, actionButton: null},
+    { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false, actionButton: null},
+    { title: "Organization", path: "/organization", backButtonNeeded: false ,actionButton: { label: "Add Employee", icon: Icons.plusLight, modalType: "addEmployeeModal" } },
+    { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false, actionButton: null},
+    { title: "Timesheet Report", path: "/time-sheet-report", backButtonNeeded: false, actionButton: null},
+    { title: "Profile", path: "/profile", backButtonNeeded: true, actionButton: null,  },
+    { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false, actionButton: { label: "Add Report", icon: Icons.plusLight, modalType: "addReportModal" } },
+    { title: "Report details", path: "/project-status-report/report-details/[id]", backButtonNeeded: true, actionButton: null},
+    { title: "Review Timesheet", path: "/time-sheet/review-timesheet/[id]", backButtonNeeded: true, actionButton: null},
     { title: "Project List", path: "/projects", backButtonNeeded: false ,actionButton: { label: "Add Project", icon: Icons.plusLight, modalType: "addModal" }},
     { title: "Client", path: "/projects/client", backButtonNeeded: false,actionButton: { label: "Add Client", icon: Icons.plusLight, modalType: "addModal" }},
     { title: "Task Category", path: "/projects/task-category", backButtonNeeded: false ,actionButton: { label: "Add Task Category", icon: Icons.plusLight, modalType: "addModal" }},
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false ,actionButton: { label: "Add Project Team", icon: Icons.plusLight, modalType: "addModal" }},
-    { title: "Organization", path: "/organization", backButtonNeeded: false ,actionButton: { label: "Add Employee", icon: Icons.plusLight, modalType: "addEmployeeModal" } },
-    { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false },
-    { title: "Timesheet Report", path: "/time-sheet-report", backButtonNeeded: false },
-    { title: "Profile", path: "/profile", backButtonNeeded: true },
-    { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false },
-    { title: "Report details", path: "/project-status-report/report-details/[id]", backButtonNeeded: true  },
-    { title: "Review Timesheet", path: "/time-sheet/review-timesheet/[id]", backButtonNeeded: true  },
-    { title: "Employee Details", path: "/organization/employee-details/[id]", backButtonNeeded: true  },
     { title: "Admin Settings", path: "/settings", backButtonNeeded: false,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } }, 
     { title: "Permissions Settings", path: "/settings/permissions/[id]", backButtonNeeded: false, actionButton: null},
     { title: "Notifications", path: "/notifications", backButtonNeeded: false, actionButton: null},
+    { title: "Employee Details", path: "/organization/employee-details/[id]", backButtonNeeded: true ,actionButton: null  },
     { title: "Holidays", path: "/holidays", backButtonNeeded: true, actionButton: { label: "Add Holidays", icon: Icons.plusLight, modalType: "roleModal" }},
   ];
 

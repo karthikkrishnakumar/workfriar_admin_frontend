@@ -24,7 +24,6 @@ const http = () => {
   ) => {
     // const fullUrl = `${url}`;
     const fullUrl = `${backendUrl}${url}`;
-    console.log(fullUrl);
     let config: AxiosRequestConfig = {
       headers: {
         "Content-Type": "application/json",
@@ -53,7 +52,7 @@ const http = () => {
           error.response.data.status = false;
           return error.response;
         } else if (error.response) {
-          console.log(error);
+          console.error(error);
           error.response.data = {
             status: false,
             message: error?.response?.data.message,
