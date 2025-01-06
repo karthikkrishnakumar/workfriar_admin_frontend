@@ -27,40 +27,47 @@ const Profile = () => {
   };
   // useEffect hook to fetch Profile data based on the ID when the component mounts
   useEffect(() => {
-      const fetchDetails = async () => {
-        try {
-          const response = await getAdminDetails(); // Make sure you pass the ID
-          if (response.status) {
-            message.success(response.message);
-            setProfile(response);
-          } else {
-            message.error(response.message);
-          }
-        
-        } catch (error) {
-          message.error("Failed to fetch project details.");
-        };
+    const fetchDetails = async () => {
+      try {
+       
+        const response = await getAdminDetails();
+        console.log(response.data);
+        if (response.status) {
+          message.success(response.message);
+          setProfile(
+            {...response.data,
+            reporting_manager: response.data.reporting_manager.full_name}
+          );
+          console.log(profile);
+        } else {
+          message.error(response.message);
+        }
+      } catch (error) {
+        console.error(error);
+        message.error("Failed to fetch project details.");
+      }
+    };
+  
+    fetchDetails(); // Call the function inside useEffect
+  }, []); // Ensure dependencies are correctly passed
+  
 
-      fetchDetails();
-    }
-  }, []);
-
-  // if (!profile) {
-  //   return (
-  //     <div className={styles.loadingWrapper}>
-  //       <Spin size="large" />
-  //     </div>
-  //   );
-  // }
+  if (!profile) {
+    return (
+      <div className={styles.loadingWrapper}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.profileDetailsWrapper}>
       <div className={styles.topRow}>
         <div className={styles.imageUploadContainer}>
           <div className={styles.imageCircle}>
-            {profile?.profile_pic ? (
+            {profile?.profile_pic_path ? (
               <img
-                src={profile?.profile_pic}
+                src={profile?.profile_pic_path}
                 alt="Profile"
                 className={styles.image}
               />

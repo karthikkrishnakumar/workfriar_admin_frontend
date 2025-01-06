@@ -6,14 +6,17 @@ import http from "@/utils/http";
  * @interface ProfileData
  */
 export interface ProfileData {
-  _id: string;
-  profile_pic: string;
+  id: string;
+  profile_pic_path: string;
   name: string;
   email: string;
   location: string;
   phone: string;
   role: string;
-  reporting_manager: string;
+  reporting_manager:{
+    _id:string;
+    full_name:string;
+  } 
 }
 
 /**
@@ -82,13 +85,3 @@ export default function useProfileService() {
   };
 }
 
-const adminDetails: ProfileData = {
-  _id: "1",
-  profile_pic: "/logo.svg",
-  name: "Amira",
-  email: "amira@techfriar.com",
-  location: "India",
-  phone: "+91 9876543210",
-  role: "Jr.Software Developer",
-  reporting_manager: "Aswina Vinod",
-};

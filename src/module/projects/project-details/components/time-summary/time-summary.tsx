@@ -45,7 +45,6 @@ const [next, setNext] = useState(false); // New state for next
         ); 
         console.log(response);
         if (response.status) {
-          message.success(response.message);
           setProjectTeamData(response.data);
           setCurrentRange(response.dateRange);
           setFilteredProjectTeam(mapMemberData(response.data));

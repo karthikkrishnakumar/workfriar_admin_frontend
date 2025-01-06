@@ -5,7 +5,7 @@ import styles from "./team-members.module.scss";
 import dayjs from "dayjs";
 import useProjectTeamService, {
   TeamMember,
-  Dates
+  Dates,
 } from "@/module/projects/project-team/services/project-team-service";
 import CustomTable, {
   Column,
@@ -21,17 +21,15 @@ interface TeamMembersProps {
 }
 
 const TeamMembers = ({ id }: TeamMembersProps) => {
-  const { fetchProjectTeamByProjectId, changeMemberStatus , updateDates} =
+  const { fetchProjectTeamByProjectId, changeMemberStatus, updateDates } =
     useProjectTeamService();
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [filteredTeamMembers, setFilteredTeamMembers] = useState<RowData[]>([]);
   const [selectedId, setSelectedId] = useState("");
-  const [ProjectTeamData, setProjectTeamData] = useState<
-    TeamMember | null
-  >(null);
-  const [dates, setDates] = useState<
-    Dates | null
-  >(null);
+  const [ProjectTeamData, setProjectTeamData] = useState<TeamMember | null>(
+    null
+  );
+  const [dates, setDates] = useState<Dates | null>(null);
   // useEffect hook to fetch project data based on the ID when the component mounts
 
   useEffect(() => {
@@ -42,11 +40,11 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       id: id,
     };
     try {
-      const response = await fetchProjectTeamByProjectId(value); 
+      const response = await fetchProjectTeamByProjectId(value);
       if (response.status) {
-        message.success(response.message);
+        console.log(response.data.teamsMembers);
         setFilteredTeamMembers(mapMemberData(response.data.teamsMembers));
-        setSelectedId(response.data.id)
+        setSelectedId(response.data.id);
       } else {
         message.error(response.message);
       }
@@ -144,21 +142,17 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       email: <span className={styles.member}>{member.email}</span>,
       dates: (
         <span className={styles.dates} onClick={() => handleEditDates(member)}>
-          <>
-            {member.dates[0].period}
-            {/* {dayjs.isDayjs(member.dates[0].start_date)
-              ? member.dates[0].start_date.format("DD/MM/YYYY")
-              : member.dates[0].start_date}{" "}
-            -{" "}
-            {dayjs.isDayjs(member.dates[0].end_date)
-              ? member.dates[0].end_date.format("DD/MM/YYYY")
-              : member.dates[0].end_date} */}
-          </>
+          <>{member.dates.period}</>
         </span>
       ),
       status: (
         <StatusDropdown
-          status={member.status || ""}
+          status={
+            member.status?
+            (member.status
+            .replace(/\b\w/g, (l) => l.toUpperCase())):
+               ""
+          }
           menuItems={[
             { key: "Active", label: "Active" },
             { key: "Inactive", label: "Inactive" },
