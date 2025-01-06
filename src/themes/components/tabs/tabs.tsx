@@ -5,7 +5,11 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 
 interface TabComponentProps {
-  headings: { key: string; label: string | ReactNode; content: React.ReactNode }[]; // Array of headings and content
+  headings: {
+    key: string;
+    label: string | ReactNode;
+    content: React.ReactNode;
+  }[]; // Array of headings and content
   onChange?: (key: string) => void;
   subHeading?: ReactNode;
   activeKey?: string;
@@ -29,13 +33,17 @@ const TabComponent: React.FC<TabComponentProps> = ({
     children: heading.content, // Content to render inside the tab
   }));
 
-  return(
-  <div className={styles.tabWrapper}>
-    <div className={styles.subHeading}>
-      {subHeading}
+  return (
+    <div className={styles.tabWrapper}>
+      <div className={styles.subHeading}>{subHeading}</div>
+      <Tabs
+        items={tabItems}
+        className={styles.customTabs}
+        onChange={onChange}
+        activeKey={activeKey}
+      />
     </div>
-    <Tabs items={tabItems} className={styles.customTabs} onChange={onChange} activeKey={activeKey}/>
-  </div>);
+  );
 };
 
 export default TabComponent;

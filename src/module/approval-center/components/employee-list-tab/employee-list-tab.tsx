@@ -2,16 +2,20 @@
 import React, { useEffect, useState } from "react";
 import styles from "./employee-list-tab.module.scss";
 import TabComponent from "@/themes/components/tabs/tabs";
-import {
-  fetchTeamMembers,
-  TeamMember,
-} from "../../services/all-time-sheet-services";
 import EmployeeList from "./employee-list/employee-list";
+import { TeamMember } from "@/interfaces/approval-center/approval-center";
+import UseApprovalCenterServices from "../../services/all-time-sheet-services";
 
 const EmployeeListTab = () => {
   const [employeeList, setEmployeeList] = useState<TeamMember[]>([]);
+
+  const fetchTeamMembers = async() => {
+    const response = await UseApprovalCenterServices().fetchTeamMembers();
+    console.log(response);
+    setEmployeeList(response.data);
+  }
   useEffect(() => {
-    fetchTeamMembers(setEmployeeList);
+    fetchTeamMembers();
   }, []);
   const tabs = [
     {

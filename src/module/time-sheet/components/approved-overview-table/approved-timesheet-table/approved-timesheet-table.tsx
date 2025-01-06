@@ -178,27 +178,27 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
   // Prepare data for the table
   const data = timesheetData.length === 0 ? [] :
   timesheetData.map((timesheet, index) => {
-    const totalHours = calculateTotalHours(timesheet.data_sheet);
+    const totalHours = calculateTotalHours(timesheet?.data_sheet);
     const taskStatusClass =
-      timesheet.status === "accepted"
+      timesheet?.status === "accepted"
         ? styles.approved
-        : timesheet.status === "rejected"
+        : timesheet?.status === "rejected"
         ? styles.rejected
         : "";
 
     return {
       task: (
         <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
-          <span className={styles.taskName}>{timesheet.category_name}</span>
-          <span className={styles.projectName}>{timesheet.project_name}</span>
+          <span className={styles.taskName}>{timesheet?.category_name}</span>
+          <span className={styles.projectName}>{timesheet?.project_name}</span>
         </div>
       ),
       details: (
         <TextAreaButton
-          buttonvalue={timesheet.task_detail}
+          buttonvalue={timesheet?.task_detail}
           onclickFunction={() => textAreaOnclick(index)}
           showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
-          value={timesheetData[index].task_detail}
+          value={timesheetData[index]?.task_detail}
           setvalue={(newValue) => {
             const updatedData = [...timesheetData];
             updatedData[index].task_detail = newValue;
@@ -208,7 +208,7 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
           readOnly={true}
         />
       ),
-      ...mapTimeEntriesToWeek(timesheet.data_sheet),
+      ...mapTimeEntriesToWeek(timesheet?.data_sheet),
       total: (
         <span className={styles.rowWiseTotal}>
           <p>{totalHours}</p>

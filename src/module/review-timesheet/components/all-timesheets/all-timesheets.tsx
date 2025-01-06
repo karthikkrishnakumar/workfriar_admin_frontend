@@ -23,8 +23,8 @@ import TextAreaButton from "@/module/time-sheet/components/text-area-button/text
  * Props for the ReviewAllTimesheetsTable component.
  */
 interface AllTimeSheetTableProps {
-  startDate: Date | null; // Start date of the timesheet period
-  endDate: Date | null;   // End date of the timesheet period
+  startDate: string; // Start date of the timesheet period
+  endDate: string;   // End date of the timesheet period
 }
 
 /**
@@ -89,6 +89,10 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     setTimeSheetData(updatedData);
     setUnsavedChanges(true);
   };
+
+  const fetchTimesheets = async() => {
+    
+  }
 
   useEffect(() => {
     // Fetch timesheet data whenever the start or end date changes

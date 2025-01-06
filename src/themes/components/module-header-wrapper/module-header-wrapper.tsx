@@ -32,7 +32,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Permissions Settings", path: "/settings/permissions/[id]", backButtonNeeded: true, actionButton: null},
     { title: "Notifications", path: "/notifications", backButtonNeeded: true, actionButton: null},
     { title: "Employee Details", path: "/organization/employee-details/[id]", backButtonNeeded: true ,actionButton: null  },
-    { title: "Holidays", path: "/holidays", backButtonNeeded: true, actionButton: { label: "Add Holidays", icon: Icons.plusLight, modalType: "roleModal" }},
+    { title: "Holidays", path: "/holidays", backButtonNeeded: true, actionButton: { label: "Add Holidays", icon: Icons.plusLight, modalType: "holidayModal" }},
   ];
 
   // Function to match the dynamic path

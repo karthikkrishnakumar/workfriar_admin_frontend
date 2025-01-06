@@ -5,7 +5,7 @@ import ReviewTabs from "../components/review-tabs/review-tabs";
 import styles from "./review-timesheet.module.scss";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import CustomAvatar from "@/themes/components/avatar/avatar";
-import { TeamMember } from "@/module/approval-center/services/all-time-sheet-services";
+import { TeamMember } from "@/interfaces/approval-center/approval-center";
 
 interface ReviewTimesheetProps {
   id: string;
@@ -46,11 +46,11 @@ const ReviewTimesheet: React.FC<ReviewTimesheetProps> = ({ id }) => {
         <>
           <div className={styles.profileWrapper}>
             <CustomAvatar
-              name={employeeProfile?.name}
-              src={employeeProfile?.avatar}
+              name={employeeProfile?.full_name}
+              src={employeeProfile?.profile_pic}
               size={63}
             />
-            <h2>{employeeProfile?.name}</h2>
+            <h2>{employeeProfile?.full_name}</h2>
           </div>
           <ReviewTabs
             approvedCount={approvedCount}
