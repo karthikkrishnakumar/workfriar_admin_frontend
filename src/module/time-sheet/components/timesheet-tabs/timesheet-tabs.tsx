@@ -70,8 +70,6 @@ const TimesheetsTabs = () => {
         endDate
       );
 
-      console.log(response);
-
       setTimeSheetdata(response?.data);
       const uniqueDates: WeekDaysData[] = (
         response.weekDates as Partial<WeekDateEntry>[]
@@ -116,6 +114,15 @@ const TimesheetsTabs = () => {
     fetchWeeks(setWeeks);
     fetchTimeSheetsCount();
   }, []);
+
+  /**
+   * Handles tab switching and updates the active tab key.
+   *
+   * @param {string} key - The key of the tab to switch to
+   */
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key); // Update active tab key state
+  };
 
   /**
    * Array of tab configurations for the TimesheetsTabs component.
@@ -197,11 +204,17 @@ const TimesheetsTabs = () => {
           <TabComponent
             headings={tabs} // Pass the tabs array to TabComponent
             subHeading={
-              <DateRangePicker
-                weekData={weeks}
-                onDateChange={handleDateChange}
-              />
+              <>
+                {activeTabKey === "1" && (
+                  <DateRangePicker
+                    weekData={weeks}
+                    onDateChange={handleDateChange}
+                  />
+                )}
+              </>
             }
+            activeKey={activeTabKey}
+            onChange={handleTabChange}
           />
         </div>
       )}

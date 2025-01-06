@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
     // Reset the cookie
     return resetCookie(response);
   } catch (error) {
-    console.error("Error in POST /api/auth/logout:", error);
     return NextResponse.json(
       { success: false, message: "Failed to logout" },
       { status: 500 }

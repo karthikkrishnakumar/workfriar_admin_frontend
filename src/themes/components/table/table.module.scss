@@ -87,6 +87,8 @@
       color: rgba(0, 0, 0, 0.25);
     }
 
+
+
     @media (max-width: 768px) {
       .ant-table-thead > tr > th,
       .ant-table-tbody > tr > td {
@@ -96,3 +98,9 @@
   }
 }
 
+.skeletonCell {
+  :global(.ant-skeleton-title) {
+    margin: 0 !important;
+    height: 20px;
+  }
+}

@@ -9,6 +9,7 @@ import ButtonComponent from "@/themes/components/button/button";
 import styles from "./update-role-permissions.module.scss";
 import useRoleService from "../../services/role-service";
 import { CATEGORIES } from "../../constants";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
 const UpdateRolePermissionsTable = () => {
   const params = useParams<{ roleId: string }>();
@@ -200,14 +201,18 @@ const UpdateRolePermissionsTable = () => {
 
   return (
     <>
-      {loading ? (
-        <Skeleton active paragraph={{ rows: 5 }} />
+    {loading ? (
+      <SkeletonLoader
+      paragraph={{ rows: 15 }}
+      classNameItem={styles.customSkeleton}
+    />
       ) : (
         <>
           <Table
             columns={columns}
             dataSource={permissions}
             className={styles.permissionTable}
+            loading={loading}
           />
           <div className={styles.actions}>
             <ButtonComponent label="Cancel" theme="white" onClick={handleCancel} />

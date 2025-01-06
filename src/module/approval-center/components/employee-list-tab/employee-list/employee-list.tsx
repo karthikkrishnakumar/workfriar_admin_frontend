@@ -1,8 +1,8 @@
-import { TeamMember } from "@/module/approval-center/services/all-time-sheet-services";
 import React from "react";
 import EmployeeCard from "./employee-card/employee-card";
 import styles from "./employee-list.module.scss";
 import { useRouter } from "next/navigation";
+import { TeamMember } from "@/interfaces/approval-center/approval-center";
 
 
 interface EmployeeListProps {
@@ -11,7 +11,6 @@ interface EmployeeListProps {
 const EmployeeList: React.FC<EmployeeListProps> = ({ employeeList }) => {
   const router = useRouter();
   const handleRouting = (id: string) => {
-    console.log(id);
     router.push(`/time-sheet/review-timesheet/${id}`);
   };
   return (
@@ -19,8 +18,8 @@ const EmployeeList: React.FC<EmployeeListProps> = ({ employeeList }) => {
       {employeeList.map((employee) => {
         return (
           <EmployeeCard
-            name={employee.name}
-            avatar={employee.avatar}
+            name={employee.full_name}
+            avatar={employee.profile_pic}
             onClickFunction={() => {
               handleRouting(employee.id);
             }}

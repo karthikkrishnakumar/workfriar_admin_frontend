@@ -29,11 +29,11 @@ const ModuleHeaderWrapper = () => {
     { title: "Client", path: "/projects/client", backButtonNeeded: false,actionButton: { label: "Add Client", icon: Icons.plusLight, modalType: "addModal" }},
     { title: "Task Category", path: "/projects/task-category", backButtonNeeded: false ,actionButton: { label: "Add Task Category", icon: Icons.plusLight, modalType: "addModal" }},
     { title: "Project Team", path: "/projects/project-team", backButtonNeeded: false ,actionButton: { label: "Add Project Team", icon: Icons.plusLight, modalType: "addModal" }},
-    { title: "Admin Settings", path: "/settings", backButtonNeeded: false,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } }, 
-    { title: "Permissions Settings", path: "/settings/permissions/[id]", backButtonNeeded: false, actionButton: null},
-    { title: "Notifications", path: "/notifications", backButtonNeeded: false, actionButton: null},
+    { title: "Admin Settings", path: "/settings", backButtonNeeded: true,  actionButton: { label: "Add Role", icon: Icons.plusLight, modalType: "roleModal" } }, 
+    { title: "Permissions Settings", path: "/settings/permissions/[id]", backButtonNeeded: true, actionButton: null},
+    { title: "Notifications", path: "/notifications", backButtonNeeded: true, actionButton: null},
     { title: "Employee Details", path: "/organization/employee-details/[id]", backButtonNeeded: true ,actionButton: null  },
-    { title: "Holidays", path: "/holidays", backButtonNeeded: true, actionButton: { label: "Add Holidays", icon: Icons.plusLight, modalType: "roleModal" }},
+    { title: "Holidays", path: "/holidays", backButtonNeeded: true, actionButton: { label: "Add Holidays", icon: Icons.plusLight, modalType: "holidayModal" }},
   ];
 
   // Function to match the dynamic path
@@ -55,6 +55,7 @@ const ModuleHeaderWrapper = () => {
 
   // Function to open the modal based on the page's modalType
   const openModalBasedOnPage = () => {
+
     if (actionButton?.modalType) {
       dispatch(openModal(actionButton.modalType)); // Dispatch the modal based on the modalType in the pages data
     }

@@ -61,7 +61,6 @@ const FormField: React.FC<FormFieldProps> = ({
     </div>
   );
 
-  console.log(value);
 
   // Correctly handle onChange for different field types
   const handleChange = (val: any) => {

@@ -16,6 +16,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+
   // Login page logic
   if (pathname === "/") {
     // Redirect to dashboard if already logged in

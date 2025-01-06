@@ -2,12 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import TabComponent from "@/themes/components/tabs/tabs";
-import DateRangePicker, { DatePickerData } from "@/themes/components/date-picker/date-picker";
+import DateRangePicker, {
+  DatePickerData,
+} from "@/themes/components/date-picker/date-picker";
 import ReviewAllTimesheetsTable from "../all-timesheets/all-timesheets";
 import PendingOverviewTable from "../pending-timesheets/pending-timesheets-overview";
 import ApprovedOverviewTable from "../approved-timesheets/approved-timesheets-overview";
 import RejectedOverviewTable from "../rejected-timesheets/rejected-timesheets-overview";
 import OverdueTable from "../overdue-timesheets/overdue-timesheets";
+import { fetchWeeks } from "../../services/review-timesheet-services";
 
 // Interface for the props expected by the ReviewTabs component
 interface ReviewPageProps {
@@ -28,32 +31,33 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
   const [loading, setLoadig] = useState(true);
 
   // State for managing the start and end dates for the date range
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-  const [weeks,setWeeks] = useState<DatePickerData[]>([]);
+  const [weeks, setWeeks] = useState<DatePickerData[]>([]);
 
   // State for managing the count of past-due timesheets
   const [pastDueCount, setPastDueCount] = useState<number>(1);
 
-  // State to store the date picker data fetched from an API
-  const [datePickerData, setDatePickerData] = useState<
-    { start: string; end: string; week: number }[]
-  >([]);
-
   // State to track the active tab (default is the first tab)
   const [activeTabKey, setActiveTabKey] = useState<string>("1");
 
-  // Handle date range change when the user selects new dates in the date picker
-  const handleDateChange = (startDate: Date, endDate: Date) => {
-    setStartDate(startDate); // Update start date
-    setEndDate(endDate); // Update end date
+  /**
+   * Handles date range changes and updates state variables for filtering.
+   * 
+
+   * @param {string} startDate - The start date of the range
+   * @param {string} endDate - The end date of the range
+   */
+  const handleDateChange = (startDate: string, endDate: string) => {
+    setStartDate(startDate);
+    setEndDate(endDate);
   };
 
   // Fetch date data for the date range picker when the component mounts
   useEffect(() => {
     // fetch dates
-    // fetchWeeks(setWeeks);
+    fetchWeeks(setWeeks);
   }, []);
 
   // Define the tabs for the review page, each with a key, label, and content
@@ -62,10 +66,7 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
       key: "1", // Key for the "All Timesheets" tab
       label: <>All Timesheets</>,
       content: (
-        <ReviewAllTimesheetsTable
-          startDate={startDate}
-          endDate={endDate}
-        />
+        <ReviewAllTimesheetsTable startDate={startDate} endDate={endDate} />
       ),
     },
     {
@@ -125,12 +126,7 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
         headings={tabs} // Pass the tabs as headings
         subHeading={
           // Date range picker displayed as a subheading
-          <DateRangePicker
-          weekData={weeks}
-          onDateChange={()=>{
-          }}
-
-          />
+          <DateRangePicker weekData={weeks} onDateChange={handleDateChange} />
         }
       />
     </div>

@@ -111,7 +111,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
    * @returns {string} - Total hours formatted as "HH:MM".
    */
   const calculateTotalHours = (entries: TimeEntry[]) => {
-    const totalMinutes = entries.reduce(
+    const totalMinutes = entries?.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
       0
     );
@@ -224,27 +224,27 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
    * @returns {Array} - Array of table rows.
    */
   const data = timesheetData?.map((timesheet, index) => {
-    const totalHours = calculateTotalHours(timesheet.data_sheet);
+    const totalHours = calculateTotalHours(timesheet?.data_sheet);
     const taskStatusClass =
-      timesheet.status === "approved"
+      timesheet?.status === "approved"
         ? styles.approved
-        : timesheet.status === "rejected"
+        : timesheet?.status === "rejected"
         ? styles.rejected
         : styles.pending;
 
     return {
       task: (
         <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
-          <span className={styles.taskName}>{timesheet.category_name}</span>
-          <span className={styles.projectName}>{timesheet.project_name}</span>
+          <span className={styles.taskName}>{timesheet?.category_name}</span>
+          <span className={styles.projectName}>{timesheet?.project_name}</span>
         </div>
       ),
       details: (
         <TextAreaButton
-          buttonvalue={timesheet.task_detail}
+          buttonvalue={timesheet?.task_detail}
           onclickFunction={() => setEditingRowIndex(index)}
           showTaskDetailModal={editingRowIndex === index}
-          value={timesheetData[index].task_detail}
+          value={timesheetData[index]?.task_detail}
           setvalue={(newValue) => {
             const updatedData = [...timesheetData];
             updatedData[index].task_detail = newValue;
@@ -253,7 +253,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
           }}
         />
       ),
-      ...mapTimeEntriesToWeek(timesheet.data_sheet, index),
+      ...mapTimeEntriesToWeek(timesheet?.data_sheet, index),
       total: (
         <span className={styles.rowWiseTotal}>
           <p>{totalHours}</p>

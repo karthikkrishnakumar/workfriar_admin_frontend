@@ -42,7 +42,6 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
   
     const response = await addRole(role); // Call the addRole service
     if (response.status) {
-      console.log()
       message.success("Role added successfully!");
       onRoleAdded(); // Refresh the role list
       return response; // Return the response for further use

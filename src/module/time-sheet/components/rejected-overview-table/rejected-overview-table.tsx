@@ -72,7 +72,7 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
   const handleFetchTimesheets = async (startDate: string, endDate: string) => {
     setShowDetailedView(true);
     setLoading(true);
-    const response = await UseAllTimesheetsServices().fetchApprovedTimesheets(
+    const response = await UseAllTimesheetsServices().fetchRejectedTimesheets(
       startDate,
       endDate
     );

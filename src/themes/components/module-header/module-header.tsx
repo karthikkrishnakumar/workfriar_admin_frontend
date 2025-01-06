@@ -4,6 +4,7 @@ import Icons from "@/themes/images/icons/icons";
 import SearchBar from "../search-bar/search-bar";
 import ProfilePreview from "../profile-preview/profile-preview";
 import ButtonComponent from "../button/button";
+import { useRouter } from "next/navigation";
 
 interface ModuleHeaderProps {
   title: string; // Title of the module header
@@ -30,13 +31,14 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   isBackButtonNeeded,
 }) => {
 
-
-
+  const router = useRouter(); 
   return (
     <div className={styles.moduleHeaderwrpper}>
       <div className={styles.leftContainer}>
         {isBackButtonNeeded && (
-          <span>{Icons.arrowLeftDark}</span>
+          <span onClick={() => router.back()} className={styles.backButton}>
+            {Icons.arrowLeftDark}
+          </span>
         )}
         <h2>{title}</h2>
         <div className={styles.actionbutton}>
@@ -45,7 +47,9 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
               label={actionButton.label}
               theme="black"
               onClick={actionButton.onClick}
-              content={actionButton.icon}
+              // content={actionButton.icon}
+              defaultIcon={actionButton.icon}
+              hoverIcon={Icons.plusDark}
               className={styles.addButton}
             />
           )}
