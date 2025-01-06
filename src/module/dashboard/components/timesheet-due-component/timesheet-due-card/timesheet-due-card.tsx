@@ -30,31 +30,31 @@ const TimeSheetDueCard: React.FC = () => {
     window.location.href = "/time-sheet";
   };
 
+  const fetchData = async () => {
+    setLoading(true); // Set loading to true before fetching
+    setError(null); // Clear any previous errors
+    try {
+      const data: TimesheetDueResponse =
+        await UseDashboardServices().fetchTimesheetDueData(
+          selectedStartDate,
+          selectedEndDate
+        );
+      setTimesheetDueData(data.data);
+
+      // Calculate the total time (hours) based on the new data
+      const totalHours =
+        data?.data?.find((item: any) => item.date === "TOTAL")?.hours ??
+        "00:00";
+
+      setTotalTime(totalHours); // Update totalTime state with the fetched data
+    } catch (error) {
+      setError("Error fetching timesheet data.");
+    } finally {
+      setLoading(false); // Set loading to false after data fetch
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true); // Set loading to true before fetching
-      setError(null); // Clear any previous errors
-      try {
-        const data: TimesheetDueResponse =
-          await UseDashboardServices().fetchTimesheetDueData(
-            selectedStartDate,
-            selectedEndDate
-          );
-        setTimesheetDueData(data.data);
-
-        // Calculate the total time (hours) based on the new data
-        const totalHours =
-          data?.data?.find((item: any) => item.date === "TOTAL")?.hours ??
-          "00:00";
-
-        setTotalTime(totalHours); // Update totalTime state with the fetched data
-      } catch (error) {
-        setError("Error fetching timesheet data.");
-      } finally {
-        setLoading(false); // Set loading to false after data fetch
-      }
-    };
-
     fetchData();
   }, [selectedStartDate, selectedEndDate]);
 
@@ -62,7 +62,7 @@ const TimeSheetDueCard: React.FC = () => {
     const fetchDatePicker = async () => {
       try {
         const datePickerResponse: DatePickerResponse =
-          await UseDashboardServices().fetchDatePickerData();
+        await UseDashboardServices().fetchDatePickerData();
         setDatePickerData(datePickerResponse.data);
       } catch (error) {
         console.error("Error fetching date picker data:", error);
@@ -74,6 +74,7 @@ const TimeSheetDueCard: React.FC = () => {
 
   const handleSubmitClick = () => {
     setIsModalVisible(true);
+   
   };
 
   // Handle modal close
@@ -139,7 +140,7 @@ const TimeSheetDueCard: React.FC = () => {
       />
 
       {isModalVisible && (
-        <TimeDueModal onClose={handleCloseModal} totalTime={totalTime} />
+        <TimeDueModal onClose={handleCloseModal} startDate={selectedStartDate} endDate={selectedEndDate} totalTime={totalTime} />
       )}
     </>
   );

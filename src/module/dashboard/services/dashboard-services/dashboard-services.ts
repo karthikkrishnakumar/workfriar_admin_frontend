@@ -76,6 +76,13 @@ export interface DatePickerResponse{
   errors: Error | null;
 }
 
+export interface saveTimesheetDueResponse{
+  status: boolean;
+  data:[];
+  message: string;
+  errors: Error | null;
+}
+
 /**
  * Fetches the project time data for a given date range.
  * @param startDate - The start date in ISO format (optional).
@@ -219,6 +226,30 @@ export default function UseDashboardServices() {
     }
   }
 
+  const saveTimesheetDue = async (
+    startDate: string,
+    endDate: string,
+  ): Promise<saveTimesheetDueResponse> => {
+    try {
+      console.log(startDate, endDate)
+      const props: JSON = <JSON>(<unknown>{ startDate, endDate});
+      // Make an HTTP POST request to fetch the dashboard datepicker data
+      const { body } = await http().post("/api/timesheet/submit-due-timesheets" , props);
+
+      console.log(body, "in services save timesheetdue");
+      // Return datepicker data with additional details
+      return {
+        status: body.status,
+        data: body.data || null,
+        message: body.message || "Successfully saved due timesheets.",
+        errors: body.errors || null,
+      };
+    } catch (error) {
+      console.error("Error saving due timesheets:", error);
+      throw error; // Rethrow the error if something goes wrong
+    }
+  }
+
   return {
     fetchProjectTimes,
     fetchTimesheetChartData,
@@ -226,5 +257,6 @@ export default function UseDashboardServices() {
     fetchNotifications,
     fetchHolidays,
     fetchDatePickerData,
+    saveTimesheetDue
   };
 }

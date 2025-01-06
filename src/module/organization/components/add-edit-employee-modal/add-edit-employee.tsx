@@ -252,6 +252,10 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
         return;
       }
 
+      if (response.status) message.success(response.message);
+      else message.error(response.message);
+
+
       onClose && onClose();
     } catch (error) {
       console.error("Error saving employee:", error);
@@ -426,7 +430,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   placeholder="Enter reporting manager"
                   options={reportingManagerOptions}
                   error={formErrors.reporting_manager}
-                  required
                 />
                 <FormField
                   type="select"

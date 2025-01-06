@@ -6,11 +6,13 @@ import DashboardNotifications from "../notifications/dashboard-notifications";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
 import UseDashboardServices, { Notification } from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import { useRouter } from "next/navigation";
 
 const NotificationCard: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]|[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     // Fetch notifications when the component mounts
@@ -29,7 +31,7 @@ const NotificationCard: React.FC = () => {
   }, []);
 
   const handleClickAllnotification = ()=>{
-    alert("under developing...")
+    router.push("/notifications")
   }
 
   if(error) return <div>{error}</div>

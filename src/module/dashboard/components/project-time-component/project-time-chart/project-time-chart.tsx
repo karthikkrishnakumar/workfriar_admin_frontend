@@ -81,8 +81,11 @@ const ProjectTimeChart: React.FC<ProjectTimeChartProps> = ({
         },
         tooltip: {
           callbacks: {
-            label: (context: TooltipItem<"bar">) =>
-              `${context.raw} hr (${visibleData.tooltips[context.dataIndex!]})`,
+            label: (context: TooltipItem<"bar">) =>{
+              const formattedValue = Number(context.raw).toFixed(2); // Format to two decimal places
+              return `${formattedValue} hr`;
+            },
+              // `${context.raw} hr (${visibleData.tooltips[context.dataIndex!]})`,
           },
         },
       },
