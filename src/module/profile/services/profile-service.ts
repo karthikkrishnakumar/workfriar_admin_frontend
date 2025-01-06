@@ -23,21 +23,21 @@ export default function useProfileService() {
   const getAdminDetails = async function (): Promise<any> {
     try {
       // Make an HTTP POST request
-      // const { body } = await http().post("/admin");
-      // if (body.status) {
-      //   const response: any = {
-      //     status: body.status,
-      //     message: body.message,
-      //     data: body.data ? body.data : undefined,
-      //   };
-      //   return response;
-      // } else {
-      //   return {
-      //     status: false,
-      //     message: body.message,
-      //   };
-      // }
-      return adminDetails;
+      const { body } = await http().post("/api/admin/profile-view");
+      console.log(body);
+      if (body.status) {
+        const response: any = {
+          status: body.status,
+          message: body.message,
+          data: body.data ? body.data : undefined,
+        };
+        return response;
+      } else {
+        return {
+          status: false,
+          message: body.message,
+        };
+      }
     } catch (error) {
       // Handle unexpected errors
       return {

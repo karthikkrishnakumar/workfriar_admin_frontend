@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 import CustomAvatar from "@/themes/components/avatar/avatar";
+import TeamMembers from "@/module/projects/project-details/components/team-members/team-members";
 
 const ProjectTeam: React.FC = () => {
   const router = useRouter();
@@ -122,8 +123,19 @@ const ProjectTeam: React.FC = () => {
    */
   const handleAddProjectTeamSubmit = async (values: Record<string, any>) => {
     try {
-      const response = await addProjectTeam(values);
+      const transformedTeam = values.teamMembers.map((member: any) => ({ userid: member }));
+      const payload={
+        project:values.projectname,
+        team_members:transformedTeam
+      }
+      const response = await addProjectTeam(payload);
       console.log(response);
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.message);
+      }
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
@@ -168,7 +180,7 @@ const ProjectTeam: React.FC = () => {
     ) => {
       if (e.key === "Details") {
         if (team.id) {
-          router.push(`/projects/project-details/${team.id}`);
+          router.push(`/projects/project-details/${team.project_id}`);
         }
       } else if (e.key === "Edit") {
         if (team.id) {
@@ -193,7 +205,7 @@ const ProjectTeam: React.FC = () => {
       ),
       ProjectTeam: (
         <span>
-          <AvatarGroup team={team.teamMembers}/>
+          <AvatarGroup team={team.teamsMembers}/>
           </span>
       ),
       actual_dates: (

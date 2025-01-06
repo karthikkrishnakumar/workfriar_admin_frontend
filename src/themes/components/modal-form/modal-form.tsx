@@ -101,51 +101,53 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
             placeholder={field.placeholder}
             options={field.options}
             showSearch
-            value={form.getFieldValue(field.name)}
+            value={field.options?.some((option) => option.value === form.getFieldValue(field.name))
+              ? form.getFieldValue(field.name)
+              : undefined }
           />
         );
         case "checkboxSelect":
           return (
             <Select
-              mode="multiple"
-              placeholder={field.placeholder || "Select options"}
-              options={field.options}
-              value={form.getFieldValue(field.name) || []} // Ensure it's an array
-              onChange={(selectedValues) => {
-                form.setFieldValue(field.name, selectedValues);
-              }}
-              dropdownRender={(menu) => (
-                <div>
-                  {field.options?.map((option) => (
-                    <div
-                      key={option.value}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "5px 10px",
-                      }}
-                    >
-                      <Checkbox
-                        checked={form
-                          .getFieldValue(field.name)
-                          ?.includes(option.value)} // Check based on initial values
-                        onChange={(e) => {
-                          const currentValue = form.getFieldValue(field.name) || [];
-                          const newValue = e.target.checked
-                            ? [...currentValue, option.value]
-                            : currentValue.filter(
-                                (val: string | number) => val !== option.value
-                              );
-                          form.setFieldValue(field.name, newValue); // Update form value
-                        }}
-                        className={styles.checkbox}
-                      />
-                      <span style={{ marginLeft: "8px" }}>{option.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            />
+      mode="multiple"
+      placeholder={field.placeholder || "Select options"}
+      options={field.options}
+      value={form.getFieldValue(field.name) || []} // Ensure it's an array
+      onChange={(selectedValues) => {
+        form.setFieldValue(field.name, selectedValues); // Update form values dynamically
+      }}
+      dropdownRender={(menu) => (
+        <div>
+          {field.options?.map((option) => {
+            const selectedValues = form.getFieldValue(field.name) || []; // Fetch current values
+            return (
+              <div
+                key={option.value}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "5px 10px",
+                }}
+              >
+                <Checkbox
+                  checked={selectedValues.includes(option.value)} // Check if the option is selected
+                  onChange={(e) => {
+                    const newValue = e.target.checked
+                      ? [...selectedValues, option.value]
+                      : selectedValues.filter(
+                          (val: string | number) => val !== option.value
+                        );
+                    form.setFieldValue(field.name, newValue); // Update form value
+                  }}
+                  className={styles.checkbox}
+                />
+                <span style={{ marginLeft: "8px" }}>{option.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    />
           );
         
       case "date":

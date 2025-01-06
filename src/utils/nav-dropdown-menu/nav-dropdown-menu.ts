@@ -31,12 +31,20 @@ export const getDropdownItems = (label: string): DropdownItem[] | undefined => {
     ],
     Projects: [
       {
-        label: "New Project",
-        path: "/new-project",
+        label: "Project List",
+        path: "/projects",
       },
       {
-        label: "Manage Projects",
-        path: "/manage-projects",
+        label: "Client",
+        path: "/projects/client",
+      },
+      {
+        label: "Task Category",
+        path: "/projects/task-category",
+      },
+      {
+        label: "Project Team",
+        path: "/projects/project-team",
       },
     ],
     Timesheet: [

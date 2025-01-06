@@ -17,7 +17,6 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
   size = 40, 
   ...restProps 
 }) => {
-  console.log(src,"haii")
   // If no image is provided, generate an avatar with the first letter
   if (!src && name) {
     return (

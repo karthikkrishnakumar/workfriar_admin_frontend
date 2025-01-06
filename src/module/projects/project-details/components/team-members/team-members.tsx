@@ -42,9 +42,14 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       id: id,
     };
     try {
-      const result = await fetchProjectTeamByProjectId(value); 
-      setFilteredTeamMembers(mapMemberData(result.data.teamsMembers));
-      setSelectedId(result.data.id)
+      const response = await fetchProjectTeamByProjectId(value); 
+      if (response.status) {
+        message.success(response.message);
+        setFilteredTeamMembers(mapMemberData(response.data.teamsMembers));
+        setSelectedId(response.data.id)
+      } else {
+        message.error(response.message);
+      }
     } catch (error) {
       message.error("Failed to fetch project details.");
     }
@@ -141,13 +146,13 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
         <span className={styles.dates} onClick={() => handleEditDates(member)}>
           <>
             {member.dates[0].period}
-            {/* {dayjs.isDayjs(member.start_date)
-              ? member.start_date.format("DD/MM/YYYY")
-              : member.start_date}{" "}
+            {/* {dayjs.isDayjs(member.dates[0].start_date)
+              ? member.dates[0].start_date.format("DD/MM/YYYY")
+              : member.dates[0].start_date}{" "}
             -{" "}
-            {dayjs.isDayjs(member.end_date)
-              ? member.end_date.format("DD/MM/YYYY")
-              : member.end_date} */}
+            {dayjs.isDayjs(member.dates[0].end_date)
+              ? member.dates[0].end_date.format("DD/MM/YYYY")
+              : member.dates[0].end_date} */}
           </>
         </span>
       ),

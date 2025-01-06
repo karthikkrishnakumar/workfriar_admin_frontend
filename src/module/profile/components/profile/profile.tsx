@@ -11,7 +11,6 @@ const Profile = () => {
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const id = "1";
 
   /**
    * Handles the form submission from the EditProfileModal
@@ -28,42 +27,46 @@ const Profile = () => {
   };
   // useEffect hook to fetch Profile data based on the ID when the component mounts
   useEffect(() => {
-    if (id) {
       const fetchDetails = async () => {
         try {
-          const result = await getAdminDetails(); // Make sure you pass the ID
-          setProfile(result);
+          const response = await getAdminDetails(); // Make sure you pass the ID
+          if (response.status) {
+            message.success(response.message);
+            setProfile(response);
+          } else {
+            message.error(response.message);
+          }
+        
         } catch (error) {
           message.error("Failed to fetch project details.");
-        }
-      };
+        };
 
       fetchDetails();
     }
-  }, [id]);
+  }, []);
 
-  if (!profile) {
-    return (
-      <div className={styles.loadingWrapper}>
-        <Spin size="large" />
-      </div>
-    );
-  }
+  // if (!profile) {
+  //   return (
+  //     <div className={styles.loadingWrapper}>
+  //       <Spin size="large" />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className={styles.profileDetailsWrapper}>
       <div className={styles.topRow}>
         <div className={styles.imageUploadContainer}>
           <div className={styles.imageCircle}>
-            {profile.profile_pic ? (
+            {profile?.profile_pic ? (
               <img
-                src={profile.profile_pic}
+                src={profile?.profile_pic}
                 alt="Profile"
                 className={styles.image}
               />
             ) : (
               <span className={styles.imageInitial}>
-                {profile.name[0].toUpperCase()}
+                {profile?.name[0].toUpperCase()}
               </span>
             )}
           </div>
@@ -71,7 +74,7 @@ const Profile = () => {
         <Button onClick={() => setIsEditModalOpen(true)}>Edit profile</Button>
       </div>
       <ProfileCard
-        initialValues={profile}
+        initialValues={profile || {}}
         formRows={[
           {
             fields: [

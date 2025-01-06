@@ -34,15 +34,24 @@ const [next, setNext] = useState(false); // New state for next
     const fetchDetails = async () => {
       try {
         const parts = currentRange.split("-");
-        const startDate = parts.slice(0, 3).join("-"); // First part of the range
-        const endDate = parts.slice(3, 6).join("-"); // Second part of the range
-        const result = await fetchTimeLoggedByProjectId(id,startDate,
+        // const startDate = parts.slice(0, 3).join("-"); // First part of the range
+        // const endDate = parts.slice(3, 6).join("-"); // Second part of the range
+        const startDate = "2023-12-01"
+        const endDate = "2023-12-31"       
+        const response = await fetchTimeLoggedByProjectId(id,startDate,
           endDate,
-          prev,
-          next); // Make sure you pass the ID
-        setProjectTeamData(result.data);
-        setCurrentRange(result.dateRange);
-        setFilteredProjectTeam(mapMemberData(result.data));
+          // prev,
+          // next
+        ); 
+        console.log(response);
+        if (response.status) {
+          message.success(response.message);
+          setProjectTeamData(response.data);
+          setCurrentRange(response.dateRange);
+          setFilteredProjectTeam(mapMemberData(response.data));
+        } else {
+          message.error(response.message);
+        }
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
