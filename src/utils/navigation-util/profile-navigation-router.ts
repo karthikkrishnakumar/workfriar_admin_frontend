@@ -7,11 +7,11 @@ interface NavigationLinks {
 
 export class ProfileNavigationClass {
   public navigationLinks: NavigationLinks[] = [
-    { path: '/home/profile', label: 'Profile' },
-    { path: '/home/settings', label: 'Settings' },
-    { path: '/home/notifications', label: 'Notifications' },
-    { path: '/home/Holidays', label: 'Holidays' },
-    { path: '/home/Logout', label: 'Logout' },
+    { path: '/profile', label: 'Profile' },
+    { path: '/settings', label: 'Settings' },
+    { path: '/notifications', label: 'Notifications' },
+    { path: '/holidays', label: 'Holidays' },
+    { path: '', label: 'Logout' },
   ];
 
   // Define a map from label to icon name

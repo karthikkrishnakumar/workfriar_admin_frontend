@@ -94,6 +94,23 @@ const Icons = {
     </svg>
   ),
 
+  // arrow up filled
+  arrowUpFilled: (
+    <svg
+      width="12"
+      height="6"
+      viewBox="0 0 12 6"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M1.5609 5.86523H6.2334H10.4409C11.1609 5.86523 11.5209 4.99523 11.0109 4.48523L7.1259 0.600227C6.5034 -0.022273 5.4909 -0.022273 4.8684 0.600227L3.3909 2.07773L0.9834 4.48523C0.4809 4.99523 0.8409 5.86523 1.5609 5.86523Z"
+        fill="#242424"
+      />
+    </svg>
+),
+
+
   // arrow down out line
   arrowDownOutline: (
     <svg
