@@ -1,7 +1,7 @@
 .container {
   position: relative;
   margin: 25vh auto;
-  padding: 0 24px; // Add padding for smaller screens
+  padding: 0 48px; // Add padding for smaller screens
 }
 
 .form {
@@ -149,6 +149,9 @@
     padding: 0 48px; // Add padding for smaller screens
   }
   
-
+  .form {
+    max-width: 375px; // Allow form to span full width
+    width: 100%;
+  }
 }
 
