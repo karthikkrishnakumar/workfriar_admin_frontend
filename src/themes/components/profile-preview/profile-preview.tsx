@@ -70,7 +70,7 @@ const ProfilePreview: React.FC<ProfilePreviewProps> = ({
         menuItems={menuItems}
         trigger={["click"]}
         icon={<IconComponent />}
-        wrapperClassName={styles.dropdownWrapper}
+        wrapperClassName={styles.profileDropdownWrapper}
         dropdownClassName={styles.profileDropdownMenu}
         minWidth="200px"
       />

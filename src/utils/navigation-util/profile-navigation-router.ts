@@ -1,4 +1,4 @@
-import Icons from "@/themes/images/icons/icons"; // Assuming this is where the icons are imported
+import Icons from "@/themes/images/icons/icons";
 
 interface NavigationLinks {
   path: string;
@@ -8,7 +8,7 @@ interface NavigationLinks {
 export class ProfileNavigationClass {
   public navigationLinks: NavigationLinks[] = [
     { path: '/profile', label: 'Profile' },
-    { path: '/settings', label: 'Settings' },
+    { path: '/settings', label: 'Admin Settings' },
     { path: '/notifications', label: 'Notifications' },
     { path: '/holidays', label: 'Holidays' },
     { path: '', label: 'Logout' },
@@ -16,11 +16,11 @@ export class ProfileNavigationClass {
 
   // Define a map from label to icon name
   private labelToIconMap: { [key: string]: keyof typeof Icons } = {
-    Profile: "avatarIcon",
-    Settings: "settings",
-    Notifications: "bell",
-    Holidays: "holiday",
-    Logout: "logout",
+    'Profile': 'avatarIcon',
+    'Admin Settings': 'settings',  // Make sure this matches exactly with the label in navigationLinks
+    'Notifications': 'bell',
+    'Holidays': 'holiday',
+    'Logout': 'logout',
   };
 
   /**
@@ -29,10 +29,10 @@ export class ProfileNavigationClass {
    * @param {string} label - The label of the selected menu item.
    * @param {Function} navigate - Function to handle navigation.
    */
-  public navigateTo(label: string, navigate: (path: string) => void) {
+  public navigateTo(label: string, navigate: (path: string) => void): void {
     const link = this.navigationLinks.find((link) => link.label === label);
     if (link) {
-      navigate(link.path); // Navigate to the path associated with the label
+      navigate(link.path);
     }
   }
 
@@ -40,9 +40,9 @@ export class ProfileNavigationClass {
    * Get the corresponding icon name for a menu item label.
    *
    * @param {string} label - The label of the menu item.
-   * @returns {string} - The corresponding icon name.
+   * @returns {keyof typeof Icons} - The corresponding icon name.
    */
   public getIconForLabel(label: string): keyof typeof Icons {
-    return this.labelToIconMap[label] || "defaultIcon"; // Use a default icon if the label is not found
+    return this.labelToIconMap[label] || 'defaultIcon';
   }
 }
