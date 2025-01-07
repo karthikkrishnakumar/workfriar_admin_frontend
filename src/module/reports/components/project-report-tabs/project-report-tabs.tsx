@@ -21,6 +21,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
+  console.log(project, "project");
   const tabs = [
     {
       key: "1",
@@ -31,19 +32,18 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
     },
   ];
 
+  const fetchDetails = async () => {
+    try {
+      const result = await UseProjectStatusServices().fetchProjectDetails(id); // Make sure you pass the ID
+      setProject(result.data);
+    } catch (error) {
+      setError("Failed to fetch project details.");
+      message.error("Failed to fetch project details.");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        const result = await UseProjectStatusServices().fetchProjectDetails(id); // Make sure you pass the ID
-        setProject(result.data);
-      } catch (error) {
-        setError("Failed to fetch project details.");
-        message.error("Failed to fetch project details.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDetails();
   }, []); // Empty dependency array means this effect runs once on mount
 
@@ -53,6 +53,7 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
 
   const handleCloseModal = () => {
     setIsModalVisible(false); // Close the modal when required
+    fetchDetails();
   };
 
   return (
@@ -90,7 +91,11 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
       )}
 
       {isModalVisible && (
-        <AddEditReport onClose={handleCloseModal} mode="edit" reportData={project}/>
+        <AddEditReport
+          onClose={handleCloseModal}
+          mode="edit"
+          reportData={project}
+        />
       )}
     </div>
   );
