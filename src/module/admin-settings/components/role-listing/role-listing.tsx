@@ -14,7 +14,6 @@ import { RootState } from "@/redux/store";
 import AddRoleModal from "../role-modal/add-role-modal/add-role-modal";
 import DeleteRoleModal from "../role-modal/delete-role-modal/delete-role-modal";
 import { closeModal } from "@/redux/slices/modalSlice";
-import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
 const RoleListingTable: React.FC = () => {
   const { listRoles, updateRole } = useRoleService();
@@ -181,6 +180,7 @@ const RoleListingTable: React.FC = () => {
           rowKey={(record) => record.roleId.toString()}
           loading={loading} 
           skeletonRows={5}
+          maxHeight = {560}
         />
       {isOpen && modalType === "roleModal" && (
         <AddRoleModal

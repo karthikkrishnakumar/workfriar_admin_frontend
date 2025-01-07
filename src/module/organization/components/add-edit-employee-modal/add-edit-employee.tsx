@@ -65,7 +65,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     profile_pic: null,
   });
 
-  console.log(employeeData,"employeeData")
   const fetchDepartmentData = async (department: string) => {
     try {
       const response: GetRolesResponse =
@@ -227,7 +226,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     };
   };
 
-  console.log(formValues);
   const handleSave = async () => {
     try {
       setFormErrors({});
@@ -251,6 +249,10 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
         setFormErrors(validationErrors);
         return;
       }
+
+      if (response.status) message.success(response.message);
+      else message.error(response.message);
+
 
       onClose && onClose();
     } catch (error) {
@@ -426,7 +428,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   placeholder="Enter reporting manager"
                   options={reportingManagerOptions}
                   error={formErrors.reporting_manager}
-                  required
                 />
                 <FormField
                   type="select"

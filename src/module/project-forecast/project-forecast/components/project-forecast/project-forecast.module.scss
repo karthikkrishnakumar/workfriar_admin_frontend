@@ -16,13 +16,13 @@
     line-height: 19.12px;
     text-align: center;
 
-    &.closed_won {
+    &.ClosedWon {
         border: 1px solid #159117 !important;
         background: #F0FFE4;
         color: #159117 !important;
     }
 
-    &.closed_lost {
+    &.ClosedLost {
         border: 1px solid #E21E26 !important;
         background: #F6E6E7;
         color: #E21E26 !important;

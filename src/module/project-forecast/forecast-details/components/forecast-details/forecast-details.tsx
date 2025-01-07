@@ -37,7 +37,7 @@ const ForecastDetails = ({
     const fetchDetails = async () => {
       try {
         const result = await fetchProjectForecastDetailsById(id); // Make sure you pass the ID
-        setForecast(result);
+        setForecast(result.data);
         setSelectedForecast({
           ...result,
           opportunity_start_date: dayjs(
@@ -107,7 +107,7 @@ const ForecastDetails = ({
           fields={[
             {
               label: "Opportunity description",
-              value: forecast?.opportunity_description,
+              value: forecast?.opportunity_description || "",
             },
           ]}
         />
@@ -126,23 +126,23 @@ const ForecastDetails = ({
                 "DD/MM/YYYY"
               ),
             },
-            { label: "Billing model", value: forecast?.billing_model },
+            { label: "Billing model", value: forecast?.billing_model || "" },
             {
               label: "Expected start date",
-              value: dayjs(forecast?.expected_start_date).format("DD/MM/YYYY"),
+              value: dayjs(forecast?.expected_project_start_date).format("DD/MM/YYYY"),
             },
             {
               label: "Expected end date",
-              value: dayjs(forecast?.expected_end_date).format("DD/MM/YYYY"),
+              value: dayjs(forecast?.expected_project_end_date).format("DD/MM/YYYY"),
             },
             {
               label: "Estimated revenue",
-              value: forecast?.estimated_value,
+              value: forecast?.estimated_revenue || "",
             },
             { label: "Opportunity stage", value: forecast?.opportunity_stage },
             {
               label: "Expected resource breakdown",
-              value: forecast?.expected_resource_breakdown,
+              value: forecast?.expected_resource_breakdown || "",
             },
             { label: "Status", value: forecast?.status },
           ]}
@@ -152,13 +152,13 @@ const ForecastDetails = ({
         <GridContainer
           isGrid={true}
           fields={[
-            { label: "Project Manager", value: forecast?.project_manager },
+            { label: "Project Manager", value: forecast?.project_manager || "" },
             {
               label: "Product Manager",
-              value: forecast?.product_manager,
+              value: forecast?.product_manager || "",
             },
-            { label: "Tech lead", value: forecast?.tech_lead },
-            { label: "Account Manager", value: forecast?.account_manager },
+            { label: "Tech lead", value: forecast?.tech_lead || ""},
+            { label: "Account Manager", value: forecast?.account_manager || ""},
           ]}
         />
         <h3>Team forecast</h3>
@@ -167,7 +167,7 @@ const ForecastDetails = ({
           fields={[
             {
               label: "Estimated Project completion %",
-              value: forecast?.estimated_completion,
+              value: forecast?.estimated_project_completion || "",
             },
           ]}
           children={
@@ -189,7 +189,7 @@ const ForecastDetails = ({
                   className={styles.gridRow}
                 >
                   <Col>
-                    <h4>{teamMember.team_member_id}</h4>
+                    <h4>{teamMember.name}</h4>
                   </Col>
                   <Col>
                     <h4>{teamMember.forecast_hours} hrs</h4>

@@ -1,12 +1,13 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { Avatar as AntAvatar } from 'antd';
 import { AvatarProps } from 'antd/es/avatar';
+import { UserOutlined } from '@ant-design/icons';
 
 interface CustomAvatarProps extends AvatarProps {
   name?: string;
-  profile?:string
-  src?:string|undefined;
+  profile?: string;
+  src?: string | undefined;
 }
 
 const CustomAvatar: React.FC<CustomAvatarProps> = ({ 
@@ -17,31 +18,50 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
   size = 40, 
   ...restProps 
 }) => {
-  console.log(src,"haii")
-  // If no image is provided, generate an avatar with the first letter
-  if (!src && name) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  const handleImageError = () => {
+    setImageFailed(true);
+    return false; // Prevents Ant Design from showing the default broken image
+  };
+
+  if ((!src || imageFailed) && name) {
+    // Display the first letter of the name
     return (
-      <AntAvatar 
+      <AntAvatar
         style={{
           backgroundColor: '#FFE3B8',
           color: '#000000',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          ...style
+          ...style,
         }}
         size={size}
         {...restProps}
       >
-        {name? name.charAt(0).toUpperCase():""}
+        {name ? name.charAt(0).toUpperCase():""}
       </AntAvatar>
     );
   }
 
-  // If image is provided, render with the image
+  if ((!src || imageFailed) && !name) {
+    // Display the default user icon
+    return (
+      <AntAvatar
+        icon={<UserOutlined />}
+        style={style}
+        size={size}
+        {...restProps}
+      />
+    );
+  }
+
+  // Render the image if it exists and hasn't failed to load
   return (
-    <AntAvatar 
+    <AntAvatar
       src={src}
+      onError={handleImageError}
       size={size}
       style={style}
       {...restProps}

@@ -44,8 +44,8 @@ const ProjectForecast: React.FC = () => {
     const fetchDetails = async () => {
       try {
         const result = await fetchProjectForecastDetails(); // Make sure you pass the ID
-        setProjectForecastData(result);
-        setFilteredProjectForecast(mapForecastData(result));
+        setProjectForecastData(result.data);
+        setFilteredProjectForecast(mapForecastData(result.data));
       } catch (error) {
         message.error("Failed to fetch project details.");
       }
@@ -55,8 +55,8 @@ const ProjectForecast: React.FC = () => {
   }, []);
 
   const handleRowClick = (row: ProjectForecastData) => {
-    if (row._id) {
-      const rowId = row._id;
+    if (row.id) {
+      const rowId = row.id;
       router.push(`/project-forecast/forecast-details/${rowId}`);
     }
   };
@@ -81,7 +81,7 @@ const ProjectForecast: React.FC = () => {
   ) => {
     setProjectForecastData((prevData) =>
       prevData.map((item) =>
-        item._id === key ? { ...item, status: newStatus } : item
+        item.id === key ? { ...item, status: newStatus } : item
       )
     );
   };
@@ -91,22 +91,22 @@ const ProjectForecast: React.FC = () => {
    * @param {ProjectForecastData} ProjectForecast - The ProjectForecast to edit
    */
   const handleEditProjectForecast = (projectForecast: ProjectForecastData) => {
-    setSelectedProjectForecast({
-      ...projectForecast,
-      opportunity_start_date: dayjs(
-        projectForecast.opportunity_start_date,
-        "DD/MM/YYYY"
-      ),
-      opportunity_close_date: dayjs(
-        projectForecast.opportunity_close_date,
-        "DD/MM/YYYY"
-      ),
-      expected_start_date: dayjs(
-        projectForecast.expected_start_date,
-        "DD/MM/YYYY"
-      ),
-      expected_end_date: dayjs(projectForecast.expected_end_date, "DD/MM/YYYY"),
-    });
+    // setSelectedProjectForecast({
+    //   ...projectForecast,
+    //   opportunity_start_date: dayjs(
+    //     projectForecast.opportunity_start_date,
+    //     "DD/MM/YYYY"
+    //   ),
+    //   opportunity_close_date: dayjs(
+    //     projectForecast.opportunity_close_date,
+    //     "DD/MM/YYYY"
+    //   ),
+    //   expected_project_start_date: dayjs(
+    //     projectForecast.expected_start_date,
+    //     "DD/MM/YYYY"
+    //   ),
+    //   expected_end_date: dayjs(projectForecast.expected_end_date, "DD/MM/YYYY"),
+    // });
     setIsEditModalOpen(true);
   };
 
@@ -187,28 +187,28 @@ const ProjectForecast: React.FC = () => {
       forecast: ProjectForecastData
     ) => {
       setEffectiveDateModal(true);
-      handleStatusChange(forecast._id, e.key as ProjectForecastData["status"]);
+      handleStatusChange(forecast.id, e.key as ProjectForecastData["status"]);
     };
     const handleMenuClick = (
       e: { key: string },
       forecast: ProjectForecastData
     ) => {
       if (e.key === "Details") {
-        if (forecast._id) {
-          router.push(`/project-forecast/forecast-details/${forecast._id}`);
+        if (forecast.id) {
+          router.push(`/project-forecast/forecast-details/${forecast.id}`);
         }
       } else if (e.key === "Edit") {
-        if (forecast._id) {
+        if (forecast.id) {
           handleEditProjectForecast(forecast);
         }
       } else if (e.key === "Delete") {
-        if (forecast._id) {
-          handleDeleteProjectForecast(forecast._id);
+        if (forecast.id) {
+          handleDeleteProjectForecast(forecast.id);
         }
       }
     };
     return forecasts.map((forecast) => ({
-      _id: forecast._id,
+      _id: forecast.id,
       opportunity_name: (
         <span className={styles.forecast}>{forecast.opportunity_name}</span>
       ),
@@ -218,13 +218,14 @@ const ProjectForecast: React.FC = () => {
       opportunity_dates: (
         <span className={styles.forecast}>
           <>
-            {dayjs.isDayjs(forecast.opportunity_start_date)
+          {forecast.opportunity_date}
+            {/* {dayjs.isDayjs(forecast.opportunity_start_date)
               ? forecast.opportunity_start_date.format("DD/MM/YYYY")
               : forecast.opportunity_start_date}{" "}
             -{" "}
             {dayjs.isDayjs(forecast.opportunity_close_date)
               ? forecast.opportunity_close_date.format("DD/MM/YYYY")
-              : forecast.opportunity_close_date}
+              : forecast.opportunity_close_date} */}
           </>
         </span>
       ),
@@ -234,7 +235,7 @@ const ProjectForecast: React.FC = () => {
       opportunity_stage: (
         <Tag
           className={`${styles.timeEntryBtn} ${
-            styles[forecast.opportunity_stage]
+            styles[forecast.opportunity_stage.replace(/\s/g,'')]
           }`}
         >
           {forecast.opportunity_stage

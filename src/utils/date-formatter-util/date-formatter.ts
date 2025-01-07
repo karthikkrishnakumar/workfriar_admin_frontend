@@ -55,3 +55,47 @@ export function isoTOenGB(dateString:string) {
     const date = dateString.split('T')[0];
     return date.replaceAll('-','/')
 }
+
+/**
+ * Function to format a date into "Today," "Yesterday," or "Aug 1, 2024."
+ * @param dateString - The input date in "YYYY-MM-DD" format
+ * @returns The formatted date string
+ */
+export function formatDateforNotifications(dateString: string): string {
+  const date = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const isToday = date.toDateString() === today.toDateString();
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+
+  if (isToday) return "Today";
+  if (isYesterday) return "Yesterday";
+
+  const formatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return formatter.format(date);
+}
+
+/**
+ * Converts a time string in the format "13:08:57.224" to "12:30 PM".
+ * @param timeString - The time string to convert (e.g., "13:08:57.224").
+ * @returns The formatted time string in "12:30 PM" format.
+ */
+export function formatTimeTo12Hour(timeString: string): string {
+  // Split the time string to extract hours and minutes
+  const [hours, minutes] = timeString.split(':').map(Number);
+
+  // Create a Date object
+  const date = new Date();
+  date.setHours(hours, minutes);
+
+  // Format the time to 12-hour format with AM/PM
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  });
+
+  return formatter.format(date);
+}

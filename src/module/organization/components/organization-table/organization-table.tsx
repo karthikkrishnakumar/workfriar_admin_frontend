@@ -88,7 +88,6 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
             employee.name
           }.`
         );
-        console.log(`Status updated successfully for ${employee.name}`);
       } else {
         // Handle unsuccessful response
         console.error(
@@ -180,7 +179,6 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
         pageSize,
         activeTab
       ); // Fetch data using the service
-      console.log(response);
 
       setFilteredEmployees(mapEmployeeData(response.data)); // Map the data to RowData format
 
@@ -202,12 +200,12 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
 
   // Define column headers for the table
   const columns: Column[] = [
-    { title: "Employee name", key: "name", align: "left", width: 240 },
+    { title: "Employee name", key: "name", align: "left", width: 220 },
     {
       title: "Email address",
       key: "email",
       align: "left",
-      width: 220,
+      width: 240,
     },
     { title: "Department", key: "department", align: "left" },
     { title: "Role", key: "role", align: "left" },

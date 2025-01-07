@@ -100,7 +100,7 @@ const ProjectList: React.FC = () => {
     console.log(values)
     const payload={
       ...values,
-      categories:values.category,
+      categories:values.categories.map((cat: any) => cat.id),
       project_logo:values.project_logo
     }
     try {
@@ -128,7 +128,6 @@ const ProjectList: React.FC = () => {
   const handleAddProjectSubmit = async (values: Record<string, any>) => {
     const payload={
       ...values,
-      categories:values.category,
       project_logo:values.project_logo
     }
     try {

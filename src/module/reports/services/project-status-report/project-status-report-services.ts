@@ -4,18 +4,15 @@ import http from "@/utils/http"; // Assuming you have a custom HTTP utility for 
 export interface ReportData {
   project_name: string;
   project_lead: string;
-  planned_start_date: string;
-  planned_end_date: string;
-  actual_start_date: string;
-  actual_end_date: string;
-  reporting_period: string;
+  reporting_period: Date;
   progress: string;
-  comments: string;
+  comments?: string;
   accomplishments: string;
   goals: string;
-  blockers: string;
+  blockers?: string;
 }
 interface ValidationError {
+  forEach(arg0: (error: { field: string; message: string }) => void): unknown;
   field: string;
   message: string;
 }
@@ -25,9 +22,19 @@ interface AddProjectStatusReportResponse {
   errors?: ValidationError;
   data?: ReportData;
 }
+interface EditProjectStatusReportResponse {
+  status: boolean;
+  message: string;
+  errors?: ValidationError;
+  data?: ReportData;
+}
 export interface DropDownData {
   id: string;
   name: string;
+  project_lead?: {
+    id: string;
+    name: string;
+  };
 }
 interface DropDownResponse {
   status: boolean;
@@ -35,7 +42,6 @@ interface DropDownResponse {
   message: string;
   errors: string[] | null;
 }
-
 
 /**
  * Service functions to handle project-related API calls.
@@ -55,7 +61,6 @@ export default function UseProjectStatusServices() {
         `/api/project-status-report/get-report/${id}`
       );
 
-      console.log(body);
       // Handle the API response and return the report details
       return {
         status: body.status,
@@ -98,7 +103,7 @@ export default function UseProjectStatusServices() {
       return {
         status: body.status,
         data: body.data.reports || [], // Return the projects data
-        total: body.data.pagination.totalPages || 0, // Total count of projects
+        total: body.data.pagination.totalCount || 0, // Total count of projects
         message: body.message || "Successfully fetched project status report.",
         errors: body.errors || null,
       };
@@ -117,35 +122,50 @@ export default function UseProjectStatusServices() {
   const addProjectStatusReport = async (
     reportData?: ReportData // Optional parameter for report data if saving
   ): Promise<AddProjectStatusReportResponse> => {
-    const props: JSON = <JSON>(<unknown>{ reportData }); // Adding report data to request payload
+    const props: JSON = <JSON>(<unknown>reportData); // Adding report data to request payload
 
     try {
       // If reportData is passed, it's used for saving the report
-      if (reportData) {
-        const { body } = await http().post(
-          "/api/project-status-report/add-report", // Endpoint for saving the report
-          props
-        );
-
-        // Return success response
-        return {
-          status: body.status,
-          message: body.message || "Project status report saved successfully.",
-          errors: body.errors || null,
-        };
-      }
-
-      // If no reportData is passed, it fetches the list of reports
       const { body } = await http().post(
         "/api/project-status-report/add-report", // Endpoint for fetching reports
         props
       );
-
       // Return fetched data response
       return {
         status: body.status,
-        data: body.data.reports || [], // Return the reports data
+        data: body.data || [], // Return the reports data
         message: body.message || "Successfully added project status reports.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Handle errors and return meaningful response
+      return {
+        status: false,
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while processing the project status report. Please try again.",
+        errors: error?.response?.data?.errors || null,
+      };
+    }
+  };
+
+  const editProjectStatusReport = async (
+    reportData: ReportData, // Optional parameter for report data if saving
+    reportId: string
+  ): Promise<EditProjectStatusReportResponse> => {
+    const props: JSON = <JSON>(<unknown>reportData); // Adding report data to request payload
+
+    try {
+      // If reportData is passed, it's used for saving the report
+      const { body } = await http().post(
+        `/api/project-status-report/update-report/${reportId}`, // Endpoint for saving the report
+        props
+      );
+      // Return fetched data response
+      return {
+        status: body.status,
+        data: body.data || [], // Return the reports data
+        message: body.message || "Successfully updated project status reports.",
         errors: body.errors || null,
       };
     } catch (error: any) {
@@ -163,9 +183,12 @@ export default function UseProjectStatusServices() {
   async function fetchDropdownData(type: string): Promise<DropDownResponse> {
     try {
       // Call the API with the provided type to get project or lead data
-      const response = await http().post(`/api/project-status-report/dropdown/${type}`);
+      const response = await http().post(
+        `/api/project-status-report/dropdown/${type}`
+      );
       const body = response.body;
-  
+
+ 
       // Return the fetched data response formatted as DropDownResponse
       return {
         status: body.status,
@@ -184,12 +207,13 @@ export default function UseProjectStatusServices() {
         errors: error?.response?.data?.errors || null,
       };
     }
-  };
-  
+  }
+
   return {
     fetchProjectDetails,
     fetchProjectStatusReport,
     addProjectStatusReport,
+    editProjectStatusReport,
     fetchDropdownData,
   };
 }

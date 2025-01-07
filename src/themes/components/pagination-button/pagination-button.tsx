@@ -27,7 +27,8 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
     return null;
   }
 
-  console.log(pageSize,current,total)
+
+ 
 
   return (
     <div className={styles.paginationDiv}>

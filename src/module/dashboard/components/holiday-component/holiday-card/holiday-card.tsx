@@ -9,11 +9,13 @@ import ButtonComponent from "@/themes/components/button/button";
 import UseDashboardServices, {
   Holidays,
 } from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import { useRouter } from "next/navigation";
 
 const HolidayCard: React.FC = () => {
   const [holidayData, setHolidayData] = useState<Holidays[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
 
   // Fetch holiday data when the component mounts
   useEffect(() => {
@@ -32,7 +34,7 @@ const HolidayCard: React.FC = () => {
   }, []);
 
   const handleClickAllHoliday = () => {
-    alert("under developing...");
+    router.push("/holidays")
   };
 
   return (

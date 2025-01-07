@@ -6,6 +6,7 @@ import dayjs from "dayjs";
  * @interface TeamMember
  */
 export interface TeamMember {
+  dates?: any;
   name: string;
   profile_pic?: string | null;
   id: string;
@@ -13,6 +14,11 @@ export interface TeamMember {
   start_date?: string | dayjs.Dayjs;
   end_date?: string | dayjs.Dayjs;
   status?: string;
+}
+
+export interface Dates {
+  start_date: string;
+  end_date:string;
 }
 
 // Interface of a team member's data
@@ -44,7 +50,7 @@ export interface ProjectTeamData {
   end_date: string | dayjs.Dayjs;
   status: string;
   date: string;
-  teamMembers: TeamMember[];
+  teamsMembers: TeamMember[];
 }
 
 /**
@@ -54,34 +60,32 @@ export default function useProjectTeamService() {
   const fetchProjectTeamByProjectId = async function (
     id: string
   ): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      id,
-    });
+    const props: JSON = <JSON>(<unknown>
+      id
+     );
+     console.log(props);
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/admin/getforecast", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error) {
-      // Handle unexpected errors
+      const { body } = await http().post("/api/admin/getprojectteam", props);
+      console.log(body)
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message || "Project team retrieved successfully.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Return a meaningful error response
       return {
         status: false,
-        message: "An error occurred. Please try again.",
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while fetching project team. Please try again.",
+        errors: error?.response?.data?.errors || null,
       };
     }
   };
-
   const fetchProjectTeamDetails = async function (): Promise<any> {
     // const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
 
@@ -109,22 +113,24 @@ export default function useProjectTeamService() {
   };
 
   const fetchTimeLoggedByProjectId = async function (
-    id: string,
+    projectId: string,
     startDate: string,
     endDate: string,
-    prev: boolean,
-    next: boolean
+    // prev: boolean,
+    // next: boolean
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>{
-      id,
+      projectId,
       startDate,
       endDate,
-      prev,
-      next,
+      // prev,
+      // next,
     });
+    console.log(props);
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/admin/getforecast", props);
+      const { body } = await http().post("/api/admin/timesummary", props);
+      console.log(body,"body")
       if (body.status) {
         const response: any = {
           status: body.status,
@@ -148,12 +154,41 @@ export default function useProjectTeamService() {
   };
 
   const changeStatus = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
+    const props: JSON = <JSON>(<unknown>
+      payload
+    );
+    try {
+      console.log(props);
+      // Make an HTTP POST request
+      const { body } = await http().post(`/api/project/updatestatus`, props);
+      console.log(body);
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [], // Return the projects data
+        message: body.message,
+        errors: body.errors,
+      };
+    } catch (error:any) {
+      console.log(error);
+      // Handle unexpected errors
+      return {
+        status: error,
+        message:
+          error?.response?.message ||
+          "An error occurred while updating the status.",
+        errors: error?.response?.data?.errors || null,
+      };
+    }
+  };
+
+  const updateDates = async function (payload: any): Promise<any> {
+    const props: JSON = <JSON>(<unknown>
+      payload
+    );
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/api", props);
+      const { body } = await http().post("/api/admin/setenddate", props);
       if (body.status) {
         const response: any = {
           status: body.status,
@@ -206,59 +241,55 @@ export default function useProjectTeamService() {
   };
 
   const updateProjectTeam = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
+    const props: JSON = <JSON>(<unknown>
+      payload
+    );
+    console.log(props);
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/api", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error) {
-      // Handle unexpected errors
+      const { body } = await http().post("/api/admin/editprojectteam", props);
+      console.log(body);
+      return {
+        status: body.status,
+        data: body.data || [],
+        message: body.message || "Project team updated successfully.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Return a meaningful error response
       return {
         status: false,
-        message: "An error occurred. Please try again.",
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while updating project team. Please try again.",
+        errors: error?.response?.data?.errors || null,
       };
     }
   };
 
   const addProjectTeam = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
+    const props: JSON = <JSON>(<unknown>
+      payload
+    );
+    console.log(props);
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/api", props);
-      if (body.status) {
-        const response: any = {
-          status: body.status,
-          message: body.message,
-          data: body.data ? body.data : undefined,
-        };
-        return response;
-      } else {
-        return {
-          status: false,
-          message: body.message,
-        };
-      }
-    } catch (error) {
-      // Handle unexpected errors
+      const { body } = await http().post("/api/admin/addprojectteam", props);
+      console.log(body);
+      return {
+        status: body.status,
+        data: body.data || [],
+        message: body.message || "Project team added successfully.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Return a meaningful error response
       return {
         status: false,
-        message: "An error occurred. Please try again.",
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while adding project team. Please try again.",
+        errors: error?.response?.data?.errors || null,
       };
     }
   };
@@ -292,6 +323,38 @@ export default function useProjectTeamService() {
     }
   };
 
+  const fetchTeamMembers = async function (): Promise<any> {
+    const department={
+      department : "Technical"
+    };
+    const props: JSON = <JSON>(<unknown>department); // Request payload
+
+    try {
+      // Make an HTTP POST request
+      const type = "projects";
+      const { body } = await http().post(
+        `/api/admin/list-all-employees-by-department`,props
+      );
+      console.log(body);
+      // Handle the API response and return filtered data
+      return {
+        status: body.status,
+        data: body.data || [],
+        message: body.message || "Team members retrieved successfully.",
+        errors: body.errors || null,
+      };
+    } catch (error: any) {
+      // Return a meaningful error response
+      return {
+        status: false,
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while fetching members. Please try again.",
+        errors: error?.response?.data?.errors || null,
+      };
+    }
+  };
+
   return {
     fetchProjectTeamByProjectId,
     fetchProjectTeamDetails,
@@ -301,5 +364,7 @@ export default function useProjectTeamService() {
     addProjectTeam,
     fetchTimeLoggedByProjectId,
     fetchProjects,
+    fetchTeamMembers,
+    updateDates
   };
 }

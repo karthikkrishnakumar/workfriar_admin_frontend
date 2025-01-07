@@ -3,7 +3,6 @@ import { useState } from "react";
 import { RcFile } from "antd/es/upload";
 import styles from "./modal-form.module.scss";
 import Icons from "@/themes/images/icons/icons";
-import CustomSelect from "../select-field/select-field";
 
 /**
  * Interface for defining a single form field's properties.
@@ -101,7 +100,9 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
             placeholder={field.placeholder}
             options={field.options}
             showSearch
-            value={form.getFieldValue(field.name)}
+            value={field.options?.some((option) => option.value === form.getFieldValue(field.name))
+              ? form.getFieldValue(field.name)
+              : undefined }
           />
         );
         case "checkboxSelect":
@@ -110,41 +111,87 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
               mode="multiple"
               placeholder={field.placeholder || "Select options"}
               options={field.options}
-              value={form.getFieldValue(field.name) || []} // Ensure it's an array
+              value={form.getFieldValue(field.name) || []}
               onChange={(selectedValues) => {
+                console.log('Selected values in onChange:', selectedValues);
                 form.setFieldValue(field.name, selectedValues);
               }}
-              dropdownRender={(menu) => (
-                <div>
-                  {field.options?.map((option) => (
-                    <div
-                      key={option.value}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "5px 10px",
-                      }}
-                    >
-                      <Checkbox
-                        checked={form
-                          .getFieldValue(field.name)
-                          ?.includes(option.value)} // Check based on initial values
-                        onChange={(e) => {
-                          const currentValue = form.getFieldValue(field.name) || [];
-                          const newValue = e.target.checked
-                            ? [...currentValue, option.value]
-                            : currentValue.filter(
-                                (val: string | number) => val !== option.value
-                              );
-                          form.setFieldValue(field.name, newValue); // Update form value
-                        }}
-                        className={styles.checkbox}
-                      />
-                      <span style={{ marginLeft: "8px" }}>{option.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              dropdownRender={(menu) => {
+                const currentValue = form.getFieldValue(field.name) || [];
+                console.log('Current form value for', field.name, ':', currentValue);
+                console.log('Available options:', field.options);
+        
+                return (
+                  <div>
+                    {field.options?.map((option) => {
+                      // Check both object format and direct value format
+                      const isSelected = currentValue.some((item: any) => 
+                        (item.id === option.value) || // For object format
+                        (item === option.value)       // For direct value format
+                      );
+                      
+                      console.log(`Checking option ${option.label}:`, {
+                        optionValue: option.value,
+                        currentValue,
+                        isSelected
+                      });
+        
+                      return (
+                        <div
+                          key={option.value}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "5px 10px",
+                          }}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
+                              console.log('Checkbox changed:', {
+                                option,
+                                isChecked,
+                                currentValue
+                              });
+        
+                              let newValue;
+                              if (isChecked) {
+                                // Check if the current values are in object format
+                                const isObjectFormat = currentValue.length > 0 && 
+                                  typeof currentValue[0] === 'object';
+        
+                                if (isObjectFormat) {
+                                  // Add as object format
+                                  newValue = [...currentValue, {
+                                    id: option.value,
+                                    name: option.label
+                                  }];
+                                } else {
+                                  // Add as direct value
+                                  newValue = [...currentValue, option.value];
+                                }
+                              } else {
+                                // Remove value checking both formats
+                                newValue = currentValue.filter((val: any) => 
+                                  typeof val === 'object' 
+                                    ? val.id !== option.value  // For object format
+                                    : val !== option.value     // For direct value format
+                                );
+                              }
+        
+                              console.log('New value after change:', newValue);
+                              form.setFieldValue(field.name, newValue);
+                            }}
+                            className={styles.checkbox}
+                          />
+                          <span style={{ marginLeft: "8px" }}>{option.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              }}
             />
           );
         

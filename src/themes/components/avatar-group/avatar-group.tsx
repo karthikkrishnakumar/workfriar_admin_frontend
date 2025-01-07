@@ -12,7 +12,6 @@ interface TeamAvatarProps {
 
 
 const AvatarGroup: React.FC<TeamAvatarProps> = ({ team = [] }) => {
-  console.log("Received team prop:", team);
   return (
     <Avatar.Group
           size="large"

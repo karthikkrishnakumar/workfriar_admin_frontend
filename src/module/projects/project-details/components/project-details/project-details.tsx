@@ -80,17 +80,31 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
               label: "Client",
               value: project?.client_name?.client_name,
             },
-            { label: "Planned start date", value: dayjs(project?.planned_start_date).format("DD/MM/YYYY") },
-            { label: "Planned end date", value: dayjs(project?.planned_end_date).format("DD/MM/YYYY") },
-            { label: "Actual start date", value: dayjs(project?.actual_start_date).format("DD/MM/YYYY") },
-            { label: "Actual end date", value: dayjs(project?.actual_end_date).format("DD/MM/YYYY") },
+            {
+              label: "Planned start date",
+              value: project?.planned_start_date || null,
+            },
+            {
+              label: "Planned end date",
+              value: project?.planned_end_date || null,
+            },
+            {
+              label: "Actual start date",
+              value: project?.actual_start_date || null,
+            },
+            {
+              label: "Actual end date",
+              value: project?.actual_end_date || null,
+            },
             {
               label: "Billing model",
               value: project?.billing_model || "--",
             },
             {
               label: "Time entry",
-              value: project?.open_for_time_entry,
+              value: project?.open_for_time_entry            
+              .replace(/_/g, " ")
+              .replace(/\b\w/g, (l) => l.toUpperCase()),
             },
             {
               label: "Status",
