@@ -19,6 +19,7 @@ const ModuleHeaderWrapper = () => {
     { title: "Timesheet", path: "/time-sheet", backButtonNeeded: false, actionButton: null},
     { title: "Organization", path: "/organization", backButtonNeeded: false ,actionButton: { label: "Add Employee", icon: Icons.plusLight, modalType: "addEmployeeModal" } },
     { title: "Project forecast", path: "/project-forecast", backButtonNeeded: false, actionButton: null},
+    { title: "Project Forecast Details", path: "/project-forecast/forecast-details/[id]", backButtonNeeded: true, actionButton: null},
     { title: "Timesheet Report", path: "/time-sheet-report", backButtonNeeded: false, actionButton: null},
     { title: "Profile", path: "/profile", backButtonNeeded: true, actionButton: null,  },
     { title: "Project Status Report", path: "/project-status-report", backButtonNeeded: false, actionButton: { label: "Add Report", icon: Icons.plusLight, modalType: "addReportModal" } },

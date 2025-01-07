@@ -99,7 +99,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
 
   const handleEditDates = (member: TeamMember) => {
     setProjectTeamData(member);
-    setDates(member.dates[0].period);
+    setDates(member.dates.period);
     setIsDateModalOpen(true);
   };
 
@@ -155,7 +155,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
           }
           menuItems={[
             { key: "Active", label: "Active" },
-            { key: "Inactive", label: "Inactive" },
+            // { key: "Inactive", label: "Inactive" },
           ]}
           onMenuClick={(e: any) => handleStatusClick(e, member)}
           arrowIcon={Icons.arrowDownFilledGold}

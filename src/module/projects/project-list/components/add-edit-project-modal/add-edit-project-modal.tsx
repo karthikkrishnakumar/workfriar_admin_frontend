@@ -113,7 +113,7 @@ const ProjectModal: React.FC<ModalProps> = ({
           secondaryButtonLabel={"Cancel"}
           initialValues={selectedProject || {}}
           onPrimaryClick={onSave}
-          formErrors={formErrors || {}}
+          // formErrors={formErrors || {}}
           formRows={[
             {
               fields: [
@@ -190,7 +190,7 @@ const ProjectModal: React.FC<ModalProps> = ({
             {
               fields: [
                 {
-                  name: "category",
+                  name: "categories",
                   label: "Task category",
                   type: "checkboxSelect",
                   placeholder: "Select categories",

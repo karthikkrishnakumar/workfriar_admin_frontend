@@ -3,7 +3,6 @@ import { useState } from "react";
 import { RcFile } from "antd/es/upload";
 import styles from "./modal-form.module.scss";
 import Icons from "@/themes/images/icons/icons";
-import CustomSelect from "../select-field/select-field";
 
 /**
  * Interface for defining a single form field's properties.
@@ -109,45 +108,91 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
         case "checkboxSelect":
           return (
             <Select
-      mode="multiple"
-      placeholder={field.placeholder || "Select options"}
-      options={field.options}
-      value={form.getFieldValue(field.name) || []} // Ensure it's an array
-      onChange={(selectedValues) => {
-        form.setFieldValue(field.name, selectedValues); // Update form values dynamically
-      }}
-      dropdownRender={(menu) => (
-        <div>
-          {field.options?.map((option) => {
-            const selectedValues = form.getFieldValue(field.name) || []; // Fetch current values
-            return (
-              <div
-                key={option.value}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "5px 10px",
-                }}
-              >
-                <Checkbox
-                  checked={selectedValues.includes(option.value)} // Check if the option is selected
-                  onChange={(e) => {
-                    const newValue = e.target.checked
-                      ? [...selectedValues, option.value]
-                      : selectedValues.filter(
-                          (val: string | number) => val !== option.value
-                        );
-                    form.setFieldValue(field.name, newValue); // Update form value
-                  }}
-                  className={styles.checkbox}
-                />
-                <span style={{ marginLeft: "8px" }}>{option.label}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    />
+              mode="multiple"
+              placeholder={field.placeholder || "Select options"}
+              options={field.options}
+              value={form.getFieldValue(field.name) || []}
+              onChange={(selectedValues) => {
+                console.log('Selected values in onChange:', selectedValues);
+                form.setFieldValue(field.name, selectedValues);
+              }}
+              dropdownRender={(menu) => {
+                const currentValue = form.getFieldValue(field.name) || [];
+                console.log('Current form value for', field.name, ':', currentValue);
+                console.log('Available options:', field.options);
+        
+                return (
+                  <div>
+                    {field.options?.map((option) => {
+                      // Check both object format and direct value format
+                      const isSelected = currentValue.some((item: any) => 
+                        (item.id === option.value) || // For object format
+                        (item === option.value)       // For direct value format
+                      );
+                      
+                      console.log(`Checking option ${option.label}:`, {
+                        optionValue: option.value,
+                        currentValue,
+                        isSelected
+                      });
+        
+                      return (
+                        <div
+                          key={option.value}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "5px 10px",
+                          }}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
+                              console.log('Checkbox changed:', {
+                                option,
+                                isChecked,
+                                currentValue
+                              });
+        
+                              let newValue;
+                              if (isChecked) {
+                                // Check if the current values are in object format
+                                const isObjectFormat = currentValue.length > 0 && 
+                                  typeof currentValue[0] === 'object';
+        
+                                if (isObjectFormat) {
+                                  // Add as object format
+                                  newValue = [...currentValue, {
+                                    id: option.value,
+                                    name: option.label
+                                  }];
+                                } else {
+                                  // Add as direct value
+                                  newValue = [...currentValue, option.value];
+                                }
+                              } else {
+                                // Remove value checking both formats
+                                newValue = currentValue.filter((val: any) => 
+                                  typeof val === 'object' 
+                                    ? val.id !== option.value  // For object format
+                                    : val !== option.value     // For direct value format
+                                );
+                              }
+        
+                              console.log('New value after change:', newValue);
+                              form.setFieldValue(field.name, newValue);
+                            }}
+                            className={styles.checkbox}
+                          />
+                          <span style={{ marginLeft: "8px" }}>{option.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              }}
+            />
           );
         
       case "date":
