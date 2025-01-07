@@ -65,7 +65,6 @@ const FormField: React.FC<FormFieldProps> = ({
 
   // Correctly handle onChange for different field types
   const handleChange = (val: any) => {
-    console.log(val, "date in picker ");
     if (onChange) {
       onChange(val); // Pass the extracted value to the parent handler
     }
@@ -93,9 +92,7 @@ const FormField: React.FC<FormFieldProps> = ({
         );
 
       case "datepicker": // If the field is a date picker
-        console.log(value, "in datepicker");
         const formattedValue = value ? dayjs(value) : null;
-        console.log(formattedValue);
         return (
           <DatePicker
             value={formattedValue}

@@ -61,7 +61,6 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
   const [projectLeads, setProjectLeads] = useState<SelectOption[]>([]);
   const [projectsData, setProjectsData] = useState<DropDownData[]>([]);
 
-  console.log(reportData, "report data");
 
   // Fetch projects and leads data
   useEffect(() => {
@@ -129,7 +128,6 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
     }
   }, [mode, reportData]);
 
-  console.log(formValues);
   // Handle form value changes
   const handleChange = (field: string, value: any, index?: number) => {
     setFormValues((prev) => {
@@ -291,14 +289,6 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
     { label: "Blockers", name: "blockers", index: 3 },
   ];
 
-  console.log(
-    "Field names:",
-    selectFields.map((field) => field.name)
-  );
-  console.log(
-    "Field labels:",
-    selectFields.map((field) => field.label)
-  );
 
   return (
     <div>

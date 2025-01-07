@@ -21,7 +21,6 @@ const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
-  console.log(project, "project");
   const tabs = [
     {
       key: "1",

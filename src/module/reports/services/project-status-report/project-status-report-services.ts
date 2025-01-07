@@ -61,7 +61,6 @@ export default function UseProjectStatusServices() {
         `/api/project-status-report/get-report/${id}`
       );
 
-      console.log(body);
       // Handle the API response and return the report details
       return {
         status: body.status,
@@ -100,7 +99,6 @@ export default function UseProjectStatusServices() {
         props
       );
 
-      console.log(body, "in report");
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -126,7 +124,6 @@ export default function UseProjectStatusServices() {
   ): Promise<AddProjectStatusReportResponse> => {
     const props: JSON = <JSON>(<unknown>reportData); // Adding report data to request payload
 
-    console.log(props, "in adding status report ");
     try {
       // If reportData is passed, it's used for saving the report
       const { body } = await http().post(
@@ -158,14 +155,12 @@ export default function UseProjectStatusServices() {
   ): Promise<EditProjectStatusReportResponse> => {
     const props: JSON = <JSON>(<unknown>reportData); // Adding report data to request payload
 
-    console.log(props, "in adding status report ");
     try {
       // If reportData is passed, it's used for saving the report
       const { body } = await http().post(
         `/api/project-status-report/update-report/${reportId}`, // Endpoint for saving the report
         props
       );
-      console.log(body,"in edit");
       // Return fetched data response
       return {
         status: body.status,

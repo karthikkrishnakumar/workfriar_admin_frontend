@@ -100,7 +100,6 @@ export default function UseDashboardServices() {
         "/api/timesheet/get-current-day-timesheets"
       );
 
-      console.log(body,"project times")
       // Return the project time data with additional details
       return {
         status: body.status,
@@ -109,7 +108,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching project time data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };
@@ -126,7 +124,6 @@ export default function UseDashboardServices() {
         props
       );
 
-      console.log(body, "snapshot");
       // Return the project time data with additional details
       return {
         status: body.status,
@@ -135,7 +132,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching project time data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };
@@ -155,7 +151,6 @@ export default function UseDashboardServices() {
         props
       );
 
-      console.log(body, "timesheet due");
       // Return the project time data with additional details
       return {
         status: body.status,
@@ -164,7 +159,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching project time data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };
@@ -182,7 +176,6 @@ export default function UseDashboardServices() {
         errors: body.errors || null,
       };
     } catch (error) {
-      console.error("Error fetching notifications data:", error);
       throw error; // Rethrow the error if something goes wrong
     }
   };
@@ -192,7 +185,6 @@ export default function UseDashboardServices() {
       // Make an HTTP POST request to fetch the dashboard notifiaction data
       const { body } = await http().post("/api/holiday/dashboard-holiday");
 
-      console.log(body, "in services");
       // Return notification data with additional details
       return {
         status: body.status,
@@ -212,7 +204,6 @@ export default function UseDashboardServices() {
       // Make an HTTP POST request to fetch the dashboard datepicker data
       const { body } = await http().post("/api/user/getduedates");
 
-      console.log(body, "in services Datepicker");
       // Return datepicker data with additional details
       return {
         status: body.status,
@@ -231,12 +222,10 @@ export default function UseDashboardServices() {
     endDate: string,
   ): Promise<saveTimesheetDueResponse> => {
     try {
-      console.log(startDate, endDate)
       const props: JSON = <JSON>(<unknown>{ startDate, endDate});
       // Make an HTTP POST request to fetch the dashboard datepicker data
       const { body } = await http().post("/api/timesheet/submit-due-timesheets" , props);
 
-      console.log(body, "in services save timesheetdue");
       // Return datepicker data with additional details
       return {
         status: body.status,

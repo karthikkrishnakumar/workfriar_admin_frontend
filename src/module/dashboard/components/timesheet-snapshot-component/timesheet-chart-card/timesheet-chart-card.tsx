@@ -51,7 +51,6 @@ const TimesheetSnapshotChartCard: React.FC = () => {
 
   const handleMonthChange = (month: number) => {
     if (selectedYear !== null) {
-      console.log(selectedYear,month,"year")
       fetchData(selectedYear, month); // Re-fetch data with the selected year and month
     }
   };
