@@ -18,14 +18,15 @@ const ProjectStatusReport: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1); // Current page state
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
-  const pageSize = 1; // Number of rows per page
+  const pageSize = 5; // Number of rows per page
   const router = useRouter();
   const dispatch = useDispatch();
-  
- const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
+   const [project, setProject] = useState<any>(null);
 
   const columns = [
-    { title: "Project", key: "project", align: "left" as const, width: 220 },
+    { title: "Project", key: "project", align: "left" as const, width: 200 },
     { title: "Project Lead", key: "projectLead", align: "left" as const },
     {
       title: "Actual Start & End Date",
@@ -48,26 +49,35 @@ const ProjectStatusReport: React.FC = () => {
     { key: "Edit", label: "Edit" },
   ];
 
-  const handleMenuClick = (e: { key: string }, record: any) => {
+  const handleRowClick = (rowId:string) => {
+    if (rowId) {
+      router.push(`/project-status-report/report-details/${rowId}`); // Navigate to the ID-based page
+    }
+  };
+
+  const handleMenuClick = async (e: { key: string }, record: any) => {
     if (e.key === "Details") {
       router.push(`/project-status-report/report-details/${record.id}`);
-    } else if (e.key === "edit") {
-      console.log("Edit clicked for:", record);
+    } else if (e.key === "Edit") {
+      setIsEditModalVisible(true);
+      const data = await UseProjectStatusServices().fetchProjectDetails(record.id);
+      setProject(data.data);
     }
   };
 
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const reports = await UseProjectStatusServices().fetchProjectStatusReport(page, pageSize); // Pass page and pageSize to API
+      const reports = await UseProjectStatusServices().fetchProjectStatusReport(
+        page,
+        pageSize
+      ); // Pass page and pageSize to API
       const formattedData = reports.data.map((item: any) => ({
         id: item.id,
         project: (
           <div className={styles.projectCell}>
             <CustomAvatar name={item.project_name} size={50} />
-            <div className={styles.projectName}>
-              {item.project_name}
-            </div>
+            <button className={styles.projectName}  onClick={() => handleRowClick(item.id)}>{item.project_name}</button>
           </div>
         ),
         projectLead: (
@@ -89,13 +99,13 @@ const ProjectStatusReport: React.FC = () => {
         ),
         progress: (
           <div className={styles.progressCell}>
-            <div>{item.progress}</div>
+            <div>{item?.progress.includes('%') ? item?.progress : `${item?.progress}%`}</div>
           </div>
         ),
         comments: (
           <div className={styles.commentsCell}>
             <Tooltip title={item.comments}>
-              <span>{item.comments.slice(0, 20)}...</span>
+            <span>{item.comments?.length > 16 ? `${item.comments.slice(0, 16)}...` : item.comments || "--"}</span>
             </Tooltip>
           </div>
         ),
@@ -130,9 +140,12 @@ const ProjectStatusReport: React.FC = () => {
     setCurrentPage(page); // Update the current page
   };
 
-   const handleCloseModal = () => {
-      dispatch(closeModal());
-    };
+  const handleCloseModal = () => {
+    dispatch(closeModal());
+    setIsEditModalVisible(false)
+    fetchData(currentPage);
+    
+  };
 
   return (
     <>
@@ -175,6 +188,9 @@ const ProjectStatusReport: React.FC = () => {
       </div>
 
       {isOpen && <AddReport mode="add" onClose={handleCloseModal} />}
+      {isEditModalVisible && (
+        <AddReport onClose={handleCloseModal} mode="edit" reportData={project}/>
+      )}
     </>
   );
 };

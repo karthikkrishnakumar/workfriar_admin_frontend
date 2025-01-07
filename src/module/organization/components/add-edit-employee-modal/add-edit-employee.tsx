@@ -65,7 +65,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     profile_pic: null,
   });
 
-  console.log(employeeData,"employeeData")
   const fetchDepartmentData = async (department: string) => {
     try {
       const response: GetRolesResponse =
@@ -227,7 +226,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     };
   };
 
-  console.log(formValues);
   const handleSave = async () => {
     try {
       setFormErrors({});

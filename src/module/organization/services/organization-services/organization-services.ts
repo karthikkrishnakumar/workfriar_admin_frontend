@@ -75,7 +75,6 @@ export default function UseEmployeeData() {
 
     try {
       const { body } = await http().post("/api/admin/employee-details/", props);
-      console.log(body);
       return {
         status: body.status,
         data: body.data || null, // Return the response data
@@ -149,7 +148,6 @@ export default function UseEmployeeData() {
 
     try {
       const { body } = await http().post("/api/admin/employees-data", props);
-      console.log(body,"cbshjab");
       return {
         status: body.status,
         data: body.data || null,
@@ -179,7 +177,6 @@ export default function UseEmployeeData() {
     const props: JSON = <JSON>(<unknown>{ department });
     try {
       const { body } = await http().post("/api/admin/getroles", props);
-      console.log(body, "hai");
       return {
         status: body.status,
         data: body.data || null,
@@ -194,10 +191,8 @@ export default function UseEmployeeData() {
 
   const addEmployee = async (data: EmployeeData): Promise<AddUserResponse> => {
     const props: JSON = <JSON>(<unknown>data);
-    console.log(data, "in add service");
     try {
       const { body } = await http().post("/api/admin/addemployee", props);
-      console.log(body, "hai");
       return {
         status: body.status,
         data: body.data || null,
@@ -216,10 +211,8 @@ export default function UseEmployeeData() {
     const props: JSON = <JSON>(<unknown>data);
     const hasFile:boolean = <boolean>(true)
 
-    console.log(data,"data edit ")
     try {
       const { body } = await http().post("/api/admin/editemployee", props, hasFile);
-      console.log(body, "hai");
       return {
         status: body.status,
         data: body.data || null,
