@@ -64,6 +64,8 @@ const FormField: React.FC<FormFieldProps> = ({
 
   // Correctly handle onChange for different field types
   const handleChange = (val: any) => {
+
+    console.log(val, "date in picker ")
     if (onChange) {
       onChange(val); // Pass the extracted value to the parent handler
     }
@@ -91,12 +93,11 @@ const FormField: React.FC<FormFieldProps> = ({
 
         case "datepicker": // If the field is a date picker
         return (
-          <DatePicker
-            value={value ? moment(value, "YYYY-MM-DD") : null} // Ensure the value is in correct moment format
-            onChange={(date, dateString) => handleChange(dateString)} // Pass the formatted date string
-            className={`${styles.customDatePicker} ${className}`}
-            placeholder={placeholder ?? "dd/mm/yyyy"}
-            suffixIcon={suffixIcon ?? Icons.calender}
+            <DatePicker
+              onChange={(date, dateString) => handleChange(dateString)} // Pass the formatted date string
+              className={`${styles.customDatePicker} ${className}`}
+              placeholder={placeholder ?? "dd/mm/yyyy"}
+              suffixIcon={suffixIcon ?? Icons.calender}
           />
         );
 
