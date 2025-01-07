@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Dropdown, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-team.module.scss";
-import dayjs from "dayjs";
 import AvatarGroup from "@/themes/components/avatar-group/avatar-group";
 import ProjectTeamModal from "../add-edit-project-team-modal/add-edit-project-team-modal";
 import { useRouter } from "next/navigation";
@@ -21,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 import CustomAvatar from "@/themes/components/avatar/avatar";
-import TeamMembers from "@/module/projects/project-details/components/team-members/team-members";
+
 
 const ProjectTeam: React.FC = () => {
   const router = useRouter();
@@ -38,6 +37,7 @@ const ProjectTeam: React.FC = () => {
 >([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
   const [selectedProjectTeam, setSelectedProjectTeam] =
     useState<ProjectTeamData | null>(null);
   const [projectTeamData, setProjectTeamData] = useState<ProjectTeamData[]>([]);
@@ -70,38 +70,41 @@ const ProjectTeam: React.FC = () => {
    * @param {string} key - The key of the ProjectTeam to update
    * @param {string} newStatus - The new status to set
    */
-  const handleStatusChange = (
-    key: string,
-    newStatus: ProjectTeamData["status"]
+  const handleStatusChange = async (
+    projectId: string,
+    status: string,
   ) => {
-    setProjectTeamData((prevData) =>
-      prevData.map((item) =>
-        item.id === key ? { ...item, status: newStatus } : item
-      )
-    );
+    try {
+      const payload = {projectId, status}
+      const response = await changeStatus(payload);
+      console.log(response);
+      if(response.status){
+        message.success(response.message)
+      }
+      else{
+        message.error(response.message)
+      }
+      fetchDetails();
+    } catch (err) {
+      console.log("Failed.");
+    }
   };
 
   /**
    * Opens the edit modal with the selected ProjectTeam's data
    * @param {ProjectTeamData} ProjectTeam - The ProjectTeam to edit
    */
-  const handleEditProjectTeam = (ProjectTeam: ProjectTeamData) => {
-    setSelectedProjectTeam({
-      ...ProjectTeam,
-      start_date: dayjs(ProjectTeam.start_date, "DD/MM/YYYY"),
-      end_date: dayjs(ProjectTeam.end_date, "DD/MM/YYYY"),
-    });
+  const handleEditProjectTeam = (ProjectTeam:any) => {
+    setSelectedProjectTeam(
+      {
+        ...ProjectTeam,
+        teamMembers: ProjectTeam.teamsMembers
+      }
+      );
+    setSelectedId(ProjectTeam.id);
     setIsEditModalOpen(true);
   };
 
-  /**
-   * Converts the status value to a readable format
-   * @param {string} status - The status value to convert
-   * @returns {string} - The formatted status string
-   */
-  const getStatusText = (status: ProjectTeamData["status"]): string => {
-    return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-  };
 
   /**
    * Handles the form submission from the EditProjectTeamModal
@@ -109,8 +112,20 @@ const ProjectTeam: React.FC = () => {
    */
   const handleEditProjectTeamSubmit = async (values: Record<string, any>) => {
     try {
-      const response = await updateProjectTeam(values);
+      const transformedTeam = values.teamMembers.map((member: any) => ({ userid: member.id }));
+      const payload={
+        id:selectedId,
+        project:values.project_id,
+        team_members:transformedTeam
+      }
+      const response = await updateProjectTeam(payload);
       console.log(response);
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.errors);
+      }
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
@@ -125,7 +140,7 @@ const ProjectTeam: React.FC = () => {
     try {
       const transformedTeam = values.teamMembers.map((member: any) => ({ userid: member }));
       const payload={
-        project:values.projectname,
+        project:values.project_id,
         team_members:transformedTeam
       }
       const response = await addProjectTeam(payload);
@@ -133,7 +148,7 @@ const ProjectTeam: React.FC = () => {
       if (response.status) {
         message.success(response.message);
       } else {
-        message.error(response.message);
+        message.error(response.errors);
       }
       fetchDetails();
     } catch (err) {
@@ -168,12 +183,13 @@ const ProjectTeam: React.FC = () => {
     
 
     const handleStatusClick = (
-      e: { key: string },
-      team: ProjectTeamData
+      status: string ,
+      id: string
     ) => {
-      setEffectiveDateModal(true);
-      handleStatusChange(team.id, e.key as ProjectTeamData["status"]);
+      // setEffectiveDateModal(true);
+      handleStatusChange(id, status);
     };
+
     const handleMenuClick = (
       e: { key: string },
       team: ProjectTeamData
@@ -224,15 +240,15 @@ const ProjectTeam: React.FC = () => {
       ),
       status: (
         <StatusDropdown
-          status={getStatusText(team.status)}
-          menuItems={[
-            { key: "completed", label: getStatusText("completed") },
-            { key: "in_progress", label: getStatusText("in_progress") },
-            { key: "on_hold", label: getStatusText("on_hold") },
-            { key: "cancelled", label: getStatusText("cancelled") },
-            { key: "not_started", label: getStatusText("not_started") },
-          ]}
-          onMenuClick={(e: any) => handleStatusClick(e, team)}
+        status={team.status}
+        menuItems={[
+          { label: "Not started", key: "Not Started" },
+          { label: "In progress", key: "In Progress" },
+          { label: "On hold", key: "On Hold" },
+          { label: "Cancelled", key: "Cancelled" },
+          { label: "Completed", key: "Completed" },
+        ]}
+          onMenuClick={(e: any) => handleStatusClick(e, team.project_id)}
           arrowIcon={Icons.arrowDownFilledGold}
           className={styles.status}
         />

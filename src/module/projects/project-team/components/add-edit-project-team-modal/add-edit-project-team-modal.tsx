@@ -55,7 +55,7 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
         {
           fields: [
             {
-              name: "projectname",
+              name: "project_id",
               label: "Project",
               type: "select",
               options: projects?.map((projects:any) => ({
