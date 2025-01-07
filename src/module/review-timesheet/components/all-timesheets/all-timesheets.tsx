@@ -13,27 +13,33 @@ import {
 import {
   TimeEntry,
   TimesheetDataTable,
+  WeekDateEntry,
   WeekDaysData,
 } from "@/interfaces/timesheets/timesheets";
 import Icons from "@/themes/images/icons/icons";
-import { Dropdown } from "antd";
+import { Dropdown, message } from "antd";
 import TextAreaButton from "@/module/time-sheet/components/text-area-button/text-area-button";
+import UseReviewTimesheetsServices from "../../services/review-timesheets-service";
+import { dateStringToMonthDate } from "@/utils/date-formatter-util/date-formatter";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
 /**
  * Props for the ReviewAllTimesheetsTable component.
  */
 interface AllTimeSheetTableProps {
   startDate: string; // Start date of the timesheet period
-  endDate: string;   // End date of the timesheet period
+  endDate: string; // End date of the timesheet period
+  userId: string; // User ID for the timesheet
 }
 
 /**
- * ReviewAllTimesheetsTable component renders a timesheet table where users can review, edit, and take actions 
+ * ReviewAllTimesheetsTable component renders a timesheet table where users can review, edit, and take actions
  * (like approve or reject) on timesheet data.
  */
 const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
   startDate,
   endDate,
+  userId,
 }) => {
   const [timesheetData, setTimeSheetData] = useState<TimesheetDataTable[]>([]); // Stores the timesheet data
   const [unsavedChanges, setUnsavedChanges] = useState(false); // Tracks unsaved changes
@@ -64,11 +70,25 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
    * @param e - Menu event object
    * @param id - Timesheet ID
    */
-  const handleMenuClick = (e: { key: string }, id?: string) => {
-    if (e.key === "approve") {
-      // Function to approve the timesheet
-    } else if (e.key === "reject") {
-      // Function to reject the timesheet
+  const handleMenuClick = async(e: { key: string }, id?: string) => {
+    if (!id) return;
+
+    const response = await UseReviewTimesheetsServices().manageTimesheetStatus(id, e.key);
+
+    if(response.status) {
+      message.success(response.message);
+      const updatedTimesheetData = timesheetData.map((timesheet) => {
+        if (timesheet.timesheet_id === id) {
+          return {
+            ...timesheet,
+            status: e.key === "approve" ? "accepted" : "rejected",
+          };
+        }
+        return timesheet;
+      });
+  
+      setTimeSheetData(updatedTimesheetData);
+      setUnsavedChanges(true);
     }
   };
 
@@ -90,19 +110,40 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     setUnsavedChanges(true);
   };
 
-  const fetchTimesheets = async() => {
-    
-  }
+  /**
+   * Fetch data for the table.
+   * @param startDate - Start date of the week
+   * @param endDate - End date of the week
+   */
+  const fetchTimesheets = async (startDate: string, endDate: string) => {
+    try {
+      setLoading(true);
+      const response =
+        await UseReviewTimesheetsServices().fetchAllReviewTimesheets(
+          userId,
+          startDate,
+          endDate
+        );
+      setTimeSheetData(response?.data);
+      const uniqueDates: WeekDaysData[] = (
+        response.weekDates as Partial<WeekDateEntry>[]
+      ).map((day) => ({
+        name: day.day_of_week!,
+        date: day.date!,
+        isHoliday: day.is_holiday!,
+        formattedDate: dateStringToMonthDate(day.date!),
+        isDisabled: day.is_disable!,
+      }));
+
+      setDaysOfWeek(uniqueDates);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch timesheet data whenever the start or end date changes
-    // fetchAllTimeSheetsToReview(
-    //   startDate,
-    //   endDate,
-    //   setTimeSheetData,
-    //   setLoading,
-    //   setDaysOfWeek
-    // );
+    fetchTimesheets(startDate, endDate);
   }, [startDate, endDate]);
 
   /**
@@ -243,17 +284,17 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
   /**
    * Processes timesheet data rows for rendering in the table.
    */
-  const data = timesheetData.map((timesheet, index) => {
+  const data = timesheetData?.map((timesheet, index) => {
     const totalHours = calculateTotalHours(timesheet.data_sheet);
     let isDisabled;
     const taskStatusClass =
-      timesheet.status === "approved"
+      timesheet.status === "accepted"
         ? styles.approved
         : timesheet.status === "rejected"
         ? styles.rejected
         : "";
 
-    if (timesheet.status === "approved" || timesheet.status === "rejected") {
+    if (timesheet.status === "accepted" || timesheet.status === "rejected") {
       isDisabled = true;
     } else {
       isDisabled = false;
@@ -285,7 +326,7 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
         <Dropdown
           menu={{
             items: menuItems,
-            onClick: (e) => handleMenuClick(e, timesheet.timesheetId),
+            onClick: (e) => handleMenuClick(e, timesheet.timesheet_id),
           }}
           trigger={["click"]}
           disabled={isDisabled}
@@ -303,24 +344,45 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
     };
   });
 
-  return (
+  return loading ? (
+    <SkeletonLoader
+      paragraph={{ rows: 10 }}
+      classNameItem={styles.customSkeleton}
+    />
+  ) : (
     <div className={styles.mainContainer}>
       <div className={styles.scrollContainer}>
         <div className={styles.tableWrapper}>
-          <CustomTable columns={columns} data={[...data, totalRow()]} />
+          <CustomTable
+            columns={columns}
+            data={data.length > 0 ? [...data, totalRow()] : data}
+          />
         </div>
       </div>
-      <div className={styles.timesheetNotesWrapper}>
-        <h2>Timesheet Note</h2>
-        <textarea
-          className={styles.timesheetNote}
-          placeholder="Write your timesheet note here."
-        />
-      </div>
-      <div className={styles.actionButtons}>
-        <ButtonComponent label="Approve" theme="black" onClick={handleSave} />
-        <ButtonComponent label="Reject" theme="white" onClick={handleSubmit} />
-      </div>
+
+      {data.length > 0 && (
+        <>
+          <div className={styles.timesheetNotesWrapper}>
+            <h2>Timesheet Note</h2>
+            <textarea
+              className={styles.timesheetNote}
+              placeholder="Write your timesheet note here."
+            />
+          </div>
+          <div className={styles.actionButtons}>
+            <ButtonComponent
+              label="Approve"
+              theme="black"
+              onClick={handleSave}
+            />
+            <ButtonComponent
+              label="Reject"
+              theme="white"
+              onClick={handleSubmit}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };

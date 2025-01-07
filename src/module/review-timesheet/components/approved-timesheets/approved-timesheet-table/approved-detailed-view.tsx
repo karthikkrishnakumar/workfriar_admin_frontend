@@ -213,13 +213,17 @@ const ApprovedDetailedView: React.FC<ApprovedDetailedViewProps> = ({
     const totalHours = calculateTotalHours(timesheet.data_sheet);
     let isDisabled;
     const taskStatusClass =
-      timesheet.status === "approved"
+      timesheet.status === "accepted"
         ? styles.approved
         : timesheet.status === "rejected"
         ? styles.rejected
         : "";
 
-    isDisabled = timesheet.status === "approved" || timesheet.status === "rejected";
+    if (timesheet.status === "accepted" || timesheet.status === "rejected") {
+      isDisabled = true;
+    } else {
+      isDisabled = false;
+    }
 
     return {
       task: (
@@ -272,18 +276,18 @@ const ApprovedDetailedView: React.FC<ApprovedDetailedViewProps> = ({
           <CustomTable columns={columns} data={[...data, totalRow()]} />
         </div>
       </div>
-      <div className={styles.timesheetNotesWrapper}>
+      {/* <div className={styles.timesheetNotesWrapper}>
         <h2>Timesheet Note</h2>
         <textarea
           className={styles.timesheetNote}
           placeholder="Write your timesheet note here."
         />
-      </div>
+      </div> */}
       <div className={styles.actionButtons}>
-        <div>
+        {/* <div>
           <ButtonComponent label="Approve" theme="black" />
           <ButtonComponent label="Reject" theme="white" />
-        </div>
+        </div> */}
         <span className={styles.backButton} onClick={backButtonFunction}>
           {" "}
           {"< Back"}

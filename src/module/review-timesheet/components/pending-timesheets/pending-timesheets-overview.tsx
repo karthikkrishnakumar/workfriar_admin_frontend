@@ -3,9 +3,15 @@ import React, { useEffect, useState } from "react";
 import styles from "./pending-timesheets-overview.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import { OverViewTable, TimesheetDataTable, WeekDaysData } from "@/interfaces/timesheets/timesheets";
+import {
+  OverViewTable,
+  TimesheetDataTable,
+  WeekDateEntry,
+  WeekDaysData,
+} from "@/interfaces/timesheets/timesheets";
 import PendingDetailedView from "./pending-timesheet-table/pending-detailed-view";
-import { isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
+import { dateStringToMonthDate, isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
+import UseReviewTimesheetsServices from "../../services/review-timesheets-service";
 
 /**
  * `PendingOverviewTable` component is responsible for displaying an overview of pending timesheets.
@@ -16,16 +22,76 @@ import { isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
  * return <PendingOverviewTable />;
  */
 interface PendingOverviewProps {
-  tableData?: OverViewTable[]; // Optional data passed in from a parent component
+  id:string;
 }
 
-const PendingOverviewTable: React.FC<PendingOverviewProps> = ({ tableData }) => {
+const PendingOverviewTable: React.FC<PendingOverviewProps> = ({
+  id
+}) => {
   // States to hold various data and control UI flow
   const [table, setTable] = useState<OverViewTable[]>([]); // Holds the overview table data
-  const [timeSheetTable, setTimesheetTable] = useState<TimesheetDataTable[]>([]); // Holds detailed timesheet data
+  const [timeSheetTable, setTimesheetTable] = useState<TimesheetDataTable[]>(
+    []
+  ); // Holds detailed timesheet data
   const [showDetailedView, setShowDetailedView] = useState<boolean>(false); // Flag to toggle between overview and detailed view
   const [loading, setLoading] = useState<boolean>(true); // Flag to indicate loading state
   const [dates, setDates] = useState<WeekDaysData[]>([]); // Holds the dates associated with the timesheets
+
+
+  /**
+   * Fetches past due weeks data and sets the table state.
+   */
+  const fetchOverViewTable = async () => {
+    try {
+      const response = await UseReviewTimesheetsServices().fetchPendingWeeks(id);
+      setTable(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  
+  /**
+     * Fetches timesheet data for a specific date range.
+     * @param {string} startDate - The date range for which to fetch timesheet data.
+     * @param {string} endDate - The date range for which to fetch timesheet data.
+     */
+    const handleFetchTimesheets = async (startDate: string, endDate: string) => {
+      setShowDetailedView(true);
+      setLoading(true);
+      const response = await UseReviewTimesheetsServices().fetchPendingTimesheets(
+        id,
+        startDate,
+        endDate
+      );
+      console.log(response);
+      setTimesheetTable(response.data);
+      const uniqueDates: WeekDaysData[] = (
+        response.weekDates as Partial<WeekDateEntry>[]
+      ).map((day) => ({
+        name: day.day_of_week!,
+        date: day.date!,
+        isHoliday: day.is_holiday!,
+        formattedDate: dateStringToMonthDate(day.date!),
+        isDisabled: day.is_disable!,
+      }));
+      setDates(uniqueDates);
+      setLoading(false);
+    };
+
+  /**
+   * Resets the view back to the overview when the user clicks the "Back" button in the detailed view.
+   */
+  const handleBackToOverview = () => {
+    setShowDetailedView(false); // Switch back to the overview table
+  };
+
+  // Fetch the initial overview data on component mount.
+  useEffect(() => {
+    setLoading(true); // Set loading state while fetching data
+    fetchOverViewTable(); // Fetch the data using the service
+  }, []);
 
   // Columns for the overview table
   const columns = [
@@ -44,29 +110,13 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({ tableData }) => 
     },
   ];
 
-  /**
-   * Fetches the detailed timesheet data based on the selected date range.
-   * This function is triggered when the user clicks the "Details" button in the overview table.
-   * 
-   * @param {string} startDate - The selected date range for fetching timesheet data
-   * @param {string} endaDate - The selected date range for fetching timesheet data
-   */
-  const handleFetchTimesheets = (startDate: string, endDate:string) => {
-    setShowDetailedView(true); // Switch to the detailed view
-    setLoading(true); // Set loading state to true while fetching data
-    // fetchPendingTimesheets(dateRange, setTimesheetTable, setDates, setLoading); // Fetch the data using the service
-  };
-
-  /**
-   * Resets the view back to the overview when the user clicks the "Back" button in the detailed view.
-   */
-  const handleBackToOverview = () => {
-    setShowDetailedView(false); // Switch back to the overview table
-  };
-
   // Mapping the overview data to fit the table structure
-  const data = table.map((element) => ({
-    period: <span className={styles.dataCell}>{isoTOenGB(element.startDate)}-{isoTOenGB(element.endDate)}</span>,
+  const data = table?.map((element) => ({
+    period: (
+      <span className={styles.dataCell}>
+        {isoTOenGB(element.startDate)}-{isoTOenGB(element.endDate)}
+      </span>
+    ),
     loggedTime: (
       <span className={styles.dataCell}>
         {element.totalHours ? element.totalHours : "--"} hr
@@ -81,7 +131,7 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({ tableData }) => 
       <span
         className={`${styles.dataCell} ${styles.actionDataCell}`}
         onClick={() => {
-          handleFetchTimesheets(element.startDate,element.endDate); // Trigger detailed view on click
+          handleFetchTimesheets(element.startDate, element.endDate); // Trigger detailed view on click
         }}
       >
         Details
@@ -89,22 +139,23 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({ tableData }) => 
     ),
   }));
 
-  // Fetch the initial overview data on component mount
-  useEffect(() => {
-    setLoading(true); // Set loading state while fetching data
-    // fetchPendingWeeks(setTable, setLoading); // Fetch the weeks data for the overview table
-  }, []);
-
   return (
     <div className={styles.pastOverDueTableWrapper}>
-      {showDetailedView ? loading ? (
-        <SkeletonLoader
-          paragraph={{ rows: 15 }}
-          classNameItem={styles.customSkeleton}
-        />
-      ) : (
-        <PendingDetailedView timeSheetData={timeSheetTable} daysOfWeek={dates} backButtonFunction={handleBackToOverview}/>
-        // Show the detailed view with the fetched timesheet data
+      {showDetailedView ? (
+        loading ? (
+          <SkeletonLoader
+            paragraph={{ rows: 15 }}
+            classNameItem={styles.customSkeleton}
+          />
+        ) : (
+          <PendingDetailedView
+            timeSheetData={timeSheetTable}
+            daysOfWeek={dates}
+            backButtonFunction={handleBackToOverview}
+            setTimesheetData={setTimesheetTable}
+          />
+          // Show the detailed view with the fetched timesheet data
+        )
       ) : loading ? (
         <SkeletonLoader
           paragraph={{ rows: 15 }}
