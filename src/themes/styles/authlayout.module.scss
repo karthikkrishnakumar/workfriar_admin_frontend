@@ -1,0 +1,93 @@
+.layout {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(117.98deg, #F4F4F4 -2.66%, #F4EBDC 119.75%);
+
+  @media screen and (max-width: 600px) {
+    flex-direction: column; /* Stack elements vertically */
+    height: 100vh; /* Allow height to adjust to content */
+  }
+}
+
+.left {
+  position: relative;
+  flex: 44 0 0; /* Occupies 2/5 of the space */
+  height: 100vh; /* Ensures it stretches to the full height of the parent */
+  border-radius: 0px 30px 30px 0px;
+  overflow: hidden;
+  background-image: url('/front-view-desk.svg'); /* Sets the image as the background */
+  background-position: center center; /* Ensures the image is always centered */
+  background-repeat: no-repeat; /* Prevents tiling */
+  background-size: cover; /* Ensures the image covers the container */
+
+    @media screen and (max-width: 740px) {
+      flex: 36 0 0; 
+    }
+
+    @media screen and (max-width: 600px) {
+      flex: none;
+      border-radius: 0px 0px 16px 16px;
+      background-image: none; /* Remove background image */
+      background-color: black; 
+      height: 10vh; /* Allow height to adjust to content */
+    }
+
+}
+
+
+.overlay {
+  position: absolute; /* Ensures it overlays the parent container */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(54, 54, 54, 0) 0%, rgba(40, 40, 40, 0.62) 100%);
+  z-index: 2; /* Ensures it appears above the background image */
+
+  @media screen and (max-width: 600px) {
+    display: none; /* Hide the gradient overlay */
+  }
+}
+
+.logo {
+  position: absolute;
+  max-width: 202px;
+  height: 33.72px;
+  z-index: 1;
+  margin-top: 40px;
+  margin-left: 32px;
+
+  
+  @media screen and (max-width: 740px) {
+    max-width: 180px;
+    height: 28px;
+    margin-left: 24px;
+
+  }
+
+
+  @media screen and (max-width: 600px) {
+    margin-top: 24px;
+    max-width: 160px;
+    height: 24px;
+    margin-left: 24px;
+
+  }
+}
+
+.layoutContent {
+  flex: 56 0 0; /* Occupies 3/5 of the space */
+  height: 100vh; /* Ensures it stretches to the full height of the parent */
+
+  @media screen and (max-width: 740px) {
+    flex: 64 0 0; 
+  }
+
+  @media screen and (max-width: 600px) {
+    
+    flex: none; /* Reset flex properties */
+    height: 90vh; /* Allow height to adjust to content */
+  }
+}

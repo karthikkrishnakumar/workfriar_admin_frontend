@@ -11,7 +11,7 @@
         position: absolute;
         z-index: 2;
         top: 8px;
-        left: 16px;
+        left: var(--label-left, 16px); // Default value is 16px
         color:var(--primary-font-color-dark);
         padding: 0 5px;
 font-size: 13px;
