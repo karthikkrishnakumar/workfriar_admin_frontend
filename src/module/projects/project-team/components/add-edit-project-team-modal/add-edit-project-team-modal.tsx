@@ -21,15 +21,9 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
   id,
   type
 }) => {
-  const values = initialValues || {
-    key: "",
-    ProjectLogo: "",
-    ProjectName: "",
-    start_date: "",
-    end_date: "",
-    status: "completed",
-  };
+  const values = initialValues || {};
   const [projects, setProjects] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -37,6 +31,9 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
         const projects = await useProjectTeamService().fetchProjects(); 
         console.log(projects)
         setProjects(projects.data);
+        const teamMembers = await useProjectTeamService().fetchTeamMembers(); 
+        console.log(teamMembers)
+        setTeamMembers(teamMembers.data);
       } catch (error) {
         message.error("Failed to fetch details.");
       }
@@ -58,7 +55,7 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
         {
           fields: [
             {
-              name: "ProjectName",
+              name: "projectname",
               label: "Project",
               type: "select",
               options: projects?.map((projects:any) => ({
@@ -69,13 +66,13 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
               placeholder: "Select project",
             },
             {
-              name: "ProjectTeam",
+              name: "teamMembers",
               label: "Team members",
               type: "checkboxSelect",
-              options: [
-                { label: "Vishnu M S", value: "vishnuMS" },
-                { label: "Aswina Vinod", value: "aswinaVinod" },
-              ],
+              options: teamMembers?.map((member:any) => ({
+                label: member.name, 
+                value: member.id,
+              })),
               required: true,
               placeholder: "Select team members",
             },

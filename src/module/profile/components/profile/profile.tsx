@@ -11,7 +11,6 @@ const Profile = () => {
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const id = "1";
 
   /**
    * Handles the form submission from the EditProfileModal
@@ -28,19 +27,30 @@ const Profile = () => {
   };
   // useEffect hook to fetch Profile data based on the ID when the component mounts
   useEffect(() => {
-    if (id) {
-      const fetchDetails = async () => {
-        try {
-          const result = await getAdminDetails(); // Make sure you pass the ID
-          setProfile(result);
-        } catch (error) {
-          message.error("Failed to fetch project details.");
+    const fetchDetails = async () => {
+      try {
+       
+        const response = await getAdminDetails();
+        console.log(response.data);
+        if (response.status) {
+          message.success(response.message);
+          setProfile(
+            {...response.data,
+            reporting_manager: response.data.reporting_manager.full_name}
+          );
+          console.log(profile);
+        } else {
+          message.error(response.message);
         }
-      };
-
-      fetchDetails();
-    }
-  }, [id]);
+      } catch (error) {
+        console.error(error);
+        message.error("Failed to fetch project details.");
+      }
+    };
+  
+    fetchDetails(); // Call the function inside useEffect
+  }, []); // Ensure dependencies are correctly passed
+  
 
   if (!profile) {
     return (
@@ -55,15 +65,15 @@ const Profile = () => {
       <div className={styles.topRow}>
         <div className={styles.imageUploadContainer}>
           <div className={styles.imageCircle}>
-            {profile.profile_pic ? (
+            {profile?.profile_pic_path ? (
               <img
-                src={profile.profile_pic}
+                src={profile?.profile_pic_path}
                 alt="Profile"
                 className={styles.image}
               />
             ) : (
               <span className={styles.imageInitial}>
-                {profile.name[0].toUpperCase()}
+                {profile?.name[0].toUpperCase()}
               </span>
             )}
           </div>
@@ -71,7 +81,7 @@ const Profile = () => {
         <Button onClick={() => setIsEditModalOpen(true)}>Edit profile</Button>
       </div>
       <ProfileCard
-        initialValues={profile}
+        initialValues={profile || {}}
         formRows={[
           {
             fields: [

@@ -5,6 +5,7 @@ import styles from "./team-members.module.scss";
 import dayjs from "dayjs";
 import useProjectTeamService, {
   TeamMember,
+  Dates,
 } from "@/module/projects/project-team/services/project-team-service";
 import CustomTable, {
   Column,
@@ -13,113 +14,147 @@ import CustomTable, {
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
 import CustomAvatar from "@/themes/components/avatar/avatar";
+import DateModal from "../effective-date-modal/effective-date-modal";
 // Interface for the props passed to the TeamMembers component
 interface TeamMembersProps {
   id: string;
 }
 
 const TeamMembers = ({ id }: TeamMembersProps) => {
-  const { fetchProjectTeamByProjectId, changeMemberStatus } =
+  const { fetchProjectTeamByProjectId, changeMemberStatus, updateDates } =
     useProjectTeamService();
-    const [filteredTeamMembers, setFilteredTeamMembers] = useState<
-    RowData[]
-  >([]);
-  const [ProjectTeamData, setProjectTeamData] = useState<
-    TeamMember[] | undefined
-  >(undefined);
-
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const [filteredTeamMembers, setFilteredTeamMembers] = useState<RowData[]>([]);
+  const [selectedId, setSelectedId] = useState("");
+  const [ProjectTeamData, setProjectTeamData] = useState<TeamMember | null>(
+    null
+  );
+  const [dates, setDates] = useState<Dates | null>(null);
   // useEffect hook to fetch project data based on the ID when the component mounts
 
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        const result = await fetchProjectTeamByProjectId(id); // Make sure you pass the ID
-        setProjectTeamData(result);
-        setFilteredTeamMembers(mapMemberData(result));
-      } catch (error) {
-        message.error("Failed to fetch project details.");
-      }
-    };
-
     fetchDetails();
   }, []);
+  const fetchDetails = async () => {
+    const value: any = {
+      id: id,
+    };
+    try {
+      const response = await fetchProjectTeamByProjectId(value);
+      if (response.status) {
+        console.log(response.data.teamsMembers);
+        setFilteredTeamMembers(mapMemberData(response.data.teamsMembers));
+        setSelectedId(response.data.id);
+      } else {
+        message.error(response.message);
+      }
+    } catch (error) {
+      message.error("Failed to fetch project details.");
+    }
+  };
 
   /**
    * Changes the ProjectTeam status
    * @param {string} key - The key of the ProjectTeam to update
    * @param {string} newStatus - The new status to set
    */
-  const handleStatusChange = async (
-    key: string,
-    newStatus: TeamMember["status"]
-  ) => {
-    setProjectTeamData((prevData = []) =>
-      prevData.map((item) =>
-        item.id === key ? { ...item, status: newStatus } : item
-      )
-    );
+  // const handleStatusChange = async (
+  //   key: string,
+  //   newStatus: TeamMember["status"]
+  // ) => {
+  //   setProjectTeamData((prevData = []) =>
+  //     prevData.map((item) =>
+  //       item.id === key ? { ...item, status: newStatus } : item
+  //     )
+  //   );
+  //   try {
+  //     const response = await changeMemberStatus(key);
+  //     console.log(response);
+  //   } catch (err) {
+  //     console.log("Failed.");
+  //   }
+  // };
+
+  const handleDateSubmit = async (values: Record<string, any>) => {
+    console.log(values);
+    const payload = {
+      end_date: dayjs(values?.end_date).format("YYYY-MM-DD"),
+      userId: ProjectTeamData?.id,
+      projectTeamId: selectedId,
+    };
     try {
-      const response = await changeMemberStatus(key);
+      const response = await updateDates(payload);
       console.log(response);
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.message);
+      }
+      fetchDetails();
     } catch (err) {
       console.log("Failed.");
     }
+    setIsDateModalOpen(false); // Close modal after submission
+  };
+
+  const handleEditDates = (member: TeamMember) => {
+    setProjectTeamData(member);
+    setDates(member.dates[0].period);
+    setIsDateModalOpen(true);
   };
 
   const columns: Column[] = [
-    { title: "Team member", key: "name", align: "left",width:300 },
+    { title: "Team member", key: "name", align: "left", width: 300 },
     { title: "Email id", key: "email", align: "left" },
     {
       title: "Start and end date",
       key: "dates",
       align: "left",
-      width:350
+      width: 350,
     },
     { title: "Status", key: "status", align: "left" },
   ];
 
   // Function to map member data to RowData format for compatibility with the table
   const mapMemberData = (members: TeamMember[]): RowData[] => {
+    function handleStatusClick(e: any, member: TeamMember): void {
+      throw new Error("Function not implemented.");
+    }
 
-
-    const handleStatusClick = (
-      e: { key: string },
-      member: TeamMember
-    ) => {
-      handleStatusChange(member.id, e.key as TeamMember["status"]);
-    };
+    // const handleStatusClick = (e: { key: string }, member: TeamMember) => {
+    //   handleStatusChange(member.id, e.key as TeamMember["status"]);
+    // };
 
     return members.map((member) => ({
       _id: member.id,
       name: (
         <span className={styles.nameCell}>
-        <CustomAvatar name={member.name} size={50} src={member.profile_pic || undefined}/>
-        {/* Custom avatar */}
-        <span className={styles.member}>{member.name}</span>
-        {/* Employee name */}
-      </span>
+          <CustomAvatar
+            name={member.name}
+            size={50}
+            src={member.profile_pic || ""}
+          />
+          {/* Custom avatar */}
+          <span className={styles.member}>{member.name}</span>
+          {/* Employee name */}
+        </span>
       ),
-      email: (
-        <span className={styles.member}>{member.email}</span>
-      ),
+      email: <span className={styles.member}>{member.email}</span>,
       dates: (
-        <span className={styles.dates}>
-          <>
-            {dayjs.isDayjs(member.start_date)
-              ? member.start_date.format("DD/MM/YYYY")
-              : member.start_date}{" "}
-            -{" "}
-            {dayjs.isDayjs(member.end_date)
-              ? member.end_date.format("DD/MM/YYYY")
-              : member.end_date}
-          </>
+        <span className={styles.dates} onClick={() => handleEditDates(member)}>
+          <>{member.dates.period}</>
         </span>
       ),
       status: (
         <StatusDropdown
-          status={member.status || ""}
+          status={
+            member.status?
+            (member.status
+            .replace(/\b\w/g, (l) => l.toUpperCase())):
+               ""
+          }
           menuItems={[
-            { key: "Active", label: "Active"},
+            { key: "Active", label: "Active" },
             { key: "Inactive", label: "Inactive" },
           ]}
           onMenuClick={(e: any) => handleStatusClick(e, member)}
@@ -132,10 +167,17 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
 
   return (
     <div className={styles.tableWrapper}>
-       <CustomTable
-        columns={columns}
-        data={filteredTeamMembers}
-      />
+      <CustomTable columns={columns} data={filteredTeamMembers} />
+      {isDateModalOpen && (
+        <DateModal
+          isModalOpen={isDateModalOpen}
+          onClose={() => {
+            setIsDateModalOpen(false);
+          }}
+          onSave={handleDateSubmit}
+          initialValues={dates}
+        />
+      )}
     </div>
   );
 };

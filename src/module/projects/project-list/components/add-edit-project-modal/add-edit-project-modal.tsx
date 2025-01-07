@@ -7,16 +7,19 @@ import useProjectListService, {
 } from "../../services/project-service";
 import { message } from "antd";
 import dayjs from "dayjs";
-import useClientService, { ClientData } from "@/module/projects/client/services/client-service";
-import useTaskCategoryService, {TaskCategoryData} from "@/module/projects/task-category/services/task-category-service";
-
+import useClientService, {
+  ClientData,
+} from "@/module/projects/client/services/client-service";
+import useTaskCategoryService, {
+  TaskCategoryData,
+} from "@/module/projects/task-category/services/task-category-service";
 
 export interface ModalProps {
   isModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
   id?: string;
-  type?:string;
+  type?: string;
   formErrors?: ProjectData | null;
 }
 
@@ -26,7 +29,7 @@ const ProjectModal: React.FC<ModalProps> = ({
   onSave,
   id,
   type,
-  formErrors
+  formErrors,
 }) => {
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
     null
@@ -43,7 +46,8 @@ const ProjectModal: React.FC<ModalProps> = ({
       try {
         const clients = await useClientService().fetchClientDetails(); // Make sure you pass the ID
         setClientData(clients.data);
-        const categories = await useTaskCategoryService().fetchTaskCategoryDetails(); // Make sure you pass the ID
+        const categories =
+          await useTaskCategoryService().fetchTaskCategoryDetails(); // Make sure you pass the ID
         setTaskCategoryData(categories.data);
         const projectLeads = await useProjectListService().fetchProjectLeads(); // Make sure you pass the ID
         setProjectLeads(projectLeads.data);
@@ -56,7 +60,7 @@ const ProjectModal: React.FC<ModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (type=="edit" && id) {
+    if (type == "edit" && id) {
       const fetchDetails = async () => {
         setLoading(true); // Set loading to true before fetching
         try {
@@ -79,9 +83,9 @@ const ProjectModal: React.FC<ModalProps> = ({
             actual_end_date: result.data.actual_end_date
               ? dayjs(result.data.actual_end_date, "DD/MM/YYYY")
               : null,
-            client_name:result.data.client_name._id,
-            client_id:result.data.client_name._id,
-            project_lead:result.data.project_lead._id
+            client_name: result.data.client_name._id,
+            client_id: result.data.client_name._id,
+            project_lead: result.data.project_lead._id,
           };
 
           setSelectedProject(formattedResult);
@@ -100,7 +104,7 @@ const ProjectModal: React.FC<ModalProps> = ({
 
   return (
     <>
-      {!loading  && (
+      {!loading && (
         <ModalFormComponent
           isVisible={isModalOpen}
           onClose={onClose}
@@ -109,7 +113,7 @@ const ProjectModal: React.FC<ModalProps> = ({
           secondaryButtonLabel={"Cancel"}
           initialValues={selectedProject || {}}
           onPrimaryClick={onSave}
-          formErrors={formErrors|| {}}
+          formErrors={formErrors || {}}
           formRows={[
             {
               fields: [
@@ -127,18 +131,18 @@ const ProjectModal: React.FC<ModalProps> = ({
                   label: "Project",
                   type: "text",
                   required: true,
-                  placeholder:"Enter project name"
+                  placeholder: "Enter project name",
                 },
                 {
                   name: "client_name",
                   label: "Client",
                   type: "select",
                   options: clientData.map((client) => ({
-                    label: client.client_name, 
+                    label: client.client_name,
                     value: client._id,
                   })),
                   required: true,
-                  placeholder:"Select client"
+                  placeholder: "Select client",
                 },
               ],
             },
@@ -150,7 +154,7 @@ const ProjectModal: React.FC<ModalProps> = ({
                   type: "textarea",
                   required: true,
                   isExtended: true,
-                  placeholder:"Enter description"
+                  placeholder: "Enter description",
                 },
               ],
             },
@@ -189,9 +193,9 @@ const ProjectModal: React.FC<ModalProps> = ({
                   name: "category",
                   label: "Task category",
                   type: "checkboxSelect",
-                  placeholder:"Select categories",
+                  placeholder: "Select categories",
                   options: taskCategoryData.map((category) => ({
-                    label: category.category, 
+                    label: category.category,
                     value: category.id,
                   })),
                 },
@@ -200,13 +204,12 @@ const ProjectModal: React.FC<ModalProps> = ({
                   label: "Project lead",
                   type: "select",
                   options: projectLeads.map((lead) => ({
-                    label: lead.full_name, 
+                    label: lead.full_name,
                     value: lead._id,
                   })),
                   required: true,
-                  placeholder:"Select project lead"
+                  placeholder: "Select project lead",
                 },
-                
               ],
             },
             {
@@ -215,7 +218,7 @@ const ProjectModal: React.FC<ModalProps> = ({
                   name: "billing_model",
                   label: "Billing model",
                   type: "select",
-                  placeholder:"Select billing model",
+                  placeholder: "Select billing model",
                   options: [
                     {
                       label: "Bill time (time and materials)",
@@ -233,7 +236,7 @@ const ProjectModal: React.FC<ModalProps> = ({
                   name: "open_for_time_entry",
                   label: "Time entry",
                   type: "select",
-                  placeholder:"Select time entry",
+                  placeholder: "Select time entry",
                   options: [
                     { label: "Opened", value: "opened" },
                     { label: "Closed", value: "closed" },
@@ -248,7 +251,7 @@ const ProjectModal: React.FC<ModalProps> = ({
                   name: "status",
                   label: "Status",
                   type: "select",
-                  placeholder:"Select status",
+                  placeholder: "Select status",
                   options: [
                     { label: "Not Started", value: "Not Started" },
                     { label: "In Progress", value: "In Progress" },
@@ -256,7 +259,7 @@ const ProjectModal: React.FC<ModalProps> = ({
                     { label: "Cancelled", value: "Cancelled" },
                     { label: "Completed", value: "Completed" },
                   ],
-                  // required: true,
+                  required: true,
                 },
               ],
             },
