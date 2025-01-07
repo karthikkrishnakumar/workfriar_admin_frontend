@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Select, DatePicker, Input } from "antd";
-import moment from "moment";
+import dayjs from "dayjs";
 import Icons from "@/themes/images/icons/icons";
 import styles from "./reusable-fields.module.scss"; // You'll need to create this SCSS module
 
@@ -26,6 +26,7 @@ export type InputType = "select" | "datepicker" | "input" | "textarea";
 
 export interface FormFieldProps {
   type: InputType;
+  numberOnly?: boolean;
   label: string;
   name: string;
   required?: boolean;
@@ -36,11 +37,12 @@ export interface FormFieldProps {
   className?: string;
   rows?: number;
   suffixIcon?: React.ReactNode;
-  error?:any;
+  error?: string; // Add an error prop
 }
 
 const FormField: React.FC<FormFieldProps> = ({
   type,
+  numberOnly,
   label,
   name,
   required = false,
@@ -61,15 +63,13 @@ const FormField: React.FC<FormFieldProps> = ({
     </div>
   );
 
-
   // Correctly handle onChange for different field types
   const handleChange = (val: any) => {
-
-    console.log(val, "date in picker ")
     if (onChange) {
       onChange(val); // Pass the extracted value to the parent handler
     }
   };
+
   // Function to render the input field based on the type of field (select, datepicker, textarea, input)
 
   const renderField = () => {
@@ -91,13 +91,15 @@ const FormField: React.FC<FormFieldProps> = ({
           </Select>
         );
 
-        case "datepicker": // If the field is a date picker
+      case "datepicker": // If the field is a date picker
+        const formattedValue = value ? dayjs(value) : null;
         return (
-            <DatePicker
-              onChange={(date, dateString) => handleChange(dateString)} // Pass the formatted date string
-              className={`${styles.customDatePicker} ${className}`}
-              placeholder={placeholder ?? "dd/mm/yyyy"}
-              suffixIcon={suffixIcon ?? Icons.calender}
+          <DatePicker
+            value={formattedValue}
+            onChange={(date, dateString) => handleChange(dateString)} // Pass the formatted date string
+            className={`${styles.customDatePicker} ${className}`}
+            placeholder={placeholder ?? "dd/mm/yyyy"}
+            suffixIcon={suffixIcon ?? Icons.calender}
           />
         );
 
@@ -116,6 +118,7 @@ const FormField: React.FC<FormFieldProps> = ({
       default:
         return (
           <Input
+            type={numberOnly ? "number" : "text"}
             value={value}
             onChange={(e) => handleChange(e.target.value)}
             placeholder={placeholder}

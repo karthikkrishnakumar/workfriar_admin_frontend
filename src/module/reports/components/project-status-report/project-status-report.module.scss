@@ -9,8 +9,8 @@
     display: none;
   }
 
-  .customSkeletonItem{
-    background-color: var(--disabled-table-column-background)!important;
+  .customSkeletonItem {
+    background-color: var(--disabled-table-column-background) !important;
   }
 
   .tableWrapper {
@@ -21,8 +21,8 @@
     display: flex;
     align-items: center;
     padding-left: 15px;
-    padding-top:5px ;
-    padding-bottom:5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     gap: 10px;
     .avatar {
       width: 40px;
@@ -39,11 +39,17 @@
     .projectName {
       font-size: 16px;
       color: var(--black) !important;
+      background-color: transparent;
+      border: none;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 
   .projectLeadCell {
-    padding-left: 14px;
+    padding-left: 16px;
     .name {
       font-size: 16px;
       color: var(--black) !important;
@@ -51,7 +57,7 @@
   }
 
   .dateCell {
-    padding-left: 8px;
+    padding-left: 10px;
     div {
       font-size: 16px;
       color: var(--black) !important;
@@ -59,7 +65,7 @@
   }
 
   .reportingCell {
-    padding-left: 8px;
+    padding-left: 10px;
     div {
       font-size: 16px;
       color: var(--black) !important;
@@ -75,7 +81,7 @@
   }
 
   .commentsCell {
-    padding-left: 8px;
+    padding-left: 6px;
     span {
       font-size: 16px;
       color: var(--black) !important;
@@ -93,30 +99,26 @@
   }
 }
 
-.paginationDiv{
+.paginationDiv {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 
-  .pagination{
+  .pagination {
+    color: red !important;
 
-   
-    color: red!important;
-
-    :global(.ant-pagination-item-active){
-      border-color: var(--primary-golden-color-dark)!important;
-      background-color:var(--primary-golden-color-dark)!important;
-      color: white!important;
+    :global(.ant-pagination-item-active) {
+      border-color: var(--primary-golden-color-dark) !important;
+      background-color: var(--primary-golden-color-dark) !important;
+      color: white !important;
     }
-    :global(.ant-pagination-item-active a){
-      color: white!important;
+    :global(.ant-pagination-item-active a) {
+      color: white !important;
     }
-    :global(.ant-pagination-item){
-      border-color:transparent;
-      background-color:transparent;
+    :global(.ant-pagination-item) {
+      border-color: transparent;
+      background-color: transparent;
     }
   }
-
-  
 }

@@ -30,13 +30,13 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
           <GridContainer
             isGrid={true}
             avatar={{
-              name: project?.project_name,
+              name: project?.project_name.name,
               profile: project?.project_name.project_logo,
               size: 80,
             }}
             fields={[
-              { label: "Project name", value: project?.project_name },
-              { label: "Project lead", value: project?.project_lead },
+              { label: "Project name", value: project?.project_name.name },
+              { label: "Project lead", value: project?.project_lead.full_name },
             ]}
           />
 
@@ -49,16 +49,19 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                 label: "Planned Start Date",
                 value: project?.planned_start_date,
               },
-              { label: "Planned End Date", value: project?.planned_end_date },
+              { label: "Planned End Date", value: project?.planned_end_date || "--"},
               { label: "Actual Start Date", value: project?.actual_start_date },
-              { label: "Actual End Date", value: project?.actual_end_date },
-              { label: "Progress", value: `${project?.progress}` },
+              { label: "Actual End Date", value: project?.actual_end_date || "--"},
+              { 
+                label: "Progress", 
+                value: project?.progress.includes('%') ? project?.progress : `${project?.progress}%` 
+              }
             ]}
           />
           {/* Comments */}
           <GridContainer
             isGrid={false}
-            fields={[{ label: "Comments", value: project?.comments }]}
+            fields={[{ label: "Comments", value: project?.comments || "--"}]}
           />
           {/* Accomplishments */}
           <GridContainer
@@ -75,7 +78,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
           {/* Blockers */}
           <GridContainer
             isGrid={false}
-            fields={[{ label: "Blockers", value: project?.blockers }]}
+            fields={[{ label: "Blockers", value: project?.blockers || "--"}]}
           />
         </div>
       )}

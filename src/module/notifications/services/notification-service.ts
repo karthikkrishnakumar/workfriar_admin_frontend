@@ -1,4 +1,3 @@
-import { formatDateforNotifications, formatTimeTo12Hour } from "@/utils/date-formatter-util/date-formatter";
 import http from "@/utils/http";
 
 /**
@@ -53,7 +52,7 @@ const useNotificationService = () => {
         success: body.success,
         message: body.message,
         data: body.data?.map((group: any) => ({
-          date: group.date, // Format the date
+          date: group.date, 
           items: group.notifications.map((item: any) => ({
             message: item.message,
             time: item.time, 

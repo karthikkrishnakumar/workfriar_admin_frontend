@@ -2,6 +2,7 @@ import ModalComponent from "@/themes/components/modal/modal";
 import styles from "./logout-modal.module.scss";
 import ButtonComponent from "@/themes/components/button/button";
 import { useAuthService } from "@/module/auth/services/auth-service/auth-service";
+
 const { 
   handleLogout
 } = useAuthService();

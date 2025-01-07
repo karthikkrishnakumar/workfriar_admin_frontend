@@ -7,6 +7,8 @@ import OtpForm from "../otp-form/otp-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthService } from "../../services/auth-service/auth-service";
 import { Spin } from "antd";
+import Icons from "@/themes/images/icons/icons";
+
 
 const LoginForm = () => {
   const [isOtp, setIsOtp] = useState(false);
@@ -68,42 +70,45 @@ const LoginForm = () => {
   }
 
   return (
-    <div className={styles.container}>
-      {loading && (
-        <div className={styles.loaderOverlay}>
-          <Spin size="large" className={styles.customspinner} />
-        </div>
-      )}
-      <div className={styles.form}>
-        <h3>Log In</h3>
-        <img src="/Google.svg" alt="Icon" className={styles.icon} />
-        <ButtonComponent
-          label="Continue with Google"
-          onClick={handleGoogleLogin}
-        />
-        <div className={styles.divider}>
-          <div className={styles.hr}></div>
-          <p>or</p>
-          <div className={styles.hr}></div>
-        </div>
-        <div className={styles.inputContainer}>
-          <InputComponent
-            label="Email"
-            width="375px"
-            height="58px"
-            placeholder="Enter Email address"
-            size="large"
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-          />
-        </div>
-        {error && <p className={styles.error}>{error}</p>}
-        <button className={styles.button} onClick={handleContinueWithEmail}>
-          Continue with Email
-        </button>
-      </div>
+<div className={styles.container}>
+  {loading && (
+    <div className={styles.loaderOverlay}>
+      <Spin size="large" className={styles.customspinner} />
     </div>
+  )}
+  <div className={styles.form}>
+    <h3>Log In</h3>
+    <ButtonComponent
+      label="Continue with Google"
+      onClick={handleGoogleLogin}
+      defaultIcon={Icons.googleIcon}
+      hoverIcon={Icons.googleIcon}
+      className={styles.googleButton}
+    />    
+    <div className={styles.divider}>
+      <div className={styles.hr}></div>
+      <p>or</p>
+      <div className={styles.hr}></div>
+    </div>
+    <div className={styles.inputContainer}>
+      <InputComponent
+        label="Email"
+        width="100%"
+        height="58px"
+        placeholder="Enter Email address"
+        size="large"
+        type="email"
+        value={email}
+        onChange={handleEmailChange}
+      />
+    </div>
+    {error && <p className={styles.error}>{error}</p>}
+    <button className={styles.emailButton} onClick={handleContinueWithEmail}>
+      Continue with Email
+    </button>
+  </div>
+</div>
+
   );
 };
 

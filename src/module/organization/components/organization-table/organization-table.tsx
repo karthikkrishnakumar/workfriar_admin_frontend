@@ -88,7 +88,6 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
             employee.name
           }.`
         );
-        console.log(`Status updated successfully for ${employee.name}`);
       } else {
         // Handle unsuccessful response
         console.error(
@@ -180,7 +179,6 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
         pageSize,
         activeTab
       ); // Fetch data using the service
-      console.log(response);
 
       setFilteredEmployees(mapEmployeeData(response.data)); // Map the data to RowData format
 

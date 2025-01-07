@@ -33,8 +33,10 @@
       .ant-table-body {
         background-color: var( --container-color);
         border-radius: 12px;
-        scrollbar-width: thin; // For Firefox
+        overflow-y: auto;
         scrollbar-color: rgba(0,0,0,0.2) rgba(0,0,0,0.1); // For Firefox
+
+        overflow-y: overlay !important;
 
         &::-webkit-scrollbar {
           width: 8px; // Vertical scrollbar width
@@ -77,9 +79,8 @@
       color: var(--primary-font-color-dark);
       font-weight: var(--default-font-weight);
       font-size: var(--heading-3-size);
+      
 
-      // border-right: 1px solid black; 
-      // border-left: 1px solid black; 
 
     }
 
@@ -96,6 +97,10 @@
       }
     }
   }
+}
+
+.ant-table-cell-scrollbar {
+  display: none !important;
 }
 
 .skeletonCell {
