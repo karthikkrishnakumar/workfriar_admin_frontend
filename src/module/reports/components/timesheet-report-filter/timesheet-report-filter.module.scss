@@ -5,6 +5,15 @@
     height: 500px;
   }
 }
+.classTitle{
+  margin-bottom: 0px!important;
+}
+.classTopButton{
+  text-align: right;
+}
+.classTabbedComponent{
+  padding-top: 0px!important;
+}
 
 .yearFilter,
 .monthFilter,
@@ -76,125 +85,6 @@
     background-color: #d4af37;
     border-radius: 50%;
   }
-}
-.modalDiv {
-  :global(.ant-modal-content) {
-    border-radius: 20px !important;
-    overflow: hidden;
-    height: 500px;
-  }
-}
-
-.yearFilter,
-.monthFilter,
-.projectFilter,
-.employeeFilter,
-.periodFilter {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  height: 650px;
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-    background-color: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: #d9d9d9;
-  }
-
-  &::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: transparent;
-  }
-}
-
-.radioLabel,
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--primary-font-color-dark);
-  transition: color 0.3s;
-
-  &:hover {
-    color: var(--primary-golden-color-dark);
-  }
-}
-
-.radioInput,
-.checkboxInput {
-  appearance: none;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.radioInput {
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--primary-golden-color-dark);
-  border-radius: 50%;
-  position: relative;
-  background-color: transparent;
-
-  &:checked::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 9px;
-    height: 9px;
-    background-color: var(--primary-golden-color-dark);
-    border-radius: 50%;
-  }
-}
-
-.checkboxInput {
-  width: 15px;
-  height: 15px;
-  border: 2px solid var(--secondary-font-color-dark);
-  border-radius: 3px;
-  background-color: transparent;
-  position: relative;
-  transition: all 0.3s;
-  padding: 5px;
-
-  &:checked {
-    background-color: var(
-      --primary-golden-color-dark
-    ); /* Fill with golden color when checked */
-    border-color: var(
-      --primary-golden-color-dark
-    ); /* Keep the border color consistent */
-
-    &::after {
-      content: "✔"; /* Add a check mark */
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 1.5px;
-      font-size: 12px; /* Adjust size of check mark */
-      color: white; /* Color of the check mark */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-}
-
-.checkboxInput:hover {
-  border-color: var(
-    --primary-golden-color-dark
-  ); /* Optional: Change border color on hover */
 }
 
 .periodFilter {

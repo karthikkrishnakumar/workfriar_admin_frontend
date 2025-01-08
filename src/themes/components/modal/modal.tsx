@@ -5,24 +5,28 @@ import styles from "./modal.module.scss";
 interface ModalProps {
   isVisible: boolean;
   title: string;
+  topButtonContent?:ReactNode;
   content?: ReactNode;
   bottomContent?: ReactNode;
   theme?: "normal" | "danger" | "primary"; // Define themes
   onClose?: () => void;
   className?: string;
   classTitle?: string;
+  classTopButton?:string;
   classBottom?:string;
 }
 
 const ModalComponent: React.FC<ModalProps> = ({
   isVisible,
   title,
+  topButtonContent,
   content,
   bottomContent,
   theme = "danger", // Default theme is "normal"
   onClose,
   className = "",
   classTitle = "",
+  classTopButton="",
   classBottom="",
 }) => {
   const themeStyles = {
@@ -58,6 +62,13 @@ const ModalComponent: React.FC<ModalProps> = ({
         >
           {title}
         </div>
+       {/* Render topButtonContent only if provided */}
+       {topButtonContent && (
+          <div className={`${styles.topButtonContainer} ${classTopButton}`}>
+            {topButtonContent}
+          </div>
+        )}
+
         {content}
         <div className={`${styles.buttonsContainer} ${classBottom}`}>{bottomContent}</div>
       </div>

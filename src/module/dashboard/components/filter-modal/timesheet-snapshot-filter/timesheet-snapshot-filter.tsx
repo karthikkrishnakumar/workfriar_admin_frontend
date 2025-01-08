@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import styles from "./timesheet-snapshot-filter.module.scss";
 import ModalComponent from "@/themes/components/modal/modal";
 import ButtonComponent from "@/themes/components/button/button";
 import TabbedComponent from "@/themes/components/tabbed-filter/tabbed-filter";
+import RadioComponent from "@/themes/components/radio-button/radio-button";
+import { RadioChangeEvent } from "antd";
 
 interface TimeSheetSnapshotFilterProps {
-  onYearChange: (year: number) => void;
-  onMonthChange: (month: number) => void;
+  onYearChange: (year: number | null) => void;
+  onMonthChange: (month: number | null) => void;
   onClose: () => void;
 }
 
@@ -32,37 +34,26 @@ const TimeSheetSnapshotFilter: React.FC<TimeSheetSnapshotFilterProps> = ({
 }) => {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const [tempYear, setTempYear] = useState<number | null>(null);
-  const [tempMonth, setTempMonth] = useState<number | null>(null);
 
-  const currentYear = new Date().getFullYear();
+  // const currentYear = new Date().getFullYear();
 
-  // Synchronize temp values with selected values when modal is opened
-  useEffect(() => {
-    setTempYear(selectedYear);
-    setTempMonth(selectedMonth);
-  }, [selectedYear, selectedMonth]);
-
-  const handleYearChange = (year: number) => {
-    setTempYear(year);
+  const handleYearChange  = (e: RadioChangeEvent) => {
+    const selectedYear = e.target.value;
+    setSelectedYear(selectedYear); // Assuming you have a state to set the selected year
   };
 
-  const handleMonthChange = (month: number) => {
-    setTempMonth(month);
-  };
+  const handleMonthChange = (e: RadioChangeEvent) => {
+      const selectedMonth = e.target.value;
+      setSelectedMonth(selectedMonth); // Assuming you have a state to set the selected month
+    };
 
   const handleApplyChange = () => {
-    const finalYear = tempYear !== null ? tempYear : currentYear;
 
-    if (tempMonth !== null) {
-      onYearChange(finalYear);
-      onMonthChange(tempMonth);
-      setSelectedYear(finalYear);
-      setSelectedMonth(tempMonth);
-    } else if (tempYear !== null) {
-      onYearChange(tempYear);
-      setSelectedYear(tempYear);
-    }
+
+   
+      onYearChange(selectedYear);
+      onMonthChange(selectedMonth);
+      
 
     onClose(); // Close the modal
   };
@@ -74,14 +65,11 @@ const TimeSheetSnapshotFilter: React.FC<TimeSheetSnapshotFilterProps> = ({
         2018, 2017, 2016,
       ].map((year) => (
         <label key={year} className={styles.radioLabel}>
-          <input
-            type="radio"
-            name="year"
-            value={year}
-            checked={tempYear === year}
-            onChange={() => handleYearChange(year)}
-            className={styles.radioInput}
-          />
+          <RadioComponent
+                checkedValue={selectedYear}
+                value={year}
+                onChange={handleYearChange}
+              />
           {year}
         </label>
       ))}
@@ -92,14 +80,11 @@ const TimeSheetSnapshotFilter: React.FC<TimeSheetSnapshotFilterProps> = ({
     <div className={styles.monthFilter}>
       {months.map((month, index) => (
         <label key={index} className={styles.radioLabel}>
-          <input
-            type="radio"
-            name="month"
-            value={index + 1}
-            checked={tempMonth === index + 1}
-            onChange={() => handleMonthChange(index + 1)}
-            className={styles.radioInput}
-          />
+          <RadioComponent
+                checkedValue={selectedMonth}
+                value={month}
+                onChange={handleMonthChange}
+              />
           {month}
         </label>
       ))}

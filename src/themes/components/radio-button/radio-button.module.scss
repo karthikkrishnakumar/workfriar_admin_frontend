@@ -1,0 +1,22 @@
+.radio {
+  /* Golden color for the radio button and its hover/active states */
+  :global(.ant-radio-inner) {
+    border-color: var(
+      --primary-golden-color-dark
+    ) !important; /* Golden outer border */
+    color: #ffd700;
+    background-color: transparent !important;
+    border-width: 2px;
+  }
+
+  :global(.ant-radio-inner::after) {
+    background-color: var(--primary-golden-color-dark);
+    border-color: var(
+      --primary-golden-color-dark
+    ) !important; /* Golden border when selected */
+    width: 24px;
+    height: 24px;
+    margin-block-start: -12px;
+    margin-inline-start: -12px;
+  }
+}
