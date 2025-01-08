@@ -7,12 +7,14 @@ interface CustomInputProps {
   value: string | undefined;
   onChange: (value: string) => void;
   placeholder?: string;
+  type?: string;
 }
 
 const CustomInputField: React.FC<CustomInputProps> = ({
   value,
   onChange,
   placeholder = "Enter text",
+  type
 }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
@@ -25,6 +27,7 @@ const CustomInputField: React.FC<CustomInputProps> = ({
         onChange={handleInputChange}
         placeholder={placeholder}
         className={styles.customInput} // Apply custom styling
+        type={type?type:"text"}
       />
     </div>
   );

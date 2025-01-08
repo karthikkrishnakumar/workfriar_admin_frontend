@@ -35,7 +35,6 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   content,
   defaultIcon,
   hoverIcon,
-  
 }) => {
   // Determine class based on the theme prop
   const getButtonClass = (theme: string) => {
@@ -90,10 +89,12 @@ const ButtonComponent: React.FC<ButtonProps> = ({
       onClick={onClick}
       icon={content}
     >
-      <span className={styles.iconWrapper}>
-        <span className={styles.defaultIcon}>{defaultIcon}</span>
-        <span className={styles.hoverIcon}>{hoverIcon}</span>
-      </span>
+      {defaultIcon && (
+        <span className={styles.iconWrapper}>
+          <span className={styles.defaultIcon}>{defaultIcon}</span>
+          <span className={styles.hoverIcon}>{hoverIcon}</span>
+        </span>
+      )}
       {label}
     </Button>
   );

@@ -4,16 +4,17 @@ import styles from "./rejected-timesheets-overview.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import RejectedDetailedView from "./rejected-timesheet-table/rejected-detailed-view";
-import { OverViewTable, TimesheetDataTable, WeekDaysData } from "@/interfaces/timesheets/timesheets";
-import { isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
+import { OverViewTable, TimesheetDataTable, WeekDateEntry, WeekDaysData } from "@/interfaces/timesheets/timesheets";
+import { dateStringToMonthDate, isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
+import UseReviewTimesheetsServices from "../../services/review-timesheets-service";
 
 // Interface for props that RejectedOverviewTable expects
 interface RejectedOverviewProps {
-  tableData?: OverViewTable[]; // Optional data for the overview table
+  id:string;
 }
 
 const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
-  tableData, // Table data passed as prop (optional)
+  id// Table data passed as prop (optional)
 }) => {
   // State variables
   const [table, setTable] = useState<OverViewTable[]>([]); // Stores the overview table data
@@ -21,6 +22,63 @@ const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
   const [showDetailedView, setShowDetailedView] = useState<boolean>(false); // Determines if detailed view is shown
   const [loading, setLoading] = useState<boolean>(true); // Loading state for fetching data
   const [dates, setDates] = useState<WeekDaysData[]>([]); // Stores the week days data
+
+  
+
+   /**
+     * Fetches past due weeks data and sets the table state.
+     */
+    const fetchOverViewTable = async () => {
+      try {
+        const response = await UseReviewTimesheetsServices().fetchRejectedWeeks(id);
+        setTable(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    
+    /**
+       * Fetches timesheet data for a specific date range.
+       * @param {string} startDate - The date range for which to fetch timesheet data.
+       * @param {string} endDate - The date range for which to fetch timesheet data.
+       */
+      const handleFetchTimesheets = async (startDate: string, endDate: string) => {
+        setShowDetailedView(true);
+        setLoading(true);
+        const response = await UseReviewTimesheetsServices().fetchRejectedTimesheets(
+          id,
+          startDate,
+          endDate
+        );
+        console.log(response);
+        setTimesheetTable(response.data);
+        const uniqueDates: WeekDaysData[] = (
+          response.weekDates as Partial<WeekDateEntry>[]
+        ).map((day) => ({
+          name: day.day_of_week!,
+          date: day.date!,
+          isHoliday: day.is_holiday!,
+          formattedDate: dateStringToMonthDate(day.date!),
+          isDisabled: day.is_disable!,
+        }));
+        setDates(uniqueDates);
+        setLoading(false);
+      };
+
+  // Handle the back button to return to the overview table
+  const handleBackToOverview = () => {
+    setShowDetailedView(false); // Hide the detailed view
+  };
+
+
+  // useEffect hook to fetch the rejected weeks on initial load
+  useEffect(() => {
+    setLoading(true); // Set loading state to true
+    fetchOverViewTable();
+  }, []);
+
 
   // Columns definition for the overview table
   const columns = [
@@ -38,19 +96,6 @@ const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
       width: 100,
     },
   ];
-
-  // Fetch timesheet data for the selected date range
-  const handleFetchTimesheets = (startDate: string,  endaDate:string) => {
-    setShowDetailedView(true); // Show detailed view
-    setLoading(true); // Set loading state to true while fetching
-    // Fetch timesheet data and set the state
-    // fetchRejectedTimesheets(dateRange, setTimesheetTable, setDates, setLoading);
-  };
-
-  // Handle the back button to return to the overview table
-  const handleBackToOverview = () => {
-    setShowDetailedView(false); // Hide the detailed view
-  };
 
   // Map the data from the overview table to a format that can be displayed in the table
   const data = table.map((element) => ({
@@ -77,12 +122,7 @@ const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
     ), // Action to view details
   }));
 
-  // useEffect hook to fetch the rejected weeks on initial load
-  useEffect(() => {
-    setLoading(true); // Set loading state to true
-    // Fetch rejected weeks and set the table data
-    // fetchRejectedWeeks(setTable, setLoading);
-  }, []);
+  
 
   return (
     <div className={styles.pastOverDueTableWrapper}>
