@@ -44,12 +44,17 @@
       align-items: center;
       justify-content: center;
     }
+
+    h2 {
+      font-size: var(--heading-3-size);
+      font-weight: var(--default-font-weight);
+    }
+    
+
+
   }
 
-  h2 {
-    font-size: var(--heading-3-size);
-    font-weight: var(--default-font-weight);
-  }
+  
   // Responsive styles for hiding text on smaller screens
   @media (max-width: 1200px) {
     justify-content: center !important;
