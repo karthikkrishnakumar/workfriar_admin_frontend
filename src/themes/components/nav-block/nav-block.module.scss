@@ -13,14 +13,14 @@
   position: relative;
 
   &.hovered {
-    background-color: #fdb95392;
+    background-color: var(--logo-font-color);
     color: #000;
   }
   // Hover effect
   &:hover {
     // background-color: var(--primary-golden-color-medium);
     // background-color: #fdb853;
-    background-color: #fdb95392;
+    background-color: var(--logo-font-color);
     color: #000;
   }
 

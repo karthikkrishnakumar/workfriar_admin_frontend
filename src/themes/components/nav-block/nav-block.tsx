@@ -30,17 +30,12 @@ const NavBlock: React.FC<NavBlockProps> = ({
   const [isArrowHovered, setIsArrowHovered] = useState(false);
   const navBlockRef = useRef<HTMLDivElement>(null);
 
-  // Only show active state when actually active or dropdown item is selected
   const isActive = activeStatus || isDropdownSelected;
-  
-  // Show active icon on hover or when actually active
   const showActiveIcon = isHovered || isActive || isArrowHovered;
 
   const resetAllHoverStates = () => {
-    if (!isDropdownOpen) {
-      setIsHovered(false);
-      setIsArrowHovered(false);
-    }
+    setIsHovered(false);
+    setIsArrowHovered(false);
   };
 
   const menu = (
@@ -64,20 +59,49 @@ const NavBlock: React.FC<NavBlockProps> = ({
   );
 
   React.useEffect(() => {
-    const handleMouseLeave = (e: MouseEvent) => {
+    const handleMouseLeave = (event: Event) => {
+      const e = event as MouseEvent;
       const navBlock = navBlockRef.current;
-      const relatedTarget = e.relatedTarget as Node;
+      if (!navBlock) return;
 
-      if (navBlock && !navBlock.contains(relatedTarget) && !isDropdownOpen) {
+      const relatedTarget = e.relatedTarget as Node | null;
+      
+      // Check if the mouse is leaving to a child element
+      const isLeavingToChild = relatedTarget && navBlock.contains(relatedTarget);
+      
+      // Check if the mouse is leaving to the dropdown menu
+      const dropdownMenu = document.querySelector('.ant-dropdown');
+      const isLeavingToDropdown = dropdownMenu?.contains(relatedTarget as Node);
+
+      // Only reset states if we're not leaving to a child element or dropdown
+      if (!isLeavingToChild && !isLeavingToDropdown && !isDropdownOpen) {
+        resetAllHoverStates();
+      }
+    };
+
+    // Handle arrow region mouse leave separately
+    const handleArrowMouseLeave = (event: Event) => {
+      const e = event as MouseEvent;
+      const navBlock = navBlockRef.current;
+      if (!navBlock) return;
+
+      const relatedTarget = e.relatedTarget as Node | null;
+      
+      // If leaving arrow region to outside navblock, reset states
+      if (!navBlock.contains(relatedTarget)) {
         resetAllHoverStates();
       }
     };
 
     const navBlock = navBlockRef.current;
-    navBlock?.addEventListener('mouseleave', handleMouseLeave);
+    const arrowSpan = navBlock?.querySelector(`.${styles.dropdownSpan}`);
+
+    navBlock?.addEventListener('mouseleave', handleMouseLeave as EventListener);
+    arrowSpan?.addEventListener('mouseleave', handleArrowMouseLeave as EventListener);
 
     return () => {
-      navBlock?.removeEventListener('mouseleave', handleMouseLeave);
+      navBlock?.removeEventListener('mouseleave', handleMouseLeave as EventListener);
+      arrowSpan?.removeEventListener('mouseleave', handleArrowMouseLeave as EventListener);
     };
   }, [isDropdownOpen]);
 
@@ -92,6 +116,11 @@ const NavBlock: React.FC<NavBlockProps> = ({
       tabIndex={0}
       aria-pressed={isActive}
       onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        if (!isDropdownOpen) {
+          setIsHovered(false);
+        }
+      }}
       onClick={onClickFunction}
       onKeyDown={(e) => {
         if (e.key === "Enter") onClickFunction?.();
@@ -108,6 +137,15 @@ const NavBlock: React.FC<NavBlockProps> = ({
           onMouseEnter={() => {
             setIsArrowHovered(true);
             setIsHovered(true);
+          }}
+          onMouseLeave={(e: React.MouseEvent) => {
+            const navBlock = navBlockRef.current;
+            const relatedTarget = e.relatedTarget as Node | null;
+            
+            // Only reset if leaving to outside the navblock
+            if (navBlock && !navBlock.contains(relatedTarget)) {
+              resetAllHoverStates();
+            }
           }}
         >
           <Dropdown
