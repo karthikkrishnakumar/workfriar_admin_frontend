@@ -17,7 +17,8 @@ interface DropdownProps {
   icon?: React.ReactNode;
   wrapperClassName?: string;
   dropdownClassName?: string;
-  minWidth?: string; // New prop for inline min-width
+  minWidth?: string;
+  onOpenChange?: (open: boolean) => void; // New prop
 }
 
 const DropdownMenu: React.FC<DropdownProps> = ({
@@ -26,34 +27,35 @@ const DropdownMenu: React.FC<DropdownProps> = ({
   icon,
   wrapperClassName = "",
   dropdownClassName = "",
-  minWidth = "150px", // Default minWidth value
+  minWidth = "150px",
+  onOpenChange,
 }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpenChange = (visible: boolean) => {
     setOpen(visible);
+    if (onOpenChange) onOpenChange(visible); // Notify parent component
   };
 
   const handleScroll = useCallback(() => {
     if (open) {
       setOpen(false);
+      if (onOpenChange) onOpenChange(false); // Notify parent component
     }
   }, [open]);
 
   useEffect(() => {
     if (open) {
       window.addEventListener("scroll", handleScroll, { passive: true });
-
       return () => {
         window.removeEventListener("scroll", handleScroll);
       };
     }
   }, [open, handleScroll]);
 
-  // Define menu with custom className for hover effect
   const menu: MenuProps = {
     items: menuItems,
-    className: styles.customMenu, 
+    className: styles.customMenu,
   };
 
   return (

@@ -44,6 +44,7 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
     if (response.status) {
       message.success("Role added successfully!");
       onRoleAdded(); // Refresh the role list
+      onClose()
       return response; // Return the response for further use
     } else {
       message.error(response.message || "Failed to add role.");

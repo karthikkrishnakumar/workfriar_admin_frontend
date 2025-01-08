@@ -60,7 +60,12 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
         <SearchBar placeholder="Search" value={""} onChange={function (value: string): void {
           throw new Error("Function not implemented.");
         } }/>
-        <ProfilePreview />
+        
+        <ProfilePreview
+          avatarSrc="/dynamic-samples-images/profile.svg"
+          name="John Doe"
+        />
+        
       </div>
     </div>
   );

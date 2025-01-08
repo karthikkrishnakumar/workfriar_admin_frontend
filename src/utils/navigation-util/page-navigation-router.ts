@@ -21,7 +21,7 @@ export class NavBarNavigationClass {
   
     // Function to get the active status of the link based on the current pathname
     public getActiveStatus(path: string, pathname: string): boolean {
-      return pathname === path; // Returns true if the current pathname matches the path
+      return pathname.startsWith(path);
     }
   
     /**

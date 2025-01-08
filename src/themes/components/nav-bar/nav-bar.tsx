@@ -22,8 +22,8 @@ const NavBar = () => {
   };
 
   const handleDropdownClick = (path: string) => {
-    setDropdownSelected(true); // Set dropdown selection when clicking dropdown items
-    window.location.href = path;
+    setDropdownSelected(true);
+    navBarNavigation.navigateTo(path, router.push);
   };
 
   return (
