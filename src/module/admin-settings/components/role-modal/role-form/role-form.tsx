@@ -29,6 +29,9 @@ const RoleForm: React.FC<RoleFormProps> = ({
   const [hasMounted, setHasMounted] = useState(false); // Track whether the component has mounted
 
   useEffect(() => {
+
+    console.log(roleData)
+    
     if (!hasMounted) {
       setInitialRoleData(roleData); // Set initial data only once
       setHasMounted(true); // Set mounted flag to true
