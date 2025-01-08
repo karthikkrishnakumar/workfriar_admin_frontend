@@ -1,5 +1,9 @@
 //dropdown menu trigger 
 
+.profileDropdownWrapper {
+  padding: 0 !important;
+}
+
 .profilePreviewWrapper {
   height: 100%;
   display: flex;
@@ -46,7 +50,7 @@
 .profileDropdownMenu {
 
   :global(.ant-dropdown-menu) {
-    max-width: 192px;
+    max-width: 200px;
     background-color: #242424;
     padding: 16px 0px;
 

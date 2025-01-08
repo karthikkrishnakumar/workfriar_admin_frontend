@@ -8,7 +8,6 @@ import LogoutModal from "@/module/dashboard/components/logout-modal/logout-modal
 import DropdownMenu from "../dropdown-menu/dropdown-menu";
 import CustomAvatar from "../avatar/avatar";
 
-
 interface ProfilePreviewProps {
   avatarSrc?: string;
   name?: string;
@@ -32,7 +31,7 @@ const ProfilePreview: React.FC<ProfilePreviewProps> = ({
       if (onMenuClick) onMenuClick(menuItem);
       profileNavigation.navigateTo(menuItem, router.push);
     }
-    setIsDropdownOpen(false); // Close dropdown after click
+    setIsDropdownOpen(false);
   };
 
   const menuItems = profileNavigation.navigationLinks.map(link => ({
@@ -45,18 +44,13 @@ const ProfilePreview: React.FC<ProfilePreviewProps> = ({
         <span>{link.label}</span>
       </div>
     ),
-    onClick: () => handleMenuClick(link.label)
+    onClick: () => handleMenuClick(link.label),
   }));
 
-  // Create icon component with current state
   const IconComponent = () => (
     <div className={styles.profileTrigger}>
       <div className={styles.avatarWrapper}>
-        <CustomAvatar
-          src={avatarSrc}
-          name={name}
-          size={44}
-        />
+        <CustomAvatar src={avatarSrc} name={name} size={44} />
       </div>
       <span className={styles.menuDropDown}>
         {isDropdownOpen ? Icons.arrowUpFilled : Icons.arrowDownFilled}
@@ -72,13 +66,12 @@ const ProfilePreview: React.FC<ProfilePreviewProps> = ({
         icon={<IconComponent />}
         wrapperClassName={styles.profileDropdownWrapper}
         dropdownClassName={styles.profileDropdownMenu}
-        minWidth="200px"
+        minWidth="192px"
+        onOpenChange={setIsDropdownOpen} // Update isDropdownOpen state
       />
 
       {isLogoutModalVisible && (
-        <LogoutModal
-          onClose={() => setLogoutModalVisible(false)}
-        />
+        <LogoutModal onClose={() => setLogoutModalVisible(false)} />
       )}
     </div>
   );
