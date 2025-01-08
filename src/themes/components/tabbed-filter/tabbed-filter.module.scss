@@ -36,17 +36,19 @@
       ); // Light golden background on hover
     }
   }
-  .tabs {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
 
   .activeTab {
     color: var(--primary-golden-color-dark);
     background-color: var(--filter-tab-bg-color);
   }
+
+  .disabled {
+    color: var(--disabled-color); // Set color for disabled state
+    background-color: var(--disabled-bg-color); // Set background color for disabled state
+    opacity: 0.2;
+     // Prevent click events on disabled buttons
+  }
+
 
   .tabContent {
     display: flex;

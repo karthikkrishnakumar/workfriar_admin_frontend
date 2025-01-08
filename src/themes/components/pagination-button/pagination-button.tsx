@@ -19,6 +19,10 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
   showSizeChanger = false,
   className,
 }) => {
+  console.log( total,
+    pageSize,
+    current,"in pagination")
+
   // Calculate the total number of pages
   const totalPages = Math.ceil(total / pageSize);
 

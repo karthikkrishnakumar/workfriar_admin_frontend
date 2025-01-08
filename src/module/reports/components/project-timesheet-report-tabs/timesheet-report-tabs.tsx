@@ -10,8 +10,9 @@ import TimeSheetReportFilter from "../timesheet-report-filter/timesheet-report-f
 
 const TimeSheetReportTabs = () => {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("project-summary");
+  const [activeTab, setActiveTab] = useState("project_summary");
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [filterData, setFilterData] = useState<any>({});
 
   setTimeout(() => {
     setLoading(false);
@@ -23,43 +24,58 @@ const TimeSheetReportTabs = () => {
 
   const tabs = [
     {
-      key: "project-summary",
+      key: "project_summary",
       label: <>Project Summary</>,
       content: (
         <div>
-          <TimesheetReport key={activeTab} activeTab={activeTab} />{" "}
+          <TimesheetReport
+            key={activeTab}
+            activeTab={activeTab}
+            filters={filterData}
+          />{" "}
         </div>
       ),
     },
     {
-      key: "project-details",
+      key: "project_detail",
       label: <>Project Details</>,
       content: (
         <div>
-          <TimesheetReport key={activeTab} activeTab={activeTab} />{" "}
+          <TimesheetReport
+            key={activeTab}
+            activeTab={activeTab}
+            filters={filterData}
+          />{" "}
         </div>
       ),
     },
     {
-      key: "employee-summary",
+      key: "employee_summary",
       label: <>Employee Summary</>,
       content: (
         <div>
-          <TimesheetReport key={activeTab} activeTab={activeTab} />{" "}
+          <TimesheetReport
+            key={activeTab}
+            activeTab={activeTab}
+            filters={filterData}
+          />{" "}
         </div>
       ),
     },
     {
-      key: "employee-details",
+      key: "employee_detail",
       label: <>Employee Details</>,
       content: (
         <div>
-          <TimesheetReport key={activeTab} activeTab={activeTab} />{" "}
+          <TimesheetReport
+            key={activeTab}
+            activeTab={activeTab}
+            filters={filterData}
+          />{" "}
         </div>
       ),
     },
   ];
-
 
   const handleClickFilter = () => {
     setIsModalVisible(true); // Open the modal when the filter button is clicked
@@ -68,22 +84,19 @@ const TimeSheetReportTabs = () => {
   const handleCloseModal = () => {
     setIsModalVisible(false); // Close the modal when required
   };
-  const handleYearChange = (year: number) => {
-  
-  };
 
-  const handleMonthChange = (month: number) => {
-   
+  const handleFilterApply = (filters: any) => {
+    setFilterData(filters); // Update filter data
+    setIsModalVisible(false); // Close the modal
   };
 
   return (
     <div className={styles.timesheetTabsWrapper}>
       {loading ? (
-          <SkeletonLoader
-            paragraph={{ rows: 2 }}
-            classNameItem={styles.customSkeletonItem}
-          />
-
+        <SkeletonLoader
+          paragraph={{ rows: 2 }}
+          classNameItem={styles.customSkeletonItem}
+        />
       ) : (
         <TabComponent
           headings={tabs}
@@ -100,11 +113,11 @@ const TimeSheetReportTabs = () => {
         />
       )}
 
-    {isModalVisible && (
+      {isModalVisible && (
         <TimeSheetReportFilter
           onClose={handleCloseModal}
-          onYearChange={handleYearChange}
-          onMonthChange={handleMonthChange}
+          onFilterApply={handleFilterApply}
+          appliedFilters={filterData}
         />
       )}
     </div>

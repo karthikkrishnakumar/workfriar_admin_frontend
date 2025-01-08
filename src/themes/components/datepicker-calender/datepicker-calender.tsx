@@ -1,31 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "./datepicker-calender.module.scss";
 import { enUS } from "date-fns/locale";
-import { Locale } from "date-fns"; // Import the Locale type
+import { Locale } from "date-fns";
 import Icons from "@/themes/images/icons/icons";
 
-// Clone and customize the enUS locale
 const customLocale: Locale = {
   ...enUS,
   localize: {
     ...enUS.localize,
-    day: (n: number) => ["S", "M", "T", "W", "T", "F", "S"][n], // Custom day names
-  } as Locale["localize"], // Explicitly type the localize object
+    day: (n: number) => ["S", "M", "T", "W", "T", "F", "S"][n],
+  } as Locale["localize"],
 };
 
 registerLocale("custom", customLocale);
 
-const SingleCalendarRangePicker = () => {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+type SingleCalendarRangePickerProps = {
+  startDate?: Date | null;
+  endDate?: Date | null;
+  onDateChange?: (dates: [Date | null, Date | null]) => void;
+};
+
+const SingleCalendarRangePicker: React.FC<SingleCalendarRangePickerProps> = ({
+  startDate: initialStartDate = null,
+  endDate: initialEndDate = null,
+  onDateChange,
+}) => {
+  const [startDate, setStartDate] = useState<Date | null>(initialStartDate);
+  const [endDate, setEndDate] = useState<Date | null>(initialEndDate);
+
+  useEffect(() => {
+    setStartDate(initialStartDate);
+    setEndDate(initialEndDate);
+  }, [initialStartDate, initialEndDate]);
 
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
+
+    if (onDateChange) {
+      onDateChange(dates); // Notify the parent component
+    }
   };
 
   const dayStyles = (date: Date) => {
@@ -36,13 +54,9 @@ const SingleCalendarRangePicker = () => {
       endDate &&
       moment(date).isBetween(startDate, endDate, "day", "[]");
 
-    if (isStartDate || isEndDate) {
-      return "start-end-day"; // Custom class for start/end dates
-    }
-    if (isInRange) {
-      return "in-range-day"; // Custom class for in-range dates
-    }
-    return ""; // Default styling
+    if (isStartDate || isEndDate) return "start-end-day";
+    if (isInRange) return "in-range-day";
+    return "";
   };
 
   const renderCustomHeader = ({
@@ -61,7 +75,6 @@ const SingleCalendarRangePicker = () => {
     nextMonthButtonDisabled: boolean;
   }) => (
     <div className={styles.customHeader}>
-      {/* Left Arrow for Month Navigation */}
       <button
         onClick={decreaseMonth}
         disabled={prevMonthButtonDisabled}
@@ -70,16 +83,9 @@ const SingleCalendarRangePicker = () => {
         {Icons.arrowRightDark}
       </button>
       <div className={styles.monthWithYear}>
-        {/* Current Month */}
-        <span className={styles.currentMonth}>
-          {moment(date).format("MMMM")}
-        </span>
-
-        {/* Current Year with Up and Down Arrows */}
+        <span className={styles.currentMonth}>{moment(date).format("MMMM")}</span>
         <div className={styles.yearControl}>
-          <span className={styles.currentYear}>
-            {moment(date).format("YYYY")}
-          </span>
+          <span className={styles.currentYear}>{moment(date).format("YYYY")}</span>
           <div className={styles.yearButtons}>
             <button
               onClick={() => changeYear(moment(date).year() + 1)}
@@ -96,7 +102,6 @@ const SingleCalendarRangePicker = () => {
           </div>
         </div>
       </div>
-      {/* Right Arrow for Month Navigation */}
       <button
         onClick={increaseMonth}
         disabled={nextMonthButtonDisabled}
@@ -117,8 +122,8 @@ const SingleCalendarRangePicker = () => {
         selectsRange
         inline
         locale="custom"
-        dayClassName={(date) => dayStyles(date)} // Apply custom styles
-        renderCustomHeader={renderCustomHeader} // Use custom header
+        dayClassName={(date) => dayStyles(date)}
+        renderCustomHeader={renderCustomHeader}
       />
       <style>
         {`
