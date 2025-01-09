@@ -9,6 +9,23 @@
     .ant-table {
       border-collapse: separate;
 
+      &.skeletonMode {
+        .ant-table-tbody > tr {
+          height: 80px; // Set a specific height for skeleton rows
+        }
+
+        .ant-table-tbody > tr > td {
+          background-color: var(--skeleton-background-color);
+          padding: 16px;
+
+          .ant-skeleton-title {
+            margin: 0 !important;
+            height: 96px; // Adjust skeleton cell height
+            width: 100%; // Ensure skeleton fills the cell
+          }
+        }
+      }
+
       .ant-table-container {
         border-radius: 12px;
         display: flex;
@@ -106,6 +123,7 @@
 .skeletonCell {
   :global(.ant-skeleton-title) {
     margin: 0 !important;
-    height: 20px;
+    height: 24px;
+    padding: 24px;
   }
 }

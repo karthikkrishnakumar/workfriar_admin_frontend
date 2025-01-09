@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useRef } from "react";
+import React, { ReactNode, useState, useRef, useEffect } from "react";
 import classNames from "classnames";
 import { Dropdown, Menu } from "antd";
 import styles from "./nav-block.module.scss";
@@ -31,30 +31,51 @@ const NavBlock: React.FC<NavBlockProps> = ({
   const navBlockRef = useRef<HTMLDivElement>(null);
 
   const isActive = activeStatus || isDropdownSelected;
-  const showActiveIcon = isHovered || isActive || isArrowHovered;
+  const showActiveIcon = isHovered || isActive || isArrowHovered || isDropdownOpen;
 
-  const resetAllHoverStates = () => {
-    setIsHovered(false);
-    setIsArrowHovered(false);
-  };
+  // Log state changes
+  useEffect(() => {
+    console.log("States Updated:", {
+      location: "State Change Effect",
+      isHovered,
+      isArrowHovered,
+      isDropdownOpen,
+      showActiveIcon
+    });
+  }, [isHovered, isArrowHovered, isDropdownOpen, showActiveIcon]);
 
   const menu = (
     <Menu
       className={styles.blackThemeMenu}
       onMouseEnter={() => {
+        console.log("Menu Enter:", {
+          location: "Menu",
+          action: "enter",
+          isHovered,
+          isArrowHovered,
+          isDropdownOpen
+        });
         setIsDropdownOpen(true);
         setIsHovered(true);
       }}
       onMouseLeave={() => {
+        console.log("Menu Leave:", {
+          location: "Menu",
+          action: "leave",
+          isHovered,
+          isArrowHovered,
+          isDropdownOpen
+        });
         setIsDropdownOpen(false);
-        resetAllHoverStates();
+        setIsHovered(false);
+        setIsArrowHovered(false);
       }}
     >
       {dropdownItems?.map((item, index) => (
         <Menu.Item key={index}>
           <div
             onClick={(event) => {
-              event.stopPropagation(); // Prevent triggering the parent's onClick
+              event.stopPropagation();
               item.onClick();
             }}
           >
@@ -64,55 +85,6 @@ const NavBlock: React.FC<NavBlockProps> = ({
       ))}
     </Menu>
   );
-  
-  
-
-  React.useEffect(() => {
-    const handleMouseLeave = (event: Event) => {
-      const e = event as MouseEvent;
-      const navBlock = navBlockRef.current;
-      if (!navBlock) return;
-
-      const relatedTarget = e.relatedTarget as Node | null;
-      
-      // Check if the mouse is leaving to a child element
-      const isLeavingToChild = relatedTarget && navBlock.contains(relatedTarget);
-      
-      // Check if the mouse is leaving to the dropdown menu
-      const dropdownMenu = document.querySelector('.ant-dropdown');
-      const isLeavingToDropdown = dropdownMenu?.contains(relatedTarget as Node);
-
-      // Only reset states if we're not leaving to a child element or dropdown
-      if (!isLeavingToChild && !isLeavingToDropdown && !isDropdownOpen) {
-        resetAllHoverStates();
-      }
-    };
-
-    // Handle arrow region mouse leave separately
-    const handleArrowMouseLeave = (event: Event) => {
-      const e = event as MouseEvent;
-      const navBlock = navBlockRef.current;
-      if (!navBlock) return;
-
-      const relatedTarget = e.relatedTarget as Node | null;
-      
-      // If leaving arrow region to outside navblock, reset states
-      if (!navBlock.contains(relatedTarget)) {
-        resetAllHoverStates();
-      }
-    };
-
-    const navBlock = navBlockRef.current;
-    const arrowSpan = navBlock?.querySelector(`.${styles.dropdownSpan}`);
-
-    navBlock?.addEventListener('mouseleave', handleMouseLeave as EventListener);
-    arrowSpan?.addEventListener('mouseleave', handleArrowMouseLeave as EventListener);
-
-    return () => {
-      navBlock?.removeEventListener('mouseleave', handleMouseLeave as EventListener);
-      arrowSpan?.removeEventListener('mouseleave', handleArrowMouseLeave as EventListener);
-    };
-  }, [isDropdownOpen]);
 
   return (
     <div
@@ -124,15 +96,41 @@ const NavBlock: React.FC<NavBlockProps> = ({
       role="button"
       tabIndex={0}
       aria-pressed={isActive}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        if (!isDropdownOpen) {
+      onMouseEnter={() => {
+        console.log("NavBlock Enter:", {
+          location: "NavBlock",
+          action: "enter",
+          isHovered,
+          isArrowHovered,
+          isDropdownOpen
+        });
+        setIsHovered(true);
+      }}
+      onMouseLeave={(e) => {
+        // Check if moving to arrow wrapper or dropdown
+        const relatedTarget = e.relatedTarget as Node | null;
+        const dropdownMenu = document.querySelector('.ant-dropdown');
+        const isLeavingToDropdown = dropdownMenu?.contains(relatedTarget as Node);
+        
+        console.log("NavBlock Leave:", {
+          location: "NavBlock",
+          action: "leave",
+          isHovered,
+          isArrowHovered,
+          isDropdownOpen,
+          isLeavingToDropdown,
+          relatedTarget: relatedTarget?.nodeName
+        });
+
+        if (!isLeavingToDropdown && !isArrowHovered) {
           setIsHovered(false);
         }
       }}
       onClick={onClickFunction}
       onKeyDown={(e) => {
-        if (e.key === "Enter") onClickFunction?.();
+        if (e.key === "Enter") {
+          onClickFunction?.();
+        }
       }}
     >
       <div className={styles.titleAndIcon}>
@@ -141,22 +139,7 @@ const NavBlock: React.FC<NavBlockProps> = ({
         <h2>{title}</h2>
       </div>
       {collapsible && (
-        <span
-          className={styles.dropdownSpan}
-          onMouseEnter={() => {
-            setIsArrowHovered(true);
-            setIsHovered(true);
-          }}
-          onMouseLeave={(e: React.MouseEvent) => {
-            const navBlock = navBlockRef.current;
-            const relatedTarget = e.relatedTarget as Node | null;
-            
-            // Only reset if leaving to outside the navblock
-            if (navBlock && !navBlock.contains(relatedTarget)) {
-              resetAllHoverStates();
-            }
-          }}
-        >
+        <span>
           <Dropdown
             overlay={menu}
             trigger={["click", "hover"]}
@@ -166,14 +149,60 @@ const NavBlock: React.FC<NavBlockProps> = ({
               position: "fixed",
             }}
             onOpenChange={(open) => {
+              console.log("Dropdown State Change:", {
+                location: "Dropdown",
+                action: "openChange",
+                open,
+                isHovered,
+                isArrowHovered,
+                isDropdownOpen
+              });
               setIsDropdownOpen(open);
-              if (!open) {
-                resetAllHoverStates();
+              if (!open && !isHovered && !isArrowHovered) {
+                setIsHovered(false);
               }
             }}
             placement="bottomLeft"
           >
-            <span>
+            <span
+              className={styles.arrowWrapper}
+              onMouseEnter={() => {
+                console.log("Arrow Enter:", {
+                  location: "ArrowWrapper",
+                  action: "enter",
+                  isHovered,
+                  isArrowHovered,
+                  isDropdownOpen
+                });
+                setIsArrowHovered(true);
+                setIsHovered(true);
+                setIsDropdownOpen(true);
+              }}
+              onMouseLeave={(e) => {
+                const relatedTarget = e.relatedTarget as Node | null;
+                const navBlock = navBlockRef.current;
+                const isLeavingToNavBlock = navBlock?.contains(relatedTarget);
+                const dropdownMenu = document.querySelector('.ant-dropdown');
+                const isLeavingToDropdown = dropdownMenu?.contains(relatedTarget as Node);
+
+                console.log("Arrow Leave:", {
+                  location: "ArrowWrapper",
+                  action: "leave",
+                  isHovered,
+                  isArrowHovered,
+                  isDropdownOpen,
+                  isLeavingToNavBlock,
+                  isLeavingToDropdown,
+                  relatedTarget: relatedTarget?.nodeName
+                });
+
+                setIsArrowHovered(false);
+                if (!isLeavingToNavBlock && !isLeavingToDropdown) {
+                  setIsHovered(false);
+                  setIsDropdownOpen(false);
+                }
+              }}
+            >
               {showActiveIcon ? Icons.arrowRightDark : Icons.arrowRightLight}
             </span>
           </Dropdown>
