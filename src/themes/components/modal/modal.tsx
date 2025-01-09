@@ -4,7 +4,7 @@ import styles from "./modal.module.scss";
 
 interface ModalProps {
   isVisible: boolean;
-  title: string;
+  title: string | React.ReactNode;
   topButtonContent?:ReactNode;
   content?: ReactNode;
   bottomContent?: ReactNode;
