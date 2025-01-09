@@ -30,6 +30,7 @@ const EditRoleModal: React.FC<EditRoleModalProps> = ({
     if (response.status) {
       message.success("Role updated successfully!");
       onRoleUpdated();// Refresh the role list
+      onClose();
       return response;  
     } else {
       message.error(response.message || "Failed to update role.");

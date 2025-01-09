@@ -48,8 +48,9 @@ const useNotificationService = () => {
     try {
       const { body } = await http().post(`${apiUrl}/all-notifications`);
 
+
       const NotificationResponse: NotificationResponse = {
-        success: body.success,
+        success: body.status,
         message: body.message,
         data: body.data?.map((group: any) => ({
           date: group.date, 
@@ -59,7 +60,6 @@ const useNotificationService = () => {
           })),
         })),
       };
-
 
       return NotificationResponse;
     } catch (error) {

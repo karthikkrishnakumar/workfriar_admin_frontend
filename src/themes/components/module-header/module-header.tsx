@@ -1,10 +1,11 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import styles from "./module-header.module.scss";
 import Icons from "@/themes/images/icons/icons";
 import SearchBar from "../search-bar/search-bar";
 import ProfilePreview from "../profile-preview/profile-preview";
 import ButtonComponent from "../button/button";
 import { useRouter } from "next/navigation";
+import useProfileService from "@/module/profile/services/profile-service";
 
 interface ModuleHeaderProps {
   title: string; // Title of the module header
@@ -16,6 +17,11 @@ interface ActionButtonProps {
   label: string; // Button label
   icon: typeof Icons[keyof typeof Icons];
   onClick: () => void; // Click handler
+}
+
+export interface AvatarData {
+  profile_pic_path: string;
+  name: string;
 }
 
 /**
@@ -30,6 +36,31 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   actionButton,
   isBackButtonNeeded,
 }) => {
+
+  const { getAdminDetails } = useProfileService();
+  const [avatarData, setAvatarData] = useState<AvatarData | null>(null);
+    
+  const fetchAvatarData = useCallback(async () => {
+    try {
+      const response = await getAdminDetails();
+      if (response.status) {
+        setAvatarData({
+          name: response.data.name,
+          profile_pic_path: response.data.profile_pic_path
+        });
+      }
+    } catch (error) {
+      setAvatarData({
+        name: '',
+        profile_pic_path: "/dynamic-samples-images/profile.svg"
+      });
+    }
+  }, [getAdminDetails]);
+
+  useEffect(() => {
+    fetchAvatarData();
+  }, []);
+
 
   const router = useRouter(); 
   return (
@@ -61,10 +92,12 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
           throw new Error("Function not implemented.");
         } }/>
         
-        <ProfilePreview
-          avatarSrc="/dynamic-samples-images/profile.svg"
-          name="John Doe"
-        />
+        {avatarData && (
+          <ProfilePreview
+            avatarSrc={avatarData.profile_pic_path}
+            name={avatarData.name}
+          />
+        )}
         
       </div>
     </div>

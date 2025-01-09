@@ -16,6 +16,7 @@ const NotificationView: React.FC = () => {
     const loadNotifications = async () => {
       setLoading(true);
       const response = await fetchNotifications();
+
       if (response.success && response.data) {
         setNotifications(response.data);
       } else if (!response.success) {

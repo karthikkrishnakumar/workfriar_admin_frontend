@@ -51,12 +51,21 @@ const NavBlock: React.FC<NavBlockProps> = ({
       }}
     >
       {dropdownItems?.map((item, index) => (
-        <Menu.Item key={index} onClick={item.onClick}>
-          {item.label}
+        <Menu.Item key={index}>
+          <div
+            onClick={(event) => {
+              event.stopPropagation(); // Prevent triggering the parent's onClick
+              item.onClick();
+            }}
+          >
+            {item.label}
+          </div>
         </Menu.Item>
       ))}
     </Menu>
   );
+  
+  
 
   React.useEffect(() => {
     const handleMouseLeave = (event: Event) => {
