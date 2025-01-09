@@ -6,7 +6,7 @@ import GridContainer from "@/themes/components/grid-container/grid-container";
 import useProjectForecastService, {
   ProjectForecastData,
 } from "@/module/project-forecast/project-forecast/services/project-forecast/project-forecast";
-import EditForecastModal from "@/module/project-forecast/project-forecast/components/edit-forecast-modal/edit-forecast-modal";
+import ForecastModal from "@/module/project-forecast/project-forecast/components/add-edit-forecast-modal/add-edit-forecast-modal";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import dayjs from "dayjs";
 
@@ -200,11 +200,12 @@ const ForecastDetails = ({
           }
         />
       </div>
-      <EditForecastModal
-        isEditModalOpen={isModalOpen}
+      <ForecastModal
+        isModalOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleEditProjectForecastSubmit}
-        initialValues={selectedForecast}
+        id={id}
+        type="edit"
       />
     </div>
   );

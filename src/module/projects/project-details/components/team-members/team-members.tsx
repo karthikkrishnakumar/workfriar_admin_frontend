@@ -45,9 +45,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
         console.log(response.data.teamsMembers);
         setFilteredTeamMembers(mapMemberData(response.data.teamsMembers));
         setSelectedId(response.data.id);
-      } else {
-        message.error(response.message);
-      }
+      } 
     } catch (error) {
       message.error("Failed to fetch project details.");
     }

@@ -41,6 +41,8 @@ interface ModalFormProps {
   initialValues?: Record<string, any>;
   formErrors?: Record<string, any>; 
   children?: React.ReactNode;
+  // optionalRows?: FormRow[];
+  // allowDynamicRows?: boolean;
 }
 
 const ModalFormComponent: React.FC<ModalFormProps> = ({
@@ -55,6 +57,8 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   initialValues = {},
   formErrors,
   children,
+  // optionalRows = [],
+  // allowDynamicRows
 }) => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string | null>(
@@ -62,6 +66,30 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const projectName = initialValues.projectName || "Project";
+  // const [dynamicRows, setDynamicRows] = useState<FormRow[]>(optionalRows);
+
+  //   /**
+  //  * Adds a new row of form fields to the dynamic rows.
+  //  */
+  //   const addNewRow = () => {
+  //     setDynamicRows((prevRows) => [
+  //       ...prevRows,
+  //       {
+  //         fields: [
+  //           { name: `newField${prevRows.length + 1}_1`, label: "New Field 1", type: "text", required: true },
+  //           { name: `newField${prevRows.length + 1}_2`, label: "New Field 2", type: "text" },
+  //         ],
+  //       },
+  //     ]);
+  //   };
+  
+  //   /**
+  //    * Removes the last added row of dynamic fields.
+  //    */
+  //   const removeLastRow = () => {
+  //     setDynamicRows((prevRows) => prevRows.slice(0, -1));
+  //   };
+
 
   /**
    * Handles form submission by validating fields and triggering the onPrimaryClick callback.
@@ -73,8 +101,6 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
         // Replace the filename with the actual File object
         values.project_logo = imageFile;
       }
-      
-      console.log('Submitting with file:', imageFile); // Debug log
       console.log('Final form values:', values); 
       onPrimaryClick?.(values);
     } catch (error) {
@@ -113,13 +139,10 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
               options={field.options}
               value={form.getFieldValue(field.name) || []}
               onChange={(selectedValues) => {
-                console.log('Selected values in onChange:', selectedValues);
                 form.setFieldValue(field.name, selectedValues);
               }}
               dropdownRender={(menu) => {
                 const currentValue = form.getFieldValue(field.name) || [];
-                console.log('Current form value for', field.name, ':', currentValue);
-                console.log('Available options:', field.options);
         
                 return (
                   <div>
@@ -130,11 +153,6 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
                         (item === option.value)       // For direct value format
                       );
                       
-                      console.log(`Checking option ${option.label}:`, {
-                        optionValue: option.value,
-                        currentValue,
-                        isSelected
-                      });
         
                       return (
                         <div
@@ -192,6 +210,8 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
                   </div>
                 );
               }}
+              tagRender={() => <></>}
+              
             />
           );
         
@@ -266,6 +286,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
         layout="vertical"
         initialValues={initialValues}
         requiredMark={false}
+        className={styles.formContent}
       >
         {formRows.map((row, rowIndex) => (
           <div
@@ -316,6 +337,19 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
             )}
           </div>
         ))}
+{/* {allowDynamicRows && (
+  <div className={styles.dynamicRowControls}>
+    <a href="#" onClick={addNewRow} className={styles.addRowLink}>
+      + Add another row
+    </a>
+    {dynamicRows.length > 0 && (
+      <a href="#" onClick={removeLastRow} className={styles.removeRowLink}>
+        - Remove last row
+      </a>
+    )}
+  </div>
+)} */}
+
       </Form>
 
       <div className={styles.buttonsContainer}>

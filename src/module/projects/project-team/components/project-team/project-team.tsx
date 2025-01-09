@@ -227,31 +227,29 @@ const ProjectTeam: React.FC = () => {
       actual_dates: (
         <span className={styles.dates}>
           <>
-            {/* {dayjs.isDayjs(team.start_date)
-              ? team.start_date.format("DD/MM/YYYY")
-              : team.start_date}{" "}
-            -{" "}
-            {dayjs.isDayjs(team.end_date)
-              ? team.end_date.format("DD/MM/YYYY")
-              : team.end_date} */}
               {team.date}
           </>
         </span>
       ),
       status: (
-        <StatusDropdown
-        status={team.status}
-        menuItems={[
-          { label: "Not started", key: "Not Started" },
-          { label: "In progress", key: "In Progress" },
-          { label: "On hold", key: "On Hold" },
-          { label: "Cancelled", key: "Cancelled" },
-          { label: "Completed", key: "Completed" },
-        ]}
-          onMenuClick={(e: any) => handleStatusClick(e, team.project_id)}
-          arrowIcon={Icons.arrowDownFilledGold}
-          className={styles.status}
-        />
+        <span className={styles.status}>
+          <>
+              {team.status}
+          </>
+        </span>
+        // <StatusDropdown
+        // status={team.status}
+        // menuItems={[
+        //   { label: "Not started", key: "Not Started" },
+        //   { label: "In progress", key: "In Progress" },
+        //   { label: "On hold", key: "On Hold" },
+        //   { label: "Cancelled", key: "Cancelled" },
+        //   { label: "Completed", key: "Completed" },
+        // ]}
+        //   onMenuClick={(e: any) => handleStatusClick(e, team.project_id)}
+        //   // arrowIcon={Icons.arrowDownFilledGold}
+        //   className={styles.status}
+        // />
       ),
       action: (
         <span className={styles.actionCell}>
@@ -284,7 +282,7 @@ const ProjectTeam: React.FC = () => {
       isModalOpen={isEditModalOpen}
       onClose={() => setIsEditModalOpen(false)}
       onSave={handleEditProjectTeamSubmit}
-      initialValues={selectedProjectTeam}
+      initialValues={selectedProjectTeam  || undefined}
       type="edit"
     />
       )}

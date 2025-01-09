@@ -1,48 +1,106 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalFormComponent, {
   FormRow,
 } from "@/themes/components/modal-form/modal-form";
 import TabComponent from "@/themes/components/tabs/tabs";
-import { ProjectForecastData } from "../../services/project-forecast/project-forecast";
+import useProjectForecastService, { ProjectForecastData } from "../../services/project-forecast/project-forecast";
+import { ModalProps } from "@/module/projects/project-list/components/add-edit-project-modal/add-edit-project-modal";
+import message from "antd/es/message";
+import { Member } from "@/module/projects/project-list/services/project-service";
+import dayjs from "dayjs";
+import useProjectTeamService from "@/module/projects/project-team/services/project-team-service";
 
-interface EditForecastModalProps {
-  isEditModalOpen: boolean;
-  onClose?: () => void;
-  onSave: (values: Record<string, any>) => void;
-  initialValues: ProjectForecastData | null;
-}
 
-const EditForecastModal: React.FC<EditForecastModalProps> = ({
-  isEditModalOpen,
+const ForecastModal: React.FC<ModalProps> = ({
+  isModalOpen,
   onClose,
   onSave,
-  initialValues,
+  id,
+  type,
 }) => {
-  const values = initialValues || {
-    _id: "",
-    opportunity_name: "",
-    opportunity_manager: "",
-    client_name: "",
-    opportunity_start_date: "",
-    opportunity_close_date: "",
-    opportunity_stage: "closed_won",
-    status: "completed",
-    opportunity_description: "",
-    billing_model: "",
-    expected_start_date: "",
-    expected_end_date: "",
-    expected_resource_breakdown: "",
-    estimated_value: "",
-    product_manager: "",
-    project_manager: "",
-    tech_lead: "",
-    account_manager: "",
-    estimated_completion: 1,
-  };
 
+  const [selectedForecast, setSelectedForecast] = useState<ProjectForecastData | null>(
+    null
+  );
 
+  const [opportunityManagers, setOpportunityManagers] = useState<Member[]>([]);
+  const [projectManagers, setProjectManagers] = useState<Member[]>([]);
+  const [productManagers, setProductManagers] = useState<Member[]>([]);
+  const [techLeads, setTechLeads] = useState<Member[]>([]);
+  const [accountManagers, setAccountManagers] = useState<Member[]>([]);
+  const [teamMembers, setTeamMembers] = useState<Member[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(false);
   
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const technical = await useProjectTeamService().fetchTeamMembers("Technical"); 
+        setTechLeads(technical.data);
+        setTeamMembers(technical.data);
+        const management = await useProjectTeamService().fetchTeamMembers("Management"); 
+        setOpportunityManagers(management.data);
+        setProductManagers(management.data);
+        const finance = await useProjectTeamService().fetchTeamMembers("Finance"); 
+        setAccountManagers(finance.data);
+        const operations = await useProjectTeamService().fetchTeamMembers("Operations"); 
+        setProjectManagers(operations.data);
+      } catch (error) {
+        message.error("Failed to fetch details.");
+      }
+    };
+
+    fetchDetails();
+  }, []);
+
+  useEffect(() => {
+    if (type == "edit" && id) {
+      const fetchDetails = async () => {
+        setLoading(true); // Set loading to true before fetching
+        try {
+          const result = await useProjectForecastService().fetchProjectForecastDetailsById(
+            id
+          );
+
+          // Format the fetched data
+          const formattedResult: ProjectForecastData = {
+            ...result.data,
+            opportunity_start_date: result.data.opportunity_start_date
+              ? dayjs(result.data.opportunity_start_date, "DD/MM/YYYY")
+              : null,
+              opportunity_close_date: result.data.opportunity_close_date
+              ? dayjs(result.data.opportunity_close_date, "DD/MM/YYYY")
+              : null,
+              expected_project_start_date: result.data.expected_project_start_date
+              ? dayjs(result.data.expected_project_start_date, "DD/MM/YYYY")
+              : null,
+              expected_project_end_date: result.data.expected_project_end_date
+              ? dayjs(result.data.expected_project_end_date, "DD/MM/YYYY")
+              : null,
+            // opportunity_manager: result.data.opportunity_manager._id,
+            // product_manager: result.data.product_manager._id,
+            // project_manager: result.data.project_manager._id,
+            // tech_lead: result.data.tech_lead._id,
+            // account_manager: result.data.account_manager._id,
+          };
+
+          setSelectedForecast(formattedResult);
+          console.log(result.data, result.data.opportunity_name)
+        } catch (error) {
+          console.log(error)
+          message.error("Failed to fetch project details.");
+        } finally {
+          setLoading(false); // Set loading to false after fetching
+        }
+      };
+
+      fetchDetails();
+    } else {
+      setSelectedForecast(null); // Reset selected project when modal is closed
+    }
+  }, [isModalOpen, id]);
   const formRowsTab1: FormRow[] = [
     {
       fields: [
@@ -58,8 +116,10 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
           required:true,
           placeholder:"Select opportunity manager",
           type: "select",
-          options: [{ label: "Aswina Vinod", value: "Aswina Vinod" }],
-        },
+          options: opportunityManagers.map((member) => ({
+            label: member.name,
+            value: member.id,
+          })),        },
       ],
     },
     {
@@ -108,11 +168,11 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
     {
       fields: [
         {
-          name: "expected_start_date",
+          name: "expected_project_start_date",
           label: "Expected project start date",
           type: "date",
         },        {
-          name: "expected_end_date",
+          name: "expected_project_end_date",
           label: "Expected project end date",
           type: "date",
         }, 
@@ -121,7 +181,7 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
     {
       fields: [
         {
-          name: "estimated_value",
+          name: "estimated_revenue",
           label: "Estimated revenue",
           type: "text",
           placeholder:"Enter estimated revenue"
@@ -164,14 +224,18 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
           label: "Project Manager",
           type: "select",
           placeholder:"Select project manager",
-          options: [{ label: "Aswina Vinod", value: "Aswina Vinod" }],
-        },        {
+          options: projectManagers.map((member) => ({
+            label: member.name,
+            value: member.id,
+          })),        },        {
           name: "product_manager",
           label: "Product Manager",
           placeholder:"Select product manager",
           type: "select",
-          options: [{ label: "Aswina Vinod", value: "Aswina Vinod" }],
-        },
+          options: productManagers.map((member) => ({
+            label: member.name,
+            value: member.id,
+          })),        },
       ],
     },
     {
@@ -181,13 +245,18 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
           label: "Tech lead",
           placeholder:"Select tech lead",
           type: "select",
-          options: [{ label: "Aswina Vinod", value: "Aswina Vinod" }],
-        },        {
+          options: techLeads.map((member) => ({
+            label: member.name,
+            value: member.id,
+          })),        },        {
           name: "account_manager",
           label: "Account Manager",
           placeholder:"Select account manager",
           type: "select",
-          options: [{ label: "Aswina Vinod", value: "Aswina Vinod" }],
+          options: accountManagers.map((member) => ({
+            label: member.name,
+            value: member.id,
+          })),
         },
       ],
     },
@@ -197,7 +266,7 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
     {
       fields: [
         {
-          name: "estimated_completion",
+          name: "estimated_project_completion",
           label: "Estimated Project completion % (Per month)",
           type: "text",
           placeholder: "%",
@@ -242,7 +311,7 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
     } else if (activeTabKey === "tab2") {
       setActiveTabKey("tab3");
     } else if (activeTabKey === "tab3") {
-      onSave(values); // For Tab 2, save client info
+      onSave(selectedForecast || {}); // For Tab 2, save client info
     }
   };
 
@@ -278,16 +347,17 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
       {/* Tabs component */}
 
       {/* Modal form with dynamic form rows based on selected tab */}
+      {!loading && (
       <ModalFormComponent
-        isVisible={isEditModalOpen}
-        title="Edit Project Forecast"
+        isVisible={isModalOpen}
+        title={type === "edit" ? "Edit Project Forecast" : "Add Project Forecast"}
         primaryButtonLabel={primaryButtonLabel}
         secondaryButtonLabel={secondaryButtonLabel}
         onPrimaryClick={handlePrimaryClick}
         onSecondaryClick={handleSecondaryClick}
         onClose={onClose}
         formRows={formRows}
-        initialValues={values}
+        initialValues={selectedForecast || {}}
         children={
           <TabComponent
             headings={headings}
@@ -296,8 +366,9 @@ const EditForecastModal: React.FC<EditForecastModalProps> = ({
           />
         }
       />
+    )}
     </div>
   );
 };
 
-export default EditForecastModal;
+export default ForecastModal;

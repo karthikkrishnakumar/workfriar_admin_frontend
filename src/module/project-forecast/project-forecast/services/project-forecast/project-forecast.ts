@@ -132,9 +132,9 @@ id: string
   };
 
   const updateProjectForecast = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
+    const props: JSON = <JSON>(<unknown>
+      payload
+    );
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/updateforecast", props);
@@ -161,9 +161,9 @@ id: string
   };
 
   const addProjectForecast = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{
-      payload,
-    });
+    const props: JSON = <JSON>(<unknown>
+      payload
+    );
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/addforecast", props);

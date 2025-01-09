@@ -12,6 +12,8 @@ import CustomTable, {
   RowData,
 } from "@/themes/components/custom-table/custom-table";
 import CustomAvatar from "@/themes/components/avatar/avatar";
+import DateRangePicker, { DatePickerData } from "@/themes/components/date-picker/date-picker";
+import { fetchWeeks } from "@/module/review-timesheet/services/review-timesheet-services";
 // Interface for the props passed to the TimeSummary component
 interface TimeSummaryProps {
   id: string;
@@ -25,54 +27,57 @@ const TimeSummary = ({ id }: TimeSummaryProps) => {
   const [filteredProjectTeam, setFilteredProjectTeam] = useState<
   RowData[]
 >([]);
-const [currentRange, setCurrentRange] = useState("");
-const [prev, setPrev] = useState(false); // New state for prev
-const [next, setNext] = useState(false); // New state for next
+const [weeks, setWeeks] = useState<DatePickerData[]>([]);
+const [startDate, setStartDate] = useState("");
+const [endDate, setEndDate] = useState("");
+
+useEffect(() => {
+  // fetch dates
+  fetchWeeks(setWeeks);
+}, []);
 
   // useEffect hook to fetch forecast data based on the ID when the component mounts
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const parts = currentRange.split("-");
-        // const startDate = parts.slice(0, 3).join("-"); // First part of the range
-        // const endDate = parts.slice(3, 6).join("-"); // Second part of the range
-        const startDate = "2023-12-01"
-        const endDate = "2023-12-31"       
-        const response = await fetchTimeLoggedByProjectId(id,startDate,
-          endDate,
-          // prev,
-          // next
+const sDate = formatDate(startDate)   
+const eDate = formatDate(endDate)   
+        const response = await fetchTimeLoggedByProjectId(id,sDate,
+          eDate,
         ); 
         console.log(response);
         if (response.status) {
-          setProjectTeamData(response.data);
-          setCurrentRange(response.dateRange);
           setFilteredProjectTeam(mapMemberData(response.data));
-        } else {
-          message.error(response.message);
+        } 
+        else {
+          setFilteredProjectTeam(mapMemberData([]));
         }
       } catch (error) {
+        console.log(error)
         message.error("Failed to fetch project details.");
       }
     };
 
     fetchDetails();
-  }, [prev, next]);
+  }, [startDate, endDate]);
 
-  const handleDateChange = (data: {
-    startDate: string;
-    endDate: string;
-    prev: boolean;
-    next: boolean;
-  }) => {
-    setCurrentRange(`${data.startDate}-${data.endDate}`);
-    setPrev(data.prev);
-    setNext(data.next);
+const formatDate=(date:string)=>{
+  const [year, month, day] = date.split('-');
+
+  // Pad month and day with leading zeros if needed
+  const formattedDate = `${year}-${(month || "0").padStart(2, '0')}-${(day || "0").padStart(2, '0')}`;
+  return formattedDate;
+}
+  
+
+
+  const handleDateChange = (startDate: string, endDate: string) => {
+    setStartDate(startDate);
+    setEndDate(endDate);
   };
 
   const columns: Column[] = [
     { title: "Team member", key: "name", align: "left",width:300 },
-    { title: "Email id", key: "email", align: "left" },
     {
       title: "Time logged",
       key: "time_logged",
@@ -82,17 +87,18 @@ const [next, setNext] = useState(false); // New state for next
     {      title: (
       <div className={styles.datePickerDiv}>
        
-
-        <DatePicker
-          onChange={(date, dateString) => {
-            console.log("Selected Date:", date, dateString);
-          }}
-          dropdownClassName={styles.datePickerDropdown}
-          suffixIcon={Icons.calender}
-          className={styles.datePickerIcon}
-          allowClear={false}
-          bordered={false}
-        />
+        <DateRangePicker weekData={weeks} onDateChange={handleDateChange} />
+        
+        {/* <DatePicker
+                 dropdownClassName={styles.datePickerDropdown}
+         suffixIcon={Icons.calender}
+         className={styles.datePickerIcon}
+         allowClear={false}
+         bordered={false}
+        //  onChange={( dateString) => {
+        //   console.log("Selected Date:", dateString);
+        // }}
+        /> */}
       </div>
     ),
     key: "date",
@@ -110,9 +116,6 @@ const [next, setNext] = useState(false); // New state for next
       <span className={styles.member}>{member.team_member}</span>
       {/* Employee name */}
     </span>
-    ),
-    email: (
-      <span className={styles.member}>{member.email}</span>
     ),
     time_logged: (
       <span className={styles.member}>{member.total_time} hrs</span>

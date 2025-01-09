@@ -186,7 +186,7 @@ const ProjectList: React.FC = () => {
         message.success(response.message)
       }
       else{
-        message.error(response.message)
+        message.error(response.errors)
       }
       fetchDetails();
     } catch (err) {

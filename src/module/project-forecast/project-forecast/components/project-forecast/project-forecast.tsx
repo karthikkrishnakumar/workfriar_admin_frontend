@@ -6,8 +6,7 @@ import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-forecast.module.scss";
 import dayjs from "dayjs";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import EditForecastModal from "../edit-forecast-modal/edit-forecast-modal";
-import AddForecastModal from "../add-forecast-modal/add-forecast-modal";
+import ForecastModal from "../add-edit-forecast-modal/add-edit-forecast-modal";
 import useProjectForecastService, {
   ProjectForecastData,
 } from "../../services/project-forecast/project-forecast";
@@ -17,6 +16,9 @@ import CustomTable, {
 } from "@/themes/components/custom-table/custom-table";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { closeModal } from "@/redux/slices/modalSlice";
 
 const ProjectForecast: React.FC = () => {
   const router = useRouter();
@@ -28,16 +30,16 @@ const ProjectForecast: React.FC = () => {
     updateProjectForecast,
   } = useProjectForecastService();
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filteredProjectForecast, setFilteredProjectForecast] = useState<
     RowData[]
   >([]);
-  const [selectedProjectForecast, setSelectedProjectForecast] =
-    useState<ProjectForecastData | null>(null);
   const [projectForecastData, setProjectForecastData] = useState<
     ProjectForecastData[]
   >([]);
+  const dispatch = useDispatch();
+  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
 
   // useEffect hook to fetch forecast data based on the ID when the component mounts
   useEffect(() => {
@@ -91,23 +93,8 @@ const ProjectForecast: React.FC = () => {
    * @param {ProjectForecastData} ProjectForecast - The ProjectForecast to edit
    */
   const handleEditProjectForecast = (projectForecast: ProjectForecastData) => {
-    // setSelectedProjectForecast({
-    //   ...projectForecast,
-    //   opportunity_start_date: dayjs(
-    //     projectForecast.opportunity_start_date,
-    //     "DD/MM/YYYY"
-    //   ),
-    //   opportunity_close_date: dayjs(
-    //     projectForecast.opportunity_close_date,
-    //     "DD/MM/YYYY"
-    //   ),
-    //   expected_project_start_date: dayjs(
-    //     projectForecast.expected_start_date,
-    //     "DD/MM/YYYY"
-    //   ),
-    //   expected_end_date: dayjs(projectForecast.expected_end_date, "DD/MM/YYYY"),
-    // });
     setIsEditModalOpen(true);
+    setSelectedId(projectForecast.id);
   };
 
   const handleDeleteProjectForecast = async (id: string) => {
@@ -161,7 +148,7 @@ const ProjectForecast: React.FC = () => {
     } catch (err) {
       console.log("Failed.");
     }
-    setIsAddModalOpen(false); // Close modal after submission
+    dispatch(closeModal())
   };
   const columns: Column[] = [
     { title: "Oppurtunity name", key: "opportunity_name", align: "left" },
@@ -219,13 +206,6 @@ const ProjectForecast: React.FC = () => {
         <span className={styles.forecast}>
           <>
           {forecast.opportunity_date}
-            {/* {dayjs.isDayjs(forecast.opportunity_start_date)
-              ? forecast.opportunity_start_date.format("DD/MM/YYYY")
-              : forecast.opportunity_start_date}{" "}
-            -{" "}
-            {dayjs.isDayjs(forecast.opportunity_close_date)
-              ? forecast.opportunity_close_date.format("DD/MM/YYYY")
-              : forecast.opportunity_close_date} */}
           </>
         </span>
       ),
@@ -306,17 +286,24 @@ const ProjectForecast: React.FC = () => {
         onSecondaryClick={() => setEffectiveDateModal(false)}
         onClose={() => setEffectiveDateModal(false)}
       />
-      <EditForecastModal
-        isEditModalOpen={isEditModalOpen}
+      <ForecastModal
+        isModalOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleEditProjectForecastSubmit}
-        initialValues={selectedProjectForecast}
+        id={selectedId}
+        type="edit"
       />
-      <AddForecastModal
-        isAddModalOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSave={handleAddProjectForecastSubmit}
-      />
+
+            {isOpen && modalType === "addModal" && (
+        
+      
+        <ForecastModal
+          isModalOpen={true}
+          onClose={() => dispatch(closeModal())}
+          onSave={handleAddProjectForecastSubmit}
+        />
+      )}
+
     </div>
   );
 };

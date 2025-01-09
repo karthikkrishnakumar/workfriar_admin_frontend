@@ -50,6 +50,10 @@ export interface ProjectLead {
   _id: string;
   full_name: string;
 }
+export interface Member {
+  id: string;
+  name: string;
+}
 
 /**
  * create the custom hook for handling project list
