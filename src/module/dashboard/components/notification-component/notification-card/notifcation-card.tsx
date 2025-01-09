@@ -5,8 +5,9 @@ import CardSection from "../../card-section/card-section";
 import DashboardNotifications from "../notifications/dashboard-notifications";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
-import UseDashboardServices, { Notification } from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import UseDashboardServices from "@/module/dashboard/services/dashboard-services/dashboard-services";
 import { useRouter } from "next/navigation";
+import { Notification } from "@/interfaces/dashboard/dashboard";
 
 const NotificationCard: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]|[]>([]);

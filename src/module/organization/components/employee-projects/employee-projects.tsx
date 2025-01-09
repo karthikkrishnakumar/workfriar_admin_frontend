@@ -4,9 +4,7 @@ import React, { useEffect, useState } from "react";
 import CustomTable, {
   RowData,
 } from "@/themes/components/custom-table/custom-table"; // Import the CustomTable
-import UseEmployeeData, {
-  Project,
-} from "../../services/organization-services/organization-services"; // Import the service function
+import UseEmployeeData from "../../services/organization-services/organization-services"; // Import the service function
 import styles from "./employee-projects.module.scss"; // Optional: Add styling
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"; // Loading skeleton
 import { MoreOutlined } from "@ant-design/icons";
@@ -15,6 +13,7 @@ import { Dropdown, message } from "antd";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
+import { Project } from "@/interfaces/organization/organization";
 
 interface EmployeeProjectsProps {
   employeeId: string;
@@ -95,8 +94,8 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
       ),
       dateRange: (
         <span className={styles.projectDateRange}>{`${
-          project.startDate ? project.startDate : "--/--/--"
-        } - ${project.endDate ? project.endDate : "--/--/--"}`}</span>
+          project.startDate ? project.startDate : ""
+        } - ${project.endDate ? project.endDate : ""}`}</span>
       ),
       projectLead: (
         <span className={styles.projectLead}>{project.project_lead}</span>

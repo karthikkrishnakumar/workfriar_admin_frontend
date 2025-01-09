@@ -6,13 +6,9 @@ import Timesheet from "../timesheet-due/timesheet-due";
 import ButtonComponent from "@/themes/components/button/button";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import TimeDueModal from "../../submit-timesheet-modal/submit-timesheet-modal";
-import UseDashboardServices, {
-  DatePickerData,
-  DatePickerResponse,
-  TimesheetDue, 
-  TimesheetDueResponse,
-} from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import UseDashboardServices from "@/module/dashboard/services/dashboard-services/dashboard-services";
 import DateRangePicker from "@/themes/components/date-picker/date-picker";
+import { DatePickerData, DatePickerResponse, TimesheetDue, TimesheetDueResponse } from "@/interfaces/dashboard/dashboard";
 
 const TimeSheetDueCard: React.FC = () => {
   const [timesheetDueData, setTimesheetDueData] = useState<TimesheetDue[] | []>(

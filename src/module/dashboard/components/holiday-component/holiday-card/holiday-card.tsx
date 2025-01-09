@@ -6,10 +6,9 @@ import CardSection from "../../card-section/card-section";
 import DashboardHoliday from "../holiday-content/holiday-content";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import ButtonComponent from "@/themes/components/button/button";
-import UseDashboardServices, {
-  Holidays,
-} from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import UseDashboardServices from "@/module/dashboard/services/dashboard-services/dashboard-services";
 import { useRouter } from "next/navigation";
+import { Holidays } from "@/interfaces/dashboard/dashboard";
 
 const HolidayCard: React.FC = () => {
   const [holidayData, setHolidayData] = useState<Holidays[] | null>(null);

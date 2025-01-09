@@ -1,65 +1,6 @@
+import { AddUserResponse, EditEmployeeData, EditUserResponse, GetAllEmployeeResponse, GetEmployeePorjectsResponse, GetEmployeeResponse, GetRolesResponse } from "@/interfaces/organization/organization";
 import http from "@/utils/http"; // Assuming you have a custom HTTP utility for API calls
 
-export interface FormValueData {
-  _id: string;
-  role: string; // Start date in string format
-  department: string; // End date in string format
-  status: boolean;
-  users: [
-    {
-      id: string;
-      full_name: string;
-    }
-  ];
-}
-
-export interface GetRolesResponse {
-  status: string;
-  data: FormValueData[];
-  message: string;
-  errors: Error | null;
-}
-
-// Define the request payload structure for adding or editing an employee
-export interface EmployeeData {
-  id?:string;
-  name: string;
-  email: string;
-  phone_number: string;
-  location: string;
-  role_id: string;
-  reporting_manager_id: string;
-  status: string;
-  profile_pic?: File | null; // The avatar can be null if not provided
-}
-
-interface ValidationError {
-  field: string;
-  message: string;
-}
-export interface AddUserResponse {
-  status: string;
-  data: EmployeeData;
-  message: string;
-  errors?: ValidationError[]; 
-}
-
-export interface EditUserResponse {
-  status: string;
-  data: EmployeeData;
-  message: string;
-  errors?: ValidationError[]; 
-}
-
-export interface Project {
-  id: string;
-  project_name: string;
-  client?: string;
-  startDate?: string;
-  endDate?: string;
-  project_lead: string;
-  status: string;
-}
 
 /**
  * Fetches employee data, employee projects data, and employees table data based on various conditions.
@@ -70,7 +11,7 @@ export default function UseEmployeeData() {
    * @param employeeId - ID of the employee to fetch data for.
    * @returns Employee data or throws an error if the request fails.
    */
-  const fetchEmployeeData = async (id: string): Promise<any> => {
+  const fetchEmployeeData = async (id: string): Promise<GetEmployeeResponse> => {
     const props: JSON = <JSON>(<unknown>{ id });
 
     try {
@@ -81,14 +22,8 @@ export default function UseEmployeeData() {
         message: body.message || "Successfully fetched employee data.",
         errors: body.errors || null,
       };
-    } catch (error: any) {
-      return {
-        status: false,
-        message:
-          error?.response?.data?.message ||
-          "An error occurred while fetching employee data. Please try again.",
-        errors: error?.response?.data?.errors || null,
-      };
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -103,7 +38,7 @@ export default function UseEmployeeData() {
     page: number,
     pageSize: number,
     userId: string
-  ): Promise<any> => {
+  ): Promise<GetEmployeePorjectsResponse> => {
     const limit = pageSize;
     const props: JSON = <JSON>(<unknown>{ page, limit, userId });
 
@@ -113,7 +48,8 @@ export default function UseEmployeeData() {
         props
       );
 
-     
+      console.log(body.data,"emplpoyee project")
+      console.log(body.data,"projects")
       return {
         status: body.status,
         data: body.data || null,
@@ -121,14 +57,8 @@ export default function UseEmployeeData() {
         message: body.message || "Successfully fetched employee projects data.",
         errors: body.errors || null,
       };
-    } catch (error: any) {
-      return {
-        status: false,
-        message:
-          error?.response?.data?.message ||
-          "An error occurred while fetching employee projects data. Please try again.",
-        errors: error?.response?.data?.errors || null,
-      };
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -143,11 +73,12 @@ export default function UseEmployeeData() {
     page: number,
     limit: number,
     tabKey: string
-  ): Promise<any> => {
+  ): Promise<GetAllEmployeeResponse> => {
     const props: JSON = <JSON>(<unknown>{ page, limit, tabKey });
 
     try {
       const { body } = await http().post("/api/admin/employees-data", props);
+      console.log(body.data)
       return {
         status: body.status,
         data: body.data || null,
@@ -155,14 +86,8 @@ export default function UseEmployeeData() {
         message: body.message || "Successfully fetched employee data.",
         errors: body.errors || null,
       };
-    } catch (error: any) {
-      return {
-        status: false,
-        message:
-          error?.response?.data?.message ||
-          "An error occurred while fetching employee data. Please try again.",
-        errors: error?.response?.data?.errors || null,
-      };
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -189,7 +114,7 @@ export default function UseEmployeeData() {
     }
   };
 
-  const addEmployee = async (data: EmployeeData): Promise<AddUserResponse> => {
+  const addEmployee = async (data: EditEmployeeData): Promise<AddUserResponse> => {
     const props: JSON = <JSON>(<unknown>data);
     try {
       const { body } = await http().post("/api/admin/addemployee", props);
@@ -206,13 +131,17 @@ export default function UseEmployeeData() {
   };
 
   const editEmployee = async (
-    data: EmployeeData
+    data: EditEmployeeData
   ): Promise<EditUserResponse> => {
     const props: JSON = <JSON>(<unknown>data);
-    const hasFile:boolean = <boolean>(true)
+    const hasFile: boolean = <boolean>true;
 
     try {
-      const { body } = await http().post("/api/admin/editemployee", props, hasFile);
+      const { body } = await http().post(
+        "/api/admin/editemployee",
+        props,
+        hasFile
+      );
       return {
         status: body.status,
         data: body.data || null,
@@ -226,12 +155,16 @@ export default function UseEmployeeData() {
   };
 
   const updateEmployeeStatus = async (
-    id: string, newStatus: boolean
+    id: string,
+    newStatus: boolean
   ): Promise<any> => {
-    const props: JSON = <JSON>(<unknown>{id,status: newStatus});
+    const props: JSON = <JSON>(<unknown>{ id, status: newStatus });
 
     try {
-      const { body } = await http().post("/api/admin/update-employee-status", props);
+      const { body } = await http().post(
+        "/api/admin/update-employee-status",
+        props
+      );
       return {
         status: body.status,
         data: body.data || null,
@@ -245,12 +178,16 @@ export default function UseEmployeeData() {
   };
 
   const updateProjectStatus = async (
-    id: string, newStatus: string
+    id: string,
+    newStatus: string
   ): Promise<any> => {
-    const props: JSON = <JSON>(<unknown>{id,status: newStatus});
+    const props: JSON = <JSON>(<unknown>{ id, status: newStatus });
 
     try {
-      const { body } = await http().post("/api/admin/update-employee-projects-status", props);
+      const { body } = await http().post(
+        "/api/admin/update-employee-projects-status",
+        props
+      );
       return {
         status: body.status,
         data: body.data || null,
@@ -271,6 +208,6 @@ export default function UseEmployeeData() {
     addEmployee,
     editEmployee,
     updateEmployeeStatus,
-    updateProjectStatus
+    updateProjectStatus,
   };
 }
