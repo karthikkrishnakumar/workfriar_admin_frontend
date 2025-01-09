@@ -106,8 +106,6 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const menuItems = [
     { key: "Details", label: "Details" },
     { key: "Edit", label: "Edit" },
-    { key: "Update-role-permissions", label: "Update Role Permissions" },
-    { key: "Delete", label: "Delete" },
   ];
 
   // Function to map employee data to RowData format for compatibility with the table

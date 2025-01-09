@@ -17,10 +17,13 @@ const TimesheetSnapshotChartCard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [filterData, setFilterData] = useState<{
+    year: number | null;
+    month: number | null;
+  }>();
 
   // Function to fetch data
-  const fetchData = async (year?: number, month?: number) => {
+  const fetchData = async (year?: number | null, month?: number | null) => {
     setLoading(true);
     setError(null);
     try {
@@ -38,23 +41,16 @@ const TimesheetSnapshotChartCard: React.FC = () => {
   };
 
   useEffect(() => {
-    // Initial fetch without filters
-    fetchData();
-  }, []);
-
-  const handleYearChange = (year: number | null) => {
-    setSelectedYear(year);
-    if (year !== null) {
-      fetchData(year); // Re-fetch data with the selected year
+    if (filterData) {
+      fetchData(filterData.year, filterData?.month);
+    } else {
+      fetchData();
     }
-  };
+  }, [filterData]);
 
-  const handleMonthChange = (month: number | null) => {
-    if (selectedYear !== null && month !== null) {
-      fetchData(selectedYear, month); // Re-fetch data with the selected year and month
-    } else if (month !== null) {
-      fetchData(month);
-    }
+  const handleFilterApply = (filters: any) => {
+    setFilterData(filters); // Update filter data
+    setIsModalVisible(false); // Close the modal
   };
 
   const handleClickFilter = () => {
@@ -79,6 +75,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
               theme="filter"
               content={Icons.filter}
               onClick={handleClickFilter}
+              className={styles.filterButton}
             />
           )
         }
@@ -109,8 +106,8 @@ const TimesheetSnapshotChartCard: React.FC = () => {
       {isModalVisible && (
         <TimeSheetSnapshotFilter
           onClose={handleCloseModal}
-          onYearChange={handleYearChange}
-          onMonthChange={handleMonthChange}
+          onFilterApply={handleFilterApply}
+          appliedFilters={filterData}
         />
       )}
     </>

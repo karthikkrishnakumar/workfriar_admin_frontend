@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "./dashboard-notifications.module.scss";
 import { Notification } from "@/module/dashboard/services/dashboard-services/dashboard-services";
-import { Empty } from "antd";
+import { Empty, RadioChangeEvent } from "antd";
+import RadioComponent from "@/themes/components/radio-button/radio-button";
 
 interface NotificationProps {
   notifications: Notification[] | [];
@@ -10,7 +11,7 @@ interface NotificationProps {
 const DashboardNotifications: React.FC<NotificationProps> = ({
   notifications = [],
 }) => {
-  const isEmptyData = notifications?.length===0;
+  const isEmptyData = notifications?.length === 0;
 
   return (
     <ul className={styles.notificationList}>
@@ -27,11 +28,10 @@ const DashboardNotifications: React.FC<NotificationProps> = ({
           {notifications?.map((notification) => (
             <li key={notification.id} className={styles.notificationItem}>
               <div className={styles.radioLabel}>
-                <input
-                  type="radio"
-                  name="notification"
-                  className={styles.radioInput}
-                  id={`notification-${notification.id}`}
+                <RadioComponent
+                  checkedValue={notification.id}
+                  value={notification.id}
+                  className={styles.radioClass}
                 />
                 <div className={styles.notificationContent}>
                   <div className={styles.notificationMessage}>

@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import styles from "./timesheet-snapshot-filter.module.scss";
 import ModalComponent from "@/themes/components/modal/modal";
 import ButtonComponent from "@/themes/components/button/button";
@@ -7,9 +7,15 @@ import RadioComponent from "@/themes/components/radio-button/radio-button";
 import { RadioChangeEvent } from "antd";
 
 interface TimeSheetSnapshotFilterProps {
-  onYearChange: (year: number | null) => void;
-  onMonthChange: (month: number | null) => void;
+  onFilterApply: (filters: {
+    year?: number | null;
+    month?: number | null;
+  }) => void;
   onClose: () => void;
+  appliedFilters?: {
+    year?: number | null;
+    month?: number | null;
+  };
 }
 
 const months = [
@@ -28,48 +34,44 @@ const months = [
 ];
 
 const TimeSheetSnapshotFilter: React.FC<TimeSheetSnapshotFilterProps> = ({
-  onYearChange,
-  onMonthChange,
+  onFilterApply,
   onClose,
+  appliedFilters = {},
 }) => {
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(
+    appliedFilters.year ?? null
+  );
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(
+    appliedFilters.month ?? null
+  );
 
-  // const currentYear = new Date().getFullYear();
-
-  const handleYearChange  = (e: RadioChangeEvent) => {
+  const handleYearChange = (e: RadioChangeEvent) => {
     const selectedYear = e.target.value;
     setSelectedYear(selectedYear); // Assuming you have a state to set the selected year
   };
 
   const handleMonthChange = (e: RadioChangeEvent) => {
-      const selectedMonth = e.target.value;
-      setSelectedMonth(selectedMonth); // Assuming you have a state to set the selected month
-    };
+    const selectedMonth = e.target.value;
+    setSelectedMonth(selectedMonth); // Assuming you have a state to set the selected month
+  };
 
   const handleApplyChange = () => {
-
-
-   
-      onYearChange(selectedYear);
-      onMonthChange(selectedMonth);
-      
-
-    onClose(); // Close the modal
+    onFilterApply({
+      year: selectedYear ?? null,
+      month: selectedMonth ?? null,
+    });
+    onClose();
   };
 
   const yearFilterContent = (
     <div className={styles.yearFilter}>
-      {[
-        2030, 2029, 2028, 2027, 2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019,
-        2018, 2017, 2016,
-      ].map((year) => (
+       {Array.from({ length: 20 }, (_, i) => 2030 - i).map((year) => (
         <label key={year} className={styles.radioLabel}>
           <RadioComponent
-                checkedValue={selectedYear}
-                value={year}
-                onChange={handleYearChange}
-              />
+            checkedValue={selectedYear}
+            value={year}
+            onChange={handleYearChange}
+          />
           {year}
         </label>
       ))}
@@ -81,26 +83,39 @@ const TimeSheetSnapshotFilter: React.FC<TimeSheetSnapshotFilterProps> = ({
       {months.map((month, index) => (
         <label key={index} className={styles.radioLabel}>
           <RadioComponent
-                checkedValue={selectedMonth}
-                value={month}
-                onChange={handleMonthChange}
-              />
+            checkedValue={selectedMonth}
+            value={index + 1}
+            onChange={handleMonthChange}
+          />
           {month}
         </label>
       ))}
     </div>
   );
 
+  const handleClearAll = () => {
+    setSelectedYear(null);
+    setSelectedMonth(null);
+  };
+
   return (
     <ModalComponent
       isVisible={true}
       title={"Filter"}
+      topButtonContent={
+        <ButtonComponent
+          label="Clear All"
+          theme="golden"
+          onClick={handleClearAll}
+        />
+      }
       content={
         <TabbedComponent
           tabs={[
             { name: "Year", content: yearFilterContent },
             { name: "Month", content: monthFilterContent },
           ]}
+          classTabbedComponent={styles.classTabbedComponent}
         />
       }
       bottomContent={
@@ -110,12 +125,15 @@ const TimeSheetSnapshotFilter: React.FC<TimeSheetSnapshotFilterProps> = ({
             label="Apply"
             theme="black"
             onClick={handleApplyChange}
+            disabled={selectedYear===null || selectedMonth ===null ? true : false}
           />
         </>
       }
       theme="normal"
       onClose={onClose}
       className={styles.modalDiv}
+      classTitle={styles.classTitle}
+      classTopButton={styles.classTopButton}
     />
   );
 };
