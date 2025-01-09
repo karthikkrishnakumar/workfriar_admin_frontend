@@ -113,8 +113,8 @@ export default function UseDashboardServices() {
   };
 
   const fetchTimesheetChartData = async (
-    year?: number,
-    month?: number
+    year?: number | null,
+    month?: number | null
   ): Promise<TimesheetSnapResponse> => {
     try {
       const props: JSON = <JSON>(<unknown>{ year, month });
