@@ -1,5 +1,5 @@
 .statusTriggerWrapper{
-  padding: 6px 8px;
+  padding: 6px 8px !important;
   border-radius: 4px;
   min-width: 96px;
   margin: 0;
@@ -30,7 +30,6 @@
 
 .actionTriggerWrapper{
   padding: 6px 6px !important;
-  border-radius: 4px;
 }
 
 .actionTriggerWrapper:hover{

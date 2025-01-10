@@ -34,7 +34,7 @@
 .dropdownTriggerWrapper{
   border:1px solid var( --input-box-outline);
   display: flex;
-  padding: 16px 16px; 
+  padding: 16px 16px  !important ;
   border-radius: 6px;
   cursor: pointer; 
   margin: 0;
