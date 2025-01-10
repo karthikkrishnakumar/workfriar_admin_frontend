@@ -7,7 +7,7 @@
     : "<<<<<++++random++++secret++++string++++>>>>>>";
   const IntersectionAge: number = process.env.INTERSECTION_AGE
     ? +process.env.INTERSECTION_AGE
-    : 60 * 60 * 24 * 1000; // seconds * minute * hour * 1000;
+    : 60 * 60  * 1000; // seconds * minute * hour * 1000;
   const IntersectionCookie: string = process.env.INTERSECTION_COOKIE
     ? process.env.INTERSECTION_COOKIE
     : "workfriar_intersection";

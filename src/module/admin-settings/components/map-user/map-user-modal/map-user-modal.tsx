@@ -114,7 +114,7 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
                   </div>
                 </div>
               }
-              dropdownClassName={styles.dropdownMenuOverlay}
+              dropdownClassName={styles.dropdownMenu}
               menuItems={[
                 {
                   key: "dropdown-content",

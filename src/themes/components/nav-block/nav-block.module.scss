@@ -10,16 +10,15 @@
   padding: 0px 0px 0px 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  // position: relative;
 
   &.hovered {
     background-color: var(--logo-font-color);
     color: #000;
   }
+
   // Hover effect
   &:hover {
-    // background-color: var(--primary-golden-color-medium);
-    // background-color: #fdb853;
+
     background-color: var(--logo-font-color);
     color: #000;
   }
@@ -28,7 +27,6 @@
   &.active {
     background-color: var(--primary-golden-color-medium);
     color: var(--primary-font-color-dark);
-    /* Add your active text color */
   }
 
   .titleAndIcon {
@@ -48,15 +46,13 @@
   }
 
   .arrowWrapper {
-    // background-color: aqua;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px; // Increase padding for a larger hover area
+    padding: 16px;
     cursor: pointer;
     border-radius: 8px;
   }
-  
   
 
   
@@ -70,24 +66,24 @@
         display: none;
       }
       // Tooltip display
-      // &:hover h2 {
-      //   opacity: 1;
-      //   visibility: visible;
-      //   position: absolute;
-      //   transform: translateX(-50%);
-      //   background-color: #000;
-      //   color: #fff;
-      //   border-radius: 4px;
-      //   white-space: nowrap;
-      //   z-index: 10;
-      //   margin-top: 70px;
-      //   font-size: 12px;
-      //   max-width: 150px;
-      // }
+      &:hover h2 {
+        opacity: 1;
+        visibility: visible;
+        position: absolute;
+        transform: translateX(-50%);
+        background-color: #000;
+        color: #fff;
+        border-radius: 4px;
+        white-space: nowrap;
+        z-index: 10;
+        margin-top: 70px;
+        font-size: 12px;
+        max-width: 150px;
+      }
     }
 
     .arrowWrapper {
-      padding: 4px; // Increase padding for a larger hover area
+      padding: 4px; 
     }
     
   }
@@ -135,5 +131,10 @@
 
   .ant-dropdown-menu-item-divider {
     background-color: #444;
+  }
+
+  @media (max-width: 1200px) {
+  margin-left: 16px !important;
+    
   }
 }

@@ -85,27 +85,7 @@ const LoginForm = () => {
       hoverIcon={Icons.googleIcon}
       className={styles.googleButton}
     />    
-    <div className={styles.divider}>
-      <div className={styles.hr}></div>
-      <p>or</p>
-      <div className={styles.hr}></div>
-    </div>
-    <div className={styles.inputContainer}>
-      <InputComponent
-        label="Email"
-        width="100%"
-        height="58px"
-        placeholder="Enter Email address"
-        size="large"
-        type="email"
-        value={email}
-        onChange={handleEmailChange}
-      />
-    </div>
     {error && <p className={styles.error}>{error}</p>}
-    <button className={styles.emailButton} onClick={handleContinueWithEmail}>
-      Continue with Email
-    </button>
   </div>
 </div>
 
