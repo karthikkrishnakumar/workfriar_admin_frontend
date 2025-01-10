@@ -312,6 +312,7 @@ const ProjectList: React.FC = () => {
           current={currentPage}
           onChange={handlePageChange}
           showSizeChanger={false}
+          loading={false}
         />
       </div>
       {isEditModalOpen && (

@@ -7,7 +7,7 @@ import http from "@/utils/http";
 export interface ClientData {
   _id: string;
   client_name: string;
-  location_id:string;
+  location_id: string;
   location: string;
   client_manager_id: string;
   client_manager: string;
@@ -16,19 +16,24 @@ export interface ClientData {
   status: string;
 }
 
-
 /**
  * create the custom hook for handling project list
  */
 export default function useClientService() {
-  const fetchClientDetails = async function (): Promise<any> {
+  const fetchClientDetails = async function (
+    page: number,
+    limit: number
+  ): Promise<any> {
+    const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
+
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/api/admin/all-clients");
+      const { body } = await http().post("/api/admin/all-clients", props);
       // Handle the API response and return filtered data
       return {
         status: body.status,
         data: body.data || [], // Return the projects data
+        total: body.pagination.totalItems || 0,
         message: body.message || "Clients retrieved successfully.",
         errors: body.errors || null,
       };
@@ -114,12 +119,13 @@ export default function useClientService() {
   };
 
   const changeStatus = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      payload
-    );
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/api/admin/change-client-status", props);
+      const { body } = await http().post(
+        "/api/admin/change-client-status",
+        props
+      );
       if (body.status) {
         const response: any = {
           status: body.status,
@@ -143,9 +149,7 @@ export default function useClientService() {
   };
 
   const addClient = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      payload
-    );
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/add-client", props);
@@ -172,9 +176,7 @@ export default function useClientService() {
   };
 
   const editClient = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      payload
-    );
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/edit-client", props);
@@ -207,6 +209,6 @@ export default function useClientService() {
     fetchCountries,
     fetchCurrencies,
     fetchClientManagers,
-    editClient
+    editClient,
   };
 }
