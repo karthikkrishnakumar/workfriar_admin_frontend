@@ -50,6 +50,10 @@ export interface ProjectLead {
   _id: string;
   full_name: string;
 }
+export interface Member {
+  id: string;
+  name: string;
+}
 
 /**
  * create the custom hook for handling project list
@@ -60,7 +64,6 @@ export default function useProjectListService() {
       // Make an HTTP POST request
       const { body } = await http().post(`/api/project/get/${id}`);
       // Handle the API response and return filtered data
-      console.log(id,body)
       return {
         status: body.status,
         data: body.data || [], // Return the projects data
@@ -110,7 +113,6 @@ export default function useProjectListService() {
     payload: any
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-    console.log("props",props)
     const hasFile:boolean = <boolean>true;
     try {
       // Make an HTTP POST request
@@ -139,10 +141,8 @@ export default function useProjectListService() {
       payload
     );
     try {
-      console.log(props);
       // Make an HTTP POST request
       const { body } = await http().post(`/api/project/updatestatus`, props);
-      console.log(body);
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -151,7 +151,6 @@ export default function useProjectListService() {
         errors: body.errors,
       };
     } catch (error:any) {
-      console.log(error);
       // Handle unexpected errors
       return {
         status: error,
@@ -168,10 +167,8 @@ export default function useProjectListService() {
      payload
     );
     try {
-      console.log(props)
       // Make an HTTP POST request
       const { body } = await http().post("/api/project/changetimeentry", props);
-      console.log(body);
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -180,7 +177,6 @@ export default function useProjectListService() {
         errors: body.errors,
       };
     } catch (error:any) {
-      console.log(error);
       // Handle unexpected errors
       return {
         status: error,

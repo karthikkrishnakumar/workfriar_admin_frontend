@@ -40,7 +40,6 @@ export default function useTaskCategoryService() {
     payload: any
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-    console.log("props",props);
     try {
       // Make an HTTP POST request
       const { body } = await http().post(`/api/admin/updatecategories`, props);
@@ -67,7 +66,6 @@ export default function useTaskCategoryService() {
     payload: any
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-    console.log("props",props);
     try {
       // Make an HTTP POST request
       const { body } = await http().post(`/api/admin/addcategory`, props);

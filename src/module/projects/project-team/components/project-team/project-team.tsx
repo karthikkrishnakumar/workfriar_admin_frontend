@@ -21,7 +21,6 @@ import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 import CustomAvatar from "@/themes/components/avatar/avatar";
 
-
 const ProjectTeam: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -32,9 +31,7 @@ const ProjectTeam: React.FC = () => {
     fetchProjectTeamDetails,
     updateProjectTeam,
   } = useProjectTeamService();
-  const [filteredProjectTeam, setFilteredProjectTeam] = useState<
-  RowData[]
->([]);
+  const [filteredProjectTeam, setFilteredProjectTeam] = useState<RowData[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [selectedId, setSelectedId] = useState("");
@@ -44,12 +41,11 @@ const ProjectTeam: React.FC = () => {
 
   // useEffect hook to fetch team data based on the ID when the component mounts
   useEffect(() => {
-
     fetchDetails();
   }, []);
   const fetchDetails = async () => {
     try {
-      const result = await fetchProjectTeamDetails(); 
+      const result = await fetchProjectTeamDetails();
       setFilteredProjectTeam(mapProjectTeamData(result.data));
     } catch (error) {
       message.error("Failed to fetch project details.");
@@ -59,52 +55,24 @@ const ProjectTeam: React.FC = () => {
   const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
     try {
       const response = await changeStatus(values);
-      console.log(response);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
   };
 
-  /**
-   * Changes the ProjectTeam status
-   * @param {string} key - The key of the ProjectTeam to update
-   * @param {string} newStatus - The new status to set
-   */
-  const handleStatusChange = async (
-    projectId: string,
-    status: string,
-  ) => {
-    try {
-      const payload = {projectId, status}
-      const response = await changeStatus(payload);
-      console.log(response);
-      if(response.status){
-        message.success(response.message)
-      }
-      else{
-        message.error(response.message)
-      }
-      fetchDetails();
-    } catch (err) {
-      console.log("Failed.");
-    }
-  };
 
   /**
    * Opens the edit modal with the selected ProjectTeam's data
    * @param {ProjectTeamData} ProjectTeam - The ProjectTeam to edit
    */
-  const handleEditProjectTeam = (ProjectTeam:any) => {
-    setSelectedProjectTeam(
-      {
-        ...ProjectTeam,
-        teamMembers: ProjectTeam.teamsMembers
-      }
-      );
+  const handleEditProjectTeam = (ProjectTeam: any) => {
+    setSelectedProjectTeam({
+      ...ProjectTeam,
+      teamMembers: ProjectTeam.teamsMembers,
+    });
     setSelectedId(ProjectTeam.id);
     setIsEditModalOpen(true);
   };
-
 
   /**
    * Handles the form submission from the EditProjectTeamModal
@@ -112,14 +80,15 @@ const ProjectTeam: React.FC = () => {
    */
   const handleEditProjectTeamSubmit = async (values: Record<string, any>) => {
     try {
-      const transformedTeam = values.teamMembers.map((member: any) => ({ userid: member.id }));
-      const payload={
-        id:selectedId,
-        project:values.project_id,
-        team_members:transformedTeam
-      }
+      const transformedTeam = values.teamMembers.map((member: any) => ({
+        userid: member.id,
+      }));
+      const payload = {
+        id: selectedId,
+        project: values.project_id,
+        team_members: transformedTeam,
+      };
       const response = await updateProjectTeam(payload);
-      console.log(response);
       if (response.status) {
         message.success(response.message);
       } else {
@@ -127,7 +96,7 @@ const ProjectTeam: React.FC = () => {
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setIsEditModalOpen(false); // Close modal after submission
   };
@@ -138,13 +107,14 @@ const ProjectTeam: React.FC = () => {
    */
   const handleAddProjectTeamSubmit = async (values: Record<string, any>) => {
     try {
-      const transformedTeam = values.teamMembers.map((member: any) => ({ userid: member }));
-      const payload={
-        project:values.project_id,
-        team_members:transformedTeam
-      }
+      const transformedTeam = values.teamMembers.map((member: any) => ({
+        userid: member,
+      }));
+      const payload = {
+        project: values.project_id,
+        team_members: transformedTeam,
+      };
       const response = await addProjectTeam(payload);
-      console.log(response);
       if (response.status) {
         message.success(response.message);
       } else {
@@ -152,9 +122,9 @@ const ProjectTeam: React.FC = () => {
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
-    dispatch(closeModal())
+    dispatch(closeModal());
   };
 
   const handleRowClick = (row: ProjectTeamData) => {
@@ -165,8 +135,8 @@ const ProjectTeam: React.FC = () => {
   };
 
   const columns: Column[] = [
-    { title: "Project",key: "ProjectName", align: "left" },
-    {  title: "Team members", key: "ProjectTeam", align: "left" },
+    { title: "Project", key: "ProjectName", align: "left" },
+    { title: "Team members", key: "ProjectTeam", align: "left" },
     {
       title: "Start and end date",
       key: "actual_dates",
@@ -177,23 +147,10 @@ const ProjectTeam: React.FC = () => {
     { title: "", key: "action", align: "left", width: 40 },
   ];
 
-
   // Function to map team data to RowData format for compatibility with the table
   const mapProjectTeamData = (teams: ProjectTeamData[]): RowData[] => {
-    
 
-    const handleStatusClick = (
-      status: string ,
-      id: string
-    ) => {
-      // setEffectiveDateModal(true);
-      handleStatusChange(id, status);
-    };
-
-    const handleMenuClick = (
-      e: { key: string },
-      team: ProjectTeamData
-    ) => {
+    const handleMenuClick = (e: { key: string }, team: ProjectTeamData) => {
       if (e.key === "Details") {
         if (team.id) {
           router.push(`/projects/project-details/${team.project_id}`);
@@ -205,53 +162,35 @@ const ProjectTeam: React.FC = () => {
       }
     };
     return teams?.map((team) => ({
-      
       _id: team.id,
       ProjectName: (
         <span className={styles.nameCell}>
-        <CustomAvatar
-          name={team.projectname}
-          size={50}
-          src={team?.projectlogo}
-        />
-        {/* Custom avatar */}
-        <span className={styles.team} onClick={()=>handleRowClick(team)}>{team.projectname}</span>
-        {/* Employee name */}
-      </span>
+          <CustomAvatar
+            name={team.projectname}
+            size={50}
+            src={team?.projectlogo}
+          />
+          {/* Custom avatar */}
+          <span className={styles.team} onClick={() => handleRowClick(team)}>
+            {team.projectname}
+          </span>
+          {/* Employee name */}
+        </span>
       ),
       ProjectTeam: (
         <span>
-          <AvatarGroup team={team.teamsMembers}/>
-          </span>
+          <AvatarGroup team={team.teamsMembers} />
+        </span>
       ),
       actual_dates: (
         <span className={styles.dates}>
-          <>
-            {/* {dayjs.isDayjs(team.start_date)
-              ? team.start_date.format("DD/MM/YYYY")
-              : team.start_date}{" "}
-            -{" "}
-            {dayjs.isDayjs(team.end_date)
-              ? team.end_date.format("DD/MM/YYYY")
-              : team.end_date} */}
-              {team.date}
-          </>
+          <>{team.date}</>
         </span>
       ),
       status: (
-        <StatusDropdown
-        status={team.status}
-        menuItems={[
-          { label: "Not started", key: "Not Started" },
-          { label: "In progress", key: "In Progress" },
-          { label: "On hold", key: "On Hold" },
-          { label: "Cancelled", key: "Cancelled" },
-          { label: "Completed", key: "Completed" },
-        ]}
-          onMenuClick={(e: any) => handleStatusClick(e, team.project_id)}
-          arrowIcon={Icons.arrowDownFilledGold}
-          className={styles.status}
-        />
+        <span className={styles.status}>
+          <>{team.status}</>
+        </span>
       ),
       action: (
         <span className={styles.actionCell}>
@@ -274,28 +213,27 @@ const ProjectTeam: React.FC = () => {
 
   return (
     <div className={styles.tableWrapper}>
-       <CustomTable
+      <CustomTable
         columns={columns}
         data={filteredProjectTeam}
         onRowClick={() => handleRowClick}
       />
       {isEditModalOpen && (
-      <ProjectTeamModal
-      isModalOpen={isEditModalOpen}
-      onClose={() => setIsEditModalOpen(false)}
-      onSave={handleEditProjectTeamSubmit}
-      initialValues={selectedProjectTeam}
-      type="edit"
-    />
+        <ProjectTeamModal
+          isModalOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleEditProjectTeamSubmit}
+          initialValues={selectedProjectTeam || undefined}
+          type="edit"
+        />
       )}
 
-
-     {isOpen && modalType === "addModal" && (
-      <ProjectTeamModal
-      isModalOpen={true}
-      onClose={() => dispatch(closeModal())}
-      onSave={handleAddProjectTeamSubmit}
-    />
+      {isOpen && modalType === "addModal" && (
+        <ProjectTeamModal
+          isModalOpen={true}
+          onClose={() => dispatch(closeModal())}
+          onSave={handleAddProjectTeamSubmit}
+        />
       )}
       <ModalFormComponent
         isVisible={effectiveDateModal}
