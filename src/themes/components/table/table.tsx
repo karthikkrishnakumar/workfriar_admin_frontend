@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Table as AntTable, Skeleton } from "antd";
-import type { TableProps as AntTableProps } from "antd";
 import styles from "./table.module.scss";
+import SkeletonLoader from "../skeleton-loader/skeleton-loader";
 
 export interface ColumnType {
   title?: string;
@@ -29,74 +29,92 @@ const Table: React.FC<TableProps> = ({
   className,
   maxHeight = 450,
   rowKey,
-  skeletonRows = 5
+  skeletonRows = 5,
 }) => {
-  // Format columns with className and handle loading state
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
   const formattedColumns = columns.map((column) => ({
     ...column,
     className: `${styles.column} ${column.className || ""}`.trim(),
-    // Override the render function when loading
-    render: loading 
+    render: loading
       ? () => (
-          <Skeleton 
+          <Skeleton
             key={`skeleton-${column.key}`}
             paragraph={false}
-            title={{ width: '100%' }}
+            title={{ width: "100%" }}
             active
           />
         )
-      : column.render
+      : column.render,
   }));
 
-  // Create skeleton data for loading state
-  const skeletonData = React.useMemo(() => {
+  const skeletonData = useMemo(() => {
     if (!loading) return undefined;
 
-    return Array(skeletonRows).fill(null).map((_, index) => ({
-      key: `skeleton-${index}`, // Ensure skeleton rows have a unique key
-      ...Object.fromEntries(
-        columns.map(col => [col.dataIndex || col.key, null])
-      )
-    }));
+    return Array(skeletonRows)
+      .fill(null)
+      .map((_, index) => ({
+        key: `skeleton-${index}`,
+        ...Object.fromEntries(
+          columns.map((col) => [col.dataIndex || col.key, null])
+        ),
+      }));
   }, [loading, columns, skeletonRows]);
 
-  // Create a safe rowKey function that handles both real and skeleton data
-  const safeRowKey = React.useCallback((record: any) => {
-    if (loading) {
-      return record.key; // Use the skeleton key we created above
-    }
-    
-    if (typeof rowKey === 'function') {
-      try {
-        return rowKey(record);
-      } catch {
-        return record.key || `fallback-${Math.random()}`; // Fallback if rowKey function fails
+  const safeRowKey = useCallback(
+    (record: any) => {
+      if (loading) return record.key;
+      if (typeof rowKey === "function") {
+        try {
+          return rowKey(record);
+        } catch {
+          return record.key || `fallback-${Math.random()}`;
+        }
       }
-    }
-    
-    if (typeof rowKey === 'string') {
-      return record[rowKey]?.toString() || `fallback-${Math.random()}`;
-    }
+      if (typeof rowKey === "string") {
+        return record[rowKey]?.toString() || `fallback-${Math.random()}`;
+      }
+      return record.key || `fallback-${Math.random()}`;
+    },
+    [loading, rowKey]
+  );
 
-    return record.key || `fallback-${Math.random()}`;
-  }, [loading, rowKey]);
+  if (!hydrated) {
+    return (
+      <div className={`${styles.tableWrapper} ${className || ""}`.trim()}>
+        <SkeletonLoader
+          count={1}
+          avatar={false}
+          title={true}
+          paragraph={{ rows: 20 }}
+          active={true}
+          className={styles.skeletonContainer}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={`${styles.tableWrapper} ${className || ""}`.trim()}>
       <AntTable
         columns={formattedColumns}
         dataSource={loading ? skeletonData : dataSource}
-        loading={false} // Disable default loading since we're using custom skeletons
+        loading={false}
         pagination={false}
-        className={styles.table}
-        scroll={{ 
-          x: "max-content", 
-          y: maxHeight  
+        className={`${styles.table} ${loading ? styles.skeletonMode : ""}`}
+        scroll={{
+          x: "max-content",
+          y: maxHeight,
         }}
         rowKey={safeRowKey}
       />
     </div>
   );
 };
+
 
 export default Table;

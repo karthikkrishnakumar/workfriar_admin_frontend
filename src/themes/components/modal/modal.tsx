@@ -4,16 +4,18 @@ import styles from "./modal.module.scss";
 
 interface ModalProps {
   isVisible: boolean;
-  title: string;
-  topButtonContent?:ReactNode;
+  title: string | React.ReactNode;
+  topButtonContent?: ReactNode;
   content?: ReactNode;
   bottomContent?: ReactNode;
-  theme?: "normal" | "danger" | "primary"; // Define themes
+  theme?: "normal" | "danger" | "primary";
   onClose?: () => void;
   className?: string;
   classTitle?: string;
-  classTopButton?:string;
-  classBottom?:string;
+  classTopButton?: string;
+  classBottom?: string;
+  // Add optional prop to control outside click behavior
+  closeOnOutsideClick?: boolean;
 }
 
 const ModalComponent: React.FC<ModalProps> = ({
@@ -22,12 +24,13 @@ const ModalComponent: React.FC<ModalProps> = ({
   topButtonContent,
   content,
   bottomContent,
-  theme = "danger", // Default theme is "normal"
+  theme = "danger",
   onClose,
   className = "",
   classTitle = "",
-  classTopButton="",
-  classBottom="",
+  classTopButton = "",
+  classBottom = "",
+  closeOnOutsideClick = false, // Default to false to prevent outside clicks from closing
 }) => {
   const themeStyles = {
     normal: {
@@ -54,21 +57,20 @@ const ModalComponent: React.FC<ModalProps> = ({
       open={isVisible}
       footer={null}
       onCancel={onClose}
+      maskClosable={closeOnOutsideClick}
       className={`${styles.customModal} ${className}`}
     >
       <div className={styles.modalContent}>
-        <div
-          className={`${styles.title} ${currentTheme.titleClass} ${classTitle}`}
-        >
+        <div className={`${styles.title} ${currentTheme.titleClass} ${classTitle}`}>
           {title}
         </div>
-       {/* Render topButtonContent only if provided */}
-       {topButtonContent && (
+        
+        {topButtonContent && (
           <div className={`${styles.topButtonContainer} ${classTopButton}`}>
             {topButtonContent}
           </div>
         )}
-
+        
         {content}
         <div className={`${styles.buttonsContainer} ${classBottom}`}>{bottomContent}</div>
       </div>

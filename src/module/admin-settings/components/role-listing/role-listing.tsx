@@ -171,7 +171,7 @@ const RoleListingTable: React.FC = () => {
     ],
     []
   );
-
+//
   return (
     <>
       <Table 
@@ -210,6 +210,7 @@ const RoleListingTable: React.FC = () => {
         <MapUserModal
           isVisible
           roleId={selectedRole.roleId}
+          roleName={selectedRole.role}
           onSave={() => setActiveModal(null)}
           onClose={() => setActiveModal(null)}
         />
