@@ -113,7 +113,6 @@ const ProjectModal: React.FC<ModalProps> = ({
           secondaryButtonLabel={"Cancel"}
           initialValues={selectedProject || {}}
           onPrimaryClick={onSave}
-          // formErrors={formErrors || {}}
           formRows={[
             {
               fields: [

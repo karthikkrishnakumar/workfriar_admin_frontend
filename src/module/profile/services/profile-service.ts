@@ -27,7 +27,6 @@ export default function useProfileService() {
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/profile-view");
-      console.log(body);
       if (body.status) {
         const response: any = {
           status: body.status,

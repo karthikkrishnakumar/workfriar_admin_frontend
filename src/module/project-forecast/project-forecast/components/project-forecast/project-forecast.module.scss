@@ -27,6 +27,11 @@
         background: #F6E6E7;
         color: #E21E26 !important;
     }
+    &.Prospecting {
+        background: #FFEAC9;
+        border: 1px solid var(--Primary-dark, #D4983F) !important;
+        color: var(--Primary-dark, #D4983F) !important;
+    }
 }
 
 

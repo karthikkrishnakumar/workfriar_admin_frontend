@@ -1,20 +1,43 @@
 
 .userSelectdropdownContent {
   
-  padding: 6px;
+  padding: 8px 6px;
   display: flex;
   flex-direction: column;
+  max-height: 360px;
+  overflow-y: hidden;
+
 
 }
 
 .userList {
-  margin-top: 24px;
-  overflow-y: auto; /* Enable scrolling when content exceeds the max height */
+  padding: 2px;
+  margin-top: 20px;
+  max-height: 200px;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 4px;
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #d9d9d9;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+
 }
 
 .userItem {
+  cursor: pointer;
   margin-bottom:9px;
-  padding:9px 4px;
+  border-radius: 8px;
+ padding:9px 4px;
   display: flex;
   align-items: center;
   gap: 16px;

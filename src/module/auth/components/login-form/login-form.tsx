@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import styles from "./login-form.module.scss";
 import InputComponent from "@/themes/components/Input/Input";
 import ButtonComponent from "@/themes/components/button/button";
-import OtpForm from "../otp-form/otp-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthService } from "../../services/auth-service/auth-service";
 import { Spin } from "antd";
@@ -65,9 +64,7 @@ const LoginForm = () => {
     setIsOtp(true); // Proceed only if the email is valid
   };
 
-  if (isOtp) {
-    return <OtpForm email={email} />;
-  }
+
 
   return (
 <div className={styles.container}>
@@ -85,27 +82,7 @@ const LoginForm = () => {
       hoverIcon={Icons.googleIcon}
       className={styles.googleButton}
     />    
-    <div className={styles.divider}>
-      <div className={styles.hr}></div>
-      <p>or</p>
-      <div className={styles.hr}></div>
-    </div>
-    <div className={styles.inputContainer}>
-      <InputComponent
-        label="Email"
-        width="100%"
-        height="58px"
-        placeholder="Enter Email address"
-        size="large"
-        type="email"
-        value={email}
-        onChange={handleEmailChange}
-      />
-    </div>
     {error && <p className={styles.error}>{error}</p>}
-    <button className={styles.emailButton} onClick={handleContinueWithEmail}>
-      Continue with Email
-    </button>
   </div>
 </div>
 
