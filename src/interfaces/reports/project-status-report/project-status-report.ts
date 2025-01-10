@@ -29,7 +29,7 @@ export interface ReportData {
   
   export interface ProjectStatusReportsResponse {
     status: boolean;
-    data?: ReportsList[];
+    data: ReportsList[];
     total:number;
     message: string;
     errors?: ValidationError;

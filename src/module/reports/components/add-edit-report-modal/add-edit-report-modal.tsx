@@ -36,14 +36,21 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
   const [formValues, setFormValues] = useState<FormValues>({
     project_name: "",
     project_lead: "",
+    project_name_id: "",
+    project_lead_id: "",
     reporting_period: "",
     progress: "",
     textareas: ["", "", "", ""],
   });
+  const [loading, setLoading] = useState<boolean>(true);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [projects, setProjects] = useState<SelectOption[]>([]);
   const [projectLeads, setProjectLeads] = useState<SelectOption[]>([]);
   const [projectsData, setProjectsData] = useState<DropDownData[]>([]);
+
+  setTimeout(() => {
+    setLoading(false);
+  }, 200);
 
   useEffect(() => {
     const fetchDropdownOptions = async () => {
@@ -366,6 +373,7 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
             />
           </>
         }
+        isLoading={loading}
         className={styles.modalDiv}
         classTitle={styles.titleClass}
         classBottom={styles.bottomClass}

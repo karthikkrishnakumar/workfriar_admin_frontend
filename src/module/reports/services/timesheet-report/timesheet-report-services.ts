@@ -1,3 +1,4 @@
+import { TimesheetReportReportsResponse } from "@/interfaces/reports/timesheet-report/timesheet-repot";
 import http from "@/utils/http"; // Assuming you have a custom HTTP utility for API calls
 
 /**
@@ -19,7 +20,7 @@ export default function UseTimeSheetServices() {
     userIds?: string[],
     year?: string,
     month?: string
-  ): Promise<any> => {
+  ): Promise<TimesheetReportReportsResponse> => {
    
 
     const props: JSON = <JSON>(
@@ -45,7 +46,6 @@ export default function UseTimeSheetServices() {
         props
       );
 
-      console.log(body);
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -54,16 +54,9 @@ export default function UseTimeSheetServices() {
         message: body.message || "Successfully fetched timesheet report data.",
         errors: body.errors || null,
       };
-    } catch (error: any) {
-      // Return a meaningful error response
-      return {
-        status: false,
-        data: [],
-        message:
-          error?.response?.data?.message ||
-          "An error occurred while fetching timesheet report data. Please try again.",
-        errors: error?.response?.data?.errors || null,
-      };
+    } catch (error) {
+      throw error
+     
     }
 
   };

@@ -248,12 +248,12 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
             />
             <SkeletonLoader
               count={1}
-              paragraph={{ rows: 4 }}
+              paragraph={{ rows: 3 }}
               classNameItem={styles.customSkeletonItem}
             />
             <SkeletonLoader
               count={3}
-              paragraph={{ rows: 5 }}
+              paragraph={{ rows: 3 }}
               classNameItem={styles.customSkeletonItem}
             />
           </>

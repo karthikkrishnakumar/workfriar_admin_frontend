@@ -1,6 +1,7 @@
 import React from "react";
 import { Pagination } from "antd"; // Assuming Ant Design's Pagination is being used
 import styles from "./pagination-button.module.scss"; // Importing the SCSS styles
+import SkeletonLoader from "../skeleton-loader/skeleton-loader";
 
 interface PaginationComponentProps {
   total: number;
@@ -9,6 +10,7 @@ interface PaginationComponentProps {
   onChange: (page: number) => void;
   showSizeChanger?: boolean;
   className?: string;
+  loading?: boolean;
 }
 
 const PaginationComponent: React.FC<PaginationComponentProps> = ({
@@ -18,6 +20,7 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
   onChange,
   showSizeChanger = false,
   className,
+  loading = true,
 }) => {
   console.log( total,
     pageSize,
@@ -31,31 +34,35 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
     return null;
   }
 
-
- 
-
   return (
     <div className={styles.paginationDiv}>
-      <Pagination
-        className={`${styles.pagination} ${className}`}
-        total={total}
-        pageSize={pageSize}
-        current={current}
-        onChange={onChange}
-        showSizeChanger={showSizeChanger}
-        itemRender={(page, type, originalElement) => {
-          if (type === "page") {
-            // Ensure page block updates dynamically
-            const isWithinRange =
-              page >= Math.max(current - 1, 1) &&
-              page <= Math.min(current + 1, totalPages);
+       {loading ? ( // Display spinner if loading
+        <div className={styles.spinner}>
+          <SkeletonLoader count={1} button/>
+        </div>
+      ) : (
+        <Pagination
+          className={`${styles.pagination} ${className}`}
+          total={total}
+          pageSize={pageSize}
+          current={current}
+          onChange={onChange}
+          showSizeChanger={showSizeChanger}
+          itemRender={(page, type, originalElement) => {
+            if (type === "page") {
+              // Ensure page block updates dynamically
+              const isWithinRange =
+                page >= Math.max(current - 1, 1) &&
+                page <= Math.min(current + 1, totalPages);
 
-            return isWithinRange ? originalElement : null;
-          }
-          return originalElement;
-        }}
-        style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
-      />
+              return isWithinRange ? originalElement : null;
+            }
+            return originalElement;
+          }}
+          style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
+          disabled={loading} // Disable pagination when loading
+        />
+      )}
     </div>
   );
 };

@@ -1,22 +1,41 @@
 "use client ";
 
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import UseTimeSheetServices from "../../services/timesheet-report/timesheet-report-services"; // Adjust the path if needed
 import CustomTable from "@/themes/components/custom-table/custom-table"; // Adjust the path if needed
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import styles from "./timesheet-report.module.scss";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
+import { TimesheetReportsList } from "@/interfaces/reports/timesheet-report/timesheet-repot";
+
+interface FormattedData {
+  projectName: ReactNode;
+  employeeName: ReactNode;
+  year: ReactNode;
+  month: ReactNode;
+  dateRange: ReactNode;
+  loggedHours: ReactNode;
+  approvedHours: ReactNode;
+  [key: string]: string | number | boolean | ReactNode | undefined;
+}
 
 const TimesheetReport = ({
   activeTab,
   filters,
 }: {
   activeTab: string;
-  filters: { startDate?: string; endDate?: string ; projectIds?: string[];userIds?: string[]; year?:string ; month?:string  };
+  filters: {
+    startDate?: string;
+    endDate?: string;
+    projectIds?: string[];
+    userIds?: string[];
+    year?: string;
+    month?: string;
+  };
 }) => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<FormattedData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1); // Current page state
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
@@ -24,24 +43,33 @@ const TimesheetReport = ({
 
   // Define params for each tab with exclude fields
   const params: Record<string, { exclude: string[] }> = {
-    "project_summary": { exclude: ["employeeName", "dateRange"] },
-    "project_detail": { exclude: ["employeeName"] },
-    "employee_summary": { exclude: ["dateRange"] },
-    "employee_detail": { exclude: [] },
+    project_summary: { exclude: ["employeeName", "dateRange"] },
+    project_detail: { exclude: ["employeeName"] },
+    employee_summary: { exclude: ["dateRange"] },
+    employee_detail: { exclude: [] },
   };
-  const { startDate, endDate ,projectIds ,userIds , year , month  } = filters;
+  const { startDate, endDate, projectIds, userIds, year, month } = filters;
 
   const fetchData = async (page: number) => {
     setLoading(true);
     setError(null);
-    
-    try {
-      
-      // Fetch data for the active tab
-      const result = await UseTimeSheetServices().fetchTimeSheetReportData(activeTab, page , pageSize, startDate, endDate ,projectIds ,userIds , year , month );
 
-      console.log(result, " in component")
-      const formattedData = result.data.map((item: any) => ({
+    try {
+      // Fetch data for the active tab
+      const result = await UseTimeSheetServices().fetchTimeSheetReportData(
+        activeTab,
+        page,
+        pageSize,
+        startDate,
+        endDate,
+        projectIds,
+        userIds,
+        year,
+        month
+      );
+
+      console.log(result, " in component");
+      const formattedData = result.data.map((item: TimesheetReportsList) => ({
         projectName: (
           <div className={styles.projectCell}>
             <CustomAvatar name={item.project_name} size={50} />
@@ -60,7 +88,9 @@ const TimesheetReport = ({
           <div className={styles.loggedHoursCell}>{item.logged_hours} hrs</div>
         ),
         approvedHours: (
-          <div className={styles.approvedHoursCell}>{item.approved_hours} hrs</div>
+          <div className={styles.approvedHoursCell}>
+            {item.approved_hours} hrs
+          </div>
         ),
       }));
 
@@ -75,7 +105,16 @@ const TimesheetReport = ({
 
   useEffect(() => {
     fetchData(currentPage); // Fetch data when activeTab changes
-  }, [activeTab,currentPage ,startDate, endDate ,projectIds ,userIds , year , month ]);
+  }, [
+    activeTab,
+    currentPage,
+    startDate,
+    endDate,
+    projectIds,
+    userIds,
+    year,
+    month,
+  ]);
 
   // Define the full set of columns
   const columns = [
@@ -94,7 +133,7 @@ const TimesheetReport = ({
     { title: "Year", key: "year", align: "left" as const },
     { title: "Month", key: "month", align: "left" as const },
     { title: "Period", key: "dateRange", align: "left" as const, width: 220 },
-    { title: "Time Logged", key: "loggedHours", align: "left" as const},
+    { title: "Time Logged", key: "loggedHours", align: "left" as const },
 
     {
       title: "Time Approved",
@@ -116,26 +155,24 @@ const TimesheetReport = ({
     return <div>{error}</div>;
   }
 
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page); // Update the current page
   };
 
   return (
     <>
-    <div className={styles.timeSheetTable}>
-      {loading ? (
-        <div>
-          <SkeletonLoader count={3} paragraph={{ rows: 5 }} />
-        </div> // Display loading state
-      ) : (
-        <div className={styles.tableWrapper}>
-          <CustomTable columns={filteredColumns} data={data} />
-        </div>
-        
-      )}
-    </div>
-    <div className={styles.paginationDiv}>
+      <div className={styles.timeSheetTable}>
+        {loading ? (
+          <div>
+            <SkeletonLoader count={3} paragraph={{ rows: 3 }} />
+          </div> // Display loading state
+        ) : (
+          <div className={styles.tableWrapper}>
+            <CustomTable columns={filteredColumns} data={data} />
+          </div>
+        )}
+      </div>
+      <div className={styles.paginationDiv}>
         <PaginationComponent
           className={styles.pagination}
           total={totalRecords}
@@ -143,7 +180,8 @@ const TimesheetReport = ({
           current={currentPage}
           onChange={handlePageChange}
           showSizeChanger={false}
-          // style={{ textAlign: "right", marginTop: "20px" }} 
+          // style={{ textAlign: "right", marginTop: "20px" }}
+          loading={loading}
         />
       </div>
     </>

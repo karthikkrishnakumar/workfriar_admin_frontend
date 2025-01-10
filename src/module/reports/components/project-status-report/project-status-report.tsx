@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Tooltip, Dropdown, message, Pagination } from "antd";
+import React, { ReactNode, useEffect, useState } from "react";
+import { Tooltip, Dropdown, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import CustomTable from "@/themes/components/custom-table/custom-table";
@@ -12,9 +12,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 import AddReport from "../add-edit-report-modal/add-edit-report-modal";
+import {
+  ReportDetails,
+  ReportsList,
+} from "@/interfaces/reports/project-status-report/project-status-report";
+import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
+
+interface FormattedData {
+  id: string;
+  project: ReactNode;
+  projectLead: ReactNode;
+  date: ReactNode;
+  reportingPeriod: ReactNode;
+  progress: ReactNode;
+  comments: ReactNode;
+  action: ReactNode;
+  [key: string]: string | number | boolean | ReactNode | undefined;
+}
 
 const ProjectStatusReport: React.FC = () => {
-  const [data, setData] = useState<any[]>([]);
+
+  const [data, setData] = useState<FormattedData[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1); // Current page state
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
@@ -22,8 +40,8 @@ const ProjectStatusReport: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
-  const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
-   const [project, setProject] = useState<any>(null);
+  const { isOpen } = useSelector((state: RootState) => state.modal);
+  const [project, setProject] = useState<ReportDetails>();
 
   const columns = [
     { title: "Project", key: "project", align: "left" as const, width: 200 },
@@ -49,18 +67,20 @@ const ProjectStatusReport: React.FC = () => {
     { key: "Edit", label: "Edit" },
   ];
 
-  const handleRowClick = (rowId:string) => {
+  const handleRowClick = (rowId: string) => {
     if (rowId) {
       router.push(`/project-status-report/report-details/${rowId}`); // Navigate to the ID-based page
     }
   };
 
-  const handleMenuClick = async (e: { key: string }, record: any) => {
+  const handleMenuClick = async (e: { key: string }, record: ReportsList) => {
     if (e.key === "Details") {
       router.push(`/project-status-report/report-details/${record.id}`);
     } else if (e.key === "Edit") {
       setIsEditModalVisible(true);
-      const data = await UseProjectStatusServices().fetchProjectDetails(record.id);
+      const data = await UseProjectStatusServices().fetchProjectDetails(
+        record.id
+      );
       setProject(data.data);
     }
   };
@@ -72,12 +92,17 @@ const ProjectStatusReport: React.FC = () => {
         page,
         pageSize
       ); // Pass page and pageSize to API
-      const formattedData = reports.data.map((item: any) => ({
+      const formattedData = reports.data.map((item: ReportsList) => ({
         id: item.id,
         project: (
           <div className={styles.projectCell}>
             <CustomAvatar name={item.project_name} size={50} />
-            <button className={styles.projectName}  onClick={() => handleRowClick(item.id)}>{item.project_name}</button>
+            <button
+              className={styles.projectName}
+              onClick={() => handleRowClick(item.id)}
+            >
+              {item.project_name}
+            </button>
           </div>
         ),
         projectLead: (
@@ -99,13 +124,21 @@ const ProjectStatusReport: React.FC = () => {
         ),
         progress: (
           <div className={styles.progressCell}>
-            <div>{item?.progress.includes('%') ? item?.progress : `${item?.progress}%`}</div>
+            <div>
+              {item?.progress.includes("%")
+                ? item?.progress
+                : `${item?.progress}%`}
+            </div>
           </div>
         ),
         comments: (
           <div className={styles.commentsCell}>
             <Tooltip title={item.comments}>
-            <span>{item.comments?.length > 16 ? `${item.comments.slice(0, 16)}...` : item.comments || "--"}</span>
+              <span>
+                {item.comments?.length > 16
+                  ? `${item.comments.slice(0, 16)}...`
+                  : item.comments || "--"}
+              </span>
             </Tooltip>
           </div>
         ),
@@ -142,9 +175,8 @@ const ProjectStatusReport: React.FC = () => {
 
   const handleCloseModal = () => {
     dispatch(closeModal());
-    setIsEditModalVisible(false)
+    setIsEditModalVisible(false);
     fetchData(currentPage);
-    
   };
 
   return (
@@ -160,12 +192,12 @@ const ProjectStatusReport: React.FC = () => {
             />
             <SkeletonLoader
               count={1}
-              paragraph={{ rows: 4 }}
+              paragraph={{ rows: 3 }}
               classNameItem={styles.customSkeletonItem}
             />
             <SkeletonLoader
-              count={3}
-              paragraph={{ rows: 5 }}
+              count={2}
+              paragraph={{ rows: 4 }}
               classNameItem={styles.customSkeletonItem}
             />
           </>
@@ -176,20 +208,24 @@ const ProjectStatusReport: React.FC = () => {
         )}
       </div>
       <div className={styles.paginationDiv}>
-        <Pagination
+        <PaginationComponent
           className={styles.pagination}
           total={totalRecords}
           pageSize={pageSize}
           current={currentPage}
           onChange={handlePageChange}
           showSizeChanger={false}
-          style={{ textAlign: "right", marginTop: "20px" }} // Align bottom-right
+          loading={loading}
         />
       </div>
 
       {isOpen && <AddReport mode="add" onClose={handleCloseModal} />}
       {isEditModalVisible && (
-        <AddReport onClose={handleCloseModal} mode="edit" reportData={project}/>
+        <AddReport
+          onClose={handleCloseModal}
+          mode="edit"
+          reportData={project}
+        />
       )}
     </>
   );
