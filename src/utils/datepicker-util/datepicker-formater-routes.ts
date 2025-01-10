@@ -1,6 +1,7 @@
 // date-formater.ts
 
-import { DatePickerData } from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import { DatePickerData } from "@/interfaces/dashboard/dashboard";
+
 
 // Format date (e.g., "Jan 1")
 export const formatDate = (date: string) =>

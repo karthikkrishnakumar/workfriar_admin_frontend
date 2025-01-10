@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import styles from "./holiday-content.module.scss";
 import Icons from "@/themes/images/icons/icons";
-import { Holidays } from "@/module/dashboard/services/dashboard-services/dashboard-services";
 import { Empty } from "antd";
+import { Holidays } from "@/interfaces/dashboard/dashboard";
 
 interface HolidayProps {
   holidays:Holidays[] | [];

@@ -188,12 +188,12 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
 
   // Define column headers for the table
   const columns: Column[] = [
-    { title: "Employee name", key: "name", align: "left", width: 220 },
+    { title: "Employee name", key: "name", align: "left", width: 200 },
     {
       title: "Email address",
       key: "email",
       align: "left",
-      width: 240,
+      width: 250,
     },
     { title: "Department", key: "department", align: "left" },
     { title: "Role", key: "role", align: "left" },
@@ -203,7 +203,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
       align: "left",
     },
     { title: "Status", key: "status", align: "left" },
-    { title: "", key: "action", align: "left", width: 40 },
+    { title: "", key: "action", align: "left", width: 30 },
   ];
 
   const handleRowClick = (row: Employee) => {
