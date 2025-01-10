@@ -96,6 +96,10 @@ const TimeSheetSnapshotFilter: React.FC<TimeSheetSnapshotFilterProps> = ({
   const handleClearAll = () => {
     setSelectedYear(null);
     setSelectedMonth(null);
+    onFilterApply({
+      year: null,
+      month: null,
+    });
   };
 
   return (

@@ -8,9 +8,8 @@ import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"
 import ButtonComponent from "@/themes/components/button/button";
 import TimeSheetSnapshotFilter from "../../filter-modal/timesheet-snapshot-filter/timesheet-snapshot-filter";
 import Icons from "@/themes/images/icons/icons";
-import UseDashboardServices, {
-  StatsProps,
-} from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import UseDashboardServices from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import { StatsProps } from "@/interfaces/dashboard/dashboard";
 
 const TimesheetSnapshotChartCard: React.FC = () => {
   const [statusData, setStatusData] = useState<StatsProps[]>([]);
@@ -18,8 +17,8 @@ const TimesheetSnapshotChartCard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [filterData, setFilterData] = useState<{
-    year: number | null;
-    month: number | null;
+    year?: number | null;
+    month?: number | null;
   }>();
 
   // Function to fetch data
@@ -48,7 +47,9 @@ const TimesheetSnapshotChartCard: React.FC = () => {
     }
   }, [filterData]);
 
-  const handleFilterApply = (filters: any) => {
+  const handleFilterApply = (filters:{
+    year?: number | null, month?: number | null
+  }) => {
     setFilterData(filters); // Update filter data
     setIsModalVisible(false); // Close the modal
   };

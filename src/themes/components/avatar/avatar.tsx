@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from 'react';
-import { Avatar as AntAvatar } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Avatar as AntAvatar, Skeleton } from 'antd';
 import { AvatarProps } from 'antd/es/avatar';
 import { UserOutlined } from '@ant-design/icons';
 
@@ -8,22 +8,47 @@ interface CustomAvatarProps extends AvatarProps {
   name?: string;
   profile?: string;
   src?: string | undefined;
+  size?:number;
 }
 
 const CustomAvatar: React.FC<CustomAvatarProps> = ({ 
   name, 
-  profile,
   src, 
   style, 
   size = 40, 
   ...restProps 
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleImageError = () => {
     setImageFailed(true);
-    return false; // Prevents Ant Design from showing the default broken image
+    setLoading(false); // Stop loading if the image fails to load
+    return false; // Prevent Ant Design from showing the default broken image
   };
+
+  useEffect(() => {
+    if (src) {
+      const image = new Image();
+      image.src = src;
+      image.onload = () => setLoading(false);
+      image.onerror = handleImageError;
+    } else {
+      setLoading(false); // If no `src`, stop loading immediately
+    }
+  }, [src]);
+
+  if (loading) {
+    // Show shimmer effect while loading
+    return (
+      <Skeleton.Avatar 
+        active 
+        size={size} 
+        style={{ ...style }} 
+        shape="circle" 
+      />
+    );
+  }
 
   if ((!src || imageFailed) && name) {
     // Display the first letter of the name
@@ -40,7 +65,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
         size={size}
         {...restProps}
       >
-        {name ? name.charAt(0).toUpperCase():""}
+        {name.charAt(0).toUpperCase()}
       </AntAvatar>
     );
   }

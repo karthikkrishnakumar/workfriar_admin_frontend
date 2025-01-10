@@ -2,9 +2,10 @@ import React from "react";
 import GridContainer from "@/themes/components/grid-container/grid-container";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import styles from "./employee-details.module.scss";
+import {  EmployeeData } from "@/interfaces/organization/organization";
 
 interface EmployeeDetailsProps {
-  employeeData: any; // Receiving employee data as a prop
+  employeeData?: EmployeeData; // Receiving employee data as a prop
   loading: boolean;
   error: string | null;
 }
@@ -48,8 +49,14 @@ const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({
           { label: "Email address", value: employeeData.email },
         ],
         fields_two: [
-          { label: "Location", value: employeeData.location },
-          { label: "Phone number", value: employeeData.phone_number },
+          {
+            label: "Location",
+            value: employeeData.location ? employeeData.location : "--",
+          },
+          {
+            label: "Phone number",
+            value: employeeData.phone_number ? employeeData.phone_number : "--",
+          },
           { label: "Employee role", value: employeeData.role },
           { label: "Department", value: employeeData.department },
           { label: "Reporting Manager", value: employeeData.reporting_manager },

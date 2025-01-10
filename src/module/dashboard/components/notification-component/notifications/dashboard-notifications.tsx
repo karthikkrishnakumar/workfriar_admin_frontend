@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./dashboard-notifications.module.scss";
-import { Notification } from "@/module/dashboard/services/dashboard-services/dashboard-services";
-import { Empty, RadioChangeEvent } from "antd";
+import { Empty} from "antd";
 import RadioComponent from "@/themes/components/radio-button/radio-button";
+import { Notification } from "@/interfaces/dashboard/dashboard";
 
 interface NotificationProps {
   notifications: Notification[] | [];

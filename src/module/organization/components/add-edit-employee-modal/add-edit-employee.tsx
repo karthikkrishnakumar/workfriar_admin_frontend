@@ -5,10 +5,12 @@ import ModalComponent from "@/themes/components/modal/modal";
 import FormField from "@/themes/components/reusable-fields/reusable-fields";
 import ButtonComponent from "@/themes/components/button/button";
 import CustomAvatar from "@/themes/components/avatar/avatar";
-import UseEmployeeData, {
-  GetRolesResponse,
+import UseEmployeeData from "../../services/organization-services/organization-services";
+import {
+  EmployeeData,
   FormValueData,
-} from "../../services/organization-services/organization-services";
+  GetRolesResponse,
+} from "@/interfaces/organization/organization";
 
 interface FormValues {
   id: string;
@@ -29,7 +31,7 @@ interface FormValues {
 interface AddEditEmployeeProps {
   onClose?: () => void;
   mode: "add" | "edit";
-  employeeData?: any;
+  employeeData?:EmployeeData;
 }
 
 interface SelectData {
@@ -42,6 +44,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
   mode,
   employeeData,
 }) => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [roleOptions, setRoleOptions] = useState<SelectData[]>([]);
@@ -64,14 +67,16 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     status: "",
     profile_pic: null,
   });
-  const [status, setIsStatus] = useState<boolean>(false);
+
+  setTimeout(() => {
+    setLoading(false);
+  }, 200);
 
   const fetchDepartmentData = async (department: string) => {
     try {
       const response: GetRolesResponse =
         await UseEmployeeData().fetchRolesByDepartment(department);
       const roles = response.data;
-      console.log(response, "response");
       // Filter and map roles based on department
       const activeRoles = roles
         .filter(
@@ -89,7 +94,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
           label: role.users[0]?.full_name,
         }));
       setReportingManagerOptions(reportingManagers);
-    
 
       if (mode === "edit") {
         const selectedRole = activeRoles.find(
@@ -118,7 +122,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string) => {
     setFormValues((prev) => ({
       ...prev,
       [field]: value,
@@ -177,10 +181,10 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
         reporting_manager_name: employeeData.reporting_manager || "",
         department: employeeData.department || "",
         status: employeeData.status ? "active" : "inactive",
-        profile_pic: employeeData.profile_pic_path,
+        profile_pic_path: employeeData.profile_pic_path,
       };
       setFormValues(initialFormValues);
-      setAvatarSrc(initialFormValues.profile_pic);
+      setAvatarSrc(initialFormValues.profile_pic_path?initialFormValues.profile_pic_path:null);
       if (employeeData.department) {
         fetchDepartmentData(employeeData.department);
       }
@@ -404,7 +408,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   type="select"
                   label="Employee Role"
                   name="role"
-                  value={formValues.role_id}
+                  value={formValues.role_name}
                   onChange={handleRoleChange}
                   placeholder="Select role"
                   options={roleOptions}
@@ -449,6 +453,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
             />
           </>
         }
+        isLoading={loading}
         className={styles.modalDiv}
         classTitle={styles.titleClass}
         classBottom={styles.bottomClass}

@@ -49,23 +49,24 @@ const months = [
 const TimeSheetReportFilter: React.FC<TimeSheetReportFilterProps> = ({
   onClose,
   onFilterApply,
-  appliedFilters = {},
+  appliedFilters,
 }) => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
-    appliedFilters.startDate ? new Date(appliedFilters.startDate) : null,
-    appliedFilters.endDate ? new Date(appliedFilters.endDate) : null,
+    appliedFilters?.startDate ? new Date(appliedFilters?.startDate) : null,
+    appliedFilters?.endDate ? new Date(appliedFilters?.endDate) : null,
   ]);
   const [selectedProjects, setSelectedProjects] = useState<string[]>(
-    appliedFilters.projectIds || []
+    appliedFilters?.projectIds || []
   );
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>(
-    appliedFilters.userIds || []
+    appliedFilters?.userIds || []
   );
   const [selectedYear, setSelectedYear] = useState<string>(
-    appliedFilters.year ?? ""
+    appliedFilters?.year ?? ""
   );
   const [selectedMonth, setSelectedMonth] = useState<string>(
-    appliedFilters.month ?? ""
+    appliedFilters?.month ?? ""
   );
   const [disabledTabs, setDisabledTabs] = useState<number[]>([]); // Store disabled tabs index
   const [projects, setProjects] = useState<
@@ -92,6 +93,7 @@ const TimeSheetReportFilter: React.FC<TimeSheetReportFilterProps> = ({
       if (result.status) {
         setProjects(result.data.projects);
         setEmployees(result.data.employees);
+        setLoading(false);
       } else {
         console.error(result.message);
       }
@@ -197,7 +199,10 @@ const TimeSheetReportFilter: React.FC<TimeSheetReportFilterProps> = ({
       name: "Year",
       content: (
         <div className={styles.yearFilter}>
-          {Array.from({ length: 20 }, (_, i) => 2030 - i).map((year) => (
+          {Array.from(
+            { length: new Date().getFullYear() - 2000 + 1 },
+            (_, i) => new Date().getFullYear() - i
+          ).map((year) => (
             <label key={year} className={styles.radioLabel}>
               <RadioComponent
                 checkedValue={selectedYear}
@@ -279,6 +284,7 @@ const TimeSheetReportFilter: React.FC<TimeSheetReportFilterProps> = ({
       }
       theme="normal"
       onClose={onClose}
+      isLoading={loading}
       className={styles.modalDiv}
       classTitle={styles.classTitle}
       classTopButton={styles.classTopButton}

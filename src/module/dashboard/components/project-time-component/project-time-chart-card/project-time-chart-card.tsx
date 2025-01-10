@@ -7,9 +7,8 @@ import ButtonComponent from "@/themes/components/button/button";
 import ProjectTimeChart from "../project-time-chart/project-time-chart";
 
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import UseDashboardServices, {
-  ProjectTimeChartProps,
-} from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import UseDashboardServices from "@/module/dashboard/services/dashboard-services/dashboard-services";
+import { ProjectTimeChartProps } from "@/interfaces/dashboard/dashboard";
 
 const ProjectTimeChartCard: React.FC = () => {
   const [projectTimeData, setProjectTimeData] = useState<

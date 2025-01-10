@@ -37,3 +37,7 @@
   border-radius: 12px;
   animation: skeletonPulse 1.5s infinite ease-in-out !important;
 }
+.customSkeletonItem::before {
+  background:rgb(255, 249, 226)!important;
+  
+}
