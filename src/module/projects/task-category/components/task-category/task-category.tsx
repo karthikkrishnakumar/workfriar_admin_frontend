@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Dropdown, Tag, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./task-category.module.scss";
-import AddTaskCategoryModal from "../add-task-category-modal/add-task-category-modal";
-import EditTaskCategoryModal from "../edit-task-category-modal/edit-task-category-modal";
+import TaskCategoryModal from "../add-edit-task-category-modal/add-edit-task-category-modal";
 import useTaskCategoryService, {
   TaskCategoryData,
 } from "../../services/task-category-service";
@@ -19,11 +18,8 @@ import { closeModal } from "@/redux/slices/modalSlice";
 const TaskCategory: React.FC = () => {
   const dispatch = useDispatch();
   const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
-  const {
-    addTaskCategory,
-    fetchTaskCategoryDetails,
-    updateTaskCategory,
-  } = useTaskCategoryService();
+  const { addTaskCategory, fetchTaskCategoryDetails, updateTaskCategory } =
+    useTaskCategoryService();
   const [selectedId, setSelectedId] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [filteredTaskCategory, setFilteredTaskCategory] = useState<RowData[]>(
@@ -39,7 +35,7 @@ const TaskCategory: React.FC = () => {
 
   const fetchDetails = async () => {
     try {
-      const result = await fetchTaskCategoryDetails(); 
+      const result = await fetchTaskCategoryDetails();
       setFilteredTaskCategory(mapCategoryData(result.data)); // Map the data to RowData format
     } catch (error) {
       message.error("Failed to fetch project details.");
@@ -52,19 +48,16 @@ const TaskCategory: React.FC = () => {
    */
   const handleTimeEntryChange = async (category: TaskCategoryData) => {
     try {
-      const timeentry = category.timeentry === "closed"
-      ? "opened"
-      : "closed"
+      const timeentry = category.timeentry === "closed" ? "opened" : "closed";
       const payload = {
         ...category,
-        timeentry:timeentry
-      } 
+        timeentry: timeentry,
+      };
       const response = await updateTaskCategory(payload);
-      if(response.status){
-        message.success(response.message)
-      }
-      else{
-        message.error(response.message)
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.message);
       }
       fetchDetails();
     } catch (err) {
@@ -88,17 +81,15 @@ const TaskCategory: React.FC = () => {
    */
   const handleEditTaskCategorySubmit = async (values: Record<string, any>) => {
     try {
-      
       const payload = {
         ...values,
-        id:selectedId
-      } 
+        id: selectedId,
+      };
       const response = await updateTaskCategory(payload);
-      if(response.status){
-        message.success(response.message)
-      }
-      else{
-        message.error(response.errors)
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.errors);
       }
       fetchDetails();
     } catch (err) {
@@ -114,17 +105,16 @@ const TaskCategory: React.FC = () => {
   const handleAddTaskCategorySubmit = async (values: Record<string, any>) => {
     try {
       const response = await addTaskCategory(values);
-      if(response.status){
-        message.success(response.message)
-      }
-      else{
-        message.error(response.errors)
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.errors);
       }
       fetchDetails();
     } catch (err) {
       message.error("Failed.");
     }
-    dispatch(closeModal())
+    dispatch(closeModal());
   };
 
   const columns: Column[] = [
@@ -187,21 +177,21 @@ const TaskCategory: React.FC = () => {
     <div className={styles.tableWrapper}>
       <CustomTable columns={columns} data={filteredTaskCategory} />
       {isEditModalOpen && (
-             <EditTaskCategoryModal
-             isEditModalOpen={isEditModalOpen}
-             onClose={() => setIsEditModalOpen(false)}
-             onSave={handleEditTaskCategorySubmit}
-             initialValues={selectedTaskCategory}
-           />
+        <TaskCategoryModal
+          isModalOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleEditTaskCategorySubmit}
+          initialValues={selectedTaskCategory}
+          type="edit"
+        />
       )}
-            {isOpen && modalType === "addModal" && (
-      <AddTaskCategoryModal
-      isAddModalOpen={true}
-      onClose={() => dispatch(closeModal())}
-      onSave={handleAddTaskCategorySubmit}
-    />
+      {isOpen && modalType === "addModal" && (
+        <TaskCategoryModal
+          isModalOpen={true}
+          onClose={() => dispatch(closeModal())}
+          onSave={handleAddTaskCategorySubmit}
+        />
       )}
-
     </div>
   );
 };

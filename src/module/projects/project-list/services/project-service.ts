@@ -8,15 +8,15 @@ export interface ProjectData {
   id: string;
   project_name: string;
   client_name: {
-    id:string;
-    client_name:string;
-  }
+    id: string;
+    client_name: string;
+  };
   actual_start_date: string;
   actual_end_date: string;
   project_lead: {
-    id:string;
-    full_name:string;
-  }
+    id: string;
+    full_name: string;
+  };
   project_logo?: string;
   open_for_time_entry: string;
   status: string;
@@ -26,8 +26,8 @@ export interface ProjectData {
   billing_model?: string;
   category?: [
     {
-      id:string;
-      name:string;
+      id: string;
+      name: string;
     }
   ];
   createdAt?: string;
@@ -82,17 +82,20 @@ export default function useProjectListService() {
     }
   };
 
-  const fetchProjectDetails = async function (): Promise<any> {
-    // const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
+  const fetchProjectDetails = async function (
+    page: number,
+    limit: number
+  ): Promise<any> {
+    const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
 
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/api/project/list");
+      const { body } = await http().post("/api/project/list", props);
       // Handle the API response and return filtered data
       return {
         status: body.status,
         data: body.data.projects || [], // Return the projects data
-        total: body.data.pagination.totalPages || 0, // Total count of projects
+        total: body.data.pagination.totalCount || 0, // Total count of projects
         message: body.message || "Projects retrieved successfully.",
         errors: body.errors || null,
       };
@@ -113,10 +116,14 @@ export default function useProjectListService() {
     payload: any
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-    const hasFile:boolean = <boolean>true;
+    const hasFile: boolean = <boolean>true;
     try {
       // Make an HTTP POST request
-      const { body } = await http().post(`/api/project/update/${id}`, props,hasFile);
+      const { body } = await http().post(
+        `/api/project/update/${id}`,
+        props,
+        hasFile
+      );
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -137,9 +144,7 @@ export default function useProjectListService() {
   };
 
   const changeStatus = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      payload
-    );
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
       const { body } = await http().post(`/api/project/updatestatus`, props);
@@ -150,7 +155,7 @@ export default function useProjectListService() {
         message: body.message,
         errors: body.errors,
       };
-    } catch (error:any) {
+    } catch (error: any) {
       // Handle unexpected errors
       return {
         status: error,
@@ -162,10 +167,8 @@ export default function useProjectListService() {
     }
   };
 
-  const changeTimeEntry = async function (payload:any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-     payload
-    );
+  const changeTimeEntry = async function (payload: any): Promise<any> {
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/project/changetimeentry", props);
@@ -176,7 +179,7 @@ export default function useProjectListService() {
         message: body.message,
         errors: body.errors,
       };
-    } catch (error:any) {
+    } catch (error: any) {
       // Handle unexpected errors
       return {
         status: error,
@@ -188,11 +191,9 @@ export default function useProjectListService() {
     }
   };
 
-  const addProject = async function (
-    payload: any
-  ): Promise<any> {
+  const addProject = async function (payload: any): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-    const hasFile:boolean = <boolean>true;
+    const hasFile: boolean = <boolean>true;
     try {
       // Make an HTTP POST request
       const { body } = await http().post(`/api/project/add`, props, hasFile);
