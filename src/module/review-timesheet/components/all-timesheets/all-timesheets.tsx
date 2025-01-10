@@ -138,7 +138,7 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
       setDaysOfWeek(uniqueDates);
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

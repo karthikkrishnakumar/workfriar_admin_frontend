@@ -52,7 +52,6 @@ const RejectedOverviewTable: React.FC<RejectedOverviewProps> = ({
           startDate,
           endDate
         );
-        console.log(response);
         setTimesheetTable(response.data);
         const uniqueDates: WeekDaysData[] = (
           response.weekDates as Partial<WeekDateEntry>[]

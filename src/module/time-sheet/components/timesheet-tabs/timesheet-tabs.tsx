@@ -20,7 +20,16 @@ import {
 import { fetchWeeks } from "@/module/review-timesheet/services/review-timesheet-services";
 import UseAllTimesheetsServices from "../../services/all-timesheet-services/all-time-sheet-services";
 import { dateStringToMonthDate } from "@/utils/date-formatter-util/date-formatter";
-import { timesheetData } from "../../../../../public/test-data/timesheet-data";
+import StatusTag from "../status-tag/status-tag";
+import { RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setActiveTabkey,
+  setShowDetailedView,
+  setShowStatusTag,
+  setStatus,
+} from "@/redux/slices/timesheetSlice";
+import { handleTabChanageToSetStatusChange } from "@/utils/timesheet-utils/timesheet-status-handler";
 
 /**
  * The TimesheetsTabs component displays a tabbed interface with different views of timesheet data.
@@ -30,7 +39,7 @@ import { timesheetData } from "../../../../../public/test-data/timesheet-data";
  * @returns {JSX.Element} The rendered TimesheetsTabs component.
  */
 const TimesheetsTabs = () => {
-  const [loading, setLoadig] = useState(true); // State to handle loading state of the component
+  const [loading, setLoading] = useState(true); // State to handle loading state of the component
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [timeSheetData, setTimeSheetdata] = useState<
@@ -40,12 +49,27 @@ const TimesheetsTabs = () => {
   const [pastDueCount, setPastDueCount] = useState<number>(0); // Count of past due items
   const [approvedCount, setApprovedCount] = useState<number>(0); // Count of approved items
   const [rejectedCount, setRejectedCount] = useState<number>(0); // Count of rejected items
-  const [datePickerData, setDatePickerData] = useState<
-    { start: string; end: string; week: number }[]
-  >([]); // Data for the date picker
   const [dates, setDates] = useState<WeekDaysData[] | undefined>([]); // Store week days data for the selected range
   const [activeTabKey, setActiveTabKey] = useState<string>("1"); // State to track active tab
   const [weeks, setWeeks] = useState<DatePickerData[]>([]);
+  const status = useSelector((state: RootState) => state.timesheet.status);
+  const showStatusTag = useSelector(
+    (state: RootState) => state.timesheet.showStatusTag
+  );
+  const dispatch = useDispatch();
+  let allTimesheetStatus = useSelector(
+    (state: RootState) => state.timesheet.statusOfAllTImeSheet
+  );
+  let pastDueTimesheetStatus = useSelector(
+    (state: RootState) => state.timesheet.statusOfPastDueTimesheet
+  );
+  let approvedTimesheetStatus = useSelector(
+    (state: RootState) => state.timesheet.statusOfAcceptedTimesheet
+  );
+  let rejectedTimesheetStatus = useSelector(
+    (state: RootState) => state.timesheet.statusOfRejectedTimesheet
+  );
+
 
   /**
    * Handles date range changes and updates state variables for filtering.
@@ -103,8 +127,9 @@ const TimesheetsTabs = () => {
   };
 
   useEffect(() => {
+    dispatch(setStatus(undefined))
     fetchAllTimesheet(startDate, endDate); // Fetch data when startDate and endDate change
-    setLoadig(false); // Set loading to false after data is fetched
+    setLoading(false); // Set loading to false after data is fetched
   }, [startDate, endDate]);
 
   /**
@@ -120,8 +145,24 @@ const TimesheetsTabs = () => {
    *
    * @param {string} key - The key of the tab to switch to
    */
+  useEffect(() => {
+    const statusMap: Record<string, any> = {
+      "1": allTimesheetStatus,
+      "2": pastDueTimesheetStatus,
+      "3": approvedTimesheetStatus,
+      "4": rejectedTimesheetStatus,
+    };
+    const newStatus = statusMap[activeTabKey];
+    handleTabChanageToSetStatusChange(dispatch, newStatus);
+  }, [activeTabKey, allTimesheetStatus, pastDueTimesheetStatus, approvedTimesheetStatus, rejectedTimesheetStatus, dispatch]);
+
+  // Tab Change Handler
   const handleTabChange = (key: string) => {
-    setActiveTabKey(key); // Update active tab key state
+    dispatch(setStatus(undefined));
+    dispatch(setShowDetailedView(false));
+    setActiveTabKey(key); // Update active tab key
+    dispatch(setActiveTabkey(key));
+    dispatch(setShowStatusTag(key === "1")); // Show StatusTag only for "All Timesheets"
   };
 
   /**
@@ -204,14 +245,15 @@ const TimesheetsTabs = () => {
           <TabComponent
             headings={tabs} // Pass the tabs array to TabComponent
             subHeading={
-              <>
+              <div className={styles.subHeading}>
+                {status && showStatusTag && <StatusTag />}
                 {activeTabKey === "1" && (
                   <DateRangePicker
                     weekData={weeks}
                     onDateChange={handleDateChange}
                   />
                 )}
-              </>
+              </div>
             }
             activeKey={activeTabKey}
             onChange={handleTabChange}

@@ -75,6 +75,7 @@ export interface TimesheetsCountResponse {
         totalSaved: number;
         totalApproved: number;
         totalRejected: number;
+        totalSubmitted: number;
     }
 }
 
@@ -99,6 +100,7 @@ export interface RejectedTimesheetResponse {
     message?: string;
     weekDates: TimeEntry[]
     errors?: Error | null;
+    notes:string;
 }
 
 export interface FetchTaskCategoriesResponse {
@@ -112,5 +114,11 @@ export interface FetchProjectsResponse {
     status: boolean;
     data: ProjectList[];
     message?: string;
+    errors?: Error | null;
+}
+
+export interface SentOverdueNotificationResponse {
+    status: boolean;
+    message: string;
     errors?: Error | null;
 }
