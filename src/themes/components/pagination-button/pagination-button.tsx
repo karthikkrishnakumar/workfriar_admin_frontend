@@ -22,18 +22,12 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
   className,
   loading = true,
 }) => {
-  console.log( total,
-    pageSize,
-    current,"in pagination")
-
   // Calculate the total number of pages
   const totalPages = Math.ceil(total / pageSize);
-
   // Hide the pagination if there are no items
   if (total === 0) {
     return null;
   }
-
   return (
     <div className={styles.paginationDiv}>
        {loading ? ( // Display spinner if loading

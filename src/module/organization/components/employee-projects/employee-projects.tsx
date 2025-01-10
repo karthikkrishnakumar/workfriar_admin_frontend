@@ -180,9 +180,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
 
   const handleMenuClick = (e: { key: string }, record: any) => {
     if (e.key === "Details") {
-      console.log("Details clicked for:", record);
     } else if (e.key === "edit") {
-      console.log("Edit clicked for:", record);
     }
   };
 

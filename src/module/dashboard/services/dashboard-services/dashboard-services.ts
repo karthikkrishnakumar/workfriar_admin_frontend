@@ -119,7 +119,7 @@ import http from "@/utils/http";
       const fetchDatePickerData = async (): Promise<DatePickerResponse> => {
         try {
             // Make an HTTP POST request to fetch the dashboard datepicker data
-            const { body } = await http().post("/api/user/getduedates");
+            const { body } = await http().post("/api/timesheet/getduedates");
             // Return datepicker data with additional details
             return {
                 status: body.status,

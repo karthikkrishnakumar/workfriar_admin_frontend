@@ -68,7 +68,6 @@ const TimesheetReport = ({
         month
       );
 
-      console.log(result, " in component");
       const formattedData = result.data.map((item: TimesheetReportsList) => ({
         projectName: (
           <div className={styles.projectCell}>

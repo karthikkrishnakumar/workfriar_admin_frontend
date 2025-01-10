@@ -77,7 +77,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
       const response: GetRolesResponse =
         await UseEmployeeData().fetchRolesByDepartment(department);
       const roles = response.data;
-      console.log(response, "response");
       // Filter and map roles based on department
       const activeRoles = roles
         .filter(
