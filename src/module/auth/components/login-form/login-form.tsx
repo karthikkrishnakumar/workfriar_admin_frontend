@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import styles from "./login-form.module.scss";
 import InputComponent from "@/themes/components/Input/Input";
 import ButtonComponent from "@/themes/components/button/button";
-import OtpForm from "../otp-form/otp-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthService } from "../../services/auth-service/auth-service";
 import { Spin } from "antd";
@@ -65,9 +64,7 @@ const LoginForm = () => {
     setIsOtp(true); // Proceed only if the email is valid
   };
 
-  if (isOtp) {
-    return <OtpForm email={email} />;
-  }
+
 
   return (
 <div className={styles.container}>
