@@ -4,17 +4,19 @@ import styles from "./modal.module.scss";
 
 interface ModalProps {
   isVisible: boolean;
-  title: string;
-  topButtonContent?:ReactNode;
+  title: string | React.ReactNode;
+  topButtonContent?: ReactNode;
   content?: ReactNode;
   bottomContent?: ReactNode;
-  theme?: "normal" | "danger" | "primary"; // Define themes
+  theme?: "normal" | "danger" | "primary";
   onClose?: () => void;
   isLoading?: boolean;
   className?: string;
   classTitle?: string;
-  classTopButton?:string;
-  classBottom?:string;
+  classTopButton?: string;
+  classBottom?: string;
+  // Add optional prop to control outside click behavior
+  closeOnOutsideClick?: boolean;
 }
 
 const ModalComponent: React.FC<ModalProps> = ({
@@ -23,13 +25,14 @@ const ModalComponent: React.FC<ModalProps> = ({
   topButtonContent,
   content,
   bottomContent,
-  theme = "danger", // Default theme is "normal"
+  theme = "danger",
   onClose,
   isLoading = false, 
   className = "",
   classTitle = "",
-  classTopButton="",
-  classBottom="",
+  classTopButton = "",
+  classBottom = "",
+  closeOnOutsideClick = false, // Default to false to prevent outside clicks from closing
 }) => {
   const themeStyles = {
     normal: {
@@ -56,9 +59,11 @@ const ModalComponent: React.FC<ModalProps> = ({
       open={isVisible}
       footer={null}
       onCancel={onClose}
+      maskClosable={closeOnOutsideClick}
       className={`${styles.customModal} ${className}`}
     >
       <div className={styles.modalContent}>
+
         {isLoading ? ( // Conditionally render the Loader if isLoading is true
           <div className={styles.loaderContainer}>
            <Spin size="large" />
@@ -83,6 +88,7 @@ const ModalComponent: React.FC<ModalProps> = ({
             </div>
           </>
         )}
+
       </div>
     </Modal>
   );

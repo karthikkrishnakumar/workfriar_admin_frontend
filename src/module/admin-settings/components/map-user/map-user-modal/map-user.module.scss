@@ -34,7 +34,7 @@
 .dropdownTriggerWrapper{
   border:1px solid var( --input-box-outline);
   display: flex;
-  padding: 16px 16px; 
+  padding: 16px 16px  !important ;
   border-radius: 6px;
   cursor: pointer; 
   margin: 0;
@@ -51,19 +51,29 @@
   width: 100%;
 }
 
-
 //actual dropdown menu
-.dropdownMenuOverlay {
-  max-height: 376px;
-  overflow-y: auto; 
+.dropdownMenu {
+  max-height: 320px;
+  overflow-y: hidden;
+  cursor: default;
+
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
   :global(.ant-dropdown-menu) {
     padding: 0;
   }  
   
-  :global(.ant-dropdown-menu-item) {
+  :global(.ant-dropdown-menu-item) {//actually this is the li menuitem and inside this li menu item we are displaying an entire selectuser as menu item
+    cursor: default !important;
     &:hover {
       background-color: transparent !important;
     }
   }
+
+
+}
+
+.roleName {
+  color: var(--primary-golden-color-medium); 
+  font-size: 16px;
+  padding-bottom:4px;
 }

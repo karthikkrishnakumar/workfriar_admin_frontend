@@ -203,7 +203,7 @@ const UpdateRolePermissionsTable = () => {
     <>
     {loading ? (
       <SkeletonLoader
-      paragraph={{ rows: 15 }}
+      paragraph={{ rows: 25 }}
       classNameItem={styles.customSkeleton}
     />
       ) : (

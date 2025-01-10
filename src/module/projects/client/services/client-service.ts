@@ -176,7 +176,6 @@ export default function useClientService() {
       payload
     );
     try {
-      console.log(props);
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/edit-client", props);
       if (body.status) {

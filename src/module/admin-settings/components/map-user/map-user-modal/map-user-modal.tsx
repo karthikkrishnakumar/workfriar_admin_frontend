@@ -11,6 +11,7 @@ import { message } from "antd";
 interface MapUserModalProps {
   isVisible: boolean;
   roleId: string;
+  roleName:string;
   onUserChange?: (selectedUsers: User[]) => void;
   onSave: () => void;
   onClose: () => void;
@@ -23,6 +24,7 @@ export interface UserCheckbox extends User{
 const MapUserModal: React.FC<MapUserModalProps> = ({
   isVisible,
   roleId,
+  roleName,
   onUserChange,
   onSave,
   onClose,
@@ -91,7 +93,9 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
   return (
     <ModalComponent
       isVisible={isVisible}
-      title={`Map User to Role`}
+      title={ <>
+        Map User to Role <span className={styles.roleName}>{roleName}</span> 
+      </>}
       theme="normal"
       content={
         <div className={styles.modalContent}>
@@ -110,7 +114,7 @@ const MapUserModal: React.FC<MapUserModalProps> = ({
                   </div>
                 </div>
               }
-              dropdownClassName={styles.dropdownMenuOverlay}
+              dropdownClassName={styles.dropdownMenu}
               menuItems={[
                 {
                   key: "dropdown-content",

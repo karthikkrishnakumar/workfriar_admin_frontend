@@ -25,8 +25,8 @@ const DropdownMenu: React.FC<DropdownProps> = ({
   menuItems,
   trigger = ["click"],
   icon,
-  wrapperClassName = "",
   dropdownClassName = "",
+  wrapperClassName = "", //triggerwrapper
   minWidth = "150px",
   onOpenChange,
 }) => {

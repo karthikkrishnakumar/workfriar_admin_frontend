@@ -49,7 +49,6 @@ const [selectedId, setSelectedId] = useState("");
   const handleAddClientSubmit = async (values: Record<string, any>) => {
     try {
       const response = await addClient(values);
-      console.log(response);
       fetchDetails();
       if(response.status){
         message.success(response.message)
@@ -58,7 +57,7 @@ const [selectedId, setSelectedId] = useState("");
         message.error(response.message)
       }
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     dispatch(closeModal())
   };
@@ -71,7 +70,6 @@ const [selectedId, setSelectedId] = useState("");
     try {
 
       const response = await editClient(payload);
-      console.log(response);
       if(response.status){
         message.success(response.message)
       }
@@ -80,7 +78,7 @@ const [selectedId, setSelectedId] = useState("");
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setIsEditModalOpen(false);
   };
@@ -105,7 +103,7 @@ const [selectedId, setSelectedId] = useState("");
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
   };
 

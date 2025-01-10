@@ -8,7 +8,7 @@ interface ModalProps {
   isModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
-  initialValues?: ProjectTeamData | null;
+  initialValues?: ProjectTeamData;
   id?: string;
   type?:string;
 }
@@ -21,19 +21,24 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
   id,
   type
 }) => {
-  const values = initialValues || {};
+  const values = initialValues;
   const [projects, setProjects] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     const fetchDetails = async () => {
       try {
+        
         const projects = await useProjectTeamService().fetchProjects(); 
-        console.log(projects)
         setProjects(projects.data);
-        const teamMembers = await useProjectTeamService().fetchTeamMembers(); 
-        console.log(teamMembers)
-        setTeamMembers(teamMembers.data);
+        const teamMembers = await useProjectTeamService().fetchTeamMembers("Technical"); 
+        const excludedIds =(values?.teamMembers || []).map(
+          (member: { id: string }) => member.id
+        );
+        const filteredTeamMembers = teamMembers.data.filter(
+          (member: { id: any; }) => !excludedIds.includes(member.id)
+        );
+        setTeamMembers(filteredTeamMembers);
       } catch (error) {
         message.error("Failed to fetch details.");
       }
@@ -76,53 +81,9 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
               required: true,
               placeholder: "Select team members",
             },
-            // {
-            //   name: "status",
-            //   label: "Status",
-            //   type: "select",
-            //   options: [
-            //     { label: "Not started", value: "Not_started" },
-            //     { label: "In progress", value: "In_progress" },
-            //     { label: "On hold", value: "On_hold" },
-            //     { label: "Cancelled", value: "Cancelled" },
-            //     { label: "Completed", value: "Completed" },
-            //   ],
-            //   required: true,
-            //   placeholder: "Select status",
-            // },
           ],
         },
-        // {
-        //   fields: [
-        //     {
-        //       name: "start_date",
-        //       label: "Start date",
-        //       type: "date",
-        //       required: true,
-        //     },
-        //     {
-        //       name: "end_date",
-        //       label: "End date",
-        //       type: "date",
-        //       required: true,
-        //     },
-        //   ],
-        // },
-        // {
-        //   fields: [
-        //     {
-        //       name: "ProjectTeam",
-        //       label: "Team members",
-        //       type: "checkboxSelect",
-        //       options: [
-        //         { label: "Vishnu M S", value: "vishnuMS" },
-        //         { label: "Aswina Vinod", value: "aswinaVinod" },
-        //       ],
-        //       required: true,
-        //       placeholder: "Select team members",
-        //     },
-        //   ],
-        // },
+       
       ]}
     />
   );

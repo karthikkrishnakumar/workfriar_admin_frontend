@@ -19,9 +19,8 @@ const Profile = () => {
   const handleEditProfileSubmit = async (values: Record<string, any>) => {
     try {
       const response = await updateAdminDetails(values);
-      console.log(response);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setIsEditModalOpen(false); // Close modal after submission
   };
@@ -29,28 +28,23 @@ const Profile = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-       
         const response = await getAdminDetails();
-        console.log(response.data);
         if (response.status) {
           message.success(response.message);
-          setProfile(
-            {...response.data,
-            reporting_manager: response.data.reporting_manager.full_name}
-          );
-          console.log(profile);
+          setProfile({
+            ...response.data,
+            reporting_manager: response.data.reporting_manager.full_name,
+          });
         } else {
           message.error(response.message);
         }
       } catch (error) {
-        console.error(error);
         message.error("Failed to fetch project details.");
       }
     };
-  
+
     fetchDetails(); // Call the function inside useEffect
   }, []); // Ensure dependencies are correctly passed
-  
 
   if (!profile) {
     return (
