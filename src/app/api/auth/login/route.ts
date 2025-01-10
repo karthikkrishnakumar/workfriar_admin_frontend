@@ -14,15 +14,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Set the cookie using your setCookie function
     const response = NextResponse.json({
       success: true,
       message: "Cookie set successfully",
     });
+    
+    // Set the cookie using your setCookie function
 
 
-    const res  = await setCookie(response, {token} );
-
+    await setCookie(response, {token} );
+  
     return response;
   } catch (error) {
     return NextResponse.json(
