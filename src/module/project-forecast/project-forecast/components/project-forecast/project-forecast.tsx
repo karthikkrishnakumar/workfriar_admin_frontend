@@ -99,10 +99,9 @@ const ProjectForecast: React.FC = () => {
 
   const handleDeleteProjectForecast = async (id: string) => {
     try {
-      const response = await deleteProjectForecast(id);
-      console.log(response);
+      const response = await deleteProjectForecast(id)
     } catch (err) {
-      console.log("Failed to log in with Google.");
+      message.error("Failed");
     }
   };
 
@@ -113,13 +112,19 @@ const ProjectForecast: React.FC = () => {
   const handleEditProjectForecastSubmit = async (
     values: Record<string, any>
   ) => {
-    console.log(values);
 
     try {
-      const response = await updateProjectForecast(values);
-      console.log(response);
+      const payload = {
+        ...values,
+        opportunity_manager: values.opportunity_manager_id,
+            product_manager: values.product_manager_id,
+            project_manager: values.project_manager_id,
+            tech_lead: values.tech_lead_id,
+            account_manager: values.account_manager_id,
+      }
+      const response = await updateProjectForecast(payload);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setIsEditModalOpen(false); // Close modal after submission
   };
@@ -127,9 +132,8 @@ const ProjectForecast: React.FC = () => {
   const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
     try {
       const response = await changeStatus(values);
-      console.log(response);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
   };
 
@@ -141,12 +145,10 @@ const ProjectForecast: React.FC = () => {
   const handleAddProjectForecastSubmit = async (
     values: Record<string, any>
   ) => {
-    console.log(values);
     try {
       const response = await addProjectForecast(values);
-      console.log(response);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     dispatch(closeModal())
   };

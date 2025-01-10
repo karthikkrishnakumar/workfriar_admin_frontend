@@ -48,11 +48,9 @@ id: string
       id
     }
     );
-    console.log(props)
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/getforecast", props);
-      console.log(body)
       if (body.status) {
         const response: any = {
           status: body.status,
@@ -79,7 +77,6 @@ id: string
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/getallforecast");
-      console.log(body);
       if (body.status) {
         const response: any = {
           status: body.status,

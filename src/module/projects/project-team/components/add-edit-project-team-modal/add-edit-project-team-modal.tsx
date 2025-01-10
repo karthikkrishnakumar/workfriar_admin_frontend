@@ -30,7 +30,6 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
       try {
         
         const projects = await useProjectTeamService().fetchProjects(); 
-        console.log(projects)
         setProjects(projects.data);
         const teamMembers = await useProjectTeamService().fetchTeamMembers("Technical"); 
         const excludedIds =(values?.teamMembers || []).map(

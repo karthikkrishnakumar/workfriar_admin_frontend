@@ -19,9 +19,8 @@ const Profile = () => {
   const handleEditProfileSubmit = async (values: Record<string, any>) => {
     try {
       const response = await updateAdminDetails(values);
-      console.log(response);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setIsEditModalOpen(false); // Close modal after submission
   };
@@ -31,14 +30,12 @@ const Profile = () => {
       try {
        
         const response = await getAdminDetails();
-        console.log(response.data);
         if (response.status) {
           message.success(response.message);
           setProfile(
             {...response.data,
             reporting_manager: response.data.reporting_manager.full_name}
           );
-          console.log(profile);
         } else {
           message.error(response.message);
         }

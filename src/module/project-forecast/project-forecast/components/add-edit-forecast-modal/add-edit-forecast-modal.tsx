@@ -79,17 +79,15 @@ const ForecastModal: React.FC<ModalProps> = ({
               expected_project_end_date: result.data.expected_project_end_date
               ? dayjs(result.data.expected_project_end_date, "DD/MM/YYYY")
               : null,
-            // opportunity_manager: result.data.opportunity_manager._id,
-            // product_manager: result.data.product_manager._id,
-            // project_manager: result.data.project_manager._id,
-            // tech_lead: result.data.tech_lead._id,
-            // account_manager: result.data.account_manager._id,
+            opportunity_manager: result.data.opportunity_manager_id,
+            product_manager: result.data.product_manager_id,
+            project_manager: result.data.project_manager_id,
+            tech_lead: result.data.tech_lead_id,
+            account_manager: result.data.account_manager_id,
           };
 
           setSelectedForecast(formattedResult);
-          console.log(result.data, result.data.opportunity_name)
         } catch (error) {
-          console.log(error)
           message.error("Failed to fetch project details.");
         } finally {
           setLoading(false); // Set loading to false after fetching

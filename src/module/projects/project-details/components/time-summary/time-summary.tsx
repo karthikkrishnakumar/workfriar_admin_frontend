@@ -45,7 +45,6 @@ const eDate = formatDate(endDate)
         const response = await fetchTimeLoggedByProjectId(id,sDate,
           eDate,
         ); 
-        console.log(response);
         if (response.status) {
           setFilteredProjectTeam(mapMemberData(response.data));
         } 
@@ -53,8 +52,7 @@ const eDate = formatDate(endDate)
           setFilteredProjectTeam(mapMemberData([]));
         }
       } catch (error) {
-        console.log(error)
-        message.error("Failed to fetch project details.");
+        message.error("Failed.");
       }
     };
 

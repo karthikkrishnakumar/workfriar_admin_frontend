@@ -42,7 +42,6 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
     try {
       const response = await fetchProjectTeamByProjectId(value);
       if (response.status) {
-        console.log(response.data.teamsMembers);
         setFilteredTeamMembers(mapMemberData(response.data.teamsMembers));
         setSelectedId(response.data.id);
       } 
@@ -51,30 +50,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
     }
   };
 
-  /**
-   * Changes the ProjectTeam status
-   * @param {string} key - The key of the ProjectTeam to update
-   * @param {string} newStatus - The new status to set
-   */
-  // const handleStatusChange = async (
-  //   key: string,
-  //   newStatus: TeamMember["status"]
-  // ) => {
-  //   setProjectTeamData((prevData = []) =>
-  //     prevData.map((item) =>
-  //       item.id === key ? { ...item, status: newStatus } : item
-  //     )
-  //   );
-  //   try {
-  //     const response = await changeMemberStatus(key);
-  //     console.log(response);
-  //   } catch (err) {
-  //     console.log("Failed.");
-  //   }
-  // };
-
   const handleDateSubmit = async (values: Record<string, any>) => {
-    console.log(values);
     const payload = {
       end_date: dayjs(values?.end_date).format("YYYY-MM-DD"),
       userId: ProjectTeamData?.id,
@@ -82,7 +58,6 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
     };
     try {
       const response = await updateDates(payload);
-      console.log(response);
       if (response.status) {
         message.success(response.message);
       } else {
@@ -90,7 +65,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setIsDateModalOpen(false); // Close modal after submission
   };

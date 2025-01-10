@@ -63,11 +63,9 @@ export default function useProjectTeamService() {
     const props: JSON = <JSON>(<unknown>
       id
      );
-     console.log(props);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/getprojectteam", props);
-      console.log(body)
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -92,7 +90,6 @@ export default function useProjectTeamService() {
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/getallprojectteam");
-      console.log(body);
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -116,17 +113,12 @@ export default function useProjectTeamService() {
     projectId: string,
     startDate: string,
     endDate: string,
-    // prev: boolean,
-    // next: boolean
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>{
       projectId,
       startDate,
       endDate,
-      // prev,
-      // next,
     });
-    console.log(props);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/timesummary", props);
@@ -157,10 +149,8 @@ export default function useProjectTeamService() {
       payload
     );
     try {
-      console.log(props);
       // Make an HTTP POST request
       const { body } = await http().post(`/api/project/updatestatus`, props);
-      console.log(body);
       // Handle the API response and return filtered data
       return {
         status: body.status,
@@ -169,7 +159,6 @@ export default function useProjectTeamService() {
         errors: body.errors,
       };
     } catch (error:any) {
-      console.log(error);
       // Handle unexpected errors
       return {
         status: error,
@@ -243,11 +232,9 @@ export default function useProjectTeamService() {
     const props: JSON = <JSON>(<unknown>
       payload
     );
-    console.log(props);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/editprojectteam", props);
-      console.log(body);
       return {
         status: body.status,
         data: body.data || [],
@@ -270,11 +257,9 @@ export default function useProjectTeamService() {
     const props: JSON = <JSON>(<unknown>
       payload
     );
-    console.log(props);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/addprojectteam", props);
-      console.log(body);
       return {
         status: body.status,
         data: body.data || [],
@@ -302,7 +287,6 @@ export default function useProjectTeamService() {
       const { body } = await http().post(
         `/api/project-status-report/dropdown/${type}`
       );
-      console.log(body);
       // Handle the API response and return filtered data
       return {
         status: body.status,

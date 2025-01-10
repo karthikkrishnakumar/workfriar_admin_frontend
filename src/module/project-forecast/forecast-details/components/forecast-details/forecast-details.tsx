@@ -68,9 +68,8 @@ const ForecastDetails = ({
   ) => {
     try {
       const response = await updateProjectForecast(values);
-      console.log(response);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setModalOpen(false); // Close modal after submission
   };

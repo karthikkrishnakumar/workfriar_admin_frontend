@@ -78,7 +78,7 @@ const ProjectList: React.FC = () => {
       fetchDetails();
       setEffectiveDateModal(false);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
   };
 
@@ -97,7 +97,6 @@ const ProjectList: React.FC = () => {
    * @param {Record<string, any>} values - The updated values for the project
    */
   const handleEditProjectSubmit = async (values: Record<string, any>) => {
-    console.log(values)
     const payload={
       ...values,
       categories:values.categories.map((cat: any) => cat.id),
@@ -105,7 +104,6 @@ const ProjectList: React.FC = () => {
     }
     try {
       const response = await updateProject(selectedId,payload);
-      console.log(response);
       if(response.status){
         message.success(response.message)
       }
@@ -115,7 +113,7 @@ const ProjectList: React.FC = () => {
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setIsEditModalOpen(false); // Close modal after submission
   };
@@ -132,8 +130,6 @@ const ProjectList: React.FC = () => {
     }
     try {
       const response = await addProject(payload);
-      console.log(response)
-      console.log(response.errors)
       if(response.status){
         message.success(response.message)
       }
@@ -142,9 +138,8 @@ const ProjectList: React.FC = () => {
         message.error(response.message)
       }
       fetchDetails();
-      console.log(formErrors)
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     dispatch(closeModal());
   };
@@ -181,7 +176,6 @@ const ProjectList: React.FC = () => {
     try {
       const payload = {projectId, status}
       const response = await changeStatus(payload);
-      console.log(response);
       if(response.status){
         message.success(response.message)
       }
@@ -190,7 +184,7 @@ const ProjectList: React.FC = () => {
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
   };
 

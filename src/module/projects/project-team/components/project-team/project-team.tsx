@@ -59,9 +59,8 @@ const ProjectTeam: React.FC = () => {
   const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
     try {
       const response = await changeStatus(values);
-      console.log(response);
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
   };
 
@@ -77,7 +76,6 @@ const ProjectTeam: React.FC = () => {
     try {
       const payload = {projectId, status}
       const response = await changeStatus(payload);
-      console.log(response);
       if(response.status){
         message.success(response.message)
       }
@@ -86,7 +84,7 @@ const ProjectTeam: React.FC = () => {
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
   };
 
@@ -119,7 +117,6 @@ const ProjectTeam: React.FC = () => {
         team_members:transformedTeam
       }
       const response = await updateProjectTeam(payload);
-      console.log(response);
       if (response.status) {
         message.success(response.message);
       } else {
@@ -127,7 +124,7 @@ const ProjectTeam: React.FC = () => {
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     setIsEditModalOpen(false); // Close modal after submission
   };
@@ -144,7 +141,6 @@ const ProjectTeam: React.FC = () => {
         team_members:transformedTeam
       }
       const response = await addProjectTeam(payload);
-      console.log(response);
       if (response.status) {
         message.success(response.message);
       } else {
@@ -152,7 +148,7 @@ const ProjectTeam: React.FC = () => {
       }
       fetchDetails();
     } catch (err) {
-      console.log("Failed.");
+      message.error("Failed.");
     }
     dispatch(closeModal())
   };
