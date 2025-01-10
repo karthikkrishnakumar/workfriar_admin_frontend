@@ -66,3 +66,4 @@ export const getDropdownItems = (label: string): DropdownItem[] | undefined => {
 export const isCollapsibleItem = (label: string): boolean => {
   return ["Reports", "Settings", "Projects", "Timesheet"].includes(label);
 };
+

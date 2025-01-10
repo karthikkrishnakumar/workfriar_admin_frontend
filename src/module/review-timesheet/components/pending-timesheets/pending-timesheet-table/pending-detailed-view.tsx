@@ -10,11 +10,12 @@ import {
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
 import React, { ReactNode, useState } from "react";
 import styles from "./pending-detailed-view.module.scss";
-import { Dropdown } from "antd";
+import { Dropdown, message } from "antd";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import ButtonComponent from "@/themes/components/button/button";
 import Icons from "@/themes/images/icons/icons";
 import TextAreaButton from "@/module/time-sheet/components/text-area-button/text-area-button";
+import UseReviewTimesheetsServices from "@/module/review-timesheet/services/review-timesheets-service";
 
 /**
  * Props for the PendingDetailedView component.
@@ -23,6 +24,7 @@ interface PendingDetailedViewProps {
   timeSheetData: TimesheetDataTable[]; // Timesheet data for the pending view
   daysOfWeek: WeekDaysData[]; // Days of the week to map data
   backButtonFunction: () => void; // Callback for the back button
+  setTimesheetData: (timesheet: TimesheetDataTable[]) => void;
 }
 
 /**
@@ -32,6 +34,7 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
   timeSheetData,
   daysOfWeek,
   backButtonFunction,
+  setTimesheetData,
 }) => {
   const [loading, setLoading] = useState(false); // Tracks loading state
   const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false); // Modal toggle for task details
@@ -53,15 +56,31 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
   ];
 
   /**
-   * Handles actions from the dropdown menu (approve/reject).
-   * @param e - The event object containing the selected action key
-   * @param id - Optional timesheet ID
+   * Handles the click on the dropdown menu actions.
+   * @param e - Menu event object
+   * @param id - Timesheet ID
    */
-  const handleMenuClick = (e: { key: string }, id?: string) => {
-    if (e.key === "approve") {
-      // Approve function logic here
-    } else if (e.key === "reject") {
-      // Reject function logic here
+  const handleMenuClick = async (e: { key: string }, id?: string) => {
+    if (!id) return;
+
+    const response = await UseReviewTimesheetsServices().manageTimesheetStatus(
+      id,
+      e.key
+    );
+
+    if (response.status) {
+      message.success(response.message);
+      const updatedTimesheetData = timeSheetData.map((timesheet) => {
+        if (timesheet.timesheet_id === id) {
+          return {
+            ...timesheet,
+            status: e.key === "approve" ? "accepted" : "rejected",
+          };
+        }
+        return timesheet;
+      });
+
+      setTimesheetData(updatedTimesheetData);
     }
   };
 
@@ -183,15 +202,19 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
   // Transform timesheet data into rows for the table
   const data = timeSheetData.map((timesheet, index) => {
     const totalHours = calculateTotalHours(timesheet.data_sheet);
+    let isDisabled;
     const taskStatusClass =
-      timesheet.status === "approved"
+      timesheet.status === "accepted"
         ? styles.approved
         : timesheet.status === "rejected"
         ? styles.rejected
         : "";
 
-    const isDisabled =
-      timesheet.status === "approved" || timesheet.status === "rejected";
+    if (timesheet.status === "accepted" || timesheet.status === "rejected") {
+      isDisabled = true;
+    } else {
+      isDisabled = false;
+    }
 
     return {
       task: (
@@ -219,7 +242,7 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
         <Dropdown
           menu={{
             items: menuItems,
-            onClick: (e) => handleMenuClick(e, timesheet.timesheetId),
+            onClick: (e) => handleMenuClick(e, timesheet.timesheet_id),
           }}
           trigger={["click"]}
           disabled={isDisabled}

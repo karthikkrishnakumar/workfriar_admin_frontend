@@ -227,12 +227,15 @@ const useRoleService = () => {
   const updatePermissionsByRoleId = async (roleId: string, permissions: Permission[]) :Promise<PermissionResponse> => {
     try {
       const payload:JSON= <JSON>(<unknown>{ roleId, permissions });
+
       const { body } = await http().post(`${apiUrl}/update-role`, payload);
 
       const permissionsResponse = {
         status: body.status,
         message: body.message,
       };
+
+      console.log(permissionsResponse)
 
       return permissionsResponse; 
     } catch (error) {

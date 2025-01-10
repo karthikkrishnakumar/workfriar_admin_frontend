@@ -48,7 +48,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
   const [reportingManagerOptions, setReportingManagerOptions] = useState<
     SelectData[]
   >([]);
-  const [statusOptions, setStatusOptions] = useState<SelectData[]>([]);
+  // const [statusOptions, setStatusOptions] = useState<SelectData[]>([]);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [formValues, setFormValues] = useState<FormValues>({
     id: "",
@@ -64,21 +64,24 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
     status: "",
     profile_pic: null,
   });
+  const [status, setIsStatus] = useState<boolean>(false);
 
   const fetchDepartmentData = async (department: string) => {
     try {
       const response: GetRolesResponse =
         await UseEmployeeData().fetchRolesByDepartment(department);
       const roles = response.data;
-
+      console.log(response, "response");
+      // Filter and map roles based on department
       const activeRoles = roles
-        .filter((role: FormValueData) => role.role)
+        .filter(
+          (role: FormValueData) => role.role && role.department === department
+        ) // Match department
         .map((role: FormValueData) => ({
           value: role._id,
           label: role.role,
         }));
       setRoleOptions(activeRoles);
-
       const reportingManagers = roles
         .filter((role: FormValueData) => role.users && role.users[0]?.full_name)
         .map((role: FormValueData) => ({
@@ -86,6 +89,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
           label: role.users[0]?.full_name,
         }));
       setReportingManagerOptions(reportingManagers);
+    
 
       if (mode === "edit") {
         const selectedRole = activeRoles.find(
@@ -109,14 +113,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
           }));
         }
       }
-
-      const status = roles
-        .filter((role: FormValueData) => role.status !== undefined)
-        .map((role: FormValueData) => ({
-          value: role.status ? "active" : "inactive",
-          label: role.status ? "Active" : "Inactive",
-        }));
-      setStatusOptions(status);
     } catch (error) {
       console.error("Error fetching department data:", error);
     }
@@ -181,10 +177,10 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
         reporting_manager_name: employeeData.reporting_manager || "",
         department: employeeData.department || "",
         status: employeeData.status ? "active" : "inactive",
-        profile_pic:employeeData.profile_pic_path
+        profile_pic: employeeData.profile_pic_path,
       };
       setFormValues(initialFormValues);
-      setAvatarSrc(initialFormValues.profile_pic)
+      setAvatarSrc(initialFormValues.profile_pic);
       if (employeeData.department) {
         fetchDepartmentData(employeeData.department);
       }
@@ -252,7 +248,6 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
 
       if (response.status) message.success(response.message);
       else message.error(response.message);
-
 
       onClose && onClose();
     } catch (error) {
@@ -436,9 +431,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
                   value={formValues.status}
                   onChange={(value) => handleChange("status", value)}
                   placeholder="Select status"
-                  options={
-                    statusOptions.length > 0 ? statusOptions : statusFields
-                  }
+                  options={statusFields}
                   error={formErrors.status}
                   required
                 />

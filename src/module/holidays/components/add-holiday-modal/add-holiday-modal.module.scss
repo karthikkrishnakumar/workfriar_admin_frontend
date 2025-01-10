@@ -1,0 +1,26 @@
+.modalBody{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 16px;
+}
+
+.formGroup{
+    display: flex;
+    flex-direction: column;
+    row-gap: 13px;
+}
+
+.formGroup label{ 
+    font-size: 13px;
+    color: var(--secondary-font-color-dark);
+}
+
+.formGroup label span{ 
+    font-size: 13px;
+    color: var(--danger-primary-font-color);
+}
+
+.modalFooter{
+    display: flex;
+    flex-direction: row-reverse;
+}

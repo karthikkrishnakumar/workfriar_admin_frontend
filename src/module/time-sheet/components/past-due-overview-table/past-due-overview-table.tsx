@@ -26,7 +26,7 @@ import {
  * @component
  * @example
  * // Usage example:
- * @returns {React.ReactElement} The rendered component.
+ * @returns {React.ReactElement} The rendered component. 
  */
 const PastDueOverviewTable = () => {
   const [table, setTable] = useState<OverViewTable[]>([]);
@@ -53,7 +53,8 @@ const PastDueOverviewTable = () => {
 
   /**
    * Fetches timesheet data for a specific date range.
-   * @param {string} dateRange - The date range for which to fetch timesheet data.
+   * @param {string} startDate - The date range for which to fetch timesheet data.
+   * @param {string} endDate - The date range for which to fetch timesheet data.
    */
   const handleFetchTimesheets = async (startDate: string, endDate: string) => {
     setShowDetailedView(true);

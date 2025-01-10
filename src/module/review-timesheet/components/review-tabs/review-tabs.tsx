@@ -18,6 +18,7 @@ interface ReviewPageProps {
   approvedCount: number; // The number of approved timesheets
   rejectedCount: number; // The number of rejected timesheets
   overDueCount: number; // The number of overdue timesheets
+  userId: string;
 }
 
 // The ReviewTabs component handles the rendering of tabs and associated content
@@ -26,21 +27,23 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
   approvedCount,
   rejectedCount,
   overDueCount,
+  userId,
 }) => {
-  // State for loading status
-  const [loading, setLoadig] = useState(true);
-
   // State for managing the start and end dates for the date range
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   const [weeks, setWeeks] = useState<DatePickerData[]>([]);
+  const [activeTabKey, setActiveTabKey] = useState<string>("1"); // State to track active tab
 
-  // State for managing the count of past-due timesheets
-  const [pastDueCount, setPastDueCount] = useState<number>(1);
-
-  // State to track the active tab (default is the first tab)
-  const [activeTabKey, setActiveTabKey] = useState<string>("1");
+  /**
+   * Handles tab switching and updates the active tab key.
+   *
+   * @param {string} key - The key of the tab to switch to
+   */
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key); // Update active tab key state
+  };
 
   /**
    * Handles date range changes and updates state variables for filtering.
@@ -66,7 +69,11 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
       key: "1", // Key for the "All Timesheets" tab
       label: <>All Timesheets</>,
       content: (
-        <ReviewAllTimesheetsTable startDate={startDate} endDate={endDate} />
+        <ReviewAllTimesheetsTable
+          startDate={startDate}
+          endDate={endDate}
+          userId={userId}
+        />
       ),
     },
     {
@@ -79,7 +86,7 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
           </span>
         </>
       ),
-      content: <PendingOverviewTable />, // Content for the pending tab
+      content: <PendingOverviewTable id={userId} />, // Content for the pending tab
     },
     {
       key: "3", // Key for the "Approved" tab
@@ -91,7 +98,7 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
           </span>
         </>
       ),
-      content: <ApprovedOverviewTable />, // Content for the approved tab
+      content: <ApprovedOverviewTable id={userId} />, // Content for the approved tab
     },
     {
       key: "4", // Key for the "Rejected" tab
@@ -103,7 +110,7 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
           </span>
         </>
       ),
-      content: <RejectedOverviewTable />, // Content for the rejected tab
+      content: <RejectedOverviewTable id={userId} />, // Content for the rejected tab
     },
     {
       key: "5", // Key for the "Overdue" tab
@@ -115,7 +122,7 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
           </span>
         </>
       ),
-      content: <OverdueTable />, // Content for the overdue tab
+      content: <OverdueTable id={userId} />, // Content for the overdue tab
     },
   ];
 
@@ -126,8 +133,17 @@ const ReviewTabs: React.FC<ReviewPageProps> = ({
         headings={tabs} // Pass the tabs as headings
         subHeading={
           // Date range picker displayed as a subheading
-          <DateRangePicker weekData={weeks} onDateChange={handleDateChange} />
-        }
+          <>
+                {activeTabKey === "1" && (
+                  <DateRangePicker
+                    weekData={weeks}
+                    onDateChange={handleDateChange}
+                  />
+                )}
+              </>
+            }
+            activeKey={activeTabKey}
+            onChange={handleTabChange}
       />
     </div>
   );

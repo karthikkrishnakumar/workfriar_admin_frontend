@@ -5,7 +5,7 @@ export default function UseApprovalCenterServices() {
     
     const fetchTeamMembers = async ():Promise<FetchTeamMembersResponse> => {
         try{
-            const { body } = await http().post("/api/admin/teammemberswithtimesheet");
+            const { body } = await http().post("/api/admin/team-members-with-timesheet");
             return {
                 status: body.status,
                 message: body.message,

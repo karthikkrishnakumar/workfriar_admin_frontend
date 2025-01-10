@@ -74,23 +74,90 @@
   height: 48px;
   display: flex;
   align-items: center;
-  
-}
-.ant-input-outlined:focus,.ant-input-outlined:focus-within{
-  border-color: black!important;
 }
 
-.customDatePicker {
-  height: 48px;
-  display: flex;
-  align-items: center;
+.customSelect:global(.ant-select .ant-select-selector){
+  &:hover{
+    border-color: var(--primary-golden-color-medium) !important;
+  }
+
+  &:focus-within{
+    border-color: var(--primary-golden-color-medium) !important;
+    box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
+  }
 }
+
+.customMenu {
+  // Dropdown menu styles
+  background-color: #297932 !important; // Example background color
+  border-radius: 8px;
+  padding: 8px;
+
+  &:global(.rc-virtual-list > .rc-virtual-list-holder > div > .rc-virtual-list-inner){
+    background-color: #ff4d4f !important;
+  }
+
+  &.ant-select-item-option-selected {
+    background-color: orange !important; // Set the background color of the selected option
+    color: #fff !important; // Text color for better visibility on orange
+
+    .ant-select-item-option-state {
+      // Tick mark color
+      color: #fff !important; // White tick mark for contrast
+    }
+  }
+
+  .ant-select-item-option {
+    &:hover {
+      background-color: #ffe6cc; // Optional: Hover effect for options
+    }
+  }
+}
+
+
+.ant-picker-outlined:focus-within{
+  border-color: var(--primary-golden-color-medium) !important;
+}
+
+.customDatePicker:global(.ant-picker){
+  &:hover{
+    border-color: var(--primary-golden-color-medium);
+  }
+
+  &:focus-within{
+    border-color: var(--primary-golden-color-medium);
+    box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
+  }
+}
+
+
 
 .customInput {
   border-radius: 8px;
   height: 48px;
 }
 
+.customInput:global(.ant-input){
+  &:hover{
+    border-color: var(--primary-golden-color-medium);
+  }
+
+  &:focus-within{
+    border-color: var(--primary-golden-color-medium);
+    box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
+  }
+}
+
 .customTextarea {
   border-radius: 8px;
 }
+
+// .custom-dropdown .ant-select-item-option-selected {
+//   background-color: #e6f7ff !important; /* Change background color of selected option */
+//   color: #ff8818 !important; /* Change text color */
+// }
+
+// .custom-dropdown .ant-select-item-option-selected .ant-select-item-option-state {
+//   color: #52c41a !important; /* Change tick mark color */
+// }
+

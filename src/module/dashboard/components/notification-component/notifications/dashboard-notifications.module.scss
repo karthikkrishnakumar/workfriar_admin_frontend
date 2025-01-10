@@ -73,3 +73,26 @@
   margin-right: 0.5rem;
 }
 
+
+.radioClass {
+
+  /* Golden color for the radio button and its hover/active states */
+  :global(.ant-radio-inner) {
+    border-color:var(--primary-golden-color-medium)!important; /* Golden outer border */
+    color:var(--primary-golden-color-medium)!important;
+    background-color: var(--primary-golden-color-medium)!important;
+    border-width: 5px!important;
+    width: 1px!important;
+    height: 1px!important;
+  }
+  :global(.ant-radio-inner::after) {
+    border-color:var(--primary-golden-color-medium)!important; /* Golden outer border */
+    color:var(--primary-golden-color-medium)!important;
+    background-color: var(--primary-golden-color-medium)!important;
+    border-width: 5px!important;
+ 
+  }
+ 
+
+  
+}

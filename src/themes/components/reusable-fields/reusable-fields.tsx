@@ -1,8 +1,10 @@
 import React from "react";
+
 import { Form, Select, DatePicker, Input } from "antd";
 import dayjs from "dayjs";
 import Icons from "@/themes/images/icons/icons";
 import styles from "./reusable-fields.module.scss"; // You'll need to create this SCSS module
+import CheckboxComponent from "../checkbox/checkbox";
 
 const { Option } = Select;
 
@@ -22,7 +24,12 @@ const { Option } = Select;
  * @param {React.ReactNode} [props.suffixIcon] - Optional suffix icon to be displayed at the end of the input.
  */
 
-export type InputType = "select" | "datepicker" | "input" | "textarea";
+export type InputType =
+  | "select"
+  | "datepicker"
+  | "input"
+  | "textarea"
+  | "checkboxSelect";
 
 export interface FormFieldProps {
   type: InputType;
@@ -112,6 +119,24 @@ const FormField: React.FC<FormFieldProps> = ({
             rows={rows}
             className={`${styles.customTextarea} ${className}`}
           />
+        );
+
+      case "checkboxSelect":
+        return (
+          <Select
+            suffixIcon={suffixIcon || Icons.arrowDownOutline}
+            className={`${styles.customSelect} ${className}`}
+            placeholder="Select locations"
+            value={undefined}
+            mode="multiple"
+            dropdownRender={(menu) => <div className={styles.customMenu}>{menu}</div>}
+          >
+            {options.map((option) => (
+              <Option key={option.value} value={option.value} className={styles.color}>
+                {option.label}
+              </Option>
+            ))}
+          </Select>
         );
 
       case "input": // Default case is input field (text input)

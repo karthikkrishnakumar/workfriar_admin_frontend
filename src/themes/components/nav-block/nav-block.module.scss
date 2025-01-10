@@ -12,12 +12,16 @@
   transition: all 0.3s ease;
   position: relative;
 
+  &.hovered {
+    background-color: var(--logo-font-color);
+    color: #000;
+  }
   // Hover effect
   &:hover {
-    background-color: var(--primary-golden-color-medium);
-    /* Add your hover background color */
+    // background-color: var(--primary-golden-color-medium);
+    // background-color: #fdb853;
+    background-color: var(--logo-font-color);
     color: #000;
-    /* Add your hover text color */
   }
 
   // Active state styles
@@ -40,12 +44,17 @@
       align-items: center;
       justify-content: center;
     }
+
+    h2 {
+      font-size: var(--heading-3-size);
+      font-weight: var(--default-font-weight);
+    }
+    
+
+
   }
 
-  h2 {
-    font-size: var(--heading-3-size);
-    font-weight: var(--default-font-weight);
-  }
+  
   // Responsive styles for hiding text on smaller screens
   @media (max-width: 1200px) {
     justify-content: center !important;
@@ -81,24 +90,32 @@
 }
 .dropdownStyle {
   z-index: 9999;
+
 }
 
 .blackThemeMenu {
-  margin-left: 18px !important;
+  margin-left: 16px !important;
   margin-top: -40px !important;
   background-color: #222222 !important;
   color: #fff !important;
   border: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 15px !important;
+  box-shadow: 0px 4px 10px 0px #00000026 !important;
+  padding: 8px !important;
 
   :global(ant-dropdown-arrow) {
     background-color: #000 !important;
   }
 
   div {
-    background-color: #000 !important;
+    padding: 8px 8px;
+    border-radius: 8px;
+    font-size: var(--heading-3-size);
+    &:hover{
+    background-color: #2b2929 !important;
+    }
   }
+
+
   li {
     color: #fff !important;
   }

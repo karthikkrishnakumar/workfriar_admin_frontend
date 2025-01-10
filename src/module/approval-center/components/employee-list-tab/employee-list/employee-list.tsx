@@ -15,7 +15,7 @@ const EmployeeList: React.FC<EmployeeListProps> = ({ employeeList }) => {
   };
   return (
     <div className={styles.employeeListWrapper}>
-      {employeeList.map((employee) => {
+      {employeeList?.map((employee) => {
         return (
           <EmployeeCard
             name={employee.full_name}

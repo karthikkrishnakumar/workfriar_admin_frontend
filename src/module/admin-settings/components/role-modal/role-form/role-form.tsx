@@ -29,6 +29,9 @@ const RoleForm: React.FC<RoleFormProps> = ({
   const [hasMounted, setHasMounted] = useState(false); // Track whether the component has mounted
 
   useEffect(() => {
+
+    console.log("Role Status Value:", roleData.status);
+    
     if (!hasMounted) {
       setInitialRoleData(roleData); // Set initial data only once
       setHasMounted(true); // Set mounted flag to true
@@ -108,14 +111,12 @@ const RoleForm: React.FC<RoleFormProps> = ({
             Status<span className={styles.asterisk}>*</span>
           </label>
           <CustomSelect
-            options={statusOptions.map((option) => ({
-              ...option,
-              value: option.value,
-            }))}
-            value={roleData.status}
-            onChange={handleChange("status")}
-            placeholder="Select status"
-          />
+  options={statusOptions}
+  value={roleData.status} // Pass the boolean value directly
+  onChange={(value) => handleChange("status")(value)} // Update the boolean value
+  placeholder="Select status"
+/>
+
         </div>
       </div>
 

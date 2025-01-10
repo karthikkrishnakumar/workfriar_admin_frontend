@@ -6,6 +6,7 @@ import styles from "./review-timesheet.module.scss";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import { TeamMember } from "@/interfaces/approval-center/approval-center";
+import UseReviewTimesheetsServices from "../services/review-timesheets-service";
 
 interface ReviewTimesheetProps {
   id: string;
@@ -18,25 +19,45 @@ const ReviewTimesheet: React.FC<ReviewTimesheetProps> = ({ id }) => {
   const [loading, setloading] = useState<boolean>(true);
   const [employeeProfile, setEmployeeProfile] = useState<TeamMember>();
 
+  /**
+   * Fetches timesheet counts
+   */
+  const fetchTimeSheetsCount = async () => {
+    try {
+      const response = await UseReviewTimesheetsServices().fetchTimesheetsCounts(id);
+      setOverDueCount(response.data.totalSaved);
+      setApprovedCount(response.data.totalApproved);
+      setRejectedCount(response.data.totalRejected);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchUserData = async (id: string) => {
+    try {
+      const response = await UseReviewTimesheetsServices().fetchUserDetails(id);
+      if (response.data) {
+        setEmployeeProfile({
+          id: response.data?.id,
+          full_name: response.data?.name,
+          profile_pic: response.data?.profile_pic_path,
+        });
+      }
+      setloading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    // fetchUserData(
-    //   id,
-    //   setPendingCount,
-    //   setApprovedCount,
-    //   setRejectedCount,
-    //   setOverDueCount,
-    //   setloading,
-    //   setEmployeeProfile
-    // );
+    fetchUserData(id);
+    fetchTimeSheetsCount();
   }, []);
   return (
     <div className={styles.reviewTimesheetWrapper}>
       {loading ? (
         <>
-          <SkeletonLoader
-            profile
-            classNameItem={styles.customSkelton}
-          />
+          <SkeletonLoader profile classNameItem={styles.customSkelton} />
           <SkeletonLoader
             paragraph={{ rows: 10 }}
             classNameItem={styles.customSkelton}
@@ -57,6 +78,7 @@ const ReviewTimesheet: React.FC<ReviewTimesheetProps> = ({ id }) => {
             overDueCount={overDueCount}
             pendingCount={pendingCount}
             rejectedCount={rejectedCount}
+            userId={id}
           />
         </>
       )}

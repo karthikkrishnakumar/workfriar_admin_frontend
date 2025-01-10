@@ -14,17 +14,19 @@ const NavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const navBarNavigation = new NavBarNavigationClass();
-  const [dropdownSelected, setDropdownSelected] = useState(false);
+  const [selectedDropdownPath, setSelectedDropdownPath] = useState<string | null>(null);
 
-  const handleNavClick = (path: string) => {
-    setDropdownSelected(false); // Reset dropdown selection when clicking main nav items
+
+  const handleMainNavClick = (path: string) => {
+    setSelectedDropdownPath(path);
     navBarNavigation.navigateTo(path, router.push);
   };
 
   const handleDropdownClick = (path: string) => {
-    setDropdownSelected(true); // Set dropdown selection when clicking dropdown items
-    window.location.href = path;
+    navBarNavigation.navigateTo(path, router.push);
+    setSelectedDropdownPath(null);
   };
+
 
   return (
     <div className={styles.navBarWrapper}>
@@ -35,7 +37,7 @@ const NavBar = () => {
 
       <div className={styles.navList}>
         {navBarNavigation.navigationLinks.map((link) => {
-          const DefaultIcon = Icons[link.defaultIcon];
+          const DefaultIcon = Icons[link.defaultIcon];  
           const ActiveIcon = Icons[link.activeIcon];
           const isCollapsible = isCollapsibleItem(link.label);
           const dropdownItems = getDropdownItems(link.label)?.map((item) => ({
@@ -55,8 +57,8 @@ const NavBar = () => {
               )}
               collapsible={isCollapsible}
               dropdownItems={dropdownItems}
-              onClickFunction={() => handleNavClick(link.path)}
-              isDropdownSelected={dropdownSelected} // Pass the dropdown selection state
+              onClickFunction={() => handleMainNavClick(link.path)}
+              isDropdownSelected={selectedDropdownPath === link.path}
             />
           );
         })}

@@ -43,7 +43,7 @@ const RejectedDetailedView: React.FC<RejectedDetailedViewProps> = ({
 
   /**
    * Handles the click on a task detail button, triggering the modal to show task details.
-   * 
+   *
    * @param {number} rowIndex - Index of the row being clicked
    */
   const textAreaOnclick = (rowIndex: number) => {
@@ -59,7 +59,7 @@ const RejectedDetailedView: React.FC<RejectedDetailedViewProps> = ({
 
   /**
    * Handles the click on approve/reject menu items for a specific timesheet.
-   * 
+   *
    * @param {object} e - Event object containing the selected menu item
    * @param {string} id - The ID of the timesheet being acted upon
    */
@@ -73,7 +73,7 @@ const RejectedDetailedView: React.FC<RejectedDetailedViewProps> = ({
 
   /**
    * Calculates the total hours for a specific task by summing up all the time entries.
-   * 
+   *
    * @param {TimeEntry[]} entries - Array of time entries for a specific task
    * @returns {string} - The total hours formatted as "HH:MM"
    */
@@ -87,7 +87,7 @@ const RejectedDetailedView: React.FC<RejectedDetailedViewProps> = ({
 
   /**
    * Maps time entries to the corresponding weekdays for a task.
-   * 
+   *
    * @param {TimeEntry[]} entries - Array of time entries for a specific task
    * @param {number} index - Index of the task in the timesheet data
    * @returns {Record<string, ReactNode>} - A mapping of weekdays to time entry inputs
@@ -119,7 +119,7 @@ const RejectedDetailedView: React.FC<RejectedDetailedViewProps> = ({
 
   /**
    * Calculates the total hours worked per day across all tasks.
-   * 
+   *
    * @returns {Record<string, number>} - A mapping of weekdays to total minutes worked
    */
   const calculateTotalByDay = () => {
@@ -136,7 +136,7 @@ const RejectedDetailedView: React.FC<RejectedDetailedViewProps> = ({
 
   /**
    * Generates the total row for the table, showing totals for all tasks and all days.
-   * 
+   *
    * @returns {object} - The total row data to be added to the table
    */
   const totalRow = () => {
@@ -194,14 +194,14 @@ const RejectedDetailedView: React.FC<RejectedDetailedViewProps> = ({
     const totalHours = calculateTotalHours(timesheet.data_sheet);
     let isDisabled;
     const taskStatusClass =
-      timesheet.status === "approved"
+      timesheet.status === "accepted"
         ? styles.approved
         : timesheet.status === "rejected"
         ? styles.rejected
         : "";
 
-    if (timesheet.status === "approved" || timesheet.status === "rejected") {
-      isDisabled = true; // Disable actions for approved/rejected timesheets
+    if (timesheet.status === "accepted" || timesheet.status === "rejected") {
+      isDisabled = true;
     } else {
       isDisabled = false;
     }
@@ -257,18 +257,18 @@ const RejectedDetailedView: React.FC<RejectedDetailedViewProps> = ({
           <CustomTable columns={columns} data={[...data, totalRow()]} />
         </div>
       </div>
-      <div className={styles.timesheetNotesWrapper}>
+      {/* <div className={styles.timesheetNotesWrapper}>
         <h2>Timesheet Note</h2>
         <textarea
           className={styles.timesheetNote}
           placeholder="Write your timesheet note here."
         />
-      </div>
+      </div> */}
       <div className={styles.actionButtons}>
-        <div>
+        {/* <div>
           <ButtonComponent label="Approve" theme="black" />
           <ButtonComponent label="Reject" theme="white" />
-        </div>
+        </div> */}
         <span className={styles.backButton} onClick={backButtonFunction}>
           {" "}
           {"< Back"}
