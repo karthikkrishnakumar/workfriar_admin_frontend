@@ -8,11 +8,20 @@ import TimesheetReport from "../timesheet-report/timesheet-report";
 import Icons from "@/themes/images/icons/icons";
 import TimeSheetReportFilter from "../timesheet-report-filter/timesheet-report-filter";
 
+export interface FilterFormData {
+  startDate?: string | null;
+  endDate?: string | null;
+  projectIds: string[] | null;
+  userIds: string[] | null;
+  year?: string | null;
+  month?: string | null;
+}
+
 const TimeSheetReportTabs = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("project_summary");
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [filterData, setFilterData] = useState<any>({});
+  const [filterData, setFilterData] = useState<FilterFormData>();
 
   setTimeout(() => {
     setLoading(false);

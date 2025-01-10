@@ -7,7 +7,7 @@ import http from "@/utils/http"; // Assuming you have a custom HTTP utility for 
 export default function UseEmployeeData() {
       /**
        * Fetches employee details based on employee ID.
-       * @param employeeId - ID of the employee to fetch data for.
+       * @param id - ID of the employee to fetch data for.
        * @returns Employee data or throws an error if the request fails.
        */
       const fetchEmployeeData = async (id: string): Promise<GetEmployeeResponse> => {
@@ -26,13 +26,13 @@ export default function UseEmployeeData() {
       };
 
       
-      /**
-       * Fetches employee projects data based on employee ID.
-       * @param page - Current page number.
-       * @param pageSize - Number of records per page.
-       * @param employeeId - ID of the employee to fetch projects for.
-       * @returns Employee projects data or throws an error if the request fails.
-       */
+       /**
+        * Fetches employee projects data based on employee ID.
+        * @param page - Current page number.
+        * @param pageSize - Number of records per page.
+        * @param employeeId - ID of the employee to fetch projects for.
+        * @returns Employee projects data or throws an error if the request fails.
+        */
       const fetchEmployeeProjectsData = async (page: number,pageSize: number,userId: string): Promise<GetEmployeePorjectsResponse> => {
         const limit = pageSize;
         const props: JSON = <JSON>(<unknown>{ page, limit, userId });
@@ -50,13 +50,13 @@ export default function UseEmployeeData() {
         }
       };
 
-      /**
-       * Fetches employees data based on selected department or tab.
-       * @param page - Current page number.
-       * @param pageSize - Number of records per page.
-       * @param tabKey - Key representing the department or "all" for all departments.
-       * @returns Filtered employee data or throws an error if the request fails.
-       */
+       /**
+        * Fetches employees data based on selected department or tab.
+        * @param page - Current page number.
+        * @param limit - Number of records per page.
+        * @param tabKey - Key representing the department or "all" for all departments.
+        * @returns Filtered employee data or throws an error if the request fails.
+        */
       const fetchEmployeesData = async (page: number,limit: number,tabKey: string): Promise<GetAllEmployeeResponse> => {
         const props: JSON = <JSON>(<unknown>{ page, limit, tabKey });
         try {
@@ -75,9 +75,9 @@ export default function UseEmployeeData() {
       };
 
       /**
-       * Fetches employees data based on selected department or tab.
-       * @param department- Current page number.
-       * @returns Filtered employee data or throws an error if the request fails.
+       * Fetches roles by department.
+       * @param department - Department name to fetch roles for.
+       * @returns Roles data or throws an error if the request fails.
        */
       const fetchRolesByDepartment = async (department: string): Promise<GetRolesResponse> => {
         const props: JSON = <JSON>(<unknown>{ department });
@@ -96,6 +96,11 @@ export default function UseEmployeeData() {
       };
 
 
+      /**
+       * Adds a new employee.
+       * @param data - Employee data to add.
+       * @returns Add user response or throws an error if the request fails.
+       */
       const addEmployee = async (data: EditEmployeeData): Promise<AddUserResponse> => {
         const props: JSON = <JSON>(<unknown>data);
         try {
@@ -112,7 +117,11 @@ export default function UseEmployeeData() {
         }
       };
 
-
+      /**
+       * Edits an existing employee's details.
+       * @param data - Employee data to edit.
+       * @returns Edit user response or throws an error if the request fails.
+       */
       const editEmployee = async (data: EditEmployeeData): Promise<EditUserResponse> => {
         const props: JSON = <JSON>(<unknown>data);
         const hasFile: boolean = <boolean>true;
@@ -131,6 +140,12 @@ export default function UseEmployeeData() {
       };
 
 
+      /**
+       * Updates an employee's status.
+       * @param id - Employee ID to update status for.
+       * @param newStatus - New status to set for the employee.
+       * @returns Update status response or throws an error if the request fails.
+       */
       const updateEmployeeStatus = async (id: string,newStatus: boolean): Promise<any> => {
         const props: JSON = <JSON>(<unknown>{ id, status: newStatus });
         try {
@@ -148,6 +163,12 @@ export default function UseEmployeeData() {
       };
 
 
+      /**
+       * Updates the status of an employee's project.
+       * @param id - Project ID to update status for.
+       * @param newStatus - New status to set for the project.
+       * @returns Update status response or throws an error if the request fails.
+       */
       const updateProjectStatus = async (id: string,newStatus: string): Promise<any> => {
         const props: JSON = <JSON>(<unknown>{ id, status: newStatus });
         try {

@@ -271,6 +271,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
           onChange={handlePageChange}
           showSizeChanger={false}
           className={styles.customPagination}
+          loading={loading}
         />
       </div>
 

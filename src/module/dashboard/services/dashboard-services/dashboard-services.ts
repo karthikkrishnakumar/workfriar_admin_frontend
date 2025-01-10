@@ -3,15 +3,12 @@ import http from "@/utils/http";
 
 // Define the interface for project time chart data
 
-/**
- * Fetches the project time data for a given date range.
- * @param startDate - The start date in ISO format (optional).
- * @param endDate - The end date in ISO format (optional).
- * @param prev - Whether to fetch the previous period (optional).
- * @param next - Whether to fetch the next period (optional).
- * @returns A promise containing the project time chart data.
- */
-    export default function UseDashboardServices() {
+
+export default function UseDashboardServices() {
+      /**
+       * Fetches the project time data for the current day.
+       * @returns A promise containing the project time data.
+       */
       const fetchProjectTimes = async (): Promise<ProjectTimeResponse> => {
         // Prepare the request payload
         try {
@@ -30,7 +27,12 @@ import http from "@/utils/http";
       };
 
 
-
+      /**
+       * Fetches timesheet chart data for a given year and month.
+       * @param year - The year for the chart data (optional).
+       * @param month - The month for the chart data (optional).
+       * @returns A promise containing the timesheet chart data.
+       */
       const fetchTimesheetChartData = async (
         year?: number | null,
         month?: number | null
@@ -56,7 +58,12 @@ import http from "@/utils/http";
       };
 
 
-
+      /**
+       * Fetches timesheet due data for a given date range.
+       * @param startDate - The start date of the due data (optional).
+       * @param endDate - The end date of the due data (optional).
+       * @returns A promise containing the timesheet due data.
+       */
       const fetchTimesheetDueData = async (
         startDate?: string,
         endDate?: string
@@ -78,7 +85,10 @@ import http from "@/utils/http";
       };
 
 
-
+      /**
+       * Fetches the notification data for the dashboard.
+       * @returns A promise containing the notification data.
+       */
       const fetchNotifications = async (): Promise<NotificationResponse> => {
         try {
             // Make an HTTP POST request to fetch the dashboard notifiaction data
@@ -96,7 +106,10 @@ import http from "@/utils/http";
       };
 
 
-
+      /**
+       * Fetches the holiday data for the dashboard.
+       * @returns A promise containing the holiday data.
+       */
       const fetchHolidays = async (): Promise<HolidayResponse> => {
         try {
             // Make an HTTP POST request to fetch the dashboard notifiaction data
@@ -115,7 +128,10 @@ import http from "@/utils/http";
       };
 
 
-
+      /**
+       * Fetches the date picker data for the dashboard.
+       * @returns A promise containing the date picker data.
+       */
       const fetchDatePickerData = async (): Promise<DatePickerResponse> => {
         try {
             // Make an HTTP POST request to fetch the dashboard datepicker data
@@ -134,7 +150,12 @@ import http from "@/utils/http";
       };
 
 
-
+      /**
+       * Saves the due timesheet data for a given date range.
+       * @param startDate - The start date of the due timesheet data.
+       * @param endDate - The end date of the due timesheet data.
+       * @returns A promise containing the response data for the saved timesheets.
+       */
       const saveTimesheetDue = async (
         startDate: string,
         endDate: string

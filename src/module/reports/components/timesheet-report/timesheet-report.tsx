@@ -8,6 +8,7 @@ import styles from "./timesheet-report.module.scss";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
 import { TimesheetReportsList } from "@/interfaces/reports/timesheet-report/timesheet-repot";
+import { FilterFormData } from "../project-timesheet-report-tabs/timesheet-report-tabs";
 
 interface FormattedData {
   projectName: ReactNode;
@@ -25,14 +26,7 @@ const TimesheetReport = ({
   filters,
 }: {
   activeTab: string;
-  filters: {
-    startDate?: string;
-    endDate?: string;
-    projectIds?: string[];
-    userIds?: string[];
-    year?: string;
-    month?: string;
-  };
+  filters?: FilterFormData;
 }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<FormattedData[]>([]);
@@ -48,7 +42,8 @@ const TimesheetReport = ({
     employee_summary: { exclude: ["dateRange"] },
     employee_detail: { exclude: [] },
   };
-  const { startDate, endDate, projectIds, userIds, year, month } = filters;
+  const { startDate, endDate, projectIds, userIds, year, month } =
+    filters || {};
 
   const fetchData = async (page: number) => {
     setLoading(true);
@@ -179,7 +174,6 @@ const TimesheetReport = ({
           current={currentPage}
           onChange={handlePageChange}
           showSizeChanger={false}
-          // style={{ textAlign: "right", marginTop: "20px" }}
           loading={loading}
         />
       </div>

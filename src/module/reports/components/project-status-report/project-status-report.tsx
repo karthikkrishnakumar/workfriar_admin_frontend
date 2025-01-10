@@ -1,22 +1,20 @@
 "use client";
 import React, { ReactNode, useEffect, useState } from "react";
-import { Tooltip, Dropdown, message } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
-import CustomTable from "@/themes/components/custom-table/custom-table";
+import { MoreOutlined } from "@ant-design/icons";
+import { Tooltip, Dropdown, message } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { closeModal } from "@/redux/slices/modalSlice";
 import styles from "./project-status-report.module.scss";
 import CustomAvatar from "@/themes/components/avatar/avatar";
-import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
-import UseProjectStatusServices from "../../services/project-status-report/project-status-report-services";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { closeModal } from "@/redux/slices/modalSlice";
 import AddReport from "../add-edit-report-modal/add-edit-report-modal";
-import {
-  ReportDetails,
-  ReportsList,
-} from "@/interfaces/reports/project-status-report/project-status-report";
+import CustomTable from "@/themes/components/custom-table/custom-table";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
+import UseProjectStatusServices from "../../services/project-status-report/project-status-report-services";
+import {ReportDetails,ReportsList,} from "@/interfaces/reports/project-status-report/project-status-report";
+
 
 interface FormattedData {
   id: string;

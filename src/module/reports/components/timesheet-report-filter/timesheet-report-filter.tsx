@@ -93,7 +93,7 @@ const TimeSheetReportFilter: React.FC<TimeSheetReportFilterProps> = ({
       if (result.status) {
         setProjects(result.data.projects);
         setEmployees(result.data.employees);
-        setLoading(false)
+        setLoading(false);
       } else {
         console.error(result.message);
       }
@@ -199,7 +199,10 @@ const TimeSheetReportFilter: React.FC<TimeSheetReportFilterProps> = ({
       name: "Year",
       content: (
         <div className={styles.yearFilter}>
-          {Array.from({ length: 20 }, (_, i) => 2030 - i).map((year) => (
+          {Array.from(
+            { length: new Date().getFullYear() - 2000 + 1 },
+            (_, i) => new Date().getFullYear() - i
+          ).map((year) => (
             <label key={year} className={styles.radioLabel}>
               <RadioComponent
                 checkedValue={selectedYear}

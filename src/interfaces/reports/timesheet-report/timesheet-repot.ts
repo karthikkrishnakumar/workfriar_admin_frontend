@@ -21,3 +21,21 @@ export interface TimesheetReportReportsResponse {
   message: string;
   errors?: ValidationError;
 }
+
+export interface employees {
+  id: string;
+  name: string; // Assuming it's just a name
+}
+export interface projects {
+  id: string;
+  project_name: string; // Assuming it's just a name
+}
+export interface GetProjectEmployeesResponse {
+  status: boolean;
+  data: {
+    employees: employees[];
+    projects:projects[];
+  };
+  message: string;
+  errors?: ValidationError;
+}

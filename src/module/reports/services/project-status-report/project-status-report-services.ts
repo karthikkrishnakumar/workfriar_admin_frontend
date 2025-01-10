@@ -54,7 +54,11 @@ export default function UseProjectStatusServices() {
     }
   };
 
-
+/**
+   * Adds a new project status report.
+   * @param reportData - Optional parameter for report data if saving.
+   * @returns Response of the add operation or throws an error if the request fails.
+   */
   const addProjectStatusReport = async (
     reportData?: ReportData // Optional parameter for report data if saving
   ): Promise<AddProjectStatusReportResponse> => {
@@ -74,6 +78,13 @@ export default function UseProjectStatusServices() {
     }
   };
 
+
+   /**
+   * Updates an existing project status report.
+   * @param reportData - Data to update the report with.
+   * @param reportId - ID of the report to be updated.
+   * @returns Response of the update operation or throws an error if the request fails.
+   */
   const editProjectStatusReport = async (
     reportData: ReportData, // Optional parameter for report data if saving
     reportId: string
@@ -93,7 +104,13 @@ export default function UseProjectStatusServices() {
         throw error; // Rethrow the error if something goes wrong
     }
   };
+  
 
+  /**
+   * Fetches dropdown data for projects or leads.
+   * @param type - Type of dropdown data to fetch (e.g., project, lead).
+   * @returns Dropdown data or throws an error if the request fails.
+   */
   async function fetchDropdownData(type: string): Promise<DropDownResponse> {
     try {
         // Call the API with the provided type to get project or lead data
