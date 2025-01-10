@@ -19,20 +19,10 @@ import { useDispatch, useSelector } from "react-redux";
 import AddEditEmployeeModal from "../add-edit-employee-modal/add-edit-employee";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
+import { Employee, EmployeeData } from "@/interfaces/organization/organization";
 
 interface OrganizationTableProps {
   activeTab: string;
-}
-
-interface Employee {
-  id: string;
-  name: string;
-  email: string;
-  department: string;
-  role: string;
-  reporting_manager: string;
-  status: boolean;
-  profile_pic_path: string;
 }
 
 const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
@@ -40,12 +30,12 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
+  const [totalRecords, setTotalRecords] = useState<number>(0); // Total records for pagination
   const pageSize = 3; // Number of rows per page
   const router = useRouter();
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [employeeData, setEmployeeData] = useState<any>(null);
+  const [employeeData, setEmployeeData] = useState<EmployeeData>();
 
   const { isOpen } = useSelector((state: RootState) => state.modal);
 
@@ -258,12 +248,12 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
             />
             <SkeletonLoader
               count={1}
-              paragraph={{ rows: 4 }}
+              paragraph={{ rows: 3 }}
               classNameItem={styles.customSkeletonItem}
             />
             <SkeletonLoader
               count={3}
-              paragraph={{ rows: 5 }}
+              paragraph={{ rows: 3 }}
               classNameItem={styles.customSkeletonItem}
             />
           </>
@@ -281,6 +271,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
           onChange={handlePageChange}
           showSizeChanger={false}
           className={styles.customPagination}
+          loading={loading}
         />
       </div>
 

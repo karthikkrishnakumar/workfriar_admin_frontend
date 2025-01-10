@@ -33,16 +33,6 @@ interface VisibleData {
   values: number[]; // Numeric values for the chart (hours in decimal)
 }
 
-// Define the structure for a single dataset in the chart
-interface Dataset {
-  data: number[]; // Data values for the chart
-  backgroundColor: string; // Bar color
-  hoverBackgroundColor?: string; // Optional hover color
-  tooltips?: string[]; // Tooltip data (not a native Chart.js property, but used here)
-  borderRadius?: number; // Optional bar border radius
-  barPercentage?: number; // Optional bar percentage for width control
-}
-
 // Define the shape of the data for the chart (project name and hours worked)
 interface ChartData {
   project_name: string;

@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { Modal, Spin } from "antd";
 import { ReactNode } from "react";
 import styles from "./modal.module.scss";
 
@@ -10,6 +10,7 @@ interface ModalProps {
   bottomContent?: ReactNode;
   theme?: "normal" | "danger" | "primary";
   onClose?: () => void;
+  isLoading?: boolean;
   className?: string;
   classTitle?: string;
   classTopButton?: string;
@@ -26,6 +27,7 @@ const ModalComponent: React.FC<ModalProps> = ({
   bottomContent,
   theme = "danger",
   onClose,
+  isLoading = false, 
   className = "",
   classTitle = "",
   classTopButton = "",
@@ -61,18 +63,32 @@ const ModalComponent: React.FC<ModalProps> = ({
       className={`${styles.customModal} ${className}`}
     >
       <div className={styles.modalContent}>
-        <div className={`${styles.title} ${currentTheme.titleClass} ${classTitle}`}>
-          {title}
-        </div>
-        
-        {topButtonContent && (
-          <div className={`${styles.topButtonContainer} ${classTopButton}`}>
-            {topButtonContent}
+
+        {isLoading ? ( // Conditionally render the Loader if isLoading is true
+          <div className={styles.loaderContainer}>
+           <Spin size="large" />
           </div>
+        ) : (
+          <>
+            <div
+              className={`${styles.title} ${currentTheme.titleClass} ${classTitle}`}
+            >
+              {title}
+            </div>
+            {/* Render topButtonContent only if provided */}
+            {topButtonContent && (
+              <div className={`${styles.topButtonContainer} ${classTopButton}`}>
+                {topButtonContent}
+              </div>
+            )}
+
+            {content}
+            <div className={`${styles.buttonsContainer} ${classBottom}`}>
+              {bottomContent}
+            </div>
+          </>
         )}
-        
-        {content}
-        <div className={`${styles.buttonsContainer} ${classBottom}`}>{bottomContent}</div>
+
       </div>
     </Modal>
   );

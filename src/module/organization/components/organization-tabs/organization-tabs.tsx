@@ -12,7 +12,7 @@ const OrganizationTabs: React.FC = () => {
 
   setTimeout(() => {
     setLoading(false);
-  }, 500);
+  }, 200);
 
   const handleTabChange = (key: string) => {
     setActiveTab(key);

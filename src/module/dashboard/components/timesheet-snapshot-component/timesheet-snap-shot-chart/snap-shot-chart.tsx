@@ -3,13 +3,14 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { Empty } from "antd";
 import styles from "./snap-shot-chart.module.scss";
+import { StatsProps } from "@/interfaces/dashboard/dashboard";
 
 // Registering necessary chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 // Defining the type for props
 interface StatusGaugeProps {
-  statusData: { status: string; count: number }[];
+  statusData: StatsProps[];
 }
 
 // StatusGauge component definition

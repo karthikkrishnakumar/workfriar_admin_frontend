@@ -120,6 +120,8 @@
 }
 
 .customDatePicker:global(.ant-picker){
+  width: 100%;
+  padding: 12px;
   &:hover{
     border-color: var(--primary-golden-color-medium);
   }
@@ -150,6 +152,7 @@
 
 .customTextarea {
   border-radius: 8px;
+  
 }
 
 // .custom-dropdown .ant-select-item-option-selected {

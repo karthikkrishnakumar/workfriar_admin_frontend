@@ -9,13 +9,14 @@ import EmployeeDetails from "../employee-details/employee-details";
 import EmployeeProjects from "../employee-projects/employee-projects";
 import AddEditEmployeeModal from "../add-edit-employee-modal/add-edit-employee";
 import UseEmployeeData from "../../services/organization-services/organization-services";
+import { EmployeeData } from "@/interfaces/organization/organization";
 
 interface EmpoyeeDetailsTabProps {
   id: string;
 }
 
 const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
-  const [employeeData, setEmployeeData] = useState<any>(null);
+  const [employeeData, setEmployeeData] = useState<EmployeeData>();
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +30,7 @@ const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
     try {
       const data = await UseEmployeeData().fetchEmployeeData(id);
       setEmployeeData(data.data);
-    } catch (err: any) {
+    } catch (err) {
       setError("Failed to fetch employee details");
     } finally {
       setEmployeeLoading(false);
@@ -50,7 +51,7 @@ const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
           loading={employeeLoading}
           error={error}
         />
-      ), // Pass props to ProjectDetails
+      ),
     },
     {
       key: "employee-projects",
