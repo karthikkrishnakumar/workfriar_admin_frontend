@@ -73,7 +73,6 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
         // Replace the filename with the actual File object
         values.project_logo = imageFile;
       }
-      console.log("Final form values:", values);
       onPrimaryClick?.(values);
     } catch (error) {
       console.error("Form validation failed:", error);

@@ -28,26 +28,23 @@ const Profile = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-       
         const response = await getAdminDetails();
         if (response.status) {
           message.success(response.message);
-          setProfile(
-            {...response.data,
-            reporting_manager: response.data.reporting_manager.full_name}
-          );
+          setProfile({
+            ...response.data,
+            reporting_manager: response.data.reporting_manager.full_name,
+          });
         } else {
           message.error(response.message);
         }
       } catch (error) {
-        console.error(error);
         message.error("Failed to fetch project details.");
       }
     };
-  
+
     fetchDetails(); // Call the function inside useEffect
   }, []); // Ensure dependencies are correctly passed
-  
 
   if (!profile) {
     return (

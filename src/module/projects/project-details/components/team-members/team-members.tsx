@@ -44,7 +44,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       if (response.status) {
         setFilteredTeamMembers(mapMemberData(response.data.teamsMembers));
         setSelectedId(response.data.id);
-      } 
+      }
     } catch (error) {
       message.error("Failed to fetch project details.");
     }
@@ -94,10 +94,6 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       throw new Error("Function not implemented.");
     }
 
-    // const handleStatusClick = (e: { key: string }, member: TeamMember) => {
-    //   handleStatusChange(member.id, e.key as TeamMember["status"]);
-    // };
-
     return members.map((member) => ({
       _id: member.id,
       name: (
@@ -121,10 +117,9 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       status: (
         <StatusDropdown
           status={
-            member.status?
-            (member.status
-            .replace(/\b\w/g, (l) => l.toUpperCase())):
-               ""
+            member.status
+              ? member.status.replace(/\b\w/g, (l) => l.toUpperCase())
+              : ""
           }
           menuItems={[
             { key: "Active", label: "Active" },

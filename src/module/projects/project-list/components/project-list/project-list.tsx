@@ -21,7 +21,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 
-
 const ProjectList: React.FC = () => {
   const router = useRouter();
   const {
@@ -35,12 +34,9 @@ const ProjectList: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [effectiveDateModal, setEffectiveDateModal] = useState(false);
   const [selectedId, setSelectedId] = useState("");
-  const [selectedProject, setSelectedProject] = useState<ProjectDisplayData | null>(
-    null
-  );
-  const [formErrors, setFormErrors] = useState<ProjectData | null>(
-    null
-  );
+  const [selectedProject, setSelectedProject] =
+    useState<ProjectDisplayData | null>(null);
+  const [formErrors, setFormErrors] = useState<ProjectData | null>(null);
   const dispatch = useDispatch();
   const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
 
@@ -58,22 +54,19 @@ const ProjectList: React.FC = () => {
     }
   };
 
-
   const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
-    const payload={
+    const payload = {
       ...values,
-      id:selectedProject?.id,
-      timeEntry: selectedProject?.open_for_time_entry === "closed"
-      ? "opened"
-      : "closed"
-    }
+      id: selectedProject?.id,
+      timeEntry:
+        selectedProject?.open_for_time_entry === "closed" ? "opened" : "closed",
+    };
     try {
       const response = await changeTimeEntry(payload);
-      if(response.status){
-        message.success(response.message)
-      }
-      else{
-        message.error(response.message)
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.message);
       }
       fetchDetails();
       setEffectiveDateModal(false);
@@ -81,7 +74,6 @@ const ProjectList: React.FC = () => {
       message.error("Failed.");
     }
   };
-
 
   /**
    * Opens the edit modal with the selected project's data
@@ -97,19 +89,18 @@ const ProjectList: React.FC = () => {
    * @param {Record<string, any>} values - The updated values for the project
    */
   const handleEditProjectSubmit = async (values: Record<string, any>) => {
-    const payload={
+    const payload = {
       ...values,
-      categories:values.categories.map((cat: any) => cat.id),
-      project_logo:values.project_logo
-    }
+      categories: values.categories.map((cat: any) => cat.id),
+      project_logo: values.project_logo,
+    };
     try {
-      const response = await updateProject(selectedId,payload);
-      if(response.status){
-        message.success(response.message)
-      }
-      else{
+      const response = await updateProject(selectedId, payload);
+      if (response.status) {
+        message.success(response.message);
+      } else {
         setFormErrors(response.errors);
-        message.error(response.message)
+        message.error(response.message);
       }
       fetchDetails();
     } catch (err) {
@@ -124,18 +115,17 @@ const ProjectList: React.FC = () => {
    */
 
   const handleAddProjectSubmit = async (values: Record<string, any>) => {
-    const payload={
+    const payload = {
       ...values,
-      project_logo:values.project_logo
-    }
+      project_logo: values.project_logo,
+    };
     try {
       const response = await addProject(payload);
-      if(response.status){
-        message.success(response.message)
-      }
-      else{
+      if (response.status) {
+        message.success(response.message);
+      } else {
         setFormErrors(response.errors);
-        message.error(response.message)
+        message.error(response.message);
       }
       fetchDetails();
     } catch (err) {
@@ -168,42 +158,30 @@ const ProjectList: React.FC = () => {
 
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: ProjectDisplayData[]): RowData[] => {
-
-      const handleStatusChange = async (
-    projectId: string,
-    status: string,
-  ) => {
-    try {
-      const payload = {projectId, status}
-      const response = await changeStatus(payload);
-      if(response.status){
-        message.success(response.message)
+    const handleStatusChange = async (projectId: string, status: string) => {
+      try {
+        const payload = { projectId, status };
+        const response = await changeStatus(payload);
+        if (response.status) {
+          message.success(response.message);
+        } else {
+          message.error(response.errors);
+        }
+        fetchDetails();
+      } catch (err) {
+        message.error("Failed.");
       }
-      else{
-        message.error(response.errors)
-      }
-      fetchDetails();
-    } catch (err) {
-      message.error("Failed.");
-    }
-  };
+    };
 
-    const handleStatusClick = (
-      status: string ,
-      id: string
-    ) => {
-      // setEffectiveDateModal(true);
+    const handleStatusClick = (status: string, id: string) => {
       handleStatusChange(id, status);
     };
 
-    const handleTimeEntryClick = (
-     project:ProjectDisplayData
-    ) => {
+    const handleTimeEntryClick = (project: ProjectDisplayData) => {
       setEffectiveDateModal(true);
       setSelectedProject(project);
     };
 
-    
     const handleMenuClick = (
       e: { key: string },
       project: ProjectDisplayData
@@ -232,7 +210,12 @@ const ProjectList: React.FC = () => {
             src={project?.project_logo}
           />
           {/* Custom avatar */}
-          <span className={styles.project} onClick={()=>handleRowClick(project)}>{project.project_name}</span>
+          <span
+            className={styles.project}
+            onClick={() => handleRowClick(project)}
+          >
+            {project.project_name}
+          </span>
           {/* Employee name */}
         </span>
       ),
@@ -303,7 +286,6 @@ const ProjectList: React.FC = () => {
 
   return (
     <div className={styles.tableWrapper}>
-      
       <CustomTable
         columns={columns}
         data={filteredProject}
@@ -311,7 +293,7 @@ const ProjectList: React.FC = () => {
       />
       {isEditModalOpen && (
         <ProjectModal
-        type="edit"
+          type="edit"
           isModalOpen={isEditModalOpen}
           onClose={() => {
             setIsEditModalOpen(false);
@@ -322,7 +304,6 @@ const ProjectList: React.FC = () => {
         />
       )}
       {isOpen && modalType === "addModal" && (
-        
         <ProjectModal
           isModalOpen={true}
           onClose={() => dispatch(closeModal())}
