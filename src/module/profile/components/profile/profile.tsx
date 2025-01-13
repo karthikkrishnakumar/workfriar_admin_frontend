@@ -30,7 +30,6 @@ const Profile = () => {
       try {
         const response = await getAdminDetails();
         if (response.status) {
-          message.success(response.message);
           setProfile({
             ...response.data,
             reporting_manager: response.data.reporting_manager.full_name,

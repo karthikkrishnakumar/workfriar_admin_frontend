@@ -1,25 +1,34 @@
 "use client";
 import React from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
+import { TaskCategoryData } from "../../services/task-category-service";
 
-interface AddModalProps {
-  isAddModalOpen: boolean;
+interface TaskCategoryModalProps {
+  isModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
+  initialValues?: TaskCategoryData | null;
+  type?: string;
 }
 
-const AddTaskCategoryModal: React.FC<AddModalProps> = ({
-  isAddModalOpen,
+const TaskCategoryModal: React.FC<TaskCategoryModalProps> = ({
+  isModalOpen,
   onClose,
   onSave,
+  initialValues,
+  type,
 }) => {
-  const values = {};
+  const values = initialValues || {
+    id: "",
+    category: "",
+    timeentry: "opened",
+  };
 
   return (
     <ModalFormComponent
-      isVisible={isAddModalOpen}
+      isVisible={isModalOpen}
       onClose={onClose}
-      title={"Add Task Category"}
+      title={type === "edit" ? "Edit Task Category" : "Add Task Category"}
       primaryButtonLabel={"Save"}
       secondaryButtonLabel={"Cancel"}
       initialValues={values}
@@ -52,4 +61,4 @@ const AddTaskCategoryModal: React.FC<AddModalProps> = ({
   );
 };
 
-export default AddTaskCategoryModal;
+export default TaskCategoryModal;

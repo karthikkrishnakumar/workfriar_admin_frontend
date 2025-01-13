@@ -14,32 +14,38 @@ import StatusDropdown from "@/themes/components/status-dropdown-menu/status-drop
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
+import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
 
 const Client: React.FC = () => {
   const dispatch = useDispatch();
   const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
-  const { addClient, editClient, changeStatus, fetchClientDetails } = useClientService();
-  const [filteredClients, setFilteredClients] = useState<
-  RowData[]
->([]);
-const [selectedId, setSelectedId] = useState("");
+  const { addClient, editClient, changeStatus, fetchClientDetails } =
+    useClientService();
+  const [filteredClients, setFilteredClients] = useState<RowData[]>([]);
+  const [selectedId, setSelectedId] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [clientData, setClientData] = useState<ClientData| null>(null);
+  const [clientData, setClientData] = useState<ClientData | null>(null);
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
+  const pageSize = 5; // Number of rows per page
 
-  // useEffect hook to fetch client data based on the ID when the component mounts
-  useEffect(() => {
-
-
-    fetchDetails();
-  }, []);
-
-  const fetchDetails = async () => {
+  const fetchDetails = async (page: number) => {
     try {
-      const result = await fetchClientDetails(); 
+      const result = await fetchClientDetails(page, pageSize);
       setFilteredClients(mapClientData(result.data));
+      setTotalRecords(result.total);
     } catch (error) {
       message.error("Failed to fetch client details.");
     }
+  };
+
+  // useEffect hook to fetch client data based on the ID when the component mounts
+  useEffect(() => {
+    fetchDetails(currentPage);
+  }, [currentPage, totalRecords]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); // Update the current page
   };
 
   /**
@@ -49,34 +55,31 @@ const [selectedId, setSelectedId] = useState("");
   const handleAddClientSubmit = async (values: Record<string, any>) => {
     try {
       const response = await addClient(values);
-      fetchDetails();
-      if(response.status){
-        message.success(response.message)
-      }
-      else{
-        message.error(response.message)
+      fetchDetails(currentPage);
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.message);
       }
     } catch (err) {
       message.error("Failed.");
     }
-    dispatch(closeModal())
+    dispatch(closeModal());
   };
 
   const handleEditClientSubmit = async (values: Record<string, any>) => {
-    const payload={
+    const payload = {
       ...values,
-      _id:selectedId
-    }
+      _id: selectedId,
+    };
     try {
-
       const response = await editClient(payload);
-      if(response.status){
-        message.success(response.message)
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.message);
       }
-      else{
-        message.error(response.message)
-      }
-      fetchDetails();
+      fetchDetails(currentPage);
     } catch (err) {
       message.error("Failed.");
     }
@@ -88,20 +91,16 @@ const [selectedId, setSelectedId] = useState("");
    * @param {string} key - The key of the client to update
    * @param {string} newStatus - The new status to set
    */
-  const handleStatusChange = async (
-    _id: string,
-    status: string,
-  ) => {
+  const handleStatusChange = async (_id: string, status: string) => {
     try {
-      const payload = {_id, status}
+      const payload = { _id, status };
       const response = await changeStatus(payload);
-      if(response.status){
-        message.success(response.message)
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.message);
       }
-      else{
-        message.error(response.message)
-      }
-      fetchDetails();
+      fetchDetails(currentPage);
     } catch (err) {
       message.error("Failed.");
     }
@@ -112,54 +111,48 @@ const [selectedId, setSelectedId] = useState("");
       ...client,
       location: client.location_id,
       client_manager: client.client_manager_id,
-      billing_currency:client.billing_currency_id
-    }
+      billing_currency: client.billing_currency_id,
+    };
     setClientData(filteredClient);
     setSelectedId(client._id);
     setIsEditModalOpen(true);
   };
 
   const columns: Column[] = [
-    { title: "Client", key: "client_name", align: "left",width:300 },
+    { title: "Client", key: "client_name", align: "left", width: 300 },
     { title: "Location", key: "location", align: "left" },
     {
       title: "Billing currency",
       key: "billing_currency",
       align: "left",
     },
-    { title: "Client manager", key: "client_manager", align: "left",width:300 },
+    {
+      title: "Client manager",
+      key: "client_manager",
+      align: "left",
+      width: 300,
+    },
     { title: "Status", key: "status", align: "left" },
     { title: "", key: "action", align: "left", width: 30 },
   ];
 
   // Function to map client data to RowData format for compatibility with the table
   const mapClientData = (clients: ClientData[]): RowData[] => {
-
-    const handleMenuClick = (
-      e: { key: string },
-      client: ClientData
-    ) => {
+    const handleMenuClick = (e: { key: string }, client: ClientData) => {
       if (e.key === "Edit") {
         if (client._id) {
           handleEditProject(client);
         }
-      } 
+      }
     };
 
-    const handleStatusClick = (
-      status: string ,
-      id: string
-    ) => {
+    const handleStatusClick = (status: string, id: string) => {
       handleStatusChange(id, status);
     };
     return clients.map((client) => ({
       _id: client._id,
-      client_name: (
-        <span className={styles.client}>{client.client_name}</span>
-      ),
-      location: (
-        <span className={styles.client}>{client.location}</span>
-      ),
+      client_name: <span className={styles.client}>{client.client_name}</span>,
+      location: <span className={styles.client}>{client.location}</span>,
       billing_currency: (
         <span className={styles.client}>{client.billing_currency}</span>
       ),
@@ -182,9 +175,7 @@ const [selectedId, setSelectedId] = useState("");
         <span className={styles.actionCell}>
           <Dropdown
             menu={{
-              items: [
-                { key: "Edit", label: "Edit" },
-              ],
+              items: [{ key: "Edit", label: "Edit" }],
               onClick: (e) => handleMenuClick(e, client),
             }}
             trigger={["click"]}
@@ -195,23 +186,31 @@ const [selectedId, setSelectedId] = useState("");
       ),
     }));
   };
-  
+
   return (
     <div className={styles.tableWrapper}>
-      <CustomTable
-        columns={columns}
-        data={filteredClients}
-      />
+      <CustomTable columns={columns} data={filteredClients} />
+      <div className={styles.paginationDiv}>
+        <PaginationComponent
+          className={styles.pagination}
+          total={totalRecords}
+          pageSize={pageSize}
+          current={currentPage}
+          onChange={handlePageChange}
+          showSizeChanger={false}
+          loading={false}
+        />
+      </div>
       {isOpen && modalType === "addModal" && (
-      <ClientModal
-      isModalOpen={true}
-      onClose={() => dispatch(closeModal())}
-      onSave={handleAddClientSubmit}
-    />
+        <ClientModal
+          isModalOpen={true}
+          onClose={() => dispatch(closeModal())}
+          onSave={handleAddClientSubmit}
+        />
       )}
       {isEditModalOpen && (
         <ClientModal
-        type="edit"
+          type="edit"
           isModalOpen={isEditModalOpen}
           onClose={() => {
             setIsEditModalOpen(false);

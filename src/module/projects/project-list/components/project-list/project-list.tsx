@@ -5,21 +5,23 @@ import { Dropdown, Tag, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./project-list.module.scss";
 import ProjectModal from "../add-edit-project-modal/add-edit-project-modal";
-import useProjectService, {
-  ProjectData,
-  ProjectDisplayData,
-} from "../../services/project-service";
-import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import CustomTable, {
-  Column,
-  RowData,
-} from "@/themes/components/custom-table/custom-table";
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
+import ModalFormComponent from "@/themes/components/modal-form/modal-form";
+import useProjectService, {
+  ProjectData,
+  ProjectDisplayData,
+} from "../../services/project-service";
+import CustomTable, {
+  Column,
+  RowData,
+} from "@/themes/components/custom-table/custom-table";
+import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
+
 
 const ProjectList: React.FC = () => {
   const router = useRouter();
@@ -39,21 +41,32 @@ const ProjectList: React.FC = () => {
   const [formErrors, setFormErrors] = useState<ProjectData | null>(null);
   const dispatch = useDispatch();
   const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
+  const pageSize = 5; // Number of rows per page
 
-  // useEffect hook to fetch project data based on the ID when the component mounts
-  useEffect(() => {
-    fetchDetails();
-  }, []);
 
-  const fetchDetails = async () => {
+  const fetchDetails = async (page: number) => {
     try {
-      const result = await fetchProjectDetails();
+      const result = await fetchProjectDetails(page,pageSize);
       setFilteredProject(mapProjectData(result.data));
+      setTotalRecords(result.total);
+      
     } catch (error) {
       message.error("Failed to fetch project details.");
     }
   };
+  
+  // useEffect hook to fetch project data based on the ID when the component mounts
+  useEffect(() => {
+    fetchDetails(currentPage);
+  }, [currentPage ,totalRecords]);
 
+
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); // Update the current page
+  };
   const handleEffectiveDateSubmit = async (values: Record<string, any>) => {
     const payload = {
       ...values,
@@ -68,7 +81,7 @@ const ProjectList: React.FC = () => {
       } else {
         message.error(response.message);
       }
-      fetchDetails();
+      fetchDetails(currentPage);
       setEffectiveDateModal(false);
     } catch (err) {
       message.error("Failed.");
@@ -102,7 +115,7 @@ const ProjectList: React.FC = () => {
         setFormErrors(response.errors);
         message.error(response.message);
       }
-      fetchDetails();
+      fetchDetails(currentPage);
     } catch (err) {
       message.error("Failed.");
     }
@@ -127,7 +140,7 @@ const ProjectList: React.FC = () => {
         setFormErrors(response.errors);
         message.error(response.message);
       }
-      fetchDetails();
+      fetchDetails(currentPage);
     } catch (err) {
       message.error("Failed.");
     }
@@ -167,7 +180,7 @@ const ProjectList: React.FC = () => {
         } else {
           message.error(response.errors);
         }
-        fetchDetails();
+        fetchDetails(currentPage);
       } catch (err) {
         message.error("Failed.");
       }
@@ -291,6 +304,17 @@ const ProjectList: React.FC = () => {
         data={filteredProject}
         onRowClick={() => handleRowClick}
       />
+      <div className={styles.paginationDiv}>
+        <PaginationComponent
+          className={styles.pagination}
+          total={totalRecords}
+          pageSize={pageSize}
+          current={currentPage}
+          onChange={handlePageChange}
+          showSizeChanger={false}
+          loading={false}
+        />
+      </div>
       {isEditModalOpen && (
         <ProjectModal
           type="edit"
