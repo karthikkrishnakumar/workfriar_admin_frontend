@@ -44,6 +44,7 @@ const HolidayCard: React.FC = () => {
           <SkeletonLoader
             count={1}
             button={true}
+            className={styles.customSkeletonButton}
             classNameItem={styles.customSkeletonItem}
           />
         ) : (

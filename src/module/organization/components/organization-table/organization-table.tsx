@@ -31,7 +31,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState<number>(0); // Total records for pagination
-  const pageSize = 3; // Number of rows per page
+  const pageSize = 5; // Number of rows per page
   const router = useRouter();
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

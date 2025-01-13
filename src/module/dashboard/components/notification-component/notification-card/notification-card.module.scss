@@ -7,6 +7,9 @@
   
   }
 
+  .customSkeletonDatepicker{
+    margin-bottom: 0px!important;
+  }
   .customSkeleton {
     width: 100%;
     height: 100%;
@@ -14,7 +17,8 @@
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0px!important;
+    top: 8px;
 
 
     .skeletonItem {
