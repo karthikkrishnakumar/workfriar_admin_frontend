@@ -12,7 +12,7 @@
   "dependencies": {
     "@ant-design/charts": "2.2.3",
     "@hapi/iron": "7.0.1",
-    "@reduxjs/toolkit": "2.4.0",
+    "@reduxjs/toolkit": "^2.5.0",
     "@types/chart.js": "2.9.41",
     "antd": "5.22.2",
     "axios": "1.7.7",
@@ -28,7 +28,7 @@
     "react-date-range": "2.0.1",
     "react-datepicker": "7.5.0",
     "react-dom": "19.0.0-rc-66855b96-20241106",
-    "react-redux": "9.1.2",
+    "react-redux": "^9.2.0",
     "react-toastify": "10.0.6",
     "sass": "1.81.0",
     "scss": "0.2.4"

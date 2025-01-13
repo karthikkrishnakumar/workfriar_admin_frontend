@@ -15,6 +15,9 @@ import {
   isoTOenGB,
 } from "@/utils/date-formatter-util/date-formatter";
 import UseAllTimesheetsServices from "../../services/all-timesheet-services/all-time-sheet-services";
+import { useDispatch, useSelector } from "react-redux";
+import { setShowDetailedView, setShowStatusTag } from "@/redux/slices/timesheetSlice";
+import { RootState } from "@/redux/store";
 
 /**
  * Interface for the props passed to the ApprovedOverviewTable component.
@@ -41,25 +44,29 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
   const [timeSheetTable, setTimesheetTable] = useState<TimesheetDataTable[]>(
     []
   ); // Stores the detailed timesheet data.
-  const [showDetailedView, setShowDetailedView] = useState<boolean>(false); // Flag to toggle between overview and detailed view.
+  const [rejectionNote,setRejectionNote] = useState<string | undefined>(undefined);
+  const showDetailedView = useSelector(
+    (state: RootState) => state.timesheet.showDetailedView
+  ); // Flag to toggle between overview and detailed view.
   const [loading, setLoading] = useState<boolean>(true); // Loading state to display skeleton loader while fetching data.
   const [dates, setDates] = useState<WeekDaysData[]>([]); // Stores the weekdays data for the timesheet.
+  const dispatch = useDispatch();
 
   /**
    * Handles the action to go back to the overview table.
    */
   const handleBackToOverview = () => {
-    setShowDetailedView(false);
+    dispatch(setShowStatusTag(false));
+    dispatch(setShowDetailedView(false));
   };
 
   const fetchOverViewTable = async () => {
     try {
       const response = await UseAllTimesheetsServices().fetchRejectedWeeks();
-      console.log(response);
       setTable(response.data);
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -70,14 +77,14 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
    * @param {string} endDate - The date range for fetching the timesheet data
    */
   const handleFetchTimesheets = async (startDate: string, endDate: string) => {
-    setShowDetailedView(true);
+    dispatch(setShowDetailedView(true));
     setLoading(true);
     const response = await UseAllTimesheetsServices().fetchRejectedTimesheets(
       startDate,
       endDate
     );
-    console.log(response);
     setTimesheetTable(response.data);
+    setRejectionNote(response.notes);
     const uniqueDates: WeekDaysData[] = (
       response.weekDates as Partial<WeekDateEntry>[]
     ).map((day) => ({
@@ -134,9 +141,6 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
       </span>
     ),
   }));
-  
-
-  console.log(data);
 
   return (
     <div className={styles.pastOverDueTableWrapper}>
@@ -152,6 +156,7 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
             setTimeSheetData={setTimesheetTable}
             daysOfWeek={dates}
             backButtonFunction={handleBackToOverview}
+            rejectionNote={rejectionNote}
           />
           // Detailed view table should be rendered here
         )

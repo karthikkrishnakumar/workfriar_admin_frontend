@@ -11,7 +11,6 @@ const EmployeeListTab = () => {
 
   const fetchTeamMembers = async() => {
     const response = await UseApprovalCenterServices().fetchTeamMembers();
-    console.log(response);
     setEmployeeList(response.data);
   }
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./rejected-timesheet-table.module.scss";
 import TimeInput from "@/themes/components/time-input/time-input";
@@ -16,10 +16,17 @@ import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
+import { useDispatch, useSelector } from "react-redux";
+import { setShowStatusTag, setStatus } from "@/redux/slices/timesheetSlice";
+import { assignStatus } from "@/utils/timesheet-utils/timesheet-status-handler";
+import ModalComponent from "@/themes/components/modal/modal";
+import { RootState } from "@/redux/store";
+import UseAllTimesheetsServices from "@/module/time-sheet/services/all-timesheet-services/all-time-sheet-services";
+import { message } from "antd";
 
 /**
  * Interface for the props passed to the RejectedTimesheetsTable component.
- * 
+ *
  * @interface RejectedTableProps
  * @property {TimesheetDataTable[]} [timesheetData] - Array of initial timesheet data (optional).
  * @property {function} setTimeSheetData - Function to update the global timesheet data.
@@ -31,12 +38,13 @@ interface RejectedTableProps {
   setTimeSheetData: (data: TimesheetDataTable[]) => void; // Function to update the global timesheet data.
   daysOfWeek: WeekDaysData[]; // Array of weekdays with associated data.
   backButtonFunction: () => void; // Function to handle back button click.
+  rejectionNote: string | undefined;
 }
 
 /**
  * RejectedTimesheetsTable component is responsible for rendering a table of rejected timesheets
  * where users can edit task details, input time for each day of the week, and delete rows.
- * 
+ *
  * @param {RejectedTableProps} props - The props for the component.
  * @returns {JSX.Element} The rendered RejectedTimesheetsTable component.
  */
@@ -45,14 +53,43 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
   setTimeSheetData,
   daysOfWeek,
   backButtonFunction,
+  rejectionNote,
 }) => {
-  const [timesheetData, setLocalTimesheetData] = useState<TimesheetDataTable[]>(initialTimesheetData);
+  const [timesheetData, setLocalTimesheetData] =
+    useState<TimesheetDataTable[]>(initialTimesheetData);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+  const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
+    useState<boolean>(false);
+  const [timesheetStatus, setTimesheetStatus] = useState<string | undefined>();
+  const dispatch = useDispatch();
+  const [savedTimesheets, setSavedTimesheets] =
+    useState<TimesheetDataTable[]>();
+  let totalHours;
+  const [editingRowId, setEditingRowId] = useState<number | null>(null);
+  const [modalString, setModalString] = useState<string>("");
+  const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false);
+
+  const handlecloseConfirmationModal = () => {
+    setIsConfirmationModalVisible(false);
+  };
+
+  useEffect(() => {
+    dispatch(setShowStatusTag(true));
+    assignStatus(timesheetData, dispatch, "rejected");
+  }, []);
+
+  const initialStatus = useSelector(
+    (state: RootState) => state.timesheet.status
+  );
+
+  useEffect(() => {
+    setTimesheetStatus(initialStatus);
+  }, [initialStatus]);
 
   /**
    * Handles time input changes and updates the timesheet status to "pending".
-   * 
+   *
    * @param {number} index - The index of the row being updated.
    * @param {WeekDaysData} day - The day of the week that is being updated.
    * @param {string} newTime - The new time entered.
@@ -71,42 +108,89 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
       updatedData[index].status = "pending";
     }
 
+    dispatch(setStatus(undefined));
+
     setLocalTimesheetData(updatedData);
     setUnsavedChanges(true);
   };
 
+  const textAreaOnclick = (row: TimesheetDataTable) => {
+    setEditingRowId(row.local_id!);
+    setModalString(row.task_detail);
+    setTaskDetailModal(!showTaskDetailModal);
+  };
+
+  const setTaskDetail = (newValue: string) => {
+    setLocalTimesheetData((previous) =>
+      previous.map((data) =>
+        data.local_id === editingRowId
+          ? { ...data, task_detail: newValue }
+          : data
+      )
+    );
+  };
+
   /**
    * Handles the deletion of a row in the timesheet table.
-   * 
+   *
    * @param {number} indexToDelete - The index of the row to delete.
    */
-  const handleDeleteRow = (indexToDelete: number) => {
-    const updatedData = timesheetData.filter((_, index) => index !== indexToDelete);
+  const handleDeleteRow = async (idToDelete: number, timesheetId?: string) => {
+    const updatedData = timesheetData.filter(
+      (data) => data.local_id !== idToDelete
+    );
+    if (timesheetId) {
+      const response = await UseAllTimesheetsServices().deleteTimesheet(
+        timesheetId
+      );
+    }
     setLocalTimesheetData(updatedData);
     setTimeSheetData(updatedData);
-    setUnsavedChanges(true);
   };
 
   /**
    * Saves the current state of the timesheet data and resets the "unsaved changes" flag.
    */
-  const handleSave = () => {
+  const handleSave = async () => {
     setTimeSheetData(timesheetData);
     setUnsavedChanges(false);
-    alert("Changes saved successfully!");
+    const response = await UseAllTimesheetsServices().saveAllTimesheets(
+      timesheetData
+    );
+    if (response.status === true) {
+      message.success("Timesheet saved successfully");
+      dispatch(setStatus("saved"));
+      setSavedTimesheets(response.data);
+    } else {
+      message.error("Error on saving timesheet");
+    }
   };
 
   /**
    * Submits the timesheet data by saving it and displaying a success message.
    */
-  const handleSubmit = () => {
-    handleSave();
-    alert("Timesheet data submitted successfully!");
+  const handleSubmit = async () => {
+    setIsConfirmationModalVisible(true);
+  };
+
+  const handleSubmitConfirm = async () => {
+    await handleSave();
+    const response = await UseAllTimesheetsServices().submitAllTimesheets(
+      savedTimesheets ? savedTimesheets : timesheetData
+    );
+    if (response.status) {
+      message.success(response.message);
+      dispatch(setStatus("submitted"));
+      setTimesheetStatus("submitted");
+    } else {
+      message.error(response.message);
+    }
+    handlecloseConfirmationModal();
   };
 
   /**
    * Calculates the total hours worked for a specific row based on the time entries.
-   * 
+   *
    * @param {TimeEntry[]} entries - Array of time entries for the row.
    * @returns {string} - Total hours formatted as "HH:MM".
    */
@@ -120,7 +204,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
 
   /**
    * Calculates the total hours worked for each day of the week across all timesheets.
-   * 
+   *
    * @returns {Record<string, number>} - Object mapping each day to the total minutes worked.
    */
   const calculateTotalByDay = () => {
@@ -139,7 +223,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
   /**
    * Maps the time entries to each day of the week and returns a record with JSX elements
    * to render the TimeInput components for each day.
-   * 
+   *
    * @param {TimeEntry[]} entries - Array of time entries for a specific timesheet row.
    * @param {number} index - The index of the timesheet row.
    * @returns {Record<string, ReactNode>} - Object mapping day names to corresponding TimeInput components.
@@ -150,13 +234,19 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
   ): Record<string, ReactNode> => {
     const weekMap: Record<string, ReactNode> = {};
     daysOfWeek.forEach((day, dayIndex) => {
-      const entry = entries[dayIndex] || { hours: "00:00", isHoliday: false, date: "" };
+      const entry = entries[dayIndex] || {
+        hours: "00:00",
+        isHoliday: false,
+        date: "",
+      };
       weekMap[day.name] = (
         <TimeInput
           value={entry.hours}
           setValue={(newTime) => handleTimeChange(index, day, newTime)}
           disabled={entry.is_disable}
-          tooltipContent={entry.is_disable ? "These dates are in next week" : ""}
+          tooltipContent={
+            entry.is_disable ? "These dates are in next week" : ""
+          }
         />
       );
     });
@@ -165,12 +255,13 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
 
   /**
    * Generates the total row for the table, displaying the total hours for each day and overall.
-   * 
+   *
    * @returns {object} - Object representing the total row.
    */
   const totalRow = () => {
     const dailyTotals = calculateTotalByDay();
     const totalAllDays = Object.values(dailyTotals).reduce((a, b) => a + b, 0);
+    totalHours = minutesToTime(totalAllDays);
 
     return {
       task: <span className={styles.totalRowTask}>Total</span>,
@@ -193,12 +284,16 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
 
   /**
    * Defines the columns for the table, including task, day columns, and action buttons.
-   * 
+   *
    * @returns {Array} - Array of column definitions.
    */
   const columns = [
     { title: "Task", key: "task", width: 140 },
-    { title: <span style={{ width: "100px" }}>Task Details</span>, key: "details", width: 155 },
+    {
+      title: <span style={{ width: "100px" }}>Task Details</span>,
+      key: "details",
+      width: 155,
+    },
     ...daysOfWeek.map((day) => ({
       title: (
         <span
@@ -220,7 +315,7 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
 
   /**
    * Maps the timesheet data to table rows.
-   * 
+   *
    * @returns {Array} - Array of table rows.
    */
   const data = timesheetData?.map((timesheet, index) => {
@@ -241,16 +336,16 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
       ),
       details: (
         <TextAreaButton
-          buttonvalue={timesheet?.task_detail}
-          onclickFunction={() => setEditingRowIndex(index)}
-          showTaskDetailModal={editingRowIndex === index}
-          value={timesheetData[index]?.task_detail}
-          setvalue={(newValue) => {
-            const updatedData = [...timesheetData];
-            updatedData[index].task_detail = newValue;
-            setLocalTimesheetData(updatedData);
-            setUnsavedChanges(true);
-          }}
+          buttonvalue={timesheet.task_detail}
+          onclickFunction={() => textAreaOnclick(timesheet)}
+          showTaskDetailModal={
+            editingRowId === timesheet.local_id && showTaskDetailModal
+          }
+          value={modalString}
+          setvalue={setTaskDetail}
+          readOnly={
+            timesheet.status === "accepted" || timesheet.status === "submitted"
+          }
         />
       ),
       ...mapTimeEntriesToWeek(timesheet?.data_sheet, index),
@@ -285,28 +380,58 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
         <div className={styles.timesheetNote}>
           <ul>
             <li>
-              Please note that you can edit the task details, delete entries,
-              and add new entries.
+              {rejectionNote
+                ? rejectionNote
+                : "Your team leader doesn't provided any rejection note."}
             </li>
           </ul>
         </div>
       </div>
       <div className={styles.actionButtons}>
-        <div>
-          <ButtonComponent
-            label="Save"
-            theme="black"
-            onClick={handleSave}
-            disabled={!unsavedChanges}
-          />
-          <ButtonComponent
-            label="Submit"
-            theme="white"
-            onClick={handleSubmit}
-            disabled={!unsavedChanges}
-          />
-        </div>
+        {data.length > 0 && (
+          <div>
+            <ButtonComponent
+              label="Save"
+              theme="black"
+              onClick={handleSave}
+              disabled={timesheetStatus === "submitted"}
+            />
+            <ButtonComponent
+              label="Submit"
+              theme="white"
+              onClick={handleSubmit}
+              disabled={timesheetStatus === "submitted"}
+            />
+          </div>
+        )}
+        <ModalComponent
+          isVisible={isConfirmationModalVisible}
+          title="Submit timesheet"
+          theme="normal"
+          onClose={handlecloseConfirmationModal}
+          content={
+            <div className={styles.modalContent}>
+              <p>Are you sure you want to submit timesheet ?</p>
+              <p>Total time entered : {totalHours} hrs </p>
+            </div>
+          }
+          bottomContent={
+            <>
+              <ButtonComponent
+                label="No"
+                theme="white"
+                onClick={handlecloseConfirmationModal}
+              />
+              <ButtonComponent
+                label="Yes"
+                theme="black"
+                onClick={handleSubmitConfirm}
+              />
+            </>
+          }
+        />
         <span className={styles.backButton} onClick={backButtonFunction}>
+          {" "}
           {"< Back"}
         </span>
       </div>

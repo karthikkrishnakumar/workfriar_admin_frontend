@@ -64,7 +64,7 @@ export default function UseAllTimesheetsServices() {
         try {
             const status = 'saved';
             const props: JSON = <JSON>(<unknown>{ status });
-            const { body } = await http().post("/api/admin/pastdue", props);
+            const { body } = await http().post("/api/timesheet/pastdue", props);
 
             return {
                 status: body.status,
@@ -87,7 +87,7 @@ export default function UseAllTimesheetsServices() {
     const fetchPastDueTimesheets = async (startDate: string, endDate: string): Promise<AllTimesheetResponse> => {
         try {
             const props: JSON = <JSON>(<unknown>{ startDate, endDate });
-            const { body } = await http().post("/api/admin/getduetimesheet", props);
+            const { body } = await http().post("/api/timesheet/getduetimesheet", props);
             return {
                 status: body.status,
                 data: body.data || null,
@@ -108,8 +108,7 @@ export default function UseAllTimesheetsServices() {
         try {
             const status = 'accepted';
             const props: JSON = <JSON>(<unknown>{ status });
-            const { body } = await http().post("/api/admin/pastdue", props);
-            console.log(body);
+            const { body } = await http().post("/api/timesheet/pastdue", props);
             return {
                 status: body.status,
                 data: body.data || null,
@@ -117,7 +116,7 @@ export default function UseAllTimesheetsServices() {
                 errors: body.errors || null,
             };
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw error;
         }
     };
@@ -132,8 +131,7 @@ export default function UseAllTimesheetsServices() {
         try {
             const status = "accepted";
             const props: JSON = <JSON>(<unknown>{ startDate, endDate, status });
-            const { body } = await http().post("/api/admin/getduetimesheet", props);
-            console.log(body);
+            const { body } = await http().post("/api/timesheet/getduetimesheet", props);
             return {
                 status: body.status,
                 data: body.data || null,
@@ -154,8 +152,7 @@ export default function UseAllTimesheetsServices() {
         try {
             const status = 'rejected';
             const props: JSON = <JSON>(<unknown>{ status });
-            const { body } = await http().post("/api/admin/pastdue", props);
-            console.log(body);
+            const { body } = await http().post("/api/timesheet/pastdue", props);
             return {
                 status: body.status,
                 data: body.data || null,
@@ -163,7 +160,7 @@ export default function UseAllTimesheetsServices() {
                 errors: body.errors || null,
             };
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw error;
         }
     };
@@ -175,13 +172,37 @@ export default function UseAllTimesheetsServices() {
      */
     const saveAllTimesheets = async (timesheet: TimesheetDataTable[]): Promise<PostResponses> => {
         try {
-            const timesheets = timesheet.map((task) => {
+            const dates: string[] = [];
+            
+            const dateFunc = () => {
+                timesheet.forEach((task) => {
+                    task.data_sheet.forEach((date) => {
+                        if (!date.is_disable) {
+                            dates.push(date.date); // Add non-disabled dates to the array
+                        }
+                    });
+                });
+            };
+
+            dateFunc();
+            let timesheets = timesheet.map((task) => {
                 return {
-                    passedDate: task.data_sheet[0].date,
-                    timesheetId: task.timesheet_id ? task.timesheet_id : null,
-                    ...task
+                    ...task,
+                    passedDate: dates[0],
+                    timesheetId: task.timesheet_id ?? null, // Use null if timesheet_id is not present
+                    data_sheet:task.data_sheet.filter((day_data)=>day_data.is_disable === false)
                 };
             });
+
+            timesheets = timesheets.filter((timesheet)=>timesheet.status !== "accepted").map((timesheet)=>{
+                return {
+                    ...timesheet,
+                    passedDate: dates[0],
+                    timesheetId: timesheet.timesheet_id ?? null, // Use null if timesheet_id is not present
+                    data_sheet: timesheet.data_sheet.filter((day_data) => day_data.is_disable === false),
+                  };
+            })
+
             const props: JSON = <JSON>(<unknown>{ timesheets });
             const { body } = await http().post("/api/timesheet/save-timesheets", props);
 
@@ -207,12 +228,13 @@ export default function UseAllTimesheetsServices() {
         try {
             const status = "rejected";
             const props: JSON = <JSON>(<unknown>{ startDate, endDate, status });
-            const { body } = await http().post("/api/admin/getduetimesheet", props);
+            const { body } = await http().post("/api/timesheet/getduetimesheet", props);
             return {
                 status: body.status,
                 data: body.data || null,
                 message: body.message,
-                weekDates: body.weekDates
+                weekDates: body.weekDates,
+                notes: body.notes
             };
         } catch (error) {
             console.error(error);
@@ -273,7 +295,7 @@ export default function UseAllTimesheetsServices() {
             const { body } = await http().post('/api/timesheet/submit-timesheets', props);
             return body;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw error;
         }
     }
@@ -289,7 +311,7 @@ export default function UseAllTimesheetsServices() {
             const { body } = await http().post('/api/timesheet/delete-timesheet', props);
             return body;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw error;
         }
     }

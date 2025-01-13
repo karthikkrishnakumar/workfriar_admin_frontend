@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useState} from "react";
+import React, { ReactNode, useEffect, useState} from "react";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import styles from "./approved-timesheet-table.module.scss";
 import TimeInput from "@/themes/components/time-input/time-input";
@@ -14,6 +14,10 @@ import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
+import { assignStatus } from "@/utils/timesheet-utils/timesheet-status-handler";
+import { useDispatch } from "react-redux";
+import { setShowStatusTag } from "@/redux/slices/timesheetSlice";
+import { access } from "fs";
 
 /**
  * Props for the ApprovedTimesheetsTable component.
@@ -58,6 +62,7 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     setTaskDetailModal(!showTaskDetailModal);
   };
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+  const dispatch = useDispatch();
 
   /**
    * Calculates the total hours worked for a row based on time entries.
@@ -72,6 +77,11 @@ const ApprovedTimesheetsTable: React.FC<PastDueTableProps> = ({
     );
     return minutesToTime(totalMinutes!);
   };
+
+  useEffect(()=>{
+    dispatch(setShowStatusTag(true));
+    assignStatus(timesheetData,dispatch,"accepted")
+  },[])
 
   /**
    * Maps time entries for each day of the week to the corresponding time input fields.

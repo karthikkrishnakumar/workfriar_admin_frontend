@@ -65,7 +65,6 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({
         startDate,
         endDate
       );
-      console.log(response);
       setTimesheetTable(response.data);
       const uniqueDates: WeekDaysData[] = (
         response.weekDates as Partial<WeekDateEntry>[]

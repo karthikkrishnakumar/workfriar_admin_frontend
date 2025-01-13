@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import styles from "./approved-overdue-table.module.scss";
+import styles from "./approved-overview-table.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import {
   OverViewTable,
@@ -15,6 +15,9 @@ import {
   dateStringToMonthDate,
   isoTOenGB,
 } from "@/utils/date-formatter-util/date-formatter";
+import { useDispatch, useSelector } from "react-redux";
+import { setShowDetailedView, setShowStatusTag } from "@/redux/slices/timesheetSlice";
+import { RootState } from "@/redux/store";
 
 /**
  * Displays an overview table of approved timesheets with options to view detailed timesheet data.
@@ -26,9 +29,12 @@ const ApprovedOverviewTable = () => {
   const [timeSheetTable, setTimesheetTable] = useState<TimesheetDataTable[]>(
     []
   );
-  const [showDetailedView, setShowDetailedView] = useState<boolean>(false);
+  const showDetailedView = useSelector(
+    (state: RootState) => state.timesheet.showDetailedView
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [dates, setDates] = useState<WeekDaysData[]>([]);
+  const dispatch = useDispatch();
 
   /**
    * fetch overview table to show
@@ -36,11 +42,10 @@ const ApprovedOverviewTable = () => {
   const fetchOverViewTable = async () => {
     try {
       const response = await UseAllTimesheetsServices().fetchApprovedWeeks();
-      console.log(response);
       setTable(response.data);
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -51,13 +56,12 @@ const ApprovedOverviewTable = () => {
    * @param {string} endDate - The date range for fetching the timesheet data
    */
   const handleFetchTimesheets = async (startDate: string, endDate: string) => {
-    setShowDetailedView(true);
+    dispatch(setShowDetailedView(true));
     setLoading(true);
     const response = await UseAllTimesheetsServices().fetchApprovedTimesheets(
       startDate,
       endDate
     );
-    console.log(response);
     setTimesheetTable(response.data);
     const uniqueDates: WeekDaysData[] = (
       response.weekDates as Partial<WeekDateEntry>[]
@@ -76,7 +80,8 @@ const ApprovedOverviewTable = () => {
    * Handles returning to the overview table from the detailed view.
    */
   const handleBackToOverview = () => {
-    setShowDetailedView(false);
+    dispatch(setShowDetailedView(false));
+    dispatch(setShowStatusTag(false));
   };
 
   /**

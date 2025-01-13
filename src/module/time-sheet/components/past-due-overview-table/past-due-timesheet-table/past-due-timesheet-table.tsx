@@ -21,7 +21,13 @@ import {
   minutesToTime,
   timeToMinutes,
 } from "@/utils/timesheet-utils/timesheet-time-formatter";
- 
+import { useDispatch, useSelector } from "react-redux";
+import { assignStatus } from "@/utils/timesheet-utils/timesheet-status-handler";
+import UseAllTimesheetsServices from "@/module/time-sheet/services/all-timesheet-services/all-time-sheet-services";
+import { setShowStatusTag, setStatus } from "@/redux/slices/timesheetSlice";
+import { message } from "antd";
+import ModalComponent from "@/themes/components/modal/modal";
+import { RootState } from "@/redux/store";
 
 interface PastDueTableProps {
   timesheetData?: TimesheetDataTable[];
@@ -31,35 +37,87 @@ interface PastDueTableProps {
 }
 
 const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
-  timesheetData: initialTimesheetData = [],
+  timesheetData,
   setTimeSheetData,
   daysOfWeek,
-  backButtonFunction
-
+  backButtonFunction,
 }) => {
-  const [timesheetData, setLocalTimesheetData] =
-    useState<TimesheetDataTable[]>(initialTimesheetData);
+  const [localTimesheetData, setLocalTimesheetData] = useState<
+    TimesheetDataTable[]
+  >([]);
+  const [localIdCounter, setLocalIdCounter] = useState<number>(0);
   const [isModalVisible, setModalVisible] = useState(false);
   const [showSubModal, setShowSubModal] = useState(false);
   const addButtonWrapperRef = useRef<HTMLDivElement>(null);
   const addButtonRef = useRef<HTMLButtonElement>(null);
-  const [selectedProject, setSelectedProject] = useState<ProjectList | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectList | null>();
   const [selectedTask, setSelectedTask] = useState<CategoryList | null>(null);
   const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
-  const textAreaOnclick = (rowIndex: number) => {
-    setEditingRowIndex(rowIndex);
+  const [editingRowId, setEditingRowId] = useState<number | null>(null);
+  const [modalString, setModalString] = useState<string>("");
+  const [savedTimesheets, setSavedTimesheets] =
+    useState<TimesheetDataTable[]>();
+  const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
+    useState<boolean>(false);
+  const dispatch = useDispatch();
+  let totalHours;
+
+  const handlecloseConfirmationModal = () => {
+    setIsConfirmationModalVisible(false);
+  };
+
+  const textAreaOnclick = (row: TimesheetDataTable) => {
+    setEditingRowId(row.local_id!);
+    setModalString(row.task_detail);
     setTaskDetailModal(!showTaskDetailModal);
   };
-  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
 
-  // Add a new row when a project and task are selected
+  // Add local IDs to initial timesheet data when it changes
+  useEffect(() => {
+    const timesheetDataWithLocalIds = timesheetData?.map((entry, index) => {
+      return {
+        ...entry,
+        local_id: index + 1,
+      };
+    });
+    setLocalIdCounter(timesheetData!.length + 1);
+    setLocalTimesheetData(timesheetDataWithLocalIds!);
+    dispatch(setShowStatusTag(true));
+    assignStatus(timesheetData!, dispatch, "pastDue");
+  }, [timesheetData]);
+
+  const setTaskDetail = (newValue: string) => {
+    setLocalTimesheetData((previous) =>
+      previous.map((data) =>
+        data.local_id === editingRowId
+          ? { ...data, task_detail: newValue }
+          : data
+      )
+    );
+  };
+
+  const initialStatus = useSelector(
+    (state: RootState) => state.timesheet.status
+  );
+  const [timesheetStatus, setTimesheetStatus] = useState<string | undefined>();
+
+  useEffect(() => {
+    setTimesheetStatus(initialStatus);
+  }, [initialStatus]);
+
+  /**
+   * Adds a new row to the timesheet when a project and task are selected.
+   */
   useEffect(() => {
     if (selectedProject && selectedTask) {
       const newRow: TimesheetDataTable = {
+        local_id: localIdCounter + 1, // Automatically assign local ID
         category_name: selectedTask.category,
         project_name: selectedProject.project_name,
-        task_detail: "Add task description",
+        project_id: selectedProject.id,
+        task_category_id: selectedTask._id,
+        task_detail: "",
         data_sheet: daysOfWeek.map((day) => ({
           day_of_week: day.name,
           date: day.date,
@@ -67,43 +125,61 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
           is_holiday: day.isHoliday,
           is_disable: day.isDisabled,
         })),
-        status: "pending",
-        timesheet_id: String(timesheetData.length + 1),
+        status: "in_progress",
       };
 
-      const updatedData = [...timesheetData, newRow];
+      const updatedData = [...localTimesheetData, newRow];
       setLocalTimesheetData(updatedData);
       setTimeSheetData(updatedData);
+      setLocalIdCounter((prevCounter) => prevCounter + 1); // Increment local ID counter
       setModalVisible(false);
       setShowSubModal(false);
       setSelectedProject(null);
       setSelectedTask(null);
     }
-  }, [selectedProject, selectedTask, timesheetData, setTimeSheetData]);
+  }, [selectedProject, selectedTask, localTimesheetData, setTimeSheetData]);
 
-  // Handle time input changes
+  /**
+   * Handles the time input change for a specific day in a specific row.
+   *
+   * @param {number} index - The index of the timesheet entry.
+   * @param {WeekDaysData} day - The day of the week for the time entry.
+   * @param {string} newTime - The new time value.
+   */
   const handleTimeChange = (
     index: number,
     day: WeekDaysData,
     newTime: string
   ) => {
-    const updatedData = [...timesheetData];
+    const updatedData = [...localTimesheetData];
     const dayIndex = daysOfWeek.indexOf(day);
     updatedData[index].data_sheet[dayIndex].hours = newTime;
     setLocalTimesheetData(updatedData);
+    setTimeSheetData(updatedData);
     setUnsavedChanges(true);
   };
 
-  // Calculate total hours for a row
+  /**
+   * Calculates the total hours worked for a specific row.
+   *
+   * @param {TimeEntry[]} entries - The time entries for a row.
+   * @returns {string} The total hours as a string in HH:MM format.
+   */
   const calculateTotalHours = (entries: TimeEntry[]) => {
-    const totalMinutes = entries?.reduce(
+    const totalMinutes = entries.reduce(
       (total, entry) => total + timeToMinutes(entry.hours || "00:00"),
       0
     );
     return minutesToTime(totalMinutes);
   };
 
-  // Map time entries to corresponding week days
+  /**
+   * Maps the time entries to corresponding week days for rendering.
+   *
+   * @param {TimeEntry[]} entries - The time entries.
+   * @param {number} index - The index of the timesheet entry.
+   * @returns {Record<string, ReactNode>} A map of week days to JSX time input components.
+   */
   const mapTimeEntriesToWeek = (
     entries: TimeEntry[],
     index: number
@@ -123,36 +199,80 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
           tooltipContent={
             entry.is_disable ? "These dates are in next week" : ""
           }
+          readOnly={
+            localTimesheetData[index].status === "accepted" ||
+            localTimesheetData[index].status === "submitted"
+              ? true
+              : false
+          }
         />
       );
     });
     return weekMap;
   };
 
-  // Handle row deletion
-  const handleDeleteRow = (indexToDelete: number) => {
-    const updatedData = timesheetData.filter(
-      (_, index) => index !== indexToDelete
+  /**
+   * Deletes a row from the timesheet.
+   *
+   * @param {number} indexToDelete - The index of the row to delete.
+   */
+  const handleDeleteRow = async (idToDelete: number, timesheetId?: string) => {
+    const updatedData = localTimesheetData.filter(
+      (data) => data.local_id !== idToDelete
     );
+    if (timesheetId) {
+      const response = await UseAllTimesheetsServices().deleteTimesheet(
+        timesheetId
+      );
+    }
     setLocalTimesheetData(updatedData);
     setTimeSheetData(updatedData);
   };
 
-  // Save button functionality
-  const handleSave = () => {
-    setTimeSheetData(timesheetData);
+  /**
+   * Saves the current timesheet data.
+   */
+  const handleSave = async () => {
+    setTimeSheetData(localTimesheetData);
     setUnsavedChanges(false);
-    alert("Changes saved successfully!");
-    console.log(timesheetData);
+    const response = await UseAllTimesheetsServices().saveAllTimesheets(
+      localTimesheetData
+    );
+    if (response.status === true) {
+      message.success("Timesheet saved successfully");
+      dispatch(setStatus("saved"));
+      setSavedTimesheets(response.data);
+    } else {
+      message.error("Error on saving timesheet");
+    }
   };
 
-  // Submit button functionality
-  const handleSubmit = () => {
-    handleSave();
-    alert("Timesheet data submitted successfully!");
+  /**
+   * Submits the timesheet data after saving.
+   */
+  const handleSubmit = async () => {
+    setIsConfirmationModalVisible(true);
   };
 
-  // Add row component
+  const handleSubmitConfirm = async () => {
+    await handleSave();
+    const response = await UseAllTimesheetsServices().submitAllTimesheets(
+      savedTimesheets ? savedTimesheets! : timesheetData!
+    );
+    if (response.status) {
+      message.success(response.message);
+      dispatch(setStatus("submitted"));
+      setTimesheetStatus("submitted");
+    } else {
+      message.error(response.message);
+    }
+    handlecloseConfirmationModal();
+  };
+
+  /**
+   * Adds a new row with default values for task, details, and time entries.
+   * @returns {Record<string, ReactNode>} The new row with default values.
+   */
   const addRow = () => ({
     task: (
       <div ref={addButtonWrapperRef} className={styles.addButtonWrapper}>
@@ -176,11 +296,18 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
           onClose={() => setModalVisible(false)}
           parentRef={addButtonWrapperRef}
           showSubModal={showSubModal}
-          subModalContent={<TaskSelector projectId={selectedProject?.id} setSelectedTask={setSelectedTask} />}
+          subModalContent={
+            <TaskSelector
+              projectId={selectedProject?.id}
+              setSelectedTask={setSelectedTask}
+            />
+          }
         />
       </div>
     ),
-    details: <TextAreaButton buttonvalue="Add task description" disabled />,
+    details: (
+      <TextAreaButton buttonvalue="Add task description" disabled value="" />
+    ),
     ...daysOfWeek.reduce(
       (acc, day) => ({
         ...acc,
@@ -196,11 +323,15 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
     action: <span>{Icons.deleteDisabled}</span>,
   });
 
-  // Calculate total hours by day
+  /**
+   * Calculates the total hours worked for each day across all rows.
+   *
+   * @returns {Record<string, number>} A map of day names to total minutes worked.
+   */
   const calculateTotalByDay = () => {
     const dailyTotals: Record<string, number> = {};
     daysOfWeek.forEach((day) => {
-      dailyTotals[day.name] = timesheetData.reduce((total, timesheet) => {
+      dailyTotals[day.name] = localTimesheetData?.reduce((total, timesheet) => {
         const dayIndex = daysOfWeek.indexOf(day);
         const dayEntry = timesheet.data_sheet[dayIndex];
         return total + timeToMinutes(dayEntry?.hours || "00:00");
@@ -210,10 +341,14 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
     return dailyTotals;
   };
 
-  // Total row component
+  /**
+   * Returns a row representing the total hours worked across all rows.
+   * @returns {Record<string, ReactNode>} The total row with hours calculated for each day.
+   */
   const totalRow = () => {
     const dailyTotals = calculateTotalByDay();
     const totalAllDays = Object.values(dailyTotals).reduce((a, b) => a + b, 0);
+    totalHours = minutesToTime(totalAllDays);
 
     return {
       task: <span className={styles.totalRowTask}>Total</span>,
@@ -234,7 +369,7 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
     };
   };
 
-  // Columns and final data
+  // Define the columns for the table
   const columns = [
     { title: "Task", key: "task", width: 140 },
     {
@@ -247,8 +382,8 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
         <span
           className={
             day.isHoliday
-              ? `${styles.dateTitles} ${styles.holidayDateTitles}` // Apply holiday style
-              : styles.dateTitles // Default style
+              ? `${styles.dateTitles} ${styles.holidayDateTitles}`
+              : styles.dateTitles
           }
         >
           <p>{day.name}</p>
@@ -265,55 +400,71 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
     },
   ];
 
-  const data = timesheetData?.map((timesheet, index) => {
-    const totalHours = calculateTotalHours(timesheet.data_sheet);
-    const taskStatusClass =
-      timesheet.status === "approved"
-        ? styles.approved
-        : timesheet.status === "rejected"
-        ? styles.rejected
-        : "";
+  // Prepare the data for the table rows
+  const data = localTimesheetData
+    ? localTimesheetData?.map((timesheet, index) => {
+        const totalHours = calculateTotalHours(timesheet.data_sheet);
+        const taskStatusClass =
+          timesheet.status === "accepted"
+            ? styles.approved
+            : timesheet.status === "rejected"
+            ? styles.rejected
+            : "";
 
-    return {
-      task: (
-        <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
-          <span className={styles.taskName}>{timesheet.category_name}</span>
-          <span className={styles.projectName}>{timesheet.project_name}</span>
-        </div>
-      ),
-      details: (
-        <TextAreaButton
-          buttonvalue={timesheet.task_detail}
-          onclickFunction={() => textAreaOnclick(index)}
-          showTaskDetailModal={editingRowIndex === index && showTaskDetailModal}
-          value={timesheetData[index].task_detail}
-          setvalue={(newValue) => {
-            const updatedData = [...timesheetData];
-            updatedData[index].task_detail = newValue;
-            setLocalTimesheetData(updatedData);
-            setTimeSheetData(updatedData);
-          }}
-        />
-      ),
-      ...mapTimeEntriesToWeek(timesheet.data_sheet, index),
-      total: (
-        <span className={styles.rowWiseTotal}>
-          <p>{totalHours}</p>
-        </span>
-      ),
-      action: (
-        <span
-          className={styles.deleteButton}
-          role="button"
-          tabIndex={0}
-          style={{ cursor: "pointer" }}
-          onClick={() => handleDeleteRow(index)}
-        >
-          {Icons.deleteActive}
-        </span>
-      ),
-    };
-  });
+        return {
+          task: (
+            <div className={`${styles.tableDataCell} ${taskStatusClass}`}>
+              <span className={styles.taskName}>{timesheet.category_name}</span>
+              <span className={styles.projectName}>
+                {timesheet.project_name}
+              </span>
+            </div>
+          ),
+          details: (
+            <TextAreaButton
+              buttonvalue={timesheet.task_detail}
+              onclickFunction={() => textAreaOnclick(timesheet)}
+              showTaskDetailModal={
+                editingRowId === timesheet.local_id && showTaskDetailModal
+              }
+              value={modalString}
+              setvalue={setTaskDetail}
+              readOnly={
+                timesheet.status === "accepted" ||
+                timesheet.status === "submitted"
+              }
+            />
+          ),
+          ...mapTimeEntriesToWeek(timesheet.data_sheet, index),
+          total: (
+            <span className={styles.rowWiseTotal}>
+              <p>{totalHours}</p>
+            </span>
+          ),
+          action: (
+            <button
+              className={styles.deleteButton}
+              disabled={
+                timesheet.status === "accepted" ||
+                timesheet.status === "submitted"
+              }
+            >
+              <span
+                className={styles.deleteButton}
+                role="button"
+                tabIndex={0}
+                style={{ cursor: "pointer" }}
+                onClick={() =>
+                  handleDeleteRow(timesheet.local_id!, timesheet.timesheet_id)
+                }
+              >
+                {Icons.deleteActive}
+              </span>
+            </button>
+          ),
+        };
+      })
+    : [];
 
   return (
     <div className={styles.mainContainer}>
@@ -321,21 +472,61 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
         <div className={styles.tableWrapper}>
           <CustomTable
             columns={columns}
-            data={[...data, addRow(), totalRow()]}
+            data={
+              timesheetStatus === "submitted" || initialStatus === "submitted"
+                ? [...data, totalRow()]
+                : [...data, addRow(), totalRow()]
+            }
           />
         </div>
       </div>
       <div className={styles.actionButtons}>
-        <div>
-          <ButtonComponent label="Save" theme="black" onClick={handleSave} />
-          <ButtonComponent
-            label="Submit"
-            theme="white"
-            onClick={handleSubmit}
-          />
-        </div>
-
-        <span className={styles.backButton} onClick={backButtonFunction}> {"< Back"}</span>
+        {data.length > 0 && (
+          <div>
+            <ButtonComponent
+              label="Save"
+              theme="black"
+              onClick={handleSave}
+              disabled={timesheetStatus === "submitted"}
+            />
+            <ButtonComponent
+              label="Submit"
+              theme="white"
+              onClick={handleSubmit}
+              disabled={timesheetStatus === "submitted"}
+            />
+          </div>
+        )}
+        <ModalComponent
+          isVisible={isConfirmationModalVisible}
+          title="Submit timesheet"
+          theme="normal"
+          onClose={handlecloseConfirmationModal}
+          content={
+            <div className={styles.modalContent}>
+              <p>Are you sure you want to submit timesheet ?</p>
+              <p>Total time entered : {totalHours} hrs </p>
+            </div>
+          }
+          bottomContent={
+            <>
+              <ButtonComponent
+                label="No"
+                theme="white"
+                onClick={handlecloseConfirmationModal}
+              />
+              <ButtonComponent
+                label="Yes"
+                theme="black"
+                onClick={handleSubmitConfirm}
+              />
+            </>
+          }
+        />
+        <span className={styles.backButton} onClick={backButtonFunction}>
+          {" "}
+          {"< Back"}
+        </span>
       </div>
     </div>
   );

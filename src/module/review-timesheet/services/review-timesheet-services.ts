@@ -13,7 +13,7 @@ async function fetchWeeks(
         const date = keyDate ? new Date(keyDate) : new Date().toISOString().split('T')[0];
         const props: JSON = <JSON>(<unknown>{ date });
         const { body } = await http().post(
-            "/api/user/getdates",
+            "/api/timesheet/getdates",
             props);
 
         setWeeks(body.data);

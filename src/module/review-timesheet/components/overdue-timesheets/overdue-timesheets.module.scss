@@ -9,10 +9,24 @@
     color: var(--primary-golden-color-dark);
     text-decoration: underline;
     cursor: pointer;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.actionDataCell:disabled{
+    opacity: 0.5;
+    cursor: no-drop;
 }
 
 .customSkeleton {
     background-color: rgba(123, 121, 121, 0.085) !important;
+}
+
+.customSkeletonButton{
+    background-color: rgba(123, 121, 121, 0.085) !important;
+    width: 100px !important;
+    height: 20px !important;
 }
 
 .customToast {

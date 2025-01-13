@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import styles from "./overdue-timesheets.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
@@ -11,68 +9,83 @@ import { OverViewTable } from "@/interfaces/timesheets/timesheets";
 import { isoTOenGB } from "@/utils/date-formatter-util/date-formatter";
 import UseReviewTimesheetsServices from "../../services/review-timesheets-service";
 
-/**
- * Props for the OverdueTable component.
- */
+export interface ExtendedOverViewTable extends OverViewTable {
+  notified: boolean;
+}
+
 interface OverdueProps {
   id: string;
 }
 
-/**
- * OverdueTable component renders a table of overdue timesheets with an option to notify users.
- */
 const OverdueTable: React.FC<OverdueProps> = ({ id }) => {
-  const [table, setTable] = useState<OverViewTable[]>([]); // Holds the overdue table data
-  const [loading, setLoading] = useState<boolean>(true); // Tracks loading state for fetching data
+  const [table, setTable] = useState<ExtendedOverViewTable[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [rowLoading, setRowLoading] = useState<Record<string, boolean>>({}); // Track loading state for each row
 
-  /**
-   * Handles the action to send a notification for a specific time period.
-   * Displays a success toast message when the notification is sent.
-   * @param startDate- The selected date range for which to send a notification
-   * @param endDate - The selected date range for which to send a notification
-   */
-  const handleSendNotification = (dateRange: string, endDate: string) => {
-    toast(
-      <p className={styles.toastMessage}>
-        <span className={styles.tickMark}>{Icons.whiteTick}</span> Notification
-        sent successfully
-      </p>,
-      {
-        className: styles.customToast,
-        bodyClassName: styles.customToastBody,
-        hideProgressBar: true,
-        closeButton: false,
-        autoClose: 2000, // Toast disappears after 2 seconds
+  const handleSendNotification = async (startDate: string, endDate: string) => {
+    const rowKey = `${startDate}-${endDate}`;
+    setRowLoading((prev) => ({ ...prev, [rowKey]: true }));
+
+    try {
+      const response =
+        await UseReviewTimesheetsServices().sentOverdueNotification(
+          id,
+          `${isoTOenGB(startDate)}-${isoTOenGB(endDate)}`
+        );
+
+      if (response.status) {
+        toast(
+          <p className={styles.toastMessage}>
+            <span className={styles.tickMark}>{Icons.whiteTick}</span>{" "}
+            Notification sent successfully
+          </p>,
+          {
+            className: styles.customToast,
+            bodyClassName: styles.customToastBody,
+            hideProgressBar: true,
+            closeButton: false,
+            autoClose: 2000,
+          }
+        );
+
+        // Update the state to mark the row as notified
+        setTable((prevTable) =>
+          prevTable.map((row) =>
+            row.startDate === startDate && row.endDate === endDate
+              ? { ...row, notified: true }
+              : row
+          )
+        );
       }
-    );
+    } catch (error) {
+      console.error("Error sending notification:", error);
+    } finally {
+      setRowLoading((prev) => ({ ...prev, [rowKey]: false }));
+    }
   };
 
-  /**
-   * Fetches past due weeks data and sets the table state.
-   */
   const fetchOverViewTable = async () => {
     try {
       const response = await UseReviewTimesheetsServices().fetchOverDueWeeks(
         id
       );
-      setTable(response.data);
+      setTable(
+        response.data.map((item: OverViewTable) => ({
+          ...item,
+          notified: false,
+        }))
+      );
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
   };
 
-  /**
-   * Fetches the overdue timesheets data when the component is mounted.
-   */
   useEffect(() => {
     setLoading(true);
     fetchOverViewTable();
   }, []);
 
-  /**
-   * Column definitions for the overdue table.
-   */
   const columns = [
     { title: "Time Period", key: "period", align: "left" as const },
     { title: "Time Logged", key: "loggedTime", align: "left" as const },
@@ -80,43 +93,52 @@ const OverdueTable: React.FC<OverdueProps> = ({ id }) => {
     { title: "Actions", key: "action", align: "left" as const, width: 100 },
   ];
 
-  /**
-   * Transforms the overdue table data into a format suitable for rendering.
-   */
-  const data = table.map((element) => ({
-    period: (
-      <span className={styles.dataCell}>
-        {isoTOenGB(element.startDate)}-{isoTOenGB(element.endDate)}
-      </span>
-    ),
-    loggedTime: (
-      <span className={styles.dataCell}>
-        {element.totalHours ? element.totalHours : "--"} hr
-      </span>
-    ),
-    approvedTime: (
-      <span className={styles.dataCell}>
-        {element.approvedHours ? element.approvedHours : "--"} hr
-      </span>
-    ),
-    action: (
-      <span
-        className={`${styles.dataCell} ${styles.actionDataCell}`}
-        onClick={() =>
-          handleSendNotification(element.startDate, element.endDate)
-        }
-      >
-        Notify
-      </span>
-    ),
-  }));
+  const data = table.map((element) => {
+    const rowKey = `${element.startDate}-${element.endDate}`;
+
+    return {
+      period: (
+        <span className={styles.dataCell}>
+          {isoTOenGB(element.startDate)}-{isoTOenGB(element.endDate)}
+        </span>
+      ),
+      loggedTime: (
+        <span className={styles.dataCell}>
+          {element.totalHours ? element.totalHours : "--"} hr
+        </span>
+      ),
+      approvedTime: (
+        <span className={styles.dataCell}>
+          {element.approvedHours ? element.approvedHours : "--"} hr
+        </span>
+      ),
+      action: (
+        <>
+          {rowLoading[rowKey] ? (
+          <SkeletonLoader classNameItem={styles.customSkeleton}  width="60%" button />
+          ) : (
+            <button
+              className={`${styles.dataCell} ${styles.actionDataCell} ${
+                element.notified ? styles.disabled : ""
+              }`}
+              onClick={() =>
+                !element.notified &&
+                !rowLoading[rowKey] &&
+                handleSendNotification(element.startDate, element.endDate)
+              }
+              disabled={element.notified || rowLoading[rowKey]} // Disable button if notified or loading
+            >
+              {element.notified ? "Notified" : "Notify"}
+            </button>
+          )}
+        </>
+      ),
+    };
+  });
 
   return (
     <div className={styles.pastOverDueTableWrapper}>
-      {/* Toast container to display notifications */}
       <ToastContainer />
-
-      {/* Conditionally render skeleton loader or the table */}
       {loading ? (
         <SkeletonLoader
           paragraph={{ rows: 15 }}

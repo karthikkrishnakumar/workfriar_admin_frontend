@@ -222,3 +222,11 @@
   color:var(--holiday-font-color);
 }
 
+.modalContent{
+  display: flex;
+  flex-direction: column;
+  color: var(--disabled-button-background-dark);
+  font-size: var(--default-font-size);
+  font-weight: var(--default-font-weight);
+}
+

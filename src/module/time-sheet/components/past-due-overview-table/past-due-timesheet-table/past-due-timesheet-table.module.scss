@@ -226,3 +226,19 @@
   color:var(--holiday-font-color);
 }
 
+.deleteButton{
+  background-color: transparent;
+  border: none;
+}
+
+.deleteButton:disabled{
+  opacity: 0.5;
+}
+
+.modalContent{
+  display: flex;
+  flex-direction: column;
+  color: var(--disabled-button-background-dark);
+  font-size: var(--default-font-size);
+  font-weight: var(--default-font-weight);
+}

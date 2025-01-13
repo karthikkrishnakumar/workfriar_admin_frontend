@@ -4,7 +4,6 @@ import styles from "./past-due-overview-table.module.scss";
 import CustomTable from "@/themes/components/custom-table/custom-table";
 import {
   OverViewTable,
-  TimeEntry,
   TimesheetDataTable,
   WeekDateEntry,
   WeekDaysData,
@@ -16,6 +15,9 @@ import {
   dateStringToMonthDate,
   isoTOenGB,
 } from "@/utils/date-formatter-util/date-formatter";
+import { useDispatch, useSelector } from "react-redux";
+import { setShowDetailedView, setShowStatusTag } from "@/redux/slices/timesheetSlice";
+import { RootState } from "@/redux/store";
 
 
 
@@ -33,9 +35,12 @@ const PastDueOverviewTable = () => {
   const [timeSheetTable, setTimesheetTable] = useState<TimesheetDataTable[]>(
     []
   );
-  const [showDetailedView, setShowDetailedView] = useState<boolean>(false);
+  const showDetailedView = useSelector(
+    (state: RootState) => state.timesheet.showDetailedView
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [dates, setDates] = useState<WeekDaysData[]>([]);
+  const dispatch = useDispatch();
 
   /**
    * Fetches past due weeks data and sets the table state.
@@ -57,13 +62,12 @@ const PastDueOverviewTable = () => {
    * @param {string} endDate - The date range for which to fetch timesheet data.
    */
   const handleFetchTimesheets = async (startDate: string, endDate: string) => {
-    setShowDetailedView(true);
+    dispatch(setShowDetailedView(true));
     setLoading(true);
     const response = await UseAllTimesheetsServices().fetchPastDueTimesheets(
       startDate,
       endDate
     );
-    console.log(response);
     setTimesheetTable(response.data);
     const uniqueDates: WeekDaysData[] = (
       response.weekDates as Partial<WeekDateEntry>[]
@@ -90,7 +94,8 @@ const PastDueOverviewTable = () => {
    * Toggles back to the overview table from the detailed view.
    */
   const handleBackToOverview = () => {
-    setShowDetailedView(false);
+    dispatch(setShowDetailedView(false));
+    dispatch(setShowStatusTag(false))
   };
 
   /**
