@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "@/themes/components/search-bar/search-bar";
 import CheckboxComponent from "@/themes/components/checkbox/checkbox";
 import styles from "./user-select.module.scss";
-import { User } from "@/module/admin-settings/services/role-service";
 import { UserCheckbox } from "../map-user-modal/map-user-modal";
+import { User } from "@/interfaces/admin-settings/roles";
 
 interface SelectUserProps {
   users: User[];

@@ -4,8 +4,9 @@ import { message } from "antd"; // Import message from antd
 import CustomInputField from "@/themes/components/input-field/input-field";
 import CustomSelect from "@/themes/components/select-field/select-field";
 import styles from "./role-form.module.scss";
-import { Role, RoleResponse } from "@/module/admin-settings/services/role-service";
+
 import ButtonComponent from "@/themes/components/button/button";
+import { Role, RoleResponse } from "@/interfaces/admin-settings/roles";
 
 export interface RoleFormProps {
   roleData: Role;

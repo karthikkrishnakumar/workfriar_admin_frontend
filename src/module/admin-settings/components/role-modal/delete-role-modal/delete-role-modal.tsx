@@ -2,8 +2,10 @@ import React from "react";
 import styles from "./delete-role-modal.module.scss";
 import ButtonComponent from "@/themes/components/button/button";
 import ModalComponent from "@/themes/components/modal/modal";
-import useRoleService, { Role } from "@/module/admin-settings/services/role-service";
+
 import { message } from "antd";
+import useRoleService from "@/module/admin-settings/services/role-service";
+import { Role } from "@/interfaces/admin-settings/roles";
 
 interface DeleteRoleModalProps {
   isVisible: boolean;
