@@ -23,6 +23,7 @@ import ModalComponent from "@/themes/components/modal/modal";
 import { RootState } from "@/redux/store";
 import UseAllTimesheetsServices from "@/module/time-sheet/services/all-timesheet-services/all-time-sheet-services";
 import { message } from "antd";
+import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 
 /**
  * Interface for the props passed to the RejectedTimesheetsTable component.
@@ -69,6 +70,9 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
   const [modalString, setModalString] = useState<string>("");
   const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false);
+  const [confirmationModalType, setConfirmationModalType] = useState<string>();
+  const [idToDelete, setIdToDelete] = useState<string>("");
+  const [localIdToDelete, setLocalIdToDelete] = useState<number>();
 
   const handlecloseConfirmationModal = () => {
     setIsConfirmationModalVisible(false);
@@ -131,22 +135,42 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
   };
 
   /**
-   * Handles the deletion of a row in the timesheet table.
-   *
-   * @param {number} indexToDelete - The index of the row to delete.
-   */
-  const handleDeleteRow = async (idToDelete: number, timesheetId?: string) => {
-    const updatedData = timesheetData.filter(
-      (data) => data.local_id !== idToDelete
-    );
-    if (timesheetId) {
-      const response = await UseAllTimesheetsServices().deleteTimesheet(
-        timesheetId
+     * Deletes a row from the timesheet.
+     */
+    const handleDeleteRow = async (idToDelete: number, timesheetId?: string) => {
+      setConfirmationModalType("delete");
+      setLocalIdToDelete(idToDelete);
+      setIsConfirmationModalVisible(true);
+      if (timesheetId) {
+        setIdToDelete(timesheetId);
+      }
+    };
+  
+    /**
+     * Deletes a row from the timesheet.
+     *
+     * @param {number} idToDelete - The index of the row to delete.
+     */
+    const handleDeleteRowConfirmation = async () => {
+      console.log("This function works");
+      const updatedData = timesheetData.filter(
+        (data) => data.local_id !== localIdToDelete
       );
-    }
-    setLocalTimesheetData(updatedData);
-    setTimeSheetData(updatedData);
-  };
+      if (idToDelete) {
+        const response = await UseAllTimesheetsServices().deleteTimesheet(
+          idToDelete
+        );
+  
+        if (response.status) {
+          message.success(response.message);
+        } else {
+          message.error(response.message);
+        }
+      }
+      handlecloseConfirmationModal();
+      setLocalTimesheetData(updatedData);
+      setTimeSheetData(updatedData);
+    };
 
   /**
    * Saves the current state of the timesheet data and resets the "unsaved changes" flag.
@@ -404,31 +428,16 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
             />
           </div>
         )}
-        <ModalComponent
+        <ConfirmationModal
           isVisible={isConfirmationModalVisible}
-          title="Submit timesheet"
-          theme="normal"
-          onClose={handlecloseConfirmationModal}
-          content={
-            <div className={styles.modalContent}>
-              <p>Are you sure you want to submit timesheet ?</p>
-              <p>Total time entered : {totalHours} hrs </p>
-            </div>
+          confirmationType={confirmationModalType!}
+          cancelationHandlerFunction={handlecloseConfirmationModal}
+          confirmationHandlerFunction={
+            confirmationModalType === "submit"
+              ? handleSubmitConfirm
+              : handleDeleteRowConfirmation
           }
-          bottomContent={
-            <>
-              <ButtonComponent
-                label="No"
-                theme="white"
-                onClick={handlecloseConfirmationModal}
-              />
-              <ButtonComponent
-                label="Yes"
-                theme="black"
-                onClick={handleSubmitConfirm}
-              />
-            </>
-          }
+          additionalData={totalHours}
         />
         <span className={styles.backButton} onClick={backButtonFunction}>
           {" "}

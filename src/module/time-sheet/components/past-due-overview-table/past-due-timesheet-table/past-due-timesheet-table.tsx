@@ -26,8 +26,8 @@ import { assignStatus } from "@/utils/timesheet-utils/timesheet-status-handler";
 import UseAllTimesheetsServices from "@/module/time-sheet/services/all-timesheet-services/all-time-sheet-services";
 import { setShowStatusTag, setStatus } from "@/redux/slices/timesheetSlice";
 import { message } from "antd";
-import ModalComponent from "@/themes/components/modal/modal";
 import { RootState } from "@/redux/store";
+import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 
 interface PastDueTableProps {
   timesheetData?: TimesheetDataTable[];
@@ -60,6 +60,9 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
     useState<TimesheetDataTable[]>();
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState<boolean>(false);
+  const [confirmationModalType, setConfirmationModalType] = useState<string>();
+  const [idToDelete, setIdToDelete] = useState<string>();
+  const [localIdToDelete, setLocalIdToDelete] = useState<number>();
   const dispatch = useDispatch();
   let totalHours;
 
@@ -213,18 +216,38 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
 
   /**
    * Deletes a row from the timesheet.
-   *
-   * @param {number} indexToDelete - The index of the row to delete.
    */
   const handleDeleteRow = async (idToDelete: number, timesheetId?: string) => {
-    const updatedData = localTimesheetData.filter(
-      (data) => data.local_id !== idToDelete
-    );
+    setConfirmationModalType("delete");
+    setLocalIdToDelete(idToDelete);
+    setIsConfirmationModalVisible(true);
     if (timesheetId) {
-      const response = await UseAllTimesheetsServices().deleteTimesheet(
-        timesheetId
-      );
+      setIdToDelete(timesheetId);
     }
+  };
+
+  /**
+   * Deletes a row from the timesheet.
+   *
+   * @param {number} idToDelete - The index of the row to delete.
+   */
+  const handleDeleteRowConfirmation = async () => {
+    console.log("This function works");
+    const updatedData = localTimesheetData.filter(
+      (data) => data.local_id !== localIdToDelete
+    );
+    if (idToDelete) {
+      const response = await UseAllTimesheetsServices().deleteTimesheet(
+        idToDelete
+      );
+
+      if (response.status) {
+        message.success(response.message);
+      } else {
+        message.error(response.message);
+      }
+    }
+    handlecloseConfirmationModal();
     setLocalTimesheetData(updatedData);
     setTimeSheetData(updatedData);
   };
@@ -251,6 +274,7 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
    * Submits the timesheet data after saving.
    */
   const handleSubmit = async () => {
+    setConfirmationModalType("submit");
     setIsConfirmationModalVisible(true);
   };
 
@@ -497,32 +521,19 @@ const PastDueTimesheetsTable: React.FC<PastDueTableProps> = ({
             />
           </div>
         )}
-        <ModalComponent
+
+        <ConfirmationModal
           isVisible={isConfirmationModalVisible}
-          title="Submit timesheet"
-          theme="normal"
-          onClose={handlecloseConfirmationModal}
-          content={
-            <div className={styles.modalContent}>
-              <p>Are you sure you want to submit timesheet ?</p>
-              <p>Total time entered : {totalHours} hrs </p>
-            </div>
+          confirmationType={confirmationModalType!}
+          cancelationHandlerFunction={handlecloseConfirmationModal}
+          confirmationHandlerFunction={
+            confirmationModalType === "submit"
+              ? handleSubmitConfirm
+              : handleDeleteRowConfirmation
           }
-          bottomContent={
-            <>
-              <ButtonComponent
-                label="No"
-                theme="white"
-                onClick={handlecloseConfirmationModal}
-              />
-              <ButtonComponent
-                label="Yes"
-                theme="black"
-                onClick={handleSubmitConfirm}
-              />
-            </>
-          }
+          additionalData={totalHours}
         />
+
         <span className={styles.backButton} onClick={backButtonFunction}>
           {" "}
           {"< Back"}
