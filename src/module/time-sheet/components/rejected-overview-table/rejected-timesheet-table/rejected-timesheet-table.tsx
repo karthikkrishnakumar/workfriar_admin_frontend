@@ -19,7 +19,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setShowStatusTag, setStatus } from "@/redux/slices/timesheetSlice";
 import { assignStatus } from "@/utils/timesheet-utils/timesheet-status-handler";
-import ModalComponent from "@/themes/components/modal/modal";
 import { RootState } from "@/redux/store";
 import UseAllTimesheetsServices from "@/module/time-sheet/services/all-timesheet-services/all-time-sheet-services";
 import { message } from "antd";
