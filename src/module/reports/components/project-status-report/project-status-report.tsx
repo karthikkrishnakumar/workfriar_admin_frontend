@@ -67,13 +67,13 @@ const ProjectStatusReport: React.FC = () => {
 
   const handleRowClick = (rowId: string) => {
     if (rowId) {
-      router.push(`/project-status-report/report-details/${rowId}`); // Navigate to the ID-based page
+      router.push(`/reports/report-details/${rowId}`); // Navigate to the ID-based page
     }
   };
 
   const handleMenuClick = async (e: { key: string }, record: ReportsList) => {
     if (e.key === "Details") {
-      router.push(`/project-status-report/report-details/${record.id}`);
+      router.push(`/reports/report-details/${record.id}`);
     } else if (e.key === "Edit") {
       setIsEditModalVisible(true);
       const data = await UseProjectStatusServices().fetchProjectDetails(

@@ -12,11 +12,11 @@ export const getDropdownItems = (label: string): DropdownItem[] | undefined => {
     Reports: [
       {
         label: "Timesheet report",
-        path: "/time-sheet-report",
+        path: "/reports/time-sheet-report",
       },
       {
         label: "Project status report",
-        path: "/project-status-report",
+        path: "/reports",
       },
     ],
     Settings: [
