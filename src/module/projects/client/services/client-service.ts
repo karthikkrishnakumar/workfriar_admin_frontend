@@ -21,8 +21,8 @@ export interface ClientData {
  */
 export default function useClientService() {
   const fetchClientDetails = async function (
-    page: number,
-    limit: number
+    page?: number,
+    limit?: number
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>{ page, limit }); // Request payload
 
