@@ -3,7 +3,6 @@ import { message } from "antd";
 import Table, { ColumnType } from "@/themes/components/table/table";
 import DropdownMenu from "@/themes/components/dropdown-menu/dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
-import useRoleService, { Role } from "../../services/role-service";
 import { useRouter } from "next/navigation";
 import EditRoleModal from "../role-modal/edit-role-modal/edit-role-modal";
 import MapUserModal from "../map-user/map-user-modal/map-user-modal";
@@ -14,6 +13,8 @@ import { RootState } from "@/redux/store";
 import AddRoleModal from "../role-modal/add-role-modal/add-role-modal";
 import DeleteRoleModal from "../role-modal/delete-role-modal/delete-role-modal";
 import { closeModal } from "@/redux/slices/modalSlice";
+import { Role } from "@/interfaces/admin-settings/roles";
+import useRoleService from "../../services/role-service";
 
 const RoleListingTable: React.FC = () => {
   const { listRoles, updateRole } = useRoleService();

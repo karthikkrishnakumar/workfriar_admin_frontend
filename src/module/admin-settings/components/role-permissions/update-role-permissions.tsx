@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Skeleton, message } from "antd";
+import { message } from "antd";
 import CheckboxComponent from "@/themes/components/checkbox/checkbox";
 import Table from "@/themes/components/table/table";
 import ButtonComponent from "@/themes/components/button/button";

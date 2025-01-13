@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { NotificationList } from "../components/notifications/notifications";
-import useNotificationService, { NotificationGroup } from "../services/notification-service";
+import useNotificationService from "../services/notification-service";
 import styles from "./notification-view.module.scss";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 import { Empty, message } from "antd";
+import { NotificationGroup } from "@/interfaces/notifications/notification";
 
 const NotificationView: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationGroup[]>([]);

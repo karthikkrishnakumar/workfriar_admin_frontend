@@ -4,9 +4,11 @@ import DropdownMenu from "@/themes/components/dropdown-menu/dropdown-menu";
 import styles from "./map-user.module.scss";
 import SelectUser from "../user-select/user-select";
 import Icons from "@/themes/images/icons/icons";
-import useRoleService, { User, UserResponse } from "@/module/admin-settings/services/role-service";
+
 import ButtonComponent from "@/themes/components/button/button";
 import { message } from "antd";
+import { User, UserResponse } from "@/interfaces/admin-settings/roles";
+import useRoleService from "@/module/admin-settings/services/role-service";
 
 interface MapUserModalProps {
   isVisible: boolean;

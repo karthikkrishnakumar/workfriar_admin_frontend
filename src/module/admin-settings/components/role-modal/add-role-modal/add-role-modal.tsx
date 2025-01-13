@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import ModalComponent from "@/themes/components/modal/modal";
 import RoleForm from "../role-form/role-form";
-import { Role, RoleResponse } from "@/module/admin-settings/services/role-service";
+
 import useRoleService from "@/module/admin-settings/services/role-service";
 import { message } from "antd";
+import { Role, RoleResponse } from "@/interfaces/admin-settings/roles";
 
 export interface AddRoleModalProps {
   isVisible: boolean;
