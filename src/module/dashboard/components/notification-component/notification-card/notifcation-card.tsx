@@ -42,14 +42,14 @@ const NotificationCard: React.FC = () => {
       title="Notifications"
       topRightContent={
         isLoading ? (
-          <SkeletonLoader count={1} button={true} classNameItem={styles.customSkeletonDatepicker}/>
+          <SkeletonLoader count={1} button={true} className={styles.customSkeletonDatepicker}/>
         ) : (
           <ButtonComponent label="View all" theme="link" link onClick={handleClickAllnotification}/>
         )
       }
       centerContent={
         isLoading ? (
-          <SkeletonLoader count={2} paragraph={{ rows: 1 }} className={styles.customSkeleton}/>
+          <SkeletonLoader count={3} paragraph={{ rows: 1 }} className={styles.customSkeleton}/>
         ) : (
           <DashboardNotifications notifications={notifications} />
         )

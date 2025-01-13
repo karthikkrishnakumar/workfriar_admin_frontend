@@ -25,7 +25,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState<number | null>(0); // Total records for pagination
-  const pageSize = 1;
+  const pageSize = 5;
 
   const menuItems = [{ key: "Details", label: "Details" }];
 

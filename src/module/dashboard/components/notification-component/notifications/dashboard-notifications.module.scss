@@ -9,10 +9,17 @@
   align-items: left;
   justify-content: flex-start;
   gap: 15px;
-  padding-top: 20px;
-  padding-bottom: 24px;
   min-height: 150px;
   overflow: hidden;
+  padding-top: 15px;
+}
+.notificationListDiv{
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: flex-start;
+  gap: 15px;
+  padding-top: 10px;
 }
 
 /* 
@@ -22,8 +29,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: fit-content;
-  max-height: fit-content;
 }
 
 /* 
@@ -55,27 +60,20 @@
     Notification message style with flexible growth, making it expand to fill available space.
   */
 .notificationMessage {
+  display: flex;
   flex-grow: 1;
-  font-size: 0.8rem;
+  font-size: 0.68rem;
   color: var(--primary-font-color-dark);
 }
 
 /* 
     Custom radio button appearance, using a circle before the content for a styled effect.
   */
-.radioInput + .notificationContent::before {
-  content: ""; // Creates a pseudo-element
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 100%;
-  background-color: var(--primary-golden-color-medium);
-  margin-right: 0.5rem;
-}
-
 
 .radioClass {
-
+  height: 100%!important;
+  display: flex;
+  align-items: flex-start;
   /* Golden color for the radio button and its hover/active states */
   :global(.ant-radio-inner) {
     border-color:var(--primary-golden-color-medium)!important; /* Golden outer border */
@@ -84,6 +82,7 @@
     border-width: 5px!important;
     width: 1px!important;
     height: 1px!important;
+    margin-top: -9px;
   }
   :global(.ant-radio-inner::after) {
     border-color:var(--primary-golden-color-medium)!important; /* Golden outer border */

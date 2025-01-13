@@ -11,7 +11,7 @@ interface NotificationProps {
 const DashboardNotifications: React.FC<NotificationProps> = ({
   notifications = [],
 }) => {
-  const isEmptyData = notifications?.length === 0;
+  const isEmptyData = !notifications || notifications.length === 0;
 
   return (
     <ul className={styles.notificationList}>
@@ -24,17 +24,17 @@ const DashboardNotifications: React.FC<NotificationProps> = ({
           />
         </div>
       ) : (
-        <>
+        <div className={styles.notificationListDiv}>
           {notifications?.map((notification) => (
             <li key={notification.id} className={styles.notificationItem}>
               <div className={styles.radioLabel}>
-                <RadioComponent
+                <div className={styles.notificationContent}>
+                  <div className={styles.notificationMessage}>
+                  <RadioComponent
                   checkedValue={notification.id}
                   value={notification.id}
                   className={styles.radioClass}
                 />
-                <div className={styles.notificationContent}>
-                  <div className={styles.notificationMessage}>
                     {notification.message.length > 35
                       ? `${notification.message}`
                       : notification.message}
@@ -43,7 +43,7 @@ const DashboardNotifications: React.FC<NotificationProps> = ({
               </div>
             </li>
           ))}
-        </>
+        </div>
       )}
     </ul>
   );

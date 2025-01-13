@@ -27,10 +27,11 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  background-color: var(--holiday-background) !important;
+  gap: 20px;
+  background-color:transparent !important;
   padding-left: 10px !important;
   animation: skeletonPulse 1.5s infinite ease-in-out !important;
+  margin-top: 8px;
 }
 .customSkeletonItem {
   background-color: var(--primary-golden-color-light) !important;
@@ -40,4 +41,7 @@
 .customSkeletonItem::before {
   background:rgb(255, 249, 226)!important;
   
+}
+.customSkeletonButton{
+  margin-bottom: 0px!important;
 }
