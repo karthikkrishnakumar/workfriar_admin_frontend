@@ -72,7 +72,7 @@ body {
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: var( --page-background);
   font-family: var(--font-rubik);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
