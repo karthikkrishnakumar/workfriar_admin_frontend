@@ -80,25 +80,25 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: any[]): RowData[] => {
     return projects.map((project) => ({
-      key: project.id,
+      key: project.project_id,      
       projectName: (
         <span className={styles.projectNameCell}>
-          <CustomAvatar name={project.project_name} size={50} />
-          <span className={styles.projectNameSpan}>{project.project_name}</span>
+          <CustomAvatar name={project.projectname} size={50} />
+          <span className={styles.projectNameSpan}>{project.projectname}</span>
         </span>
       ),
       client: (
         <span className={styles.projectClient}>
-          {project.client ? project.client : "--"}
+          {project.clientname ? project.clientname : "--"}
         </span>
       ),
       dateRange: (
         <span className={styles.projectDateRange}>{`${
-          project.startDate ? project.startDate : ""
-        } - ${project.endDate ? project.endDate : ""}`}</span>
+          project.dates[0].start_date ? project.dates[0].start_date : ""
+        } - ${project.dates[0].end_date ? project.dates[0].end_date : ""}`}</span>
       ),
       projectLead: (
-        <span className={styles.projectLead}>{project.project_lead}</span>
+        <span className={styles.projectLead}>{project.projectlead}</span>
       ),
       projectStatus: (
         <StatusDropdown
@@ -192,11 +192,18 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
     <>
       <div className={styles.employeeProjectsWrapper}>
         {loading ? (
+          <>
+          <SkeletonLoader
+            count={1}
+            paragraph={{ rows: 3 }}
+            className={styles.customSkeleton}
+          />
           <SkeletonLoader
             count={3}
             paragraph={{ rows: 4 }}
             className={styles.customSkeleton}
           />
+          </>
         ) : (
           <div className={styles.tableWrapper}>
             <CustomTable columns={columns} data={projects} />
@@ -211,6 +218,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
           onChange={handlePageChange}
           showSizeChanger={false}
           className={styles.customPagination}
+          loading={loading}
         />
       </div>
     </>

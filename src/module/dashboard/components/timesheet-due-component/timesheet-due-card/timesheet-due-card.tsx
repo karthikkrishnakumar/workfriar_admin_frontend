@@ -99,16 +99,7 @@ const TimeSheetDueCard: React.FC = () => {
           </div>
         }
         centerContent={
-          loading ? (
-            <SkeletonLoader
-              count={8}
-              paragraph={{ rows: 3 }}
-              className={styles.customSkeleton}
-              classNameItem={styles.skeletonItem}
-            />
-          ) : (
-            <Timesheet data={timesheetDueData} />
-          )
+            <Timesheet data={timesheetDueData} loading={loading}/>
         }
         bottomContent={
           loading ? (
@@ -116,6 +107,7 @@ const TimeSheetDueCard: React.FC = () => {
               count={2}
               button={true}
               className={styles.customSkeletonForButton}
+              classNameItem={styles.buttonSkeletonItem}
             />
           ) : (
             <div>

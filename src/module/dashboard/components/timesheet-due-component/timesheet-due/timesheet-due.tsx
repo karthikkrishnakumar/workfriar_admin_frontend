@@ -3,6 +3,7 @@ import React from "react";
 import styles from "./timesheet-due.module.scss";
 import { Empty } from "antd";
 import { TimesheetDue } from "@/interfaces/dashboard/dashboard";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
 // Define the TimesheetProps interface for the component's expected props
 /**
@@ -13,6 +14,7 @@ import { TimesheetDue } from "@/interfaces/dashboard/dashboard";
 
 interface TimesheetDataProps {
   data: TimesheetDue[] | []; // Array of days and their respective hours worked.
+  loading: boolean; 
 }
 
 // Define types for TimesheetDay and TimesheetData
@@ -26,8 +28,23 @@ interface TimesheetDataProps {
  * @returns JSX.Element - The rendered timesheet grid.
  */
 
-const Timesheet: React.FC<TimesheetDataProps> = ({ data }) => {
+const Timesheet: React.FC<TimesheetDataProps> = ({ data , loading }) => {
   const isEmptyData = !data ||data?.length === 0;
+
+  if (loading) {
+    // Render skeleton loader while loading
+    return (
+      <div className={styles.skeleton}>
+     
+        <SkeletonLoader
+          count={8}
+          paragraph={{ rows: 4 }}
+          className={styles.customSkeleton}
+          classNameItem={styles.skeletonItem}
+        />
+      </div>
+    );
+  }
 
   return (
     <>

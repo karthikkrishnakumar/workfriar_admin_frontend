@@ -78,3 +78,39 @@
     }
   }
 }
+
+.skeleton{
+  max-width: 82%;
+}
+
+.customSkeleton {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.skeletonItem {
+  background: #f0f0f0;
+  width: 100px;
+  border-radius: 0.25rem;
+}
+
+@media (max-width: 1000px) {
+  .skeleton{
+    max-width: 100%;
+  }
+
+  .customSkeleton {
+    padding: 0rem;
+  }
+
+  .skeletonItem {
+    background: #f0f0f0;
+    width: 90px;
+    border-radius: 0.25rem;
+  }
+  
+}
+

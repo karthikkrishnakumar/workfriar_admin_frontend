@@ -33,11 +33,11 @@ export default function UseEmployeeData() {
         * @param employeeId - ID of the employee to fetch projects for.
         * @returns Employee projects data or throws an error if the request fails.
         */
-      const fetchEmployeeProjectsData = async (page: number,pageSize: number,userId: string): Promise<GetEmployeePorjectsResponse> => {
+      const fetchEmployeeProjectsData = async (page: number,pageSize: number,employeeId: string): Promise<GetEmployeePorjectsResponse> => {
         const limit = pageSize;
-        const props: JSON = <JSON>(<unknown>{ page, limit, userId });
+        const props: JSON = <JSON>(<unknown>{ page, limit, employeeId });
         try {
-            const { body } = await http().post("/api/project/get-projects-by-user",props);
+            const { body } = await http().post("/api/admin/getprojectsbyemployee",props);
             return {
                 status: body.status,
                 data: body.data || null,
