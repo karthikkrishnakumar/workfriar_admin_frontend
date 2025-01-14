@@ -10,7 +10,7 @@ export default function UseProjectStatusServices() {
    * @param id - The ID of the project to fetch details for.
    * @returns Project details or throws an error if the request fails.
    */
-  const fetchProjectDetails = async (id: string): Promise<ProjectStatusReportDetailsResponse> => {
+  const fetchProjectDetails = async (id: string | null): Promise<ProjectStatusReportDetailsResponse> => {
     try {
         // Send a POST request to fetch project details
         const { body } = await http().post(`/api/project-status-report/get-report/${id}`);
