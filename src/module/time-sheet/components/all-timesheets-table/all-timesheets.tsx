@@ -23,11 +23,11 @@ import {
 } from "@/interfaces/timesheets/timesheets";
 import UseAllTimesheetsServices from "../../services/all-timesheet-services/all-time-sheet-services";
 import { message } from "antd";
-import ModalComponent from "@/themes/components/modal/modal";
 import { useDispatch, useSelector } from "react-redux";
 import { setStatus } from "@/redux/slices/timesheetSlice";
 import { assignStatus } from "@/utils/timesheet-utils/timesheet-status-handler";
 import { RootState } from "@/redux/store";
+import ConfirmationModal from "../confirmation-modal/confirmation-modal";
 
 /**
  * Props for the AllTimesheetsTable component.
@@ -66,6 +66,9 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
   const [modalString, setModalString] = useState<string>("");
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState<boolean>(false);
+  const [confirmationModalType,setConfirmationModalType] = useState<string>();
+  const [idToDelete,setIdToDelete] = useState<string>();
+  const [localIdToDelete,setLocalIdToDelete] = useState<number>();
   const dispatch = useDispatch();
   let totalHours;
 
@@ -219,18 +222,38 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
 
   /**
    * Deletes a row from the timesheet.
-   *
-   * @param {number} indexToDelete - The index of the row to delete.
    */
   const handleDeleteRow = async (idToDelete: number, timesheetId?: string) => {
-    const updatedData = localTimesheetData.filter(
-      (data) => data.local_id !== idToDelete
-    );
+    setConfirmationModalType("delete");
+    setLocalIdToDelete(idToDelete);
+    setIsConfirmationModalVisible(true);
     if (timesheetId) {
-      const response = await UseAllTimesheetsServices().deleteTimesheet(
-        timesheetId
-      );
+      setIdToDelete(timesheetId);
     }
+  }
+
+  /**
+   * Deletes a row from the timesheet.
+   *
+   * @param {number} idToDelete - The index of the row to delete.
+   */
+  const handleDeleteRowConfirmation = async () => {
+    console.log("This function works");
+    const updatedData = localTimesheetData.filter(
+      (data) => data.local_id !== localIdToDelete
+    );
+    if (idToDelete) {
+      const response = await UseAllTimesheetsServices().deleteTimesheet(
+        idToDelete
+      );
+
+      if(response.status){
+        message.success(response.message);
+      }else{
+        message.error(response.message);
+      }
+    }
+    handlecloseConfirmationModal();
     setLocalTimesheetData(updatedData);
     setTimeSheetData(updatedData);
   };
@@ -257,6 +280,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
    * Submits the timesheet data after saving.
    */
   const handleSubmit = async () => {
+    setConfirmationModalType("submit");
     setIsConfirmationModalVisible(true);
   };
 
@@ -499,26 +523,13 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
           />
         </div>
       )}
-      <ModalComponent
+      <ConfirmationModal 
         isVisible={isConfirmationModalVisible}
-        title="Submit timesheet"
-        theme="normal"
-        onClose={handlecloseConfirmationModal}
-        content={
-          <div className={styles.modalContent}>
-            <p>
-              Are you sure you want to submit timesheet ?
-            </p>
-              <p>Total time entered : {totalHours} hrs </p>
-          </div>
-        }
-        bottomContent={
-          <>
-          <ButtonComponent label="No" theme="white" onClick={handlecloseConfirmationModal}/>
-          <ButtonComponent label="Yes" theme="black" onClick={handleSubmitConfirm}/>
-          </>
-        }
-      />
+        confirmationType={confirmationModalType!}
+        cancelationHandlerFunction={handlecloseConfirmationModal}
+        confirmationHandlerFunction={confirmationModalType === "submit" ? handleSubmitConfirm : handleDeleteRowConfirmation}
+        additionalData={totalHours}
+       />
     </div>
   );
 };
