@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import { message } from "antd";
 import styles from "./team-members.module.scss";
 import dayjs from "dayjs";
-import useProjectTeamService, {
-  TeamMember,
-  Dates,
-} from "@/module/projects/project-team/services/project-team-service";
+import useProjectTeamService from "@/module/projects/project-team/services/project-team-service";
 import CustomTable, {
   Column,
   RowData,
@@ -15,6 +12,7 @@ import StatusDropdown from "@/themes/components/status-dropdown-menu/status-drop
 import Icons from "@/themes/images/icons/icons";
 import CustomAvatar from "@/themes/components/avatar/avatar";
 import DateModal from "../effective-date-modal/effective-date-modal";
+import { Dates, TeamMember } from "@/interfaces/project-team/project-team";
 // Interface for the props passed to the TeamMembers component
 interface TeamMembersProps {
   id: string;

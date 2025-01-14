@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import useClientService, { ClientData } from "../../services/client-service";
+import useClientService  from "../../services/client-service";
 import { message } from "antd";
+import { ClientData } from "@/interfaces/clients/clients";
 
 
 interface ModalProps {

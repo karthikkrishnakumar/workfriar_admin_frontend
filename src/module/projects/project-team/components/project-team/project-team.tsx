@@ -6,20 +6,19 @@ import styles from "./project-team.module.scss";
 import AvatarGroup from "@/themes/components/avatar-group/avatar-group";
 import ProjectTeamModal from "../add-edit-project-team-modal/add-edit-project-team-modal";
 import { useRouter } from "next/navigation";
-import useProjectTeamService, {
-  ProjectTeamData,
-} from "../../services/project-team-service";
+import useProjectTeamService from "../../services/project-team-service";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import CustomTable, {
-  Column,
-  RowData,
-} from "@/themes/components/custom-table/custom-table";
 import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
 import Icons from "@/themes/images/icons/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 import CustomAvatar from "@/themes/components/avatar/avatar";
+import { ProjectTeamData } from "@/interfaces/project-team/project-team";
+import CustomTable, {
+  Column,
+  RowData,
+} from "@/themes/components/custom-table/custom-table";
 
 const ProjectTeam: React.FC = () => {
   const router = useRouter();
@@ -37,7 +36,6 @@ const ProjectTeam: React.FC = () => {
   const [selectedId, setSelectedId] = useState("");
   const [selectedProjectTeam, setSelectedProjectTeam] =
     useState<ProjectTeamData | null>(null);
-  const [projectTeamData, setProjectTeamData] = useState<ProjectTeamData[]>([]);
 
   // useEffect hook to fetch team data based on the ID when the component mounts
   useEffect(() => {
@@ -59,7 +57,6 @@ const ProjectTeam: React.FC = () => {
       message.error("Failed.");
     }
   };
-
 
   /**
    * Opens the edit modal with the selected ProjectTeam's data
@@ -149,7 +146,6 @@ const ProjectTeam: React.FC = () => {
 
   // Function to map team data to RowData format for compatibility with the table
   const mapProjectTeamData = (teams: ProjectTeamData[]): RowData[] => {
-
     const handleMenuClick = (e: { key: string }, team: ProjectTeamData) => {
       if (e.key === "Details") {
         if (team.id) {
