@@ -14,7 +14,7 @@ import PaginationComponent from "@/themes/components/pagination-button/paginatio
 
 
 interface EmployeeProjectsProps {
-  employeeId: string;
+  employeeId: string | null;
 }
 
 const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
