@@ -9,11 +9,9 @@ import styles from "./employee-projects.module.scss"; // Optional: Add styling
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"; // Loading skeleton
 import { MoreOutlined } from "@ant-design/icons";
 import CustomAvatar from "@/themes/components/avatar/avatar";
-import { Dropdown, message } from "antd";
-import StatusDropdown from "@/themes/components/status-dropdown-menu/status-dropdown-menu";
-import Icons from "@/themes/images/icons/icons";
+import { Dropdown } from "antd";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
-import { Project } from "@/interfaces/organization/organization";
+
 
 interface EmployeeProjectsProps {
   employeeId: string;
@@ -28,54 +26,6 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
   const pageSize = 5;
 
   const menuItems = [{ key: "Details", label: "Details" }];
-
-  const handleStatusChange = async (project: Project, newStatus: string) => {
-    try {
-      // Update status on the backend
-      const response = await UseEmployeeData().updateProjectStatus(
-        project.id,
-        newStatus
-      );
-
-      // Check if the status update was successful
-      if (response?.status === true) {
-        // Update status in the frontend only if the service returns success
-        setProjects((prev) =>
-          prev.map((pro) =>
-            pro.id === project.id
-              ? {
-                  ...pro,
-                  status: (
-                    <StatusDropdown
-                      status={newStatus ? "Active" : "Inactive"}
-                      menuItems={[
-                        { key: "Completed", label: "Completed" },
-                        { key: "On Hold", label: "On Hold" },
-                        { key: "In Progress", label: "In Progress" },
-                        { key: "Cancelled", label: "Cancelled" },
-                        { key: "Not Started", label: "Not Started" },
-                      ]}
-                      onMenuClick={(key) => handleStatusChange(project, key)}
-                      arrowIcon={Icons.arrowDownFilledGold}
-                      className={styles.employeeStatus}
-                    />
-                  ),
-                }
-              : pro
-          )
-        );
-
-        message.success(
-          `Project status updated to "${newStatus}" for ${project.project_name}.`
-        );
-      } else {
-        message.error(`Failed to update status for ${project.project_name}.`);
-      }
-    } catch (error) {
-      console.error("Error updating status:", error);
-      message.error("An error occurred while updating project status.");
-    }
-  };
 
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: any[]): RowData[] => {
@@ -101,21 +51,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
         <span className={styles.projectLead}>{project.projectlead}</span>
       ),
       projectStatus: (
-        <StatusDropdown
-          status={project.status}
-          menuItems={[
-            { key: "Completed", label: <span>Completed</span> },
-            { key: "On Hold", label: <span>On Hold</span> },
-            { key: "In Progress", label: <span>In Progress</span> },
-            { key: "Cancelled", label: <span>Cancelled</span> },
-            { key: "Not Started", label: <span>Not Started</span> },
-          ]}
-          onMenuClick={(key) => {
-            handleStatusChange(project, key);
-          }}
-          arrowIcon={Icons.arrowDownFilledGold}
-          className={styles.projectStatus}
-        />
+        <span className={styles.statusClass}>{project.status}</span>
       ),
       action: (
         <span className={styles.actionCell}>
@@ -143,7 +79,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
       ); // Service to fetch employee projects
       setProjects(mapProjectData(data.data)); // Map the data to RowData format
       setTotalRecords(data.total);
-    } catch (err: any) {
+    } catch (err) {
       setError("Failed to fetch employee projects");
     } finally {
       setLoading(false);

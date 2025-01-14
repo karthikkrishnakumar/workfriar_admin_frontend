@@ -38,6 +38,7 @@ export default function UseEmployeeData() {
         const props: JSON = <JSON>(<unknown>{ page, limit, employeeId });
         try {
             const { body } = await http().post("/api/admin/getprojectsbyemployee",props);
+            console.log(body)
             return {
                 status: body.status,
                 data: body.data || null,
