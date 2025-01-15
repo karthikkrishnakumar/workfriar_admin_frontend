@@ -10,9 +10,10 @@ import { RootState } from '@/redux/store';
 import ModalComponent from '@/themes/components/modal/modal';
 import { closeModal } from '@/redux/slices/modalSlice';
 import AddHolidayModal from '../add-holiday-modal/add-holiday-modal';
+import YearSelector from '../year-selector/year-selector';
 
 const HolidayTabs = () => {
-    const [num,setNum] = useState('2024');
+    const [year,setYear] = useState<string>();
     const dispatch = useDispatch();
 
 
@@ -27,7 +28,7 @@ const HolidayTabs = () => {
           key: "1",
           label: <>All</>,
           content: (
-            <AllHolidays year={num} />
+            <AllHolidays year={year!} />
           ),
         },
         {
@@ -37,7 +38,7 @@ const HolidayTabs = () => {
               Techfriar India
             </>
           ),
-          content:<IndianHolidays year={num}/>,
+          content:<IndianHolidays year={year!}/>,
         },
         {
           key: "3",
@@ -46,18 +47,15 @@ const HolidayTabs = () => {
               Techfriar Dubai
             </>
           ),
-          content: <DubaiHolidays year={num}/>,
+          content: <DubaiHolidays year={year!}/>,
         },
       ];
 
-      useEffect(() => {
-        
-      }, []);
 
   
   return (
     <>
-      <TabComponent  headings={tabs}/>
+      <TabComponent  headings={tabs} subHeading={<YearSelector onChange={setYear}/>}/>
 
       <ModalComponent isVisible={isOpen} title='Add Holiday' onClose={handleCloseModal} theme='normal' content={<AddHolidayModal/>}/>
     </>

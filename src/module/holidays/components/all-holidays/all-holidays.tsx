@@ -89,6 +89,7 @@ const AllHolidays: React.FC<AllHolidaysProps> = ({ year }) => {
 
   // Fetch holidays when the year changes
   useEffect(() => {
+    setLoading(true);
     fetchHolidays(year);
   }, [year]);
 
