@@ -4,3 +4,11 @@
     flex-direction: column;
     row-gap: 16px;
 }
+
+.emptyWrapper{
+    width: 100%;
+}
+
+.customSkeleton{
+    background-color: rgba(123, 121, 121, 0.085)!important;
+}

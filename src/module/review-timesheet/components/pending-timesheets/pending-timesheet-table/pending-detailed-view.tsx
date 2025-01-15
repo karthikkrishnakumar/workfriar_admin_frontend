@@ -16,6 +16,7 @@ import ButtonComponent from "@/themes/components/button/button";
 import Icons from "@/themes/images/icons/icons";
 import TextAreaButton from "@/module/time-sheet/components/text-area-button/text-area-button";
 import UseReviewTimesheetsServices from "@/module/review-timesheet/services/review-timesheets-service";
+import ConfirmationModal from "@/module/time-sheet/components/confirmation-modal/confirmation-modal";
 
 /**
  * Props for the PendingDetailedView component.
@@ -25,6 +26,7 @@ interface PendingDetailedViewProps {
   daysOfWeek: WeekDaysData[]; // Days of the week to map data
   backButtonFunction: () => void; // Callback for the back button
   setTimesheetData: (timesheet: TimesheetDataTable[]) => void;
+  userId:string;
 }
 
 /**
@@ -35,10 +37,15 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
   daysOfWeek,
   backButtonFunction,
   setTimesheetData,
+  userId
 }) => {
   const [loading, setLoading] = useState(false); // Tracks loading state
   const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false); // Modal toggle for task details
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null); // Tracks the row being edited
+  const [rejectionNote, setRejectionNote] = useState<string>(); // Rejection note for rejected timesheets
+  const [isConfirmationModalIsVisible, setIsConfirmationModalIsVisible] =
+    useState<boolean>(false); // To show confirmation modal
+  const [actionType, setActionType] = useState<string>();
 
   /**
    * Toggles the task detail modal for a specific row.
@@ -48,6 +55,49 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
     setEditingRowIndex(rowIndex);
     setTaskDetailModal(!showTaskDetailModal);
   };
+
+  /**
+     * show confirmation modal
+     */
+    const handleShowConfirmationModal = (action: string) => {
+      setIsConfirmationModalIsVisible(true);
+      setActionType(action);
+    };
+  
+  
+    /**
+     * close confirmation modal
+     */
+    const handleCloseConfirmationModal = () => {
+      setIsConfirmationModalIsVisible(false);
+    };
+  
+    /**
+     * handles Rejection note change
+     */
+    const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setRejectionNote(e.target.value);
+    };
+
+
+    const manageWholeTimesheetStatus = async () => {
+        try {
+          const response = await UseReviewTimesheetsServices().manageAllTimesheets(
+            userId,
+            timeSheetData[0].timesheet_id,
+            rejectionNote,
+            actionType!
+          );
+          if(response.status){
+            message.success(response.message);
+          }else{
+            message.error(response.message);
+          }
+          handleCloseConfirmationModal();
+        } catch (error) {
+          console.error(error);
+        }
+      };
 
   // Menu items for the dropdown
   const menuItems = [
@@ -272,18 +322,34 @@ const PendingDetailedView: React.FC<PendingDetailedViewProps> = ({
         <textarea
           className={styles.timesheetNote}
           placeholder="Write your timesheet note here."
+          value={rejectionNote}
+          onChange={handleNoteChange}
         />
       </div>
       <div className={styles.actionButtons}>
         <div>
-          <ButtonComponent label="Approve" theme="black" />
-          <ButtonComponent label="Reject" theme="white" />
+          <ButtonComponent
+            label="Approve"
+            theme="black"
+            onClick={() => handleShowConfirmationModal("accepted")}
+          />
+          <ButtonComponent
+            label="Reject"
+            theme="white"
+            onClick={() => handleShowConfirmationModal("rejected")}
+          />
         </div>
         <span className={styles.backButton} onClick={backButtonFunction}>
           {" "}
           {"< Back"}
         </span>
       </div>
+      <ConfirmationModal
+        isVisible={isConfirmationModalIsVisible}
+        confirmationType={actionType!}
+        cancelationHandlerFunction={handleCloseConfirmationModal}
+        confirmationHandlerFunction={manageWholeTimesheetStatus}
+      />
     </div>
   );
 };

@@ -152,6 +152,7 @@ const PendingOverviewTable: React.FC<PendingOverviewProps> = ({
             daysOfWeek={dates}
             backButtonFunction={handleBackToOverview}
             setTimesheetData={setTimesheetTable}
+            userId={id}
           />
           // Show the detailed view with the fetched timesheet data
         )
