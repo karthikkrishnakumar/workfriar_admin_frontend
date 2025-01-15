@@ -94,13 +94,17 @@ export interface WeekDateEntry {
     normalized_date: string;
 }
 
+interface Notes {
+    message:string;
+}
+
 export interface RejectedTimesheetResponse {
     status?: boolean;
     data: TimesheetDataTable[];
     message?: string;
     weekDates: TimeEntry[]
     errors?: Error | null;
-    notes:string;
+    notes:Notes;
 }
 
 export interface FetchTaskCategoriesResponse {

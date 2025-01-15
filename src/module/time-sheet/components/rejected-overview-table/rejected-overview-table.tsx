@@ -84,7 +84,9 @@ const ApprovedOverviewTable: React.FC<PastDueOverviewProps> = ({
       endDate
     );
     setTimesheetTable(response.data);
-    setRejectionNote(response.notes);
+    if(response.notes){
+      setRejectionNote(response.notes.message);
+    }
     const uniqueDates: WeekDaysData[] = (
       response.weekDates as Partial<WeekDateEntry>[]
     ).map((day) => ({

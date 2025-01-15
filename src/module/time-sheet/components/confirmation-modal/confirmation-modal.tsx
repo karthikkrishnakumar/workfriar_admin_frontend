@@ -62,7 +62,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         />
       );
 
-    case "accept":
+    case "accepted":
       return (
         <ModalComponent
           isVisible={isVisible}
@@ -83,7 +83,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         />
       );
 
-    case "reject":
+    case "rejected":
       return (
         <ModalComponent
           isVisible={isVisible}
@@ -92,7 +92,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           onClose={cancelationHandlerFunction}
           content={
             <div className={styles.modalContent}>
-              <p>Are you sure you want to accept timesheet ?</p>
+              <p>Are you sure you want to reject timesheet ?</p>
             </div>
           }
           bottomContent={

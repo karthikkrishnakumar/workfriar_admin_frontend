@@ -342,6 +342,35 @@ export default function UseReviewTimesheetsServices() {
         }
     }
 
+
+    /**
+     * Fetches weeks with overdue timesheets for a user.
+     *
+     * @async
+     * @param {string} userid - The ID of the user.
+     * @param {string} timesheetid - timesheet id.
+     * @param {string} notes - timesheet rejection notes.
+     * @returns {Promise<ManageTimesheetStatusResponse>} Resolves with overdue weeks.
+     */
+    const manageAllTimesheets = async (userid:string, timesheetid:string | undefined, notes:string | undefined, status:string): Promise<ManageTimesheetStatusResponse> => {
+        try{
+            const props: JSON = <JSON>(<unknown>{ userid, timesheetid, notes,status });
+            const { body } = await http().post("/api/admin/manage-all-timesheet", props);
+
+            return {
+                status: body.status,
+                message: body.message,
+                errors: body.errors || null
+            };
+        }catch(error){
+            console.error(error);
+            throw error;
+        }
+    }
+    
+
+
+
     return {
         manageTimesheetStatus,
         fetchAllReviewTimesheets,
@@ -354,6 +383,7 @@ export default function UseReviewTimesheetsServices() {
         fetchRejectedWeeks,
         fetchRejectedTimesheets,
         fetchOverDueWeeks,
-        sentOverdueNotification
+        sentOverdueNotification,
+        manageAllTimesheets
     };
 }
