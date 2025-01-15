@@ -12,7 +12,7 @@ import AddEditReport from "../add-edit-report-modal/add-edit-report-modal";
 import UseProjectStatusServices from "../../services/project-status-report/project-status-report-services";
 
 interface ReportTabProps {
-  id: string;
+  id: string | null;
 }
 
 const ProjectReportTabs: React.FC<ReportTabProps> = ({ id }) => {

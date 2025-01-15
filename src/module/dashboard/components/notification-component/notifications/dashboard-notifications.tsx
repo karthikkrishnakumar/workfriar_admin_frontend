@@ -3,15 +3,27 @@ import styles from "./dashboard-notifications.module.scss";
 import { Empty} from "antd";
 import RadioComponent from "@/themes/components/radio-button/radio-button";
 import { Notification } from "@/interfaces/dashboard/dashboard";
+import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
 
 interface NotificationProps {
   notifications: Notification[] | [];
+  loading:boolean;
 }
 
 const DashboardNotifications: React.FC<NotificationProps> = ({
   notifications = [],
+  loading
 }) => {
   const isEmptyData = !notifications || notifications.length === 0;
+
+  if(loading){
+    return (
+    <div className={styles.skeleton}>
+     <SkeletonLoader count={3} paragraph={{ rows: 1 }} className={styles.classLoading}/>
+    </div>
+    );
+    
+  }
 
   return (
     <ul className={styles.notificationList}>

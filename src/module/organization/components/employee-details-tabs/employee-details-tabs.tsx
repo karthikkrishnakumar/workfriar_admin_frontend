@@ -12,7 +12,7 @@ import UseEmployeeData from "../../services/organization-services/organization-s
 import { EmployeeData } from "@/interfaces/organization/organization";
 
 interface EmpoyeeDetailsTabProps {
-  id: string;
+  id: string | null;
 }
 
 const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
@@ -26,6 +26,7 @@ const EmployeeDetailsTabs: React.FC<EmpoyeeDetailsTabProps> = ({ id }) => {
     setLoading(false);
   }, 200);
 
+  
   const getEmployeeData = async () => {
     try {
       const data = await UseEmployeeData().fetchEmployeeData(id);

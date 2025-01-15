@@ -48,11 +48,7 @@ const NotificationCard: React.FC = () => {
         )
       }
       centerContent={
-        isLoading ? (
-          <SkeletonLoader count={3} paragraph={{ rows: 1 }} className={styles.customSkeleton}/>
-        ) : (
-          <DashboardNotifications notifications={notifications} />
-        )
+          <DashboardNotifications notifications={notifications} loading={isLoading}/> 
       }
       className={styles.notificationCard}
     />

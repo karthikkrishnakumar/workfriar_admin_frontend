@@ -20,6 +20,7 @@ import AddEditEmployeeModal from "../add-edit-employee-modal/add-edit-employee";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 import { Employee, EmployeeData } from "@/interfaces/organization/organization";
+import { generateToken } from "@/utils/token-generator/token-util";
 
 interface OrganizationTableProps {
   activeTab: string;
@@ -208,15 +209,15 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
 
   const handleRowClick = (row: Employee) => {
     if (row.id) {
-      const rowId = row.id;
-      router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
+      const id = generateToken(row.id);
+      router.push(`/organization/employee-details/${id}`); // Navigate to the ID-based page
     }
   };
   const handleMenuClick = async (e: { key: string }, employee: Employee) => {
     if (e.key === "Details") {
       if (employee.id) {
-        const rowId = employee.id;
-        router.push(`/organization/employee-details/${rowId}`); // Navigate to the ID-based page
+        const id = generateToken(employee.id);
+        router.push(`/organization/employee-details/${id}`); // Navigate to the ID-based page
       }
     } else if (e.key === "Edit") {
       setIsModalOpen(true);
@@ -242,18 +243,12 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
           <>
             <SkeletonLoader
               count={1}
-              paragraph={{ rows: 2 }}
-              className={styles.customSkeleton}
-              classNameItem={styles.customSkeletonItem}
-            />
-            <SkeletonLoader
-              count={1}
               paragraph={{ rows: 3 }}
               classNameItem={styles.customSkeletonItem}
             />
             <SkeletonLoader
               count={3}
-              paragraph={{ rows: 3 }}
+              paragraph={{ rows: 4 }}
               classNameItem={styles.customSkeletonItem}
             />
           </>

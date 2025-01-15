@@ -14,6 +14,7 @@ import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
 import UseProjectStatusServices from "../../services/project-status-report/project-status-report-services";
 import {ReportDetails,ReportsList,} from "@/interfaces/reports/project-status-report/project-status-report";
+import { generateToken } from "@/utils/token-generator/token-util";
 
 
 interface FormattedData {
@@ -67,13 +68,15 @@ const ProjectStatusReport: React.FC = () => {
 
   const handleRowClick = (rowId: string) => {
     if (rowId) {
-      router.push(`/reports/report-details/${rowId}`); // Navigate to the ID-based page
+      const id = generateToken(rowId)
+      router.push(`/reports/report-details/${id}`); // Navigate to the ID-based page
     }
   };
 
   const handleMenuClick = async (e: { key: string }, record: ReportsList) => {
     if (e.key === "Details") {
-      router.push(`/reports/report-details/${record.id}`);
+      const id = generateToken(record.id)
+      router.push(`/reports/report-details/${id}`);
     } else if (e.key === "Edit") {
       setIsEditModalVisible(true);
       const data = await UseProjectStatusServices().fetchProjectDetails(
@@ -184,17 +187,11 @@ const ProjectStatusReport: React.FC = () => {
           <>
             <SkeletonLoader
               count={1}
-              paragraph={{ rows: 2 }}
-              className={styles.customSkeleton}
-              classNameItem={styles.customSkeletonItem}
-            />
-            <SkeletonLoader
-              count={1}
               paragraph={{ rows: 3 }}
               classNameItem={styles.customSkeletonItem}
             />
             <SkeletonLoader
-              count={2}
+              count={3}
               paragraph={{ rows: 4 }}
               classNameItem={styles.customSkeletonItem}
             />
