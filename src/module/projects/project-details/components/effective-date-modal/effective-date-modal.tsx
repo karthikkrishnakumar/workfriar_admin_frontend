@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import { Dates } from "@/module/projects/project-team/services/project-team-service";
+import { Dates } from "@/interfaces/project-team/project-team";
 
 export interface ModalProps {
   isModalOpen: boolean;
@@ -17,7 +17,6 @@ const EffectiveDateModal: React.FC<ModalProps> = ({
   initialValues,
 }) => {
   return (
-    <>
       <ModalFormComponent
         isVisible={isModalOpen}
         onClose={onClose}
@@ -40,7 +39,6 @@ const EffectiveDateModal: React.FC<ModalProps> = ({
         primaryButtonLabel={"Save"}
         secondaryButtonLabel={"Cancel"}
       />
-    </>
   );
 };
 

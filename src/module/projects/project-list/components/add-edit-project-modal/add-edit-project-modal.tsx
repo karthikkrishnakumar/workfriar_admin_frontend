@@ -1,18 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import useProjectListService, {
-  ProjectData,
-  ProjectLead,
-} from "../../services/project-service";
+import useProjectListService from "../../services/project-service";
 import { message } from "antd";
 import dayjs from "dayjs";
-import useClientService, {
-  ClientData,
-} from "@/module/projects/client/services/client-service";
+import useClientService from "@/module/projects/client/services/client-service";
 import useTaskCategoryService, {
   TaskCategoryData,
 } from "@/module/projects/task-category/services/task-category-service";
+import { ClientData } from "@/interfaces/clients/clients";
+import { ProjectData, ProjectLead } from "@/interfaces/projects/projects";
 
 export interface ModalProps {
   isModalOpen: boolean;

@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import { DatePicker, message } from "antd";
 import styles from "./time-summary.module.scss";
 import Icons from "@/themes/images/icons/icons";
-import useProjectTeamService, {
-  TimeLogged,
-  TimeLoggedResponse,
-} from "@/module/projects/project-team/services/project-team-service";
+import useProjectTeamService from "@/module/projects/project-team/services/project-team-service";
 import CustomTable, {
   Column,
   RowData,
@@ -16,6 +13,7 @@ import DateRangePicker, {
   DatePickerData,
 } from "@/themes/components/date-picker/date-picker";
 import { fetchWeeks } from "@/module/review-timesheet/services/review-timesheet-services";
+import { TimeLogged } from "@/interfaces/project-team/project-team";
 // Interface for the props passed to the TimeSummary component
 interface TimeSummaryProps {
   id: string;
@@ -23,9 +21,6 @@ interface TimeSummaryProps {
 
 const TimeSummary = ({ id }: TimeSummaryProps) => {
   const { fetchTimeLoggedByProjectId } = useProjectTeamService();
-  const [ProjectTeamData, setProjectTeamData] = useState<
-    TimeLoggedResponse[] | undefined
-  >(undefined);
   const [filteredProjectTeam, setFilteredProjectTeam] = useState<RowData[]>([]);
   const [weeks, setWeeks] = useState<DatePickerData[]>([]);
   const [startDate, setStartDate] = useState("");

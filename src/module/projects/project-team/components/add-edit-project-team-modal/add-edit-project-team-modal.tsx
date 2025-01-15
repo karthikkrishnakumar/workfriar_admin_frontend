@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import useProjectTeamService, { ProjectTeamData } from "../../services/project-team-service";
+import useProjectTeamService from "../../services/project-team-service";
 import { message } from "antd";
+import { ProjectTeamData } from "@/interfaces/project-team/project-team";
 
 interface ModalProps {
   isModalOpen: boolean;

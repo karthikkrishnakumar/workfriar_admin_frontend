@@ -7,9 +7,9 @@ import TabComponent from "@/themes/components/tabs/tabs";
 import useProjectForecastService, { ProjectForecastData } from "../../services/project-forecast/project-forecast";
 import { ModalProps } from "@/module/projects/project-list/components/add-edit-project-modal/add-edit-project-modal";
 import message from "antd/es/message";
-import { Member } from "@/module/projects/project-list/services/project-service";
 import dayjs from "dayjs";
 import useProjectTeamService from "@/module/projects/project-team/services/project-team-service";
+import { Member } from "@/interfaces/projects/projects";
 
 
 const ForecastModal: React.FC<ModalProps> = ({

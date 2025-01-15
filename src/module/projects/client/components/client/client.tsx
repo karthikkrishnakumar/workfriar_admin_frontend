@@ -4,7 +4,7 @@ import { Dropdown, message } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import styles from "./client.module.scss";
 import ClientModal from "../add-edit-client-modal/add-edit-client-modal";
-import useClientService, { ClientData } from "../../services/client-service";
+import useClientService from "../../services/client-service";
 import CustomTable, {
   Column,
   RowData,
@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
+import { ClientData } from "@/interfaces/clients/clients";
 
 const Client: React.FC = () => {
   const dispatch = useDispatch();

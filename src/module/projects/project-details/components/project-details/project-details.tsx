@@ -2,11 +2,9 @@
 import { useState, useEffect } from "react";
 import styles from "./project-details.module.scss";
 import { Spin, message } from "antd";
-import useProjectService, {
-  ProjectData,
-} from "@/module/projects/project-list/services/project-service";
-import dayjs from "dayjs";
+import useProjectService from "@/module/projects/project-list/services/project-service";
 import GridContainer from "@/themes/components/grid-container/grid-container";
+import { ProjectData } from "@/interfaces/projects/projects";
 
 /**
  * Interface representing the project details structure.

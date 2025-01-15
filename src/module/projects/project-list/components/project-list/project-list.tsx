@@ -12,15 +12,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { closeModal } from "@/redux/slices/modalSlice";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import useProjectService, {
-  ProjectData,
-  ProjectDisplayData,
-} from "../../services/project-service";
+import useProjectService from "../../services/project-service";
 import CustomTable, {
   Column,
   RowData,
 } from "@/themes/components/custom-table/custom-table";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
+import { ProjectData, ProjectDisplayData } from "@/interfaces/projects/projects";
 
 
 const ProjectList: React.FC = () => {
