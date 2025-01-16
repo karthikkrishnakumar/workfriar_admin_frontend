@@ -158,7 +158,8 @@ const TimesheetReport = ({
       <div className={styles.timeSheetTable}>
         {loading ? (
           <div>
-            <SkeletonLoader count={3} paragraph={{ rows: 3 }} />
+            <SkeletonLoader count={1} paragraph={{ rows: 3 }} />
+            <SkeletonLoader count={3} paragraph={{ rows: 4 }} />
           </div> // Display loading state
         ) : (
           <div className={styles.tableWrapper}>

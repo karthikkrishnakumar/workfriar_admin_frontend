@@ -22,6 +22,7 @@ import TextAreaButton from "@/module/time-sheet/components/text-area-button/text
 import UseReviewTimesheetsServices from "../../services/review-timesheets-service";
 import { dateStringToMonthDate } from "@/utils/date-formatter-util/date-formatter";
 import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader";
+import ConfirmationModal from "@/module/time-sheet/components/confirmation-modal/confirmation-modal";
 
 /**
  * Props for the ReviewAllTimesheetsTable component.
@@ -47,6 +48,10 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
   const [loading, setLoading] = useState(false); // Loading state for fetching data
   const [showTaskDetailModal, setTaskDetailModal] = useState<boolean>(false); // Controls visibility of task details modal
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null); // Index of the row being edited
+  const [rejectionNote, setRejectionNote] = useState<string>(); // Rejection note for rejected timesheets
+  const [isConfirmationModalIsVisible, setIsConfirmationModalIsVisible] =
+    useState<boolean>(false); // To show confirmation modal
+  const [actionType, setActionType] = useState<string>();
 
   /**
    * Handles the click on the task detail text area to toggle the modal visibility.
@@ -55,6 +60,29 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
   const textAreaOnclick = (rowIndex: number) => {
     setEditingRowIndex(rowIndex);
     setTaskDetailModal(!showTaskDetailModal);
+  };
+
+  /**
+   * show confirmation modal
+   */
+  const handleShowConfirmationModal = (action: string) => {
+    setIsConfirmationModalIsVisible(true);
+    setActionType(action);
+  };
+
+
+  /**
+   * close confirmation modal
+   */
+  const handleCloseConfirmationModal = () => {
+    setIsConfirmationModalIsVisible(false);
+  };
+
+  /**
+   * handles Rejection note change
+   */
+  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setRejectionNote(e.target.value);
   };
 
   /**
@@ -70,12 +98,15 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
    * @param e - Menu event object
    * @param id - Timesheet ID
    */
-  const handleMenuClick = async(e: { key: string }, id?: string) => {
+  const handleMenuClick = async (e: { key: string }, id?: string) => {
     if (!id) return;
 
-    const response = await UseReviewTimesheetsServices().manageTimesheetStatus(id, e.key);
+    const response = await UseReviewTimesheetsServices().manageTimesheetStatus(
+      id,
+      e.key
+    );
 
-    if(response.status) {
+    if (response.status) {
       message.success(response.message);
       const updatedTimesheetData = timesheetData.map((timesheet) => {
         if (timesheet.timesheet_id === id) {
@@ -86,9 +117,31 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
         }
         return timesheet;
       });
-  
+
       setTimeSheetData(updatedTimesheetData);
       setUnsavedChanges(true);
+    }
+  };
+
+  /**
+   * Handle the status managing of the whole week timesheet
+   */
+  const manageWholeTimesheetStatus = async () => {
+    try {
+      const response = await UseReviewTimesheetsServices().manageAllTimesheets(
+        userId,
+        timesheetData[0].timesheet_id,
+        rejectionNote,
+        actionType!
+      );
+      if(response.status){
+        message.success(response.message);
+      }else{
+        message.error(response.message);
+      }
+      handleCloseConfirmationModal();
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -236,23 +289,6 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
   };
 
   /**
-   * Saves the changes made to the timesheet data.
-   */
-  const handleSave = () => {
-    setTimeSheetData(timesheetData);
-    setUnsavedChanges(false);
-    alert("Changes saved successfully!");
-  };
-
-  /**
-   * Submits the timesheet data after saving.
-   */
-  const handleSubmit = () => {
-    handleSave();
-    alert("Timesheet data submitted successfully!");
-  };
-
-  /**
    * Table column definitions.
    */
   const columns = [
@@ -365,6 +401,8 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
           <div className={styles.timesheetNotesWrapper}>
             <h2>Timesheet Note</h2>
             <textarea
+              value={rejectionNote}
+              onChange={handleNoteChange}
               className={styles.timesheetNote}
               placeholder="Write your timesheet note here."
             />
@@ -373,14 +411,23 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
             <ButtonComponent
               label="Approve"
               theme="black"
-              onClick={handleSave}
+              onClick={() => handleShowConfirmationModal("accepted")}
             />
             <ButtonComponent
               label="Reject"
               theme="white"
-              onClick={handleSubmit}
+              onClick={() => handleShowConfirmationModal("rejected")}
             />
           </div>
+
+          <ConfirmationModal
+            isVisible={isConfirmationModalIsVisible}
+            confirmationType={actionType!}
+            cancelationHandlerFunction={handleCloseConfirmationModal}
+            confirmationHandlerFunction={
+              manageWholeTimesheetStatus
+            }
+          />
         </>
       )}
     </div>

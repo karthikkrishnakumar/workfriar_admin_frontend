@@ -47,7 +47,7 @@ const OrganizationTabs: React.FC = () => {
       ),
     },
     {
-      key: "finanace",
+      key: "finance",
       label: "Finance",
       content: (
         <div>

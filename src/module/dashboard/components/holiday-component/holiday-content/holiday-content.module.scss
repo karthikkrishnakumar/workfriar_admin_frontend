@@ -59,3 +59,17 @@
 .emptyWrapper .ant-empty-image > svg g g path:nth-of-type(2) {
   fill: darkgoldenrod !important; /* Change the second path color */
 }
+
+@media (max-width:868px){
+  .arrowButton {
+    width: 4px;
+  }
+  .holidayTitle {
+    font-size: 14px;
+  }
+  .holidayDate {
+    font-size: 8px;
+    padding: 4px 5px;
+    
+  }
+}

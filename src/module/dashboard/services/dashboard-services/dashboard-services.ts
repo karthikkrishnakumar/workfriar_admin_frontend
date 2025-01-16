@@ -115,6 +115,7 @@ export default function UseDashboardServices() {
             // Make an HTTP POST request to fetch the dashboard notifiaction data
             const { body } = await http().post("/api/holiday/dashboard-holiday");
             // Return notification data with additional details
+            console.log(body)
             return {
                 status: body.status,
                 data: body.data || null,

@@ -12,6 +12,11 @@
     ? process.env.INTERSECTION_COOKIE
     : "workfriar_intersection";
 
+
+  const isProduction = process.env.NODE_ENV === 'production';
+  const domain = isProduction ? process.env.COOKIE_DOMAIN : '.localhost';
+
+
   /**
    * Interface for cookie data encryption
    */
@@ -74,10 +79,10 @@
       maxAge: IntersectionAge / 1000,
       expires: new Date(Date.now() + IntersectionAge),
       httpOnly: true,
-      secure: false,
+      secure: isProduction,
       path: "/",
-      sameSite: "strict",
-      domain: '.localhost'
+      sameSite: isProduction ? "none" : "strict",
+      domain: domain
     });
     return cookie;
   }
@@ -91,14 +96,11 @@
     const cookie = serialize(cookieName, "", {
       maxAge: -1,
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "strict",
       path: "/",
-      domain: '.localhost'
+      domain: domain
     });
-    // TODO: implement below mentioned logic on later.
-    // secure: process.env.NODE_ENV === 'production',
-    // sameSite: 'lax',
 
     return cookie;
   }

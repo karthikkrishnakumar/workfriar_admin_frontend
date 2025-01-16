@@ -8,50 +8,56 @@ interface CustomAvatarProps extends AvatarProps {
   name?: string;
   profile?: string;
   src?: string | undefined;
-  size?:number;
+  size?: number;
 }
 
-const CustomAvatar: React.FC<CustomAvatarProps> = ({ 
-  name, 
-  src, 
-  style, 
-  size = 40, 
-  ...restProps 
+const CustomAvatar: React.FC<CustomAvatarProps> = ({
+  name = '',
+  src,
+  style = {},
+  size = 40,
+  ...restProps
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!src);
 
   const handleImageError = () => {
     setImageFailed(true);
-    setLoading(false); // Stop loading if the image fails to load
+    setLoading(false);
     return false; // Prevent Ant Design from showing the default broken image
   };
 
   useEffect(() => {
+    setImageFailed(false); // Reset the imageFailed state on src change
+    setLoading(!!src); // Reset the loading state when src changes
+
     if (src) {
       const image = new Image();
       image.src = src;
       image.onload = () => setLoading(false);
       image.onerror = handleImageError;
+
+      return () => {
+        image.onload = null;
+        image.onerror = null;
+      };
     } else {
-      setLoading(false); // If no `src`, stop loading immediately
+      setLoading(false); // If no src, stop loading immediately
     }
   }, [src]);
 
   if (loading) {
-    // Show shimmer effect while loading
     return (
-      <Skeleton.Avatar 
-        active 
-        size={size} 
-        style={{ ...style }} 
-        shape="circle" 
+      <Skeleton.Avatar
+        active
+        size={size}
+        style={{ ...style }}
+        shape="circle"
       />
     );
   }
 
   if ((!src || imageFailed) && name) {
-    // Display the first letter of the name
     return (
       <AntAvatar
         style={{
@@ -71,7 +77,6 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
   }
 
   if ((!src || imageFailed) && !name) {
-    // Display the default user icon
     return (
       <AntAvatar
         icon={<UserOutlined />}
@@ -82,7 +87,6 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
     );
   }
 
-  // Render the image if it exists and hasn't failed to load
   return (
     <AntAvatar
       src={src}

@@ -8,9 +8,11 @@ import UseApprovalCenterServices from "../../services/all-time-sheet-services";
 
 const EmployeeListTab = () => {
   const [employeeList, setEmployeeList] = useState<TeamMember[]>([]);
+  const [loading,setLoading] = useState<boolean>(true);
 
   const fetchTeamMembers = async() => {
     const response = await UseApprovalCenterServices().fetchTeamMembers();
+    setLoading(false);
     setEmployeeList(response.data);
   }
   useEffect(() => {
@@ -20,7 +22,7 @@ const EmployeeListTab = () => {
     {
       key: "1",
       label: <>Team members</>,
-      content: <EmployeeList employeeList={employeeList} />,
+      content: <EmployeeList employeeList={employeeList} loading={loading}/>,
     },
   ];
   return (
