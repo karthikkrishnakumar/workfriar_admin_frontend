@@ -19,12 +19,11 @@ interface TeamMembersProps {
 }
 
 const TeamMembers = ({ id }: TeamMembersProps) => {
-  const { fetchProjectTeamByProjectId, changeMemberStatus, updateDates } =
-    useProjectTeamService();
+  const { fetchProjectTeamByProjectId, updateDates } = useProjectTeamService();
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [filteredTeamMembers, setFilteredTeamMembers] = useState<RowData[]>([]);
   const [selectedId, setSelectedId] = useState("");
-  const [ProjectTeamData, setProjectTeamData] = useState<TeamMember | null>(
+  const [projectTeamData, setProjectTeamData] = useState<TeamMember | null>(
     null
   );
   const [dates, setDates] = useState<Dates | null>(null);
@@ -51,7 +50,7 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
   const handleDateSubmit = async (values: Record<string, any>) => {
     const payload = {
       end_date: dayjs(values?.end_date).format("YYYY-MM-DD"),
-      userId: ProjectTeamData?.id,
+      userId: projectTeamData?.id,
       projectTeamId: selectedId,
     };
     try {
@@ -92,14 +91,14 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
       throw new Error("Function not implemented.");
     }
 
-    return members.map((member) => ({
+    return members?.map((member) => ({
       _id: member.id,
       name: (
         <span className={styles.nameCell}>
           <CustomAvatar
             name={member.name}
             size={50}
-            src={member.profile_pic || ""}
+            src={member.profile_pic ?? ""}
           />
           {/* Custom avatar */}
           <span className={styles.member}>{member.name}</span>

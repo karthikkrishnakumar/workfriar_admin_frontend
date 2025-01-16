@@ -150,7 +150,7 @@ const Client: React.FC = () => {
     const handleStatusClick = (status: string, id: string) => {
       handleStatusChange(id, status);
     };
-    return clients.map((client) => ({
+    return clients?.map((client) => ({
       _id: client._id,
       client_name: <span className={styles.client}>{client.client_name}</span>,
       location: <span className={styles.client}>{client.location}</span>,

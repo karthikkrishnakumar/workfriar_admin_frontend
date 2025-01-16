@@ -1,42 +1,41 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import ModalFormComponent from "@/themes/components/modal-form/modal-form";
-import useClientService  from "../../services/client-service";
+import useClientService from "../../services/client-service";
 import { message } from "antd";
 import { ClientData } from "@/interfaces/clients/clients";
-
 
 interface ModalProps {
   isModalOpen: boolean;
   onClose?: () => void;
   onSave: (values: Record<string, any>) => void;
   initialValues?: ClientData | null;
-  type?:string;
+  type?: string;
 }
-
 
 const ClientModal: React.FC<ModalProps> = ({
   isModalOpen,
   onClose,
   onSave,
   initialValues,
-  type
+  type,
 }) => {
-
+  const { fetchCurrencies, fetchCountries, fetchClientManagers } =
+    useClientService();
   const [currency, setCurrency] = useState([]);
   const [clientManagers, setClientManagers] = useState([]);
   const [countries, setCountries] = useState([]);
 
   const values = initialValues || {};
-  
+
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const currency = await useClientService().fetchCurrencies(); 
+        const currency = await fetchCurrencies();
         setCurrency(currency.data);
-        const countries = await useClientService().fetchCountries(); // Make sure you pass the ID
+        const countries = await fetchCountries(); // Make sure you pass the ID
         setCountries(countries.data);
-        const clientManagers = await useClientService().fetchClientManagers(); // Make sure you pass the ID
+        const clientManagers = await fetchClientManagers(); // Make sure you pass the ID
         setClientManagers(clientManagers.data);
       } catch (error) {
         message.error("Failed to fetch details.");
@@ -46,10 +45,7 @@ const ClientModal: React.FC<ModalProps> = ({
     fetchDetails();
   }, []);
 
-  
   return (
-    <>
-
     <ModalFormComponent
       isVisible={isModalOpen}
       onClose={onClose}
@@ -72,8 +68,8 @@ const ClientModal: React.FC<ModalProps> = ({
               name: "location",
               label: "Location",
               type: "select",
-              options: countries.map((countries:any) => ({
-                label: countries.country, 
+              options: countries?.map((countries: any) => ({
+                label: countries.country,
                 value: countries._id,
               })),
               required: true,
@@ -87,8 +83,8 @@ const ClientModal: React.FC<ModalProps> = ({
               name: "client_manager",
               label: "Client Manager",
               type: "select",
-              options: clientManagers.map((manager:any) => ({
-                label: manager.full_name, 
+              options: clientManagers?.map((manager: any) => ({
+                label: manager.full_name,
                 value: manager._id,
               })),
               required: true,
@@ -98,8 +94,8 @@ const ClientModal: React.FC<ModalProps> = ({
               name: "billing_currency",
               label: "Billing currency",
               type: "select",
-              options: currency.map((currency:any) => ({
-                label: currency.currency, 
+              options: currency?.map((currency: any) => ({
+                label: currency.currency,
                 value: currency._id,
               })),
               required: true,
@@ -124,7 +120,6 @@ const ClientModal: React.FC<ModalProps> = ({
         },
       ]}
     />
-    </>
   );
 };
 

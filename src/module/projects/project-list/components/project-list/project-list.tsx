@@ -18,8 +18,10 @@ import CustomTable, {
   RowData,
 } from "@/themes/components/custom-table/custom-table";
 import PaginationComponent from "@/themes/components/pagination-button/pagination-button";
-import { ProjectData, ProjectDisplayData } from "@/interfaces/projects/projects";
-
+import {
+  ProjectData,
+  ProjectDisplayData,
+} from "@/interfaces/projects/projects";
 
 const ProjectList: React.FC = () => {
   const router = useRouter();
@@ -43,24 +45,20 @@ const ProjectList: React.FC = () => {
   const [totalRecords, setTotalRecords] = useState(0); // Total records for pagination
   const pageSize = 5; // Number of rows per page
 
-
   const fetchDetails = async (page: number) => {
     try {
-      const result = await fetchProjectDetails(page,pageSize);
+      const result = await fetchProjectDetails(page, pageSize);
       setFilteredProject(mapProjectData(result.data));
       setTotalRecords(result.total);
-      
     } catch (error) {
       message.error("Failed to fetch project details.");
     }
   };
-  
+
   // useEffect hook to fetch project data based on the ID when the component mounts
   useEffect(() => {
     fetchDetails(currentPage);
-  }, [currentPage ,totalRecords]);
-
-
+  }, [currentPage, totalRecords]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page); // Update the current page
@@ -211,7 +209,7 @@ const ProjectList: React.FC = () => {
         }
       }
     };
-    return projects.map((project) => ({
+    return projects?.map((project) => ({
       _id: project.id,
       projectName: (
         <span className={styles.nameCell}>

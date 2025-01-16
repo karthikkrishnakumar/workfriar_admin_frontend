@@ -45,72 +45,72 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
   return (
     <div className={styles.projectDetailsWrapper}>
       <GridContainer
-          isGrid={true}
-          avatar={{
-            name: project?.project_name,
-            profile: project?.project_logo || "",
-            size: 100}}
-          fields={[
-            {
-              label: "Project",
-              value: project?.project_name,
-            },
-            { label: "Project lead", value: project?.project_lead?.full_name },
-          ]}
-        />
+        isGrid={true}
+        avatar={{
+          name: project?.project_name,
+          profile: project?.project_logo ?? "",
+          size: 100,
+        }}
+        fields={[
+          {
+            label: "Project",
+            value: project?.project_name,
+          },
+          { label: "Project lead", value: project?.project_lead?.full_name },
+        ]}
+      />
 
       {/* Description Section */}
       <GridContainer
-          isGrid={false}
-          fields={[
-            {
-              label: "Project description",
-              value: project.description || "--",
-            }
-          ]}
-        />
+        isGrid={false}
+        fields={[
+          {
+            label: "Project description",
+            value: project.description ?? "--",
+          },
+        ]}
+      />
 
       {/* Details Section */}
       <GridContainer
-          isGrid={true}
-          fields={[
-            {
-              label: "Client",
-              value: project?.client_name?.client_name,
-            },
-            {
-              label: "Planned start date",
-              value: project?.planned_start_date || null,
-            },
-            {
-              label: "Planned end date",
-              value: project?.planned_end_date || null,
-            },
-            {
-              label: "Actual start date",
-              value: project?.actual_start_date || null,
-            },
-            {
-              label: "Actual end date",
-              value: project?.actual_end_date || null,
-            },
-            {
-              label: "Billing model",
-              value: project?.billing_model || "--",
-            },
-            {
-              label: "Time entry",
-              value: project?.open_for_time_entry            
+        isGrid={true}
+        fields={[
+          {
+            label: "Client",
+            value: project?.client_name?.client_name,
+          },
+          {
+            label: "Planned start date",
+            value: project?.planned_start_date ?? null,
+          },
+          {
+            label: "Planned end date",
+            value: project?.planned_end_date ?? null,
+          },
+          {
+            label: "Actual start date",
+            value: project?.actual_start_date ?? null,
+          },
+          {
+            label: "Actual end date",
+            value: project?.actual_end_date ?? null,
+          },
+          {
+            label: "Billing model",
+            value: project?.billing_model ?? "--",
+          },
+          {
+            label: "Time entry",
+            value: project?.open_for_time_entry
               .replace(/_/g, " ")
               .replace(/\b\w/g, (l) => l.toUpperCase()),
-            },
-            {
-              label: "Status",
-              value: project?.status,
-            },
-            
-          ]}
-        />
+          },
+          {
+            label: "Status",
+            value: project?.status,
+          },
+        ]}
+      />
     </div>
   );
 };
