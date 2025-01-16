@@ -138,7 +138,7 @@ const TaskCategory: React.FC = () => {
         }
       }
     };
-    return categorys.map((category) => ({
+    return categorys?.map((category) => ({
       _id: category.id,
       task_category: (
         <span className={styles.category}>{category.category}</span>

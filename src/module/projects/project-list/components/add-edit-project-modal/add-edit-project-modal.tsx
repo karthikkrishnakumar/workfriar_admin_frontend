@@ -28,6 +28,10 @@ const ProjectModal: React.FC<ModalProps> = ({
   type,
   formErrors,
 }) => {
+  const { fetchClientDetails } = useClientService();
+  const { fetchTaskCategoryDetails } = useTaskCategoryService();
+  const { fetchProjectLeads, fetchProjectDetailsById } =
+    useProjectListService();
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
     null
   );
@@ -41,12 +45,11 @@ const ProjectModal: React.FC<ModalProps> = ({
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const clients = await useClientService().fetchClientDetails(); // Make sure you pass the ID
+        const clients = await fetchClientDetails(); // Make sure you pass the ID
         setClientData(clients.data);
-        const categories =
-          await useTaskCategoryService().fetchTaskCategoryDetails(); // Make sure you pass the ID
+        const categories = await fetchTaskCategoryDetails(); // Make sure you pass the ID
         setTaskCategoryData(categories.data);
-        const projectLeads = await useProjectListService().fetchProjectLeads(); // Make sure you pass the ID
+        const projectLeads = await fetchProjectLeads(); // Make sure you pass the ID
         setProjectLeads(projectLeads.data);
       } catch (error) {
         message.error("Failed to fetch details.");
@@ -61,9 +64,7 @@ const ProjectModal: React.FC<ModalProps> = ({
       const fetchDetails = async () => {
         setLoading(true); // Set loading to true before fetching
         try {
-          const result = await useProjectListService().fetchProjectDetailsById(
-            id
-          );
+          const result = await fetchProjectDetailsById(id);
 
           // Format the fetched data
           const formattedResult: ProjectData = {
@@ -133,7 +134,7 @@ const ProjectModal: React.FC<ModalProps> = ({
                   name: "client_name",
                   label: "Client",
                   type: "select",
-                  options: clientData.map((client) => ({
+                  options: clientData?.map((client) => ({
                     label: client.client_name,
                     value: client._id,
                   })),
@@ -190,16 +191,17 @@ const ProjectModal: React.FC<ModalProps> = ({
                   label: "Task category",
                   type: "checkboxSelect",
                   placeholder: "Select categories",
-                  options: taskCategoryData.map((category) => ({
-                    label: category.category,
-                    value: category.id,
-                  })),
+                  options:
+                    taskCategoryData?.map((category) => ({
+                      label: category.category,
+                      value: category.id,
+                    })) || [],
                 },
                 {
                   name: "project_lead",
                   label: "Project lead",
                   type: "select",
-                  options: projectLeads.map((lead) => ({
+                  options: projectLeads?.map((lead) => ({
                     label: lead.full_name,
                     value: lead._id,
                   })),

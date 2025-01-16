@@ -95,6 +95,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
           <Select
             placeholder={field.placeholder}
             options={field.options}
+            disabled={field.readonly}
             showSearch
             value={
               field.options?.some(
@@ -110,6 +111,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
           <Select
             mode="multiple"
             placeholder={field.placeholder || "Select options"}
+            disabled={field.readonly}
             options={field.options}
             value={form.getFieldValue(field.name) || []}
             onChange={(selectedValues) => {
@@ -199,7 +201,13 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
           />
         );
       case "textarea":
-        return <Input.TextArea placeholder={field.placeholder} rows={4} />;
+        return (
+          <Input.TextArea
+            placeholder={field.placeholder}
+            rows={4}
+            readOnly={field.readonly}
+          />
+        );
       case "image":
         return (
           <div className={styles.imageUploadContainer}>

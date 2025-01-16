@@ -11,7 +11,7 @@ interface ModalProps {
   onSave: (values: Record<string, any>) => void;
   initialValues?: ProjectTeamData;
   id?: string;
-  type?:string;
+  type?: string;
 }
 
 const ProjectTeamModal: React.FC<ModalProps> = ({
@@ -20,8 +20,9 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
   onSave,
   initialValues,
   id,
-  type
+  type,
 }) => {
+  const { fetchProjects, fetchTeamMembers } = useProjectTeamService();
   const values = initialValues;
   const [projects, setProjects] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -29,15 +30,14 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        
-        const projects = await useProjectTeamService().fetchProjects(); 
+        const projects = await fetchProjects();
         setProjects(projects.data);
-        const teamMembers = await useProjectTeamService().fetchTeamMembers("Technical"); 
-        const excludedIds =(values?.teamMembers || []).map(
+        const teamMembers = await fetchTeamMembers("Technical");
+        const excludedIds = (values?.teamMembers || []).map(
           (member: { id: string }) => member.id
         );
         const filteredTeamMembers = teamMembers.data.filter(
-          (member: { id: any; }) => !excludedIds.includes(member.id)
+          (member: { id: any }) => !excludedIds.includes(member.id)
         );
         setTeamMembers(filteredTeamMembers);
       } catch (error) {
@@ -47,7 +47,7 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
 
     fetchDetails();
   }, []);
-  
+
   return (
     <ModalFormComponent
       isVisible={isModalOpen}
@@ -64,27 +64,28 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
               name: "project_id",
               label: "Project",
               type: "select",
-              options: projects?.map((projects:any) => ({
-                label: projects.name, 
+              options: projects?.map((projects: any) => ({
+                label: projects.name,
                 value: projects.id,
               })),
               required: true,
               placeholder: "Select project",
+              readonly: type === "edit",
             },
             {
               name: "teamMembers",
               label: "Team members",
               type: "checkboxSelect",
-              options: teamMembers?.map((member:any) => ({
-                label: member.name, 
-                value: member.id,
-              })),
+              options:
+                teamMembers?.map((member: any) => ({
+                  label: member.name,
+                  value: member.id,
+                })) || [],
               required: true,
               placeholder: "Select team members",
             },
           ],
         },
-       
       ]}
     />
   );

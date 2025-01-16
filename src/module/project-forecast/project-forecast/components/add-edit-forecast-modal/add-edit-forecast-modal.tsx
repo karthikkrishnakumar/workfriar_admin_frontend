@@ -4,13 +4,14 @@ import ModalFormComponent, {
   FormRow,
 } from "@/themes/components/modal-form/modal-form";
 import TabComponent from "@/themes/components/tabs/tabs";
-import useProjectForecastService, { ProjectForecastData } from "../../services/project-forecast/project-forecast";
+import useProjectForecastService, {
+  ProjectForecastData,
+} from "../../services/project-forecast/project-forecast";
 import { ModalProps } from "@/module/projects/project-list/components/add-edit-project-modal/add-edit-project-modal";
 import message from "antd/es/message";
 import dayjs from "dayjs";
 import useProjectTeamService from "@/module/projects/project-team/services/project-team-service";
 import { Member } from "@/interfaces/projects/projects";
-
 
 const ForecastModal: React.FC<ModalProps> = ({
   isModalOpen,
@@ -19,10 +20,8 @@ const ForecastModal: React.FC<ModalProps> = ({
   id,
   type,
 }) => {
-
-  const [selectedForecast, setSelectedForecast] = useState<ProjectForecastData | null>(
-    null
-  );
+  const [selectedForecast, setSelectedForecast] =
+    useState<ProjectForecastData | null>(null);
 
   const [opportunityManagers, setOpportunityManagers] = useState<Member[]>([]);
   const [projectManagers, setProjectManagers] = useState<Member[]>([]);
@@ -32,20 +31,27 @@ const ForecastModal: React.FC<ModalProps> = ({
   const [teamMembers, setTeamMembers] = useState<Member[]>([]);
 
   const [loading, setLoading] = useState<boolean>(false);
-  
 
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const technical = await useProjectTeamService().fetchTeamMembers("Technical"); 
+        const technical = await useProjectTeamService().fetchTeamMembers(
+          "Technical"
+        );
         setTechLeads(technical.data);
         setTeamMembers(technical.data);
-        const management = await useProjectTeamService().fetchTeamMembers("Management"); 
+        const management = await useProjectTeamService().fetchTeamMembers(
+          "Management"
+        );
         setOpportunityManagers(management.data);
         setProductManagers(management.data);
-        const finance = await useProjectTeamService().fetchTeamMembers("Finance"); 
+        const finance = await useProjectTeamService().fetchTeamMembers(
+          "Finance"
+        );
         setAccountManagers(finance.data);
-        const operations = await useProjectTeamService().fetchTeamMembers("Operations"); 
+        const operations = await useProjectTeamService().fetchTeamMembers(
+          "Operations"
+        );
         setProjectManagers(operations.data);
       } catch (error) {
         message.error("Failed to fetch details.");
@@ -60,9 +66,10 @@ const ForecastModal: React.FC<ModalProps> = ({
       const fetchDetails = async () => {
         setLoading(true); // Set loading to true before fetching
         try {
-          const result = await useProjectForecastService().fetchProjectForecastDetailsById(
-            id
-          );
+          const result =
+            await useProjectForecastService().fetchProjectForecastDetailsById(
+              id
+            );
 
           // Format the fetched data
           const formattedResult: ProjectForecastData = {
@@ -70,13 +77,13 @@ const ForecastModal: React.FC<ModalProps> = ({
             opportunity_start_date: result.data.opportunity_start_date
               ? dayjs(result.data.opportunity_start_date, "DD/MM/YYYY")
               : null,
-              opportunity_close_date: result.data.opportunity_close_date
+            opportunity_close_date: result.data.opportunity_close_date
               ? dayjs(result.data.opportunity_close_date, "DD/MM/YYYY")
               : null,
-              expected_project_start_date: result.data.expected_project_start_date
+            expected_project_start_date: result.data.expected_project_start_date
               ? dayjs(result.data.expected_project_start_date, "DD/MM/YYYY")
               : null,
-              expected_project_end_date: result.data.expected_project_end_date
+            expected_project_end_date: result.data.expected_project_end_date
               ? dayjs(result.data.expected_project_end_date, "DD/MM/YYYY")
               : null,
             opportunity_manager: result.data.opportunity_manager_id,
@@ -105,19 +112,21 @@ const ForecastModal: React.FC<ModalProps> = ({
         {
           name: "opportunity_name",
           label: "Opportunity name",
-          required:true,
+          required: true,
           type: "text",
-          placeholder:"Enter opportunity name"
-        },        {
+          placeholder: "Enter opportunity name",
+        },
+        {
           name: "opportunity_manager",
           label: "Opportunity Manager",
-          required:true,
-          placeholder:"Select opportunity manager",
+          required: true,
+          placeholder: "Select opportunity manager",
           type: "select",
-          options: opportunityManagers.map((member) => ({
+          options: opportunityManagers?.map((member) => ({
             label: member.name,
             value: member.id,
-          })),        },
+          })),
+        },
       ],
     },
     {
@@ -125,10 +134,10 @@ const ForecastModal: React.FC<ModalProps> = ({
         {
           name: "opportunity_description",
           label: "Opportunity Description",
-          required:true,
+          required: true,
           type: "textarea",
-          isExtended:true,
-          placeholder:"Enter opportunity description"
+          isExtended: true,
+          placeholder: "Enter opportunity description",
         },
       ],
     },
@@ -137,13 +146,14 @@ const ForecastModal: React.FC<ModalProps> = ({
         {
           name: "client_name",
           label: "Client name",
-          required:true,
+          required: true,
           type: "text",
-          placeholder:"Enter client name"
-        },        {
+          placeholder: "Enter client name",
+        },
+        {
           name: "billing_model",
           label: "Billing model",
-          placeholder:"Select billing model",
+          placeholder: "Select billing model",
           type: "select",
           options: [{ label: "Non billable", value: "Non billable" }],
         },
@@ -154,13 +164,14 @@ const ForecastModal: React.FC<ModalProps> = ({
         {
           name: "opportunity_start_date",
           label: "Opportunity start date",
-          required:true,
+          required: true,
           type: "date",
-        },        {
+        },
+        {
           name: "opportunity_close_date",
           label: "Tentative opportunity close date",
           type: "date",
-        }, 
+        },
       ],
     },
     {
@@ -169,11 +180,12 @@ const ForecastModal: React.FC<ModalProps> = ({
           name: "expected_project_start_date",
           label: "Expected project start date",
           type: "date",
-        },        {
+        },
+        {
           name: "expected_project_end_date",
           label: "Expected project end date",
           type: "date",
-        }, 
+        },
       ],
     },
     {
@@ -182,15 +194,17 @@ const ForecastModal: React.FC<ModalProps> = ({
           name: "estimated_revenue",
           label: "Estimated revenue",
           type: "text",
-          placeholder:"Enter estimated revenue"
-        },        {
+          placeholder: "Enter estimated revenue",
+        },
+        {
           name: "opportunity_stage",
           label: "Opportunity stage",
-          placeholder:"Select opportunity stage",
+          placeholder: "Select opportunity stage",
           type: "select",
-          required:true,
-          options: [{ label: "Closed Won", value: "Closed Won" },
-            { label: "Closed Lost", value: "Closed Lost" }
+          required: true,
+          options: [
+            { label: "Closed Won", value: "Closed Won" },
+            { label: "Closed Lost", value: "Closed Lost" },
           ],
         },
       ],
@@ -201,13 +215,14 @@ const ForecastModal: React.FC<ModalProps> = ({
           name: "expected_resource_breakdown",
           label: "Expected resource breakdown",
           type: "text",
-          placeholder:"Enter breakdown"
-        },        {
+          placeholder: "Enter breakdown",
+        },
+        {
           name: "status",
           label: "Status",
-          placeholder:"Select status",
+          placeholder: "Select status",
           type: "select",
-          required:true,
+          required: true,
           options: [{ label: "Completed", value: "Completed" }],
         },
       ],
@@ -221,19 +236,22 @@ const ForecastModal: React.FC<ModalProps> = ({
           name: "project_manager",
           label: "Project Manager",
           type: "select",
-          placeholder:"Select project manager",
-          options: projectManagers.map((member) => ({
+          placeholder: "Select project manager",
+          options: projectManagers?.map((member) => ({
             label: member.name,
             value: member.id,
-          })),        },        {
+          })),
+        },
+        {
           name: "product_manager",
           label: "Product Manager",
-          placeholder:"Select product manager",
+          placeholder: "Select product manager",
           type: "select",
-          options: productManagers.map((member) => ({
+          options: productManagers?.map((member) => ({
             label: member.name,
             value: member.id,
-          })),        },
+          })),
+        },
       ],
     },
     {
@@ -241,17 +259,19 @@ const ForecastModal: React.FC<ModalProps> = ({
         {
           name: "tech_lead",
           label: "Tech lead",
-          placeholder:"Select tech lead",
+          placeholder: "Select tech lead",
           type: "select",
-          options: techLeads.map((member) => ({
+          options: techLeads?.map((member) => ({
             label: member.name,
             value: member.id,
-          })),        },        {
+          })),
+        },
+        {
           name: "account_manager",
           label: "Account Manager",
-          placeholder:"Select account manager",
+          placeholder: "Select account manager",
           type: "select",
-          options: accountManagers.map((member) => ({
+          options: accountManagers?.map((member) => ({
             label: member.name,
             value: member.id,
           })),
@@ -346,25 +366,27 @@ const ForecastModal: React.FC<ModalProps> = ({
 
       {/* Modal form with dynamic form rows based on selected tab */}
       {!loading && (
-      <ModalFormComponent
-        isVisible={isModalOpen}
-        title={type === "edit" ? "Edit Project Forecast" : "Add Project Forecast"}
-        primaryButtonLabel={primaryButtonLabel}
-        secondaryButtonLabel={secondaryButtonLabel}
-        onPrimaryClick={handlePrimaryClick}
-        onSecondaryClick={handleSecondaryClick}
-        onClose={onClose}
-        formRows={formRows}
-        initialValues={selectedForecast || {}}
-        children={
-          <TabComponent
-            headings={headings}
-            onChange={handleTabChange}
-            activeKey={activeTabKey}
-          />
-        }
-      />
-    )}
+        <ModalFormComponent
+          isVisible={isModalOpen}
+          title={
+            type === "edit" ? "Edit Project Forecast" : "Add Project Forecast"
+          }
+          primaryButtonLabel={primaryButtonLabel}
+          secondaryButtonLabel={secondaryButtonLabel}
+          onPrimaryClick={handlePrimaryClick}
+          onSecondaryClick={handleSecondaryClick}
+          onClose={onClose}
+          formRows={formRows}
+          initialValues={selectedForecast || {}}
+          children={
+            <TabComponent
+              headings={headings}
+              onChange={handleTabChange}
+              activeKey={activeTabKey}
+            />
+          }
+        />
+      )}
     </div>
   );
 };

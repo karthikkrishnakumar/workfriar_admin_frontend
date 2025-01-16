@@ -85,14 +85,14 @@ const TimeSummary = ({ id }: TimeSummaryProps) => {
   ];
   // Function to map member data to RowData format for compatibility with the table
   const mapMemberData = (members: TimeLogged[]): RowData[] => {
-    return members.map((member) => ({
+    return members?.map((member) => ({
       _id: member._id,
       name: (
         <span className={styles.nameCell}>
           <CustomAvatar
             name={member.team_member}
             size={50}
-            src={member.profile_pic || undefined}
+            src={member.profile_pic ?? undefined}
           />
           {/* Custom avatar */}
           <span className={styles.member}>{member.team_member}</span>

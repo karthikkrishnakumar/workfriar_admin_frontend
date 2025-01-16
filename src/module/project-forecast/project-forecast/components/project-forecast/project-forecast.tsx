@@ -63,15 +63,15 @@ const ProjectForecast: React.FC = () => {
     }
   };
 
-      /**
-     * Converts the status value to a readable format
-     * @param {string} status - The status value to convert
-     * @returns {string} - The formatted status string
-     */
-      const getStatusText = (status: ProjectForecastData["status"]): string => {
-        return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-      };
-      
+  /**
+   * Converts the status value to a readable format
+   * @param {string} status - The status value to convert
+   * @returns {string} - The formatted status string
+   */
+  const getStatusText = (status: ProjectForecastData["status"]): string => {
+    return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
   /**
    * Changes the ProjectForecast status
    * @param {string} key - The key of the ProjectForecast to update
@@ -99,7 +99,7 @@ const ProjectForecast: React.FC = () => {
 
   const handleDeleteProjectForecast = async (id: string) => {
     try {
-      const response = await deleteProjectForecast(id)
+      const response = await deleteProjectForecast(id);
     } catch (err) {
       message.error("Failed");
     }
@@ -112,16 +112,15 @@ const ProjectForecast: React.FC = () => {
   const handleEditProjectForecastSubmit = async (
     values: Record<string, any>
   ) => {
-
     try {
       const payload = {
         ...values,
         opportunity_manager: values.opportunity_manager_id,
-            product_manager: values.product_manager_id,
-            project_manager: values.project_manager_id,
-            tech_lead: values.tech_lead_id,
-            account_manager: values.account_manager_id,
-      }
+        product_manager: values.product_manager_id,
+        project_manager: values.project_manager_id,
+        tech_lead: values.tech_lead_id,
+        account_manager: values.account_manager_id,
+      };
       const response = await updateProjectForecast(payload);
     } catch (err) {
       message.error("Failed.");
@@ -150,7 +149,7 @@ const ProjectForecast: React.FC = () => {
     } catch (err) {
       message.error("Failed.");
     }
-    dispatch(closeModal())
+    dispatch(closeModal());
   };
   const columns: Column[] = [
     { title: "Oppurtunity name", key: "opportunity_name", align: "left" },
@@ -169,8 +168,6 @@ const ProjectForecast: React.FC = () => {
 
   // Function to map forecast data to RowData format for compatibility with the table
   const mapForecastData = (forecasts: ProjectForecastData[]): RowData[] => {
-
-
     const handleStatusClick = (
       e: { key: string },
       forecast: ProjectForecastData
@@ -196,7 +193,7 @@ const ProjectForecast: React.FC = () => {
         }
       }
     };
-    return forecasts.map((forecast) => ({
+    return forecasts?.map((forecast) => ({
       _id: forecast.id,
       opportunity_name: (
         <span className={styles.forecast}>{forecast.opportunity_name}</span>
@@ -206,9 +203,7 @@ const ProjectForecast: React.FC = () => {
       ),
       opportunity_dates: (
         <span className={styles.forecast}>
-          <>
-          {forecast.opportunity_date}
-          </>
+          <>{forecast.opportunity_date}</>
         </span>
       ),
       client_name: (
@@ -217,7 +212,7 @@ const ProjectForecast: React.FC = () => {
       opportunity_stage: (
         <Tag
           className={`${styles.timeEntryBtn} ${
-            styles[forecast.opportunity_stage.replace(/\s/g,'')]
+            styles[forecast.opportunity_stage.replace(/\s/g, "")]
           }`}
         >
           {forecast.opportunity_stage
@@ -296,16 +291,13 @@ const ProjectForecast: React.FC = () => {
         type="edit"
       />
 
-            {isOpen && modalType === "addModal" && (
-        
-      
+      {isOpen && modalType === "addModal" && (
         <ForecastModal
           isModalOpen={true}
           onClose={() => dispatch(closeModal())}
           onSave={handleAddProjectForecastSubmit}
         />
       )}
-
     </div>
   );
 };

@@ -178,16 +178,8 @@ const ProjectTeam: React.FC = () => {
           <AvatarGroup team={team.teamsMembers} />
         </span>
       ),
-      actual_dates: (
-        <span className={styles.dates}>
-          <>{team.date}</>
-        </span>
-      ),
-      status: (
-        <span className={styles.status}>
-          <>{team.status}</>
-        </span>
-      ),
+      actual_dates: <span className={styles.dates}>{team.date}</span>,
+      status: <span className={styles.status}>{team.status}</span>,
       action: (
         <span className={styles.actionCell}>
           <Dropdown
