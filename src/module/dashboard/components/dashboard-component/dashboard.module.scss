@@ -40,3 +40,23 @@
   flex-direction: column;
   gap: 16px;
 }
+
+
+@media (max-width:868px){
+
+  /* divided dashboard main two div */
+.topMainDiv {
+ 
+  flex-direction: column;
+}
+
+.bottomMainDiv{
+  flex-direction: column;
+}
+  
+.additionalDiv {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+}
