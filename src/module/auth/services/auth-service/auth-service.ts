@@ -1,6 +1,9 @@
-  import jwt from "jsonwebtoken";
+  import http from "@/utils/http";
+import jwt from "jsonwebtoken";
 
   export const useAuthService = () => {
+
+    const apiUrl = "/api/auth";
 
     const redirectToGoogleLogin = () => {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -54,25 +57,28 @@
     }
     };
 
+    
     const handleLogout = async () => {
       try {
-        // Call the logout API route
-        const response = await fetch("/api/auth/logout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
 
-        const data = await response.json();
+          const response = await fetch("/api/auth/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
 
-        if (response.ok && data.success) {
-          // Redirect to login page after successful logout
-          window.location.href = "/";
-          return { success: true, message: data.message || "Logout successful" };
-        } else {
-          return { success: false, message: data.message || "Logout failed" };
-        }
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            // Redirect to login page after successful logout
+            window.location.href = "/";
+            return { success: true, message: data.message || "Logout successful" };
+          } else {
+            return { success: false, message: data.message || "Logout failed" };
+          }
+
+        
       } catch (error) {
         return { success: false, message: "An error occurred during logout." };
       }
