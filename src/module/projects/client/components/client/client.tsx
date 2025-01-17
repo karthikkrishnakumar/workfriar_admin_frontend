@@ -120,7 +120,7 @@ const Client: React.FC = () => {
   };
 
   const columns: Column[] = [
-    { title: "Client", key: "client_name", align: "left", width: 300 },
+    { title: "Client", key: "client_name", align: "left" },
     { title: "Location", key: "location", align: "left" },
     {
       title: "Billing currency",
@@ -131,7 +131,6 @@ const Client: React.FC = () => {
       title: "Client manager",
       key: "client_manager",
       align: "left",
-      width: 300,
     },
     { title: "Status", key: "status", align: "left" },
     { title: "", key: "action", align: "left", width: 30 },

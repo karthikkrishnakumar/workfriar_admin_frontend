@@ -45,12 +45,14 @@ const ProjectModal: React.FC<ModalProps> = ({
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const clients = await fetchClientDetails(); // Make sure you pass the ID
+        const [clients, projectLeads, categories] = await Promise.all([
+          fetchClientDetails(),
+          fetchProjectLeads(),
+          fetchTaskCategoryDetails(),
+        ]);
         setClientData(clients.data);
-        const categories = await fetchTaskCategoryDetails(); // Make sure you pass the ID
-        setTaskCategoryData(categories.data);
-        const projectLeads = await fetchProjectLeads(); // Make sure you pass the ID
         setProjectLeads(projectLeads.data);
+        setTaskCategoryData(categories.data);
       } catch (error) {
         message.error("Failed to fetch details.");
       }

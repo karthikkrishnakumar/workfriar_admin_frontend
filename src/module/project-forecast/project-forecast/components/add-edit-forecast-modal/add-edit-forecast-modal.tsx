@@ -23,6 +23,8 @@ const ForecastModal: React.FC<ModalProps> = ({
   const [selectedForecast, setSelectedForecast] =
     useState<ProjectForecastData | null>(null);
 
+  const { fetchTeamMembers } = useProjectTeamService();
+  const { fetchProjectForecastDetailsById } = useProjectForecastService();
   const [opportunityManagers, setOpportunityManagers] = useState<Member[]>([]);
   const [projectManagers, setProjectManagers] = useState<Member[]>([]);
   const [productManagers, setProductManagers] = useState<Member[]>([]);
@@ -35,23 +37,17 @@ const ForecastModal: React.FC<ModalProps> = ({
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const technical = await useProjectTeamService().fetchTeamMembers(
-          "Technical"
-        );
+        const [technical, management, finance, operations] = await Promise.all([
+          fetchTeamMembers("Technical"),
+          fetchTeamMembers("Management"),
+          fetchTeamMembers("Finance"),
+          fetchTeamMembers("Operations"),
+        ]);
         setTechLeads(technical.data);
         setTeamMembers(technical.data);
-        const management = await useProjectTeamService().fetchTeamMembers(
-          "Management"
-        );
         setOpportunityManagers(management.data);
         setProductManagers(management.data);
-        const finance = await useProjectTeamService().fetchTeamMembers(
-          "Finance"
-        );
         setAccountManagers(finance.data);
-        const operations = await useProjectTeamService().fetchTeamMembers(
-          "Operations"
-        );
         setProjectManagers(operations.data);
       } catch (error) {
         message.error("Failed to fetch details.");
@@ -66,10 +62,7 @@ const ForecastModal: React.FC<ModalProps> = ({
       const fetchDetails = async () => {
         setLoading(true); // Set loading to true before fetching
         try {
-          const result =
-            await useProjectForecastService().fetchProjectForecastDetailsById(
-              id
-            );
+          const result = await fetchProjectForecastDetailsById(id);
 
           // Format the fetched data
           const formattedResult: ProjectForecastData = {

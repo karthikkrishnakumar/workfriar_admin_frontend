@@ -30,9 +30,11 @@ const ProjectTeamModal: React.FC<ModalProps> = ({
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const projects = await fetchProjects();
+        const [projects, teamMembers] = await Promise.all([
+          fetchProjects(),
+          fetchTeamMembers("Technical"),
+        ]);
         setProjects(projects.data);
-        const teamMembers = await fetchTeamMembers("Technical");
         const excludedIds = (values?.teamMembers || []).map(
           (member: { id: string }) => member.id
         );
