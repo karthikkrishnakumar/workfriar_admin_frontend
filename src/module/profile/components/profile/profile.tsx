@@ -5,6 +5,7 @@ import { Button, message, Spin } from "antd";
 import ProfileCard from "@/themes/components/profile-card/profile-card";
 import EditProjectModal from "../edit-profile-modal/edit-profile-modal";
 import useProfileService, { ProfileData } from "../../services/profile-service";
+import CustomAvatar from "@/themes/components/avatar/avatar";
 
 const Profile = () => {
   const { getAdminDetails, updateAdminDetails } = useProfileService();
@@ -58,20 +59,14 @@ const Profile = () => {
       <div className={styles.topRow}>
         <div className={styles.imageUploadContainer}>
           <div className={styles.imageCircle}>
-            {profile?.profile_pic_path ? (
-              <img
-                src={profile?.profile_pic_path}
-                alt="Profile"
-                className={styles.image}
-              />
-            ) : (
-              <span className={styles.imageInitial}>
-                {profile?.name[0].toUpperCase()}
-              </span>
-            )}
+            <CustomAvatar
+              src={profile?.profile_pic_path}
+              name={profile?.name}
+              size={100}
+            />
           </div>
         </div>
-        <Button onClick={() => setIsEditModalOpen(true)}>Edit profile</Button>
+        {/* <Button onClick={() => setIsEditModalOpen(true)}>Edit profile</Button> */}
       </div>
       <ProfileCard
         initialValues={profile || {}}

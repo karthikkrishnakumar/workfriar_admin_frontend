@@ -74,13 +74,12 @@ const TeamMembers = ({ id }: TeamMembersProps) => {
   };
 
   const columns: Column[] = [
-    { title: "Team member", key: "name", align: "left", width: 300 },
+    { title: "Team member", key: "name", align: "left" },
     { title: "Email id", key: "email", align: "left" },
     {
       title: "Start and end date",
       key: "dates",
       align: "left",
-      width: 350,
     },
     { title: "Status", key: "status", align: "left" },
   ];

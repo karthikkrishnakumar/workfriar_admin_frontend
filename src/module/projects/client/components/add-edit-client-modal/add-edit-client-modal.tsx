@@ -31,11 +31,13 @@ const ClientModal: React.FC<ModalProps> = ({
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const currency = await fetchCurrencies();
+        const [currency, countries, clientManagers] = await Promise.all([
+          fetchCurrencies(),
+          fetchCountries(),
+          fetchClientManagers(),
+        ]);
         setCurrency(currency.data);
-        const countries = await fetchCountries(); // Make sure you pass the ID
         setCountries(countries.data);
-        const clientManagers = await fetchClientManagers(); // Make sure you pass the ID
         setClientManagers(clientManagers.data);
       } catch (error) {
         message.error("Failed to fetch details.");
