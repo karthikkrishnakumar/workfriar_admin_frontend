@@ -98,13 +98,13 @@ const ProjectList: React.FC = () => {
    * @param {Record<string, any>} values - The updated values for the project
    */
   const handleEditProjectSubmit = async (values: Record<string, any>) => {
-    console.log(values)
     const payload = {
       ...values,
-      categories: values.categories.map((cat: any) => cat),
+      categories: values.categories.map((cat: any) =>
+        typeof cat === "object" && cat !== null ? cat.id : cat
+      ),
       project_logo: values.project_logo,
     };
-    console.log(payload);
     try {
       const response = await updateProject(selectedId, payload);
       if (response.status) {
