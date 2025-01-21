@@ -43,7 +43,7 @@ const ProjectStatusReport: React.FC = () => {
   const [project, setProject] = useState<ReportDetails>();
 
   const columns = [
-    { title: "Project", key: "project", align: "left" as const, width: 200 },
+    { title: "Project", key: "project", align: "left" as const, width: 190 },
     { title: "Project Lead", key: "projectLead", align: "left" as const },
     {
       title: "Actual Start & End Date",

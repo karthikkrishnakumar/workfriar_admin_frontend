@@ -203,7 +203,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
       key: "reportingManager",
       align: "left",
     },
-    { title: "Status", key: "status", align: "left" },
+    { title: "Status", key: "status", align: "left" , width:80},
     { title: "", key: "action", align: "left", width: 30 },
   ];
 

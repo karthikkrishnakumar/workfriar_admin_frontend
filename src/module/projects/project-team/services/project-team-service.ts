@@ -1,6 +1,5 @@
 import http from "@/utils/http";
 
-
 /**
  * create the custom hook for handling project list
  */
@@ -8,9 +7,7 @@ export default function useProjectTeamService() {
   const fetchProjectTeamByProjectId = async function (
     id: string
   ): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      id
-     );
+    const props: JSON = <JSON>(<unknown>id);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/getprojectteam", props);
@@ -60,7 +57,7 @@ export default function useProjectTeamService() {
   const fetchTimeLoggedByProjectId = async function (
     projectId: string,
     startDate: string,
-    endDate: string,
+    endDate: string
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>{
       projectId,
@@ -69,7 +66,7 @@ export default function useProjectTeamService() {
     });
     try {
       // Make an HTTP POST request
-      const { body } = await http().post("/api/admin/timesummary", props);
+      const { body } = await http().post("/api/timesheet/timesummary", props);
       if (body.status) {
         const response: any = {
           status: body.status,
@@ -93,9 +90,7 @@ export default function useProjectTeamService() {
   };
 
   const changeStatus = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      payload
-    );
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
       const { body } = await http().post(`/api/project/updatestatus`, props);
@@ -106,7 +101,7 @@ export default function useProjectTeamService() {
         message: body.message,
         errors: body.errors,
       };
-    } catch (error:any) {
+    } catch (error: any) {
       // Handle unexpected errors
       return {
         status: error,
@@ -119,9 +114,7 @@ export default function useProjectTeamService() {
   };
 
   const updateDates = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      payload
-    );
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/setenddate", props);
@@ -177,9 +170,7 @@ export default function useProjectTeamService() {
   };
 
   const updateProjectTeam = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      payload
-    );
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/editprojectteam", props);
@@ -202,9 +193,7 @@ export default function useProjectTeamService() {
   };
 
   const addProjectTeam = async function (payload: any): Promise<any> {
-    const props: JSON = <JSON>(<unknown>
-      payload
-    );
+    const props: JSON = <JSON>(<unknown>payload);
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/addprojectteam", props);
@@ -254,14 +243,15 @@ export default function useProjectTeamService() {
     }
   };
 
-  const fetchTeamMembers = async function (department:string): Promise<any> {
-    const props: JSON = <JSON>(<unknown>{department}); // Request payload
+  const fetchTeamMembers = async function (department: string): Promise<any> {
+    const props: JSON = <JSON>(<unknown>{ department }); // Request payload
 
     try {
       // Make an HTTP POST request
-      
+
       const { body } = await http().post(
-        `/api/admin/list-all-employees-by-department`,props
+        `/api/admin/list-all-employees-by-department`,
+        props
       );
       // Handle the API response and return filtered data
       return {
@@ -292,6 +282,6 @@ export default function useProjectTeamService() {
     fetchTimeLoggedByProjectId,
     fetchProjects,
     fetchTeamMembers,
-    updateDates
+    updateDates,
   };
 }

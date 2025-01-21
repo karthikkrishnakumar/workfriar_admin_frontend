@@ -100,7 +100,9 @@ const ProjectList: React.FC = () => {
   const handleEditProjectSubmit = async (values: Record<string, any>) => {
     const payload = {
       ...values,
-      categories: values.categories.map((cat: any) => cat.id),
+      categories: values.categories.map((cat: any) =>
+        typeof cat === "object" && cat !== null ? cat.id : cat
+      ),
       project_logo: values.project_logo,
     };
     try {

@@ -135,17 +135,12 @@
     box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
   }
 }
-
-.customTextarea {
+.customTextarea:hover{
+  border-color:  var(--primary-golden-color-medium)!important;
+}
+.customTextarea:focus {
   border-radius: 8px;
-
+  border-color:  var(--primary-golden-color-medium)!important;
+  box-shadow: 0 0 4px var(--primary-golden-color-medium)
 }
 
-// .custom-dropdown .ant-select-item-option-selected {
-//   background-color: #e6f7ff !important; /* Change background color of selected option */
-//   color: #ff8818 !important; /* Change text color */
-// }
-
-// .custom-dropdown .ant-select-item-option-selected .ant-select-item-option-state {
-//   color: #52c41a !important; /* Change tick mark color */
-// }

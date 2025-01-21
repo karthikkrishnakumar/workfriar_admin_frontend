@@ -8,7 +8,12 @@ import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"
 import TimeDueModal from "../../submit-timesheet-modal/submit-timesheet-modal";
 import UseDashboardServices from "@/module/dashboard/services/dashboard-services/dashboard-services";
 import DateRangePicker from "@/themes/components/date-picker/date-picker";
-import { DatePickerData, DatePickerResponse, TimesheetDue, TimesheetDueResponse } from "@/interfaces/dashboard/dashboard";
+import {
+  DatePickerData,
+  DatePickerResponse,
+  TimesheetDue,
+  TimesheetDueResponse,
+} from "@/interfaces/dashboard/dashboard";
 
 const TimeSheetDueCard: React.FC = () => {
   const [timesheetDueData, setTimesheetDueData] = useState<TimesheetDue[] | []>(
@@ -35,7 +40,7 @@ const TimeSheetDueCard: React.FC = () => {
           selectedStartDate,
           selectedEndDate
         );
-      setTimesheetDueData(data.data);
+        setTimesheetDueData(data.data);
 
       // Calculate the total time (hours) based on the new data
       const totalHours =
@@ -58,8 +63,8 @@ const TimeSheetDueCard: React.FC = () => {
     const fetchDatePicker = async () => {
       try {
         const datePickerResponse: DatePickerResponse =
-        await UseDashboardServices().fetchDatePickerData();
-        setDatePickerData(datePickerResponse.data);
+          await UseDashboardServices().fetchDatePickerData();
+          setDatePickerData(datePickerResponse.data);
       } catch (error) {
         console.error("Error fetching date picker data:", error);
       }
@@ -70,7 +75,6 @@ const TimeSheetDueCard: React.FC = () => {
 
   const handleSubmitClick = () => {
     setIsModalVisible(true);
-   
   };
 
   // Handle modal close
@@ -90,6 +94,7 @@ const TimeSheetDueCard: React.FC = () => {
       <CardSection
         title="Timesheet due"
         topRightContent={
+         
           <div>
             <DateRangePicker
               weekData={datePickerData}
@@ -97,30 +102,35 @@ const TimeSheetDueCard: React.FC = () => {
               dateChangeType="pastDue"
             />
           </div>
+          
         }
-        centerContent={
-            <Timesheet data={timesheetDueData} loading={loading}/>
-        }
+        centerContent={<Timesheet data={timesheetDueData} loading={loading} />}
         bottomContent={
           loading ? (
-            <SkeletonLoader
-              count={2}
-              button={true}
-              className={styles.customSkeletonForButton}
-              classNameItem={styles.buttonSkeletonItem}
-            />
+            <div className={styles.bottomButton}>
+              <SkeletonLoader
+                count={2}
+                button={true}
+                className={styles.customSkeletonForButton}
+                classNameItem={styles.buttonSkeletonItem}
+              />
+            </div>
           ) : (
-            <div>
-              <ButtonComponent
-                label="Review"
-                theme="white"
-                onClick={handleClickReview}
-              />
-              <ButtonComponent
-                label="Submit"
-                theme="black"
-                onClick={handleSubmitClick}
-              />
+            <div className={styles.bottomButton}>
+              {datePickerData?.length > 0 && (
+                <>
+                  <ButtonComponent
+                    label="Review"
+                    theme="white"
+                    onClick={handleClickReview}
+                  />
+                  <ButtonComponent
+                    label="Submit"
+                    theme="black"
+                    onClick={handleSubmitClick}
+                  />
+                </>
+              )}
             </div>
           )
         }
@@ -128,7 +138,12 @@ const TimeSheetDueCard: React.FC = () => {
       />
 
       {isModalVisible && (
-        <TimeDueModal onClose={handleCloseModal} startDate={selectedStartDate} endDate={selectedEndDate} totalTime={totalTime} />
+        <TimeDueModal
+          onClose={handleCloseModal}
+          startDate={selectedStartDate}
+          endDate={selectedEndDate}
+          totalTime={totalTime}
+        />
       )}
     </>
   );
