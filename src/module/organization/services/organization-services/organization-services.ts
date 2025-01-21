@@ -42,7 +42,7 @@ export default function UseEmployeeData() {
             return {
                 status: body.status,
                 data: body.data || null,
-                total: body.pagination.totalItems,
+                total: body.pagination.totalItems || 0,
                 message: body.message || "Successfully fetched employee projects data.",
                 errors: body.errors || null,
             };

@@ -40,20 +40,27 @@ const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
         />
       </div>
     ) : (
-    <div className={styles.holidayCard}>
-      <button onClick={handlePrev} className={styles.arrowButton}>
-        {Icons.arrowLeftGrey}
-      </button>
-      <div className={styles.holidaysDetialsDiv}>
-        <p className={styles.holidayTitle}>{currentHoliday?.holiday_name}</p>
-        <p className={styles.holidayDate}>{currentHoliday?.holiday_date}</p>
+      <div className={styles.holidayCard}>
+        {/* Conditionally render the buttons if holidays.length >= 2 */}
+        {holidays.length >= 2 && (
+          <button onClick={handlePrev} className={styles.arrowButton}>
+            {Icons.arrowLeftGrey}
+          </button>
+        )}
+        <div className={styles.holidaysDetialsDiv}>
+          <p className={styles.holidayTitle}>
+            {currentHoliday?.holiday_name}
+          </p>
+          <p className={styles.holidayDate}>{currentHoliday?.holiday_date}</p>
+        </div>
+        {holidays.length >= 2 && (
+          <button onClick={handleNext} className={styles.arrowButton}>
+            {Icons.arrowRightGrey}
+          </button>
+        )}
       </div>
-      <button onClick={handleNext} className={styles.arrowButton}>
-        {Icons.arrowRightGrey}
-      </button>
-    </div>
     )}
-    </>
+  </>
   );
 };
 
