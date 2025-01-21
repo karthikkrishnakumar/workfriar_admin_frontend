@@ -17,7 +17,7 @@
   padding-left: 15px;
 }
 .employeeName {
-  padding-left: 10px;
+  padding-left: 5px;
   font-size: 16px;
   color: var(--black);
   transition: color 0.3s ease;
@@ -37,6 +37,9 @@
   padding-left: 15px;
   font-size: 16px;
   color: var(--black);
+}
+.employeeManager{
+  padding-right: 10px;
 }
 .employeeStatus {
   font-size: 14px;

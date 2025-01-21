@@ -78,7 +78,7 @@ const EmployeeProjects: React.FC<EmployeeProjectsProps> = ({ employeeId }) => {
         employeeId
       ); // Service to fetch employee projects
       setProjects(mapProjectData(data.data)); // Map the data to RowData format
-      setTotalRecords(data.total);
+      setTotalRecords(data.total? data.total :0);
     } catch (err) {
       setError("Failed to fetch employee projects");
     } finally {

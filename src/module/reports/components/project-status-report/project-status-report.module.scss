@@ -82,6 +82,10 @@
 
   .commentsCell {
     padding-left: 6px;
+    max-width: 130px; /* Adjust based on design */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     span {
       font-size: 16px;
       color: var(--black) !important;
@@ -120,5 +124,11 @@
       border-color: transparent;
       background-color: transparent;
     }
+  }
+}
+
+@media(max-width:1100px){
+  .commentsCell {
+    max-width: 100px; /* Adjust based on design */
   }
 }
