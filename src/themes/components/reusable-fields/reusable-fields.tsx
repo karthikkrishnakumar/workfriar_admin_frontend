@@ -4,7 +4,6 @@ import { Form, Select, DatePicker, Input } from "antd";
 import dayjs from "dayjs";
 import Icons from "@/themes/images/icons/icons";
 import styles from "./reusable-fields.module.scss"; // You'll need to create this SCSS module
-import CheckboxComponent from "../checkbox/checkbox";
 
 const { Option } = Select;
 
@@ -29,7 +28,8 @@ export type InputType =
   | "datepicker"
   | "input"
   | "textarea"
-  | "checkboxSelect";
+  | "checkboxSelect"
+  | "dateRangePicker";
 
 export interface FormFieldProps {
   type: InputType;
@@ -128,6 +128,7 @@ const FormField: React.FC<FormFieldProps> = ({
             className={`${styles.customSelect} ${className}`}
             placeholder="Select locations"
             value={undefined}
+            onChange={onChange}
             mode="multiple"
             dropdownRender={(menu) => <div className={styles.customMenu}>{menu}</div>}
           >

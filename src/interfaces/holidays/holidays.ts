@@ -24,3 +24,8 @@ export interface HolidaysResponse {
         holidays: HolidayType[];
     };
 }
+
+export interface AddHolidaysResponse {
+    status: boolean;
+    message: string;
+}

@@ -6,9 +6,11 @@
     padding: 0px !important;
   }
 }
+
 .formsContentDiv {
   overflow-y: scroll;
   padding: 0px 24px 0px 24px;
+
   &::-webkit-scrollbar {
     width: 4px;
     background-color: transparent;
@@ -28,9 +30,11 @@
 .titleClass {
   padding: 24px 24px 0px 24px;
 }
+
 .bottomClass {
   padding: 24px 24px 24px 24px;
 }
+
 .flexContainer {
   display: flex;
   justify-content: space-between;
@@ -56,15 +60,15 @@
 }
 
 
-  .formItems {
-    width: 100%;
+.formItems {
+  width: 100%;
 
-    :global(.ant-form-item-explain-error) {
-      font-size: 11px !important;
-      color: #ff4d4f !important; // Optional: Customize the color
-      letter-spacing: 0.5px;
-    }
+  :global(.ant-form-item-explain-error) {
+    font-size: 11px !important;
+    color: #ff4d4f !important; // Optional: Customize the color
+    letter-spacing: 0.5px;
   }
+}
 
 
 .customSelect {
@@ -76,57 +80,39 @@
   align-items: center;
 }
 
-.customSelect:global(.ant-select .ant-select-selector){
-  &:hover{
+.customSelect:global(.ant-select .ant-select-selector) {
+  &:hover {
     border-color: var(--primary-golden-color-medium) !important;
   }
 
-  &:focus-within{
+  &:focus-within {
     border-color: var(--primary-golden-color-medium) !important;
     box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
   }
 }
 
-.customMenu {
-  // Dropdown menu styles
-  background-color: #297932 !important; // Example background color
-  border-radius: 8px;
-  padding: 8px;
-
-  &:global(.rc-virtual-list > .rc-virtual-list-holder > div > .rc-virtual-list-inner){
-    background-color: #ff4d4f !important;
-  }
-
-  &.ant-select-item-option-selected {
-    background-color: orange !important; // Set the background color of the selected option
-    color: #fff !important; // Text color for better visibility on orange
-
-    .ant-select-item-option-state {
-      // Tick mark color
-      color: #fff !important; // White tick mark for contrast
-    }
-  }
-
-  .ant-select-item-option {
-    &:hover {
-      background-color: #ffe6cc; // Optional: Hover effect for options
-    }
-  }
+.customSelect:global(.ant-select .ant-select-selector .ant-select-selection-wrap) {
+  height: 100%;
 }
 
 
-.ant-picker-outlined:focus-within{
+
+
+
+
+.ant-picker-outlined:focus-within {
   border-color: var(--primary-golden-color-medium) !important;
 }
 
-.customDatePicker:global(.ant-picker){
+.customDatePicker:global(.ant-picker) {
   width: 100%;
   padding: 12px;
-  &:hover{
+
+  &:hover {
     border-color: var(--primary-golden-color-medium);
   }
 
-  &:focus-within{
+  &:focus-within {
     border-color: var(--primary-golden-color-medium);
     box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
   }
@@ -139,12 +125,12 @@
   height: 48px;
 }
 
-.customInput:global(.ant-input){
-  &:hover{
+.customInput:global(.ant-input) {
+  &:hover {
     border-color: var(--primary-golden-color-medium);
   }
 
-  &:focus-within{
+  &:focus-within {
     border-color: var(--primary-golden-color-medium);
     box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
   }
@@ -152,7 +138,7 @@
 
 .customTextarea {
   border-radius: 8px;
-  
+
 }
 
 // .custom-dropdown .ant-select-item-option-selected {
@@ -163,4 +149,3 @@
 // .custom-dropdown .ant-select-item-option-selected .ant-select-item-option-state {
 //   color: #52c41a !important; /* Change tick mark color */
 // }
-

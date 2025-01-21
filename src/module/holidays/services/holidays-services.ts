@@ -1,4 +1,4 @@
-import { HolidaysResponse } from "@/interfaces/holidays/holidays";
+import { AddHolidaysResponse, HolidaysResponse } from "@/interfaces/holidays/holidays";
 import http from "@/utils/http";
 
 /**
@@ -72,9 +72,29 @@ export default function UseHolidayServices() {
         }
     };
 
+
+    /**
+     * Fetch holidays specific to Dubai for a given year.
+     * 
+     * @throws Will throw an error if the HTTP request fails.
+     */
+    const addHolidays = async(holiday_name:string,holiday_type:string,start_date:Date,end_date:Date,location:string[]):Promise <AddHolidaysResponse> => {
+        try{
+            const props: JSON = <JSON>(<unknown>{ holiday_name,holiday_type,start_date,end_date,location });
+            const { body } = await http().post("/api/holiday/add", props);
+            return {
+                status: body.status,
+                message: body.message,
+            }
+        }catch(error){
+            throw error;
+        }
+    }
+
     return {
         fetchAllHolidays,
         fetchIndianHolidays,
-        fetchDubaiHolidays
+        fetchDubaiHolidays,
+        addHolidays
     };
 }

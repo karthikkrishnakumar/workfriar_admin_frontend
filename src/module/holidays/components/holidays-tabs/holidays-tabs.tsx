@@ -1,7 +1,7 @@
 "use client";
 
 import TabComponent from '@/themes/components/tabs/tabs';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import AllHolidays from '../all-holidays/all-holidays';
 import IndianHolidays from '../indian-holidays/indian-holidays';
 import DubaiHolidays from '../dubai-holidays/dubai-holidays';
@@ -11,7 +11,6 @@ import ModalComponent from '@/themes/components/modal/modal';
 import { closeModal } from '@/redux/slices/modalSlice';
 import AddHolidayModal from '../add-holiday-modal/add-holiday-modal';
 import YearSelector from '../year-selector/year-selector';
-
 const HolidayTabs = () => {
     const [year,setYear] = useState<string>();
     const dispatch = useDispatch();

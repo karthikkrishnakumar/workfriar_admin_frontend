@@ -4,25 +4,27 @@ import styles from "./add-holiday-modal.module.scss";
 import FormField from "@/themes/components/reusable-fields/reusable-fields";
 import { Form } from "antd";
 import ButtonComponent from "@/themes/components/button/button";
+import UseHolidayServices from "../../services/holidays-services";
 
 const AddHolidayModal = () => {
   const [holidayName, setHolidayName] = useState("");
-  const [holidayDate, setHolidayDate] = useState<Date | null>(null);
+  const [holidayStartDate, setHolidayStartDate] = useState<Date | null>(null);
+  const [holidayEndDate, setHolidayEndDate] = useState<Date | null>(null);
   const [holidayType, setHolidayType] = useState("");
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState<string[]>();
 
   const holidayTypeOptions = [
     {
-      label: "Nationol Holiday", value:"nationalHoliday"
+      label: "Nationol Holiday", value:"Nationol Holiday"
     },
     {
-      label: "Public Holiday", value:"publicHoliday"
+      label: "Public Holiday", value:"Public Holiday"
     },
     {
-      label: "Restricted Holiday", value:"restrictedHoliday"
+      label: "Restricted Holiday", value:"Restricted Holiday"
     },
     {
-      label: "Office Shutdown", value:"officeShutdown"
+      label: "Office Shutdown", value:"Office Shutdown"
     }
   ]
 
@@ -30,13 +32,23 @@ const AddHolidayModal = () => {
   const locations = [
     {
       label: "India",
-      value: "india",
+      value: "India",
     },
     {
-      label: "UAE",
-      value: "uae",
+      label: "Dubai",
+      value: "Dubai",
     }
   ];
+
+
+  const handleOnClick = async() =>{
+    try{
+      const response = await UseHolidayServices().addHolidays(holidayName,holidayType,holidayStartDate!,holidayEndDate!,location!);
+      console.log(response);
+    }catch(error){
+      console.error(error);
+    }
+  }
 
 
 
@@ -51,6 +63,7 @@ const AddHolidayModal = () => {
               name=""
               required
               placeholder="Enter holiday name"
+              onChange={setHolidayName}
             />
           </div>
           <div className={styles.formGroup}>
@@ -67,11 +80,21 @@ const AddHolidayModal = () => {
           <div className={styles.formGroup}>
             <FormField
               type="datepicker"
-              label="Holiday Date"
+              label="Holiday Start Date"
               name=""
               required
-              onChange={(date) => setHolidayDate(date)}
-              value={holidayDate}
+              onChange={(date) => setHolidayStartDate(date)}
+              value={holidayStartDate}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <FormField
+              type="datepicker"
+              label="Holiday End Date"
+              name=""
+              required
+              onChange={(date) => setHolidayEndDate(date)}
+              value={holidayEndDate}
             />
           </div>
           <div className={styles.formGroup}>
@@ -88,7 +111,7 @@ const AddHolidayModal = () => {
         </div>
       </div>
       <div className={styles.modalFooter}>
-        <ButtonComponent label="Save" theme="black"/>
+        <ButtonComponent label="Save" theme="black" onClick={handleOnClick}/>
         <ButtonComponent label="Cancel" theme="white" />
       </div>
     </Form>
