@@ -30,7 +30,7 @@
   gap: 20px;
   background-color:transparent !important;
   animation: skeletonPulse 1.5s infinite ease-in-out !important;
-  margin-top: 8px;
+  margin-top: 16px;
 }
 .customSkeletonItem {
   background-color: var(--primary-golden-color-light) !important;
@@ -43,4 +43,6 @@
 }
 .customSkeletonButton{
   margin-bottom: 0px!important;
+  max-width: 60px;
+  max-height: 20px;
 }

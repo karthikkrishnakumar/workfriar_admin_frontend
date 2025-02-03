@@ -44,7 +44,7 @@ const ProjectTimeChartCard: React.FC = () => {
       title="Project time today"
       topRightContent={
         loading ? (
-          <SkeletonLoader count={1} button={true} />
+          <SkeletonLoader count={1} button={true} className={styles.customSkeletonButton}/>
         ) : (
           <ButtonComponent
             label="Add Entry"

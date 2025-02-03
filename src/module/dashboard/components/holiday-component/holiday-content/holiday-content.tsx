@@ -7,7 +7,7 @@ import { Empty } from "antd";
 import { Holidays } from "@/interfaces/dashboard/dashboard";
 
 interface HolidayProps {
-  holidays:Holidays[] | [];
+  holidays: Holidays[] | [];
 }
 
 const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
@@ -27,40 +27,45 @@ const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
 
   const currentHoliday = holidays[currentIndex];
 
-  const isEmptyData = !holidays || holidays.length === 0
+  const isEmptyData = !holidays || holidays.length === 0;
+  console.log(holidays);
 
   return (
     <>
-    {isEmptyData ? (
-      // Render empty illustration when no data is available
-      <div className={styles.emptyWrapper}>
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description="No Holidays Available"
-        />
-      </div>
-    ) : (
-      <div className={styles.holidayCard}>
-        {/* Conditionally render the buttons if holidays.length >= 2 */}
-        {holidays.length >= 2 && (
-          <button onClick={handlePrev} className={styles.arrowButton}>
-            {Icons.arrowLeftGrey}
-          </button>
-        )}
-        <div className={styles.holidaysDetialsDiv}>
-          <p className={styles.holidayTitle}>
-            {currentHoliday?.holiday_name}
-          </p>
-          <p className={styles.holidayDate}>{currentHoliday?.holiday_date}</p>
+      {isEmptyData ? (
+        // Render empty illustration when no data is available
+        <div className={styles.emptyWrapper}>
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description="No Holidays Available"
+          />
         </div>
-        {holidays.length >= 2 && (
-          <button onClick={handleNext} className={styles.arrowButton}>
-            {Icons.arrowRightGrey}
-          </button>
-        )}
-      </div>
-    )}
-  </>
+      ) : (
+        <div className={styles.holidayCard}>
+          {/* Conditionally render the buttons if holidays.length >= 2 */}
+          <div className={styles.arrowDiv}>
+          {holidays.length > 1 && currentIndex !== 0 && (
+            <button onClick={handlePrev} className={styles.arrowButton}>
+              {Icons.arrowLeftGrey}
+            </button>
+          )}
+          </div>
+          <div className={styles.holidaysDetialsDiv}>
+            <p className={styles.holidayTitle}>
+              {currentHoliday?.holiday_name}
+            </p>
+            <p className={styles.holidayDate}>{currentHoliday?.holiday_date}</p>
+          </div>
+          <div className={styles.arrowDiv}>
+          {holidays.length > 1 && currentIndex !== holidays.length - 1 && (
+            <button onClick={handleNext} className={styles.arrowButton}>
+              {Icons.arrowRightGrey}
+            </button>
+          )}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

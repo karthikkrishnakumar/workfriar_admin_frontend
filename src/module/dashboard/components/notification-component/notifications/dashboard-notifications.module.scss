@@ -64,6 +64,7 @@
   flex-grow: 1;
   font-size: 0.68rem;
   color: var(--primary-font-color-dark);
+  line-height: 20px;
 }
 
 /* 
@@ -82,7 +83,7 @@
     border-width: 5px!important;
     width: 1px!important;
     height: 1px!important;
-    margin-top: -9px;
+    margin-top: -2px;
   }
   :global(.ant-radio-inner::after) {
     border-color:var(--primary-golden-color-medium)!important; /* Golden outer border */
@@ -97,7 +98,7 @@
 }
 
 .skeleton{
-  padding-top:15px ;
+  padding-top:20px ;
 }
 .classLoading{
   margin-bottom: 15px;
