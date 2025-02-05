@@ -69,7 +69,7 @@ const TimesheetSnapshotChartCard: React.FC = () => {
         title="Timesheet Snapshot"
         topRightContent={
           loading ? (
-            <SkeletonLoader count={1} button={true} />
+            <SkeletonLoader count={1} button={true} className={styles.buttonLoading}/>
           ) : (
             <ButtonComponent
               filter={true}

@@ -14,6 +14,7 @@ import {
   TimesheetDue,
   TimesheetDueResponse,
 } from "@/interfaces/dashboard/dashboard";
+import { useRouter } from "next/navigation";
 
 const TimeSheetDueCard: React.FC = () => {
   const [timesheetDueData, setTimesheetDueData] = useState<TimesheetDue[] | []>(
@@ -26,9 +27,14 @@ const TimeSheetDueCard: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [totalTime, setTotalTime] = useState<string>("0");
   const [datePickerData, setDatePickerData] = useState<DatePickerData[]>([]);
+  const router = useRouter()
 
   const handleClickReview = () => {
-    window.location.href = "/time-sheet";
+    const params = new URLSearchParams({
+      startDate: selectedStartDate,
+      endDate: selectedEndDate,
+    });
+    router.push(`/time-sheet?${params}`);
   };
 
   const fetchData = async () => {

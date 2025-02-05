@@ -10,6 +10,11 @@
   padding-top: 10px;
   padding-bottom: 10px;
 
+  .arrowDiv{
+    width: 24px;
+    padding-right: 15px;
+  }
+
   .arrowButton {
     width: 24px;
     height: 100%;
@@ -19,8 +24,11 @@
     background-color: transparent;
     outline: none;
     border: 0;
-    padding-right: 10px;
+    &:hover{
+      cursor: pointer;
+    }
   }
+  
 
   .holidaysDetialsDiv {
     width: 100%;
