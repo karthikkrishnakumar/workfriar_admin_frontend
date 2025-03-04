@@ -89,7 +89,7 @@ import jwt from "jsonwebtoken";
   const EmailLogin = async (email: string, password: string): Promise<EmailLoginResponse> => {
     try {
       const props: JSON = <JSON>(<unknown>{  email, password  });
-      const { body } = await http().post(`/api/auth/email-login`, props);
+      const { body } = await http().post(`/api/auth/login-with-password`, props);
       
       return {
         status: body.status,
