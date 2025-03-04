@@ -27,6 +27,56 @@
     margin-bottom: 40px;
   }
 
+  .inputContainer {
+    width: 100%;
+  }
+  .input{
+    height: 50px!important;
+    background-color: transparent;
+  }
+  .emailButton {
+    font-size: var(--heading-3-size);
+    padding: 12px 24px;
+    width: 100%;
+    margin-left: 0px;
+    margin-bottom: 5px;
+    height: 42px;
+    border: none;
+    cursor: pointer;
+    border-radius: 24px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background: var(--primary-golden-color-dark);
+    color: white;
+    margin-top: 32px;
+    font-weight: var(--sub-heading-font-weight);
+    line-height: 18.96px;
+    &:hover {
+      background: #dda045 !important;
+      color: white!important;
+    }
+  }
+
+  .divider {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    align-items: center;
+
+    .hr {
+      width: 100%;
+      height: 1px;
+      background-color: #8a8a8a;
+    }
+
+    p {
+      font-size: var(--default-font-size);
+      font-weight: var(--default-font-weight);
+      color: #646464;
+    }
+  }
+
   .googleButton{
     width: 100%;
     max-width: 375px;
@@ -46,58 +96,21 @@
 
 
   .error {
+    height: 20px;
+    width: 100%;
     color: red;
     font-size: var(--default-font-size);
     font-weight: var(--default-font-weight);
-    text-align: left;
+    text-align: center;
     margin-top: 10px; // Adjust margin for smaller screens
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+  .emptyError{
+    height: 20px;
+    width: 100%;
+    margin-top: 10px;
   }
 
-  .divider {
-    margin-top: 32px;
-    margin-bottom:32px;
-    display: flex;
-    flex-direction: row;
-    gap: 6px;
-    align-items: center; // Align vertically
-
-    .hr {
-      width: 100%;
-      height: 1px;
-      background-color: #646464;
-    }
-
-    p {
-      font-size: var(--default-font-size);
-      font-weight: var(--default-font-weight);
-      line-height: 1;
-      color: #646464;
-    }
-  }
-
-  .inputContainer {
-    position: relative;
-    width: 100%; // Ensure input spans full width
-  }
-
-  .emailButton {
-    font-size: var(--heading-3-size);
-    padding: 12px 24px;
-    height: 42px;
-    border: none;
-    cursor: pointer;
-    border-radius: 24px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    background: var(--primary-golden-color-dark);
-    color: white;
-    margin-top: 32px;
-    font-weight: var(--sub-heading-font-weight);
-    line-height: 18.96px;
-
-    &:hover {
-      background: #dda045 !important;
-    }
-  }
 }
 
 .loaderOverlay {

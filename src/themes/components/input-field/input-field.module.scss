@@ -3,7 +3,12 @@
 .inputContainer {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem; /* Spacing between input fields */
+
+    :global(.ant-input-affix-wrapper-focused){
+        border-color: var(--primary-golden-color-dark); /* Ant Design primary color */
+        box-shadow: 0 0 4px  var(--primary-golden-color-dark); /* Focus shadow effect */
+        background-color: transparent;
+    }
   }
   
   .customInput {

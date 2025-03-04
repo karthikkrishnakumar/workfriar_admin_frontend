@@ -1,34 +1,108 @@
-import React from "react";
-import { Input } from "antd"; // Import Input from Ant Design
-import styles from "./input-field.module.scss"; // SCSS module
+import React, { useState, useEffect } from "react";
+import { Input } from "antd";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import styles from "./input-field.module.scss";
 
-// Define the interface for the props passed to the CustomInputField component
 interface CustomInputProps {
-  value: string | undefined;
+  value?: string;
   onChange: (value: string) => void;
   placeholder?: string;
   type?: string;
+  className?: string;
+  disabled?: boolean;
+  maxLength?: number;
+  prefix?: React.ReactNode;
+  onFocus?: () => void;
+  error?: string;
+  validateInput?: (value: string) => boolean;
 }
 
 const CustomInputField: React.FC<CustomInputProps> = ({
-  value,
+  value = "",
   onChange,
   placeholder = "Enter text",
-  type
+  type = "text",
+  className = "",
+  disabled = false,
+  maxLength,
+  prefix,
+  onFocus,
+  error,
+  validateInput,
 }) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [localError, setLocalError] = useState<string | undefined>(error);
+
+  // Update local error when prop error changes
+  useEffect(() => {
+    setLocalError(error);
+  }, [error]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    
+    // Clear local error when user starts typing
+    if (localError) {
+      setLocalError(undefined);
+    }
+
+    // Optional input validation
+    if (validateInput && !validateInput(inputValue)) {
+      // You can set a specific validation error here if needed
+      setLocalError("Invalid input");
+      return;
+    }
+
+    onChange(inputValue);
+  };
+
+  const handleFocus = () => {
+    // Clear any existing errors when input is focused
+    if (localError) {
+      setLocalError(undefined);
+    }
+    
+    // Call the onFocus prop if provided
+    onFocus && onFocus();
   };
 
   return (
     <div className={styles.inputContainer}>
       <Input
         value={value}
-        onChange={handleInputChange}
+        onChange={handleChange}
+        onFocus={handleFocus}
         placeholder={placeholder}
-        className={styles.customInput} // Apply custom styling
-        type={type?type:"text"}
+        type={type === "password" && !isPasswordVisible ? "password" : "text"}
+        disabled={disabled}
+        maxLength={maxLength}
+        prefix={prefix}
+        className={`
+          ${styles.customInput} 
+          ${className} 
+          ${localError ? styles.inputError : ''}
+        `}
+        suffix={
+          type === "password" ? (
+            isPasswordVisible ? (
+              <EyeInvisibleOutlined 
+                onClick={() => setIsPasswordVisible(false)} 
+                className={styles.eyeIcon} 
+              />
+            ) : (
+              <EyeOutlined 
+                onClick={() => setIsPasswordVisible(true)} 
+                className={styles.eyeIcon} 
+              />
+            )
+          ) : null
+        }
       />
+      {localError && (
+        <div className={styles.errorMessage}>
+          {localError}
+        </div>
+      )}
     </div>
   );
 };
