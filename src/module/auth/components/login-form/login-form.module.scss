@@ -95,6 +95,19 @@
 
 
 
+  @keyframes fadeInSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+      visibility: hidden;
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+    }
+  }
+  
   .error {
     height: 20px;
     width: 100%;
@@ -102,9 +115,10 @@
     font-size: var(--default-font-size);
     font-weight: var(--default-font-weight);
     text-align: center;
-    margin-top: 10px; // Adjust margin for smaller screens
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    margin-top: 10px;
+    animation: fadeInSlide 0.3s ease-in-out;
   }
+  
   .emptyError{
     height: 20px;
     width: 100%;

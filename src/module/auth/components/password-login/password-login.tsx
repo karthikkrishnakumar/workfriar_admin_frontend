@@ -12,9 +12,10 @@ interface PasswordLoginProps {
   onBack: () => void;
   onError: (error: string) => void; // Pass error to parent component
   onLoading: (loading: boolean) => void;
+  clearParams:() => void;
 }
 
-const PasswordLogin: React.FC<PasswordLoginProps> = ({ email, onBack, onError ,onLoading }) => {
+const PasswordLogin: React.FC<PasswordLoginProps> = ({ email, onBack, onError ,onLoading ,clearParams}) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +35,8 @@ const PasswordLogin: React.FC<PasswordLoginProps> = ({ email, onBack, onError ,o
         onLoading(true); 
         router.push("/dashboard");
       } else {
-        onError(response.message || "Authentication failed.");
+        const errorMessage = response.message || "Authentication failed!.";
+        router.push(`/?error=${encodeURIComponent(errorMessage)}`);
       }
     } catch (error) {
       onError("Something went wrong. Please try again.");
@@ -53,6 +55,7 @@ const PasswordLogin: React.FC<PasswordLoginProps> = ({ email, onBack, onError ,o
         placeholder="Enter your password"
         type="password"
         className={styles.input}
+        onFocus={clearParams}
       />
       <ButtonComponent
         label={loading ? "Logging in..." : "Log In"}

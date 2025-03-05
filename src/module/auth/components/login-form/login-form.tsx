@@ -20,19 +20,31 @@ const LoginForm = () => {
 
     // Clear error and remove error parameter from URL
     const clearErrorAndParams = () => {
-        
+
         const currentUrl = new URL(window.location.href);
         if (currentUrl.searchParams.has("error")) {
             currentUrl.searchParams.delete("error");
             router.replace(currentUrl.toString(), { scroll: false });
         }
-        setError(null);
+        if (error && error !== "Authentication failed!." || error !== "server error[100]") {
+            setError(null)
+        }
     };
+
+    const handleBack = () => {
+        setStep("email");
+        clearErrorAndParams();
+    };
+
 
     useEffect(() => {
         const token = searchParams.get("token");
         const errorParam = searchParams.get("error");
 
+
+        if (!errorParam && error === "Authentication failed!." || error === "server error[100]") {
+            setError(null)
+        }
         if (token) {
             setLoading(true);
             handleAppLogin(token).then((response) => {
@@ -44,9 +56,9 @@ const LoginForm = () => {
                 }
             });
         } else if (errorParam) {
-            setError(errorParam || "Authentication failed.");
+            setError(errorParam || "Authentication failed!.");
         }
-    }, [searchParams, handleAppLogin, router]);
+    }, [searchParams, handleAppLogin, router, clearErrorAndParams , handleBack]);
 
     // Modify existing functions to use clearErrorAndParams
     const handleGoogleLogin = () => {
@@ -54,25 +66,21 @@ const LoginForm = () => {
         redirectToGoogleLogin();
     };
 
-    const handleBack = () => {
-        setStep("email");
+   
+    const handleContinueWithEmail = async () => {
+        // Clear error from Google login before proceeding
         clearErrorAndParams();
+
+        // Delay execution to ensure the URL update happens before validation
+        setTimeout(() => {
+            if (!email || !/\S+@\S+\.\S+/.test(email)) {
+                setError("Please enter a valid email address.");
+                return;
+            }
+            setStep("password");
+        }, 300);
     };
 
-    const handleContinueWithEmail = async () => {
-      // Clear error from Google login before proceeding
-      clearErrorAndParams();
-  
-      // Delay execution to ensure the URL update happens before validation
-      setTimeout(() => {
-          if (!email || !/\S+@\S+\.\S+/.test(email)) {
-              setError("Please enter a valid email address.");
-              return;
-          }
-          setStep("password");
-      }, 300);
-  };
-  
 
     return (
         <div className={styles.container}>
@@ -114,15 +122,16 @@ const LoginForm = () => {
                     </>
                 ) : (
                     <div className={styles.inputContainer}>
-                        <PasswordLogin 
-                            email={email} 
-                            onBack={handleBack} 
-                            onError={setError} 
+                        <PasswordLogin
+                            email={email}
+                            onBack={handleBack}
+                            onError={setError}
                             onLoading={setLoading}
+                            clearParams={clearErrorAndParams}
                         />
                     </div>
                 )}
-              {error ? <div className={styles.error}>{error}</div> : <div className={styles.emptyError}></div>}
+                {error ? <div className={styles.error}>{error}</div> : <div className={styles.emptyError}></div>}
 
             </div>
         </div>
