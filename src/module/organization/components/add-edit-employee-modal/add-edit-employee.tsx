@@ -247,6 +247,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
 
       if (Object.keys(validationErrors).length > 0) {
         setFormErrors(validationErrors);
+        message.error("Please fill in all required fields.");
         return;
       }
 
@@ -280,6 +281,7 @@ const AddEditEmployeeModal: React.FC<AddEditEmployeeProps> = ({
 
       if (Object.keys(validationErrors).length > 0) {
         setFormErrors(validationErrors);
+        message.error("Please fill in all required fields.");
         return;
       }
 

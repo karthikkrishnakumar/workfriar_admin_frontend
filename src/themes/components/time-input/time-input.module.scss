@@ -16,27 +16,32 @@
   outline: none;
   background-color: #fff;
   color: var(--primary-font-color-dark);
-}
+  font-weight: var(--default-font-weight); /* Default font weight */
 
-.timeInput:focus {
-  border-color: #000;
-  border-width: 2px;
+  &:focus {
+    border-color: #000;
+    border-width: 2px;
 
-  &::placeholder{
-    display: none;
+    &::placeholder {
+      display: none;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: no-drop;
+
+    &::placeholder {
+      color: rgba(83, 85, 85, 0.632);
+    }
+  }
+
+  // Make font bold when the input is not "00:00"
+  &:not([value="00:00"]) {
+    font-weight: 500;
+    color: #000;
   }
 }
-
-.timeInput.disabled {
-  opacity: 0.5;
-  cursor: no-drop;
-}
-
-.timeInput.disabled::placeholder{
-  color: rgba(83, 85, 85, 0.632);
-}
-
-
 
 .timeInput::placeholder {
   color: var(--primary-font-color-dark);

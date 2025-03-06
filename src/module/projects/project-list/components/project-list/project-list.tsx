@@ -169,6 +169,7 @@ const ProjectList: React.FC = () => {
 
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: ProjectDisplayData[]): RowData[] => {
+    console.log(projects)
     const handleStatusChange = async (projectId: string, status: string) => {
       try {
         const payload = { projectId, status };
@@ -233,13 +234,16 @@ const ProjectList: React.FC = () => {
       clientName: <span className={styles.project}>{project.client_name}</span>,
       dates: (
         <span className={styles.project}>
-          <>
-            {project.actual_start_date && project.actual_end_date
-              ? `${project.actual_start_date} - ${project.actual_end_date}`
-              : "--"}
-          </>
+          {project.actual_start_date && project.actual_end_date
+            ? `${project.actual_start_date} - ${project.actual_end_date}`
+            : project.actual_start_date
+            ? `${project.actual_start_date} -`
+            : project.actual_end_date
+            ? `- ${project.actual_end_date}`
+            : "--"}
         </span>
       ),
+      
       projectLead: (
         <span className={styles.project}>{project.project_lead}</span>
       ),

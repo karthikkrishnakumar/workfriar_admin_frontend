@@ -4,11 +4,30 @@
   scroll-behavior: smooth;
   border-radius: 8px;
   padding-top: 36px;
-  padding-bottom: 36px;
+
   &::-webkit-scrollbar {
-    display: none;
+    display: block !important;
+    width: 4px !important;
+    height: 4px;
+    background-color: transparent;
   }
 
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0) !important;
+    background-color: #d9d9d9;
+    cursor: grabbing;
+    transition: background-color 0.4s ease;
+
+    &:hover {
+      background-color: var(--primary-golden-color-medium);
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
   .customSkeletonItem {
     background-color: var(--disabled-table-column-background) !important;
   }
@@ -127,7 +146,7 @@
   }
 }
 
-@media(max-width:1100px){
+@media (max-width: 1100px) {
   .commentsCell {
     max-width: 100px; /* Adjust based on design */
   }

@@ -112,7 +112,7 @@ export interface FormValueData {
     
   export interface GetEmployeePorjectsResponse {
     status: string;
-    data: Project[];
+    data?: Project[];
     total?:number;
     message: string;
     errors?: ValidationError[];

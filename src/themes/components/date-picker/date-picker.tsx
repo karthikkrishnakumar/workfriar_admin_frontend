@@ -3,9 +3,9 @@ import styles from "./date-picker.module.scss";
 import {
   formatDate,
   formatYear,
-  findCurrentWeek,
   getDisabledWeeks,
   getWeekDates,
+  findCurrentWeekWithParams,
 } from "@/utils/datepicker-util/datepicker-formater-routes";
 import Icons from "@/themes/images/icons/icons";
 import SkeletonLoader from "../skeleton-loader/skeleton-loader";
@@ -35,10 +35,12 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   );
   const [disabledWeeks, setDisabledWeeks] = useState<boolean[]>([]);
 
+  console.log(weekData);
   useEffect(() => {
     if (!weekData || weekData.length === 0) return;
 
-    const current = findCurrentWeek(weekData);
+    const current = findCurrentWeekWithParams(weekData);
+    console.log(current)
     setCurrentWeek(current);
 
     const disabled = getDisabledWeeks(weekData, dateChangeType);

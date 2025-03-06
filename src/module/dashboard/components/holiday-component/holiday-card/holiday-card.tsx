@@ -14,27 +14,29 @@ const HolidayCard: React.FC = () => {
   const [holidayData, setHolidayData] = useState<Holidays[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter()
+  const router = useRouter();
+
+  const fetchHolidayData = async () => {
+    try {
+      const data = await UseDashboardServices().fetchHolidays();
+      setHolidayData(data.data);
+    } catch (error) {
+      setError("Error fetching holiday data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch holiday data when the component mounts
   useEffect(() => {
-    const fetchHolidayData = async () => {
-      try {
-        const data = await UseDashboardServices().fetchHolidays();
-        setHolidayData(data.data);
-      } catch (error) {
-        setError("Error fetching holiday data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchHolidayData();
   }, []);
 
   const handleClickAllHoliday = () => {
     router.push("/holidays")
   };
+
+  const isEmptyData = !holidayData || holidayData.length === 0;
 
   return (
     <CardSection
@@ -48,12 +50,14 @@ const HolidayCard: React.FC = () => {
             classNameItem={styles.customSkeletonItem}
           />
         ) : (
+          !isEmptyData && (
           <ButtonComponent
             label="View all"
             theme="link"
             link
             onClick={handleClickAllHoliday}
           />
+          )
         )
       }
       centerContent={

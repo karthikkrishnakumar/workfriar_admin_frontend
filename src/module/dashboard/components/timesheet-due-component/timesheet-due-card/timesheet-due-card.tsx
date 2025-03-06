@@ -27,6 +27,8 @@ const TimeSheetDueCard: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [totalTime, setTotalTime] = useState<string>("0");
   const [datePickerData, setDatePickerData] = useState<DatePickerData[]>([]);
+
+  console.log("date",datePickerData);
   const router = useRouter()
 
   const handleClickReview = () => {
@@ -34,7 +36,7 @@ const TimeSheetDueCard: React.FC = () => {
       startDate: selectedStartDate,
       endDate: selectedEndDate,
     });
-    router.push(`/time-sheet?${params}`);
+    window.location.href = `/time-sheet/?${params}`;
   };
 
   const fetchData = async () => {
@@ -46,8 +48,10 @@ const TimeSheetDueCard: React.FC = () => {
           selectedStartDate,
           selectedEndDate
         );
-        setTimesheetDueData(data.data);
 
+        if(selectedStartDate !== "" && selectedEndDate !== ""){
+          setTimesheetDueData(data.data);
+        }
       // Calculate the total time (hours) based on the new data
       const totalHours =
         data?.data?.find((item: any) => item.date === "TOTAL")?.hours ??
@@ -70,6 +74,8 @@ const TimeSheetDueCard: React.FC = () => {
       try {
         const datePickerResponse: DatePickerResponse =
           await UseDashboardServices().fetchDatePickerData();
+
+          console.log("datePickerResponse",datePickerResponse);
           setDatePickerData(datePickerResponse.data);
       } catch (error) {
         console.error("Error fetching date picker data:", error);
@@ -110,7 +116,8 @@ const TimeSheetDueCard: React.FC = () => {
           </div>
           
         }
-        centerContent={<Timesheet data={timesheetDueData} loading={loading} />}
+            
+        centerContent={ <Timesheet data={timesheetDueData} loading={loading} />  }
         bottomContent={
           loading ? (
             <div className={styles.bottomButton}>

@@ -1,5 +1,5 @@
 .chartContainer {
-  padding: 20px 0px;
+  padding: 10px 0px;
   background-color: var(--primary-background-color);
   border-radius: 10px;
   display: flex;
@@ -65,7 +65,7 @@
 .customScrollThumb {
   height: 100%;
   border: none;
-  background-color: var(--scrollbar);
+  background-color: rgb(169, 169, 169);
   border-radius: 9999px;
   cursor: grab;
   transition: all 150ms ease-out;
@@ -78,6 +78,7 @@
 
   &:active {
     cursor: grabbing;
+    background-color: var(--primary-golden-color-medium);
   }
 }
 

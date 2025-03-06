@@ -35,7 +35,7 @@ const NavBlock: React.FC<NavBlockProps> = ({
 
   // Log state changes
   useEffect(() => {
-  }, [isHovered, isArrowHovered, isDropdownOpen, showActiveIcon]);
+  }, [isHovered, isArrowHovered, isDropdownOpen, showActiveIcon ]);
 
   const menu = (
     <Menu
