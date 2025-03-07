@@ -206,7 +206,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
           setValue={(newTime) => handleTimeChange(index, day, newTime)}
           disabled={entry.is_disable}
           tooltipContent={
-            entry.is_disable ? "These dates are in next week" : ""
+            entry.is_disable ? "These dates are in another week" : ""
           }
           readOnly={
             localTimesheetData[index].status === "accepted" ||
@@ -333,21 +333,21 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
         />
       </div>
     ),
-    details: (
-      <TextAreaButton buttonvalue="Add task description" disabled value="" />
-    ),
-    ...daysOfWeek.reduce(
-      (acc, day) => ({
-        ...acc,
-        [day.name]: <TimeInput value="00:00" disabled />,
-      }),
-      {}
-    ),
-    total: (
-      <span className={styles.rowWiseTotal}>
-        <p>0:00</p>
-      </span>
-    ),
+    // details: (
+    //   <TextAreaButton buttonvalue="Add task description" disabled value="" />
+    // ),
+    // ...daysOfWeek.reduce(
+    //   (acc, day) => ({
+    //     ...acc,
+    //     [day.name]: <TimeInput value="00:00" disabled />,
+    //   }),
+    //   {}
+    // ),
+    // total: (
+    //   <span className={styles.rowWiseTotal}>
+    //     <p>0:00</p>
+    //   </span>
+    // ),
     action: <span>{Icons.deleteDisabled}</span>,
   });
 
@@ -466,7 +466,9 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
           ...mapTimeEntriesToWeek(timesheet.data_sheet, index),
           total: (
             <span className={styles.rowWiseTotal}>
+
               <p>{totalHours}</p>
+             
             </span>
           ),
           action: (

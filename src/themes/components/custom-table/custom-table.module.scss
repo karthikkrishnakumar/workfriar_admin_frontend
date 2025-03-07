@@ -35,7 +35,12 @@
     padding: 15px 0;
     background-color: #ffffff;
     align-items: center;
+    transition: background-color 0.3s ease; // Add smooth transition for hover effect
     
+    &:hover {
+      background-color: #f9f9f9; // Light gray background on hover, similar to antd
+      cursor: pointer;
+    }
 
     &.firstRow {
       border-top-left-radius: 10px;

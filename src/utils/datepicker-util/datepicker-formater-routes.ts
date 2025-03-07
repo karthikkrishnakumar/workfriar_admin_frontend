@@ -43,6 +43,44 @@ export const findCurrentWeek = (weekData: DatePickerData[] | null | undefined): 
   return weekData[weekData.length - 1]?.week ?? null; // Default to the first week if no match is found
 };
 
+export const findCurrentWeekWithParams = (weekData: DatePickerData[]): number => {
+  if (!weekData || weekData.length === 0) return 0;
+
+  const params = new URLSearchParams(window.location.search);
+  const startDateParam = params.get("startDate");
+  const endDateParam = params.get("endDate");
+
+  if (startDateParam && endDateParam) {
+    // Normalize date format to YYYY-MM-DD
+    const normalizeDate = (dateStr: string) => {
+      const date = new Date(dateStr);
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0"); // Ensure 2-digit month
+      const dd = String(date.getDate()).padStart(2, "0"); // Ensure 2-digit day
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const normalizedStart = normalizeDate(startDateParam);
+    const normalizedEnd = normalizeDate(endDateParam);
+
+    console.log("Normalized Start:", normalizedStart);
+    console.log("Normalized End:", normalizedEnd);
+
+    // Normalize weekData dates before comparison
+    const weekIndex = weekData.findIndex((week) => 
+      normalizeDate(week.startDate) === normalizedStart &&
+      normalizeDate(week.endDate) === normalizedEnd
+    );
+
+    console.log("Matching Week Index:", weekIndex);
+    return weekIndex !== -1 ? weekIndex : findCurrentWeek(weekData) || 0;
+  }
+
+  return findCurrentWeek(weekData) || 0;
+};
+
+
+
 // Determines which weeks should be disabled based on today's date
 export const getDisabledWeeks = (
   weekData: DatePickerData[] | null | undefined,

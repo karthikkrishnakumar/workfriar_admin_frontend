@@ -28,7 +28,6 @@ const DashboardHoliday: React.FC<HolidayProps> = ({ holidays }) => {
   const currentHoliday = holidays[currentIndex];
 
   const isEmptyData = !holidays || holidays.length === 0;
-  console.log(holidays);
 
   return (
     <>

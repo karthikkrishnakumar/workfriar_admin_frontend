@@ -16,7 +16,6 @@ const NavBar = () => {
   const navBarNavigation = new NavBarNavigationClass();
   const [selectedDropdownPath, setSelectedDropdownPath] = useState<string | null>(null);
 
-
   const handleMainNavClick = (path: string) => {
     setSelectedDropdownPath(path);
     navBarNavigation.navigateTo(path, router.push);

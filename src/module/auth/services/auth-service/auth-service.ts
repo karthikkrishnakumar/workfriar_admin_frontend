@@ -1,4 +1,5 @@
-  import http from "@/utils/http";
+  import { EmailLoginResponse } from "@/interfaces/auth/auth-interfaces";
+import http from "@/utils/http";
 import jwt from "jsonwebtoken";
 
   export const useAuthService = () => {
@@ -84,10 +85,29 @@ import jwt from "jsonwebtoken";
       }
     };
 
+    // New function for email-password login
+  const EmailLogin = async (email: string, password: string): Promise<EmailLoginResponse> => {
+    try {
+      const props: JSON = <JSON>(<unknown>{  email, password  });
+      const { body } = await http().post(`/api/auth/login-with-password`, props);
+      
+      return {
+        status: body.status,
+        message: body.message ,
+        token: body.token || null,
+    };
+    } catch (error) {
+      throw error;
+    }
+  };
+
     return {
       handleAppLogin,
       redirectToGoogleLogin,
       validateAdminToken,
-      handleLogout
+      handleLogout,
+      EmailLogin
     };
+
+
   };

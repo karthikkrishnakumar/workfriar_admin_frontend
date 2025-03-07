@@ -203,6 +203,7 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
 
           // Update formErrors with the mapped validation errors
           setFormErrors(validationErrors);
+          message.error("Please fill in all required fields.");
           return;
         }
         // Handle successful response
@@ -255,6 +256,7 @@ const AddReport: React.FC<AddReportProps> = ({ onClose, mode, reportData }) => {
             );
 
             setFormErrors(validationErrors);
+            message.error("Please fill in all required fields.");
             return;
           }
 
