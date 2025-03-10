@@ -1,5 +1,10 @@
+
+
+interface Data {
+    token: string;
+}
 export interface EmailLoginResponse{
     status: boolean;
     message: string;
-    token: string;
+    data: Data | null;
 }

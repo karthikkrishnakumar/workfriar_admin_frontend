@@ -35,7 +35,6 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   );
   const [disabledWeeks, setDisabledWeeks] = useState<boolean[]>([]);
 
-  console.log(weekData);
   useEffect(() => {
     if (!weekData || weekData.length === 0) return;
 

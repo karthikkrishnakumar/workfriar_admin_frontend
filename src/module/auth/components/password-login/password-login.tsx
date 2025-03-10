@@ -1,24 +1,30 @@
-"use client"; // Ensures it runs on the client side
+"use client";
 
 import React, { useState } from "react";
 import styles from "./password-login.module.scss";
 import CustomInputField from "@/themes/components/input-field/input-field";
 import ButtonComponent from "@/themes/components/button/button";
 import { useRouter } from "next/navigation";
-import { useAuthService } from "../../services/auth-service/auth-service"; 
+import { useAuthService } from "../../services/auth-service/auth-service";
 
 interface PasswordLoginProps {
   email: string;
   onBack: () => void;
-  onError: (error: string) => void; // Pass error to parent component
+  onError: (error: string) => void;
   onLoading: (loading: boolean) => void;
-  clearParams:() => void;
+  clearParams: () => void;
 }
 
-const PasswordLogin: React.FC<PasswordLoginProps> = ({ email, onBack, onError ,onLoading ,clearParams}) => {
+const PasswordLogin: React.FC<PasswordLoginProps> = ({
+  email,
+  onBack,
+  onError,
+  onLoading,
+  clearParams,
+}) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const authService = useAuthService();
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -28,20 +34,28 @@ const PasswordLogin: React.FC<PasswordLoginProps> = ({ email, onBack, onError ,o
     }
 
     setLoading(true);
+    onLoading(true);
     try {
-      const response = await useAuthService().EmailLogin(email, password);
-
-      if (response.status) {
-        onLoading(true); 
-        router.push("/dashboard");
+      const response = await authService.EmailLogin(email, password);
+      
+      if (response.status && response.data?.token) {
+        const token = response.data.token;
+        const loginResponse = await authService.handleAppLogin(token);
+        
+        if (loginResponse.success) {
+          router.push("/dashboard");
+        } else {
+          onError(loginResponse.message || "Login failed.");
+        }
       } else {
-        const errorMessage = response.message || "Authentication failed!.";
-        router.push(`/?error=${encodeURIComponent(errorMessage)}`);
+        onError(response.message || "Authentication failed!");
+        router.push(`/?error=${encodeURIComponent(response.message || "Authentication failed!")}`);
       }
     } catch (error) {
       onError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+      onLoading(false);
     }
   };
 

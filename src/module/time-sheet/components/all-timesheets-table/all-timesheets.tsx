@@ -272,10 +272,24 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
       dispatch(setStatus("saved"));
       setSavedTimesheets(response.data);
     } else {
-      message.error("Error on saving timesheet");
+      message.error(response.message || "Error on saving timesheet");
+
+          // Check if error is due to missing Task Detail
+    if (response.message === "Task Detail is required to save timesheet") {
+      const updatedTimesheets = localTimesheetData.map((timesheet) => ({
+        ...timesheet,
+        error: !timesheet.task_detail, // Set error flag for empty task details
+      }));
+
+      setLocalTimesheetData(updatedTimesheets); // Update state with error flag
+
+
+      
+    }
+
     }
   };
-
+  console.log(localTimesheetData);
   /**
    * Submits the timesheet data after saving.
    */
@@ -461,6 +475,7 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
                 timesheet.status === "accepted" ||
                 timesheet.status === "submitted"
               }
+              error={timesheet.error}
             />
           ),
           ...mapTimeEntriesToWeek(timesheet.data_sheet, index),

@@ -6,7 +6,7 @@ import ButtonComponent from "@/themes/components/button/button";
 
 /**
  * Interface for the props passed to the TextAreaButton component.
- * 
+ *
  * @interface TextAreaButtonProps
  * @property {string} [buttonvalue] - The value displayed on the button.
  * @property {() => void} [onclickFunction] - Function to handle the button click.
@@ -24,12 +24,13 @@ interface TextAreaButtonProps {
   value?: string; // Value for the text area.
   setvalue?: (value: string) => void; // Function to update the parent component's state.
   readOnly?: boolean; // If true, the text area will be read-only.
+  error?: boolean; // If true, the text area will display an error state.
 }
 
 /**
- * TextAreaButton component displays a button that triggers a modal with a text area. 
+ * TextAreaButton component displays a button that triggers a modal with a text area.
  * It allows the user to edit and save a task description, with optional read-only functionality.
- * 
+ *
  * @param {TextAreaButtonProps} props - The props for the component.
  * @returns {JSX.Element} The rendered TextAreaButton component.
  */
@@ -41,14 +42,14 @@ const TextAreaButton: React.FC<TextAreaButtonProps> = ({
   value,
   setvalue,
   readOnly = false,
+  error = false,
 }) => {
   // Local state for the text area value
   const [textAreaValue, setTextAreaValue] = useState<string>("");
 
-
   useEffect(() => {
     setTextAreaValue(value!); // Update local state when the value prop changes
-  },[value])
+  }, [value]);
 
   /**
    * Handles saving the text area value and updating the parent component's state.
@@ -66,19 +67,23 @@ const TextAreaButton: React.FC<TextAreaButtonProps> = ({
     <>
       {/* Button to trigger the modal */}
       <button
-        className={`${styles.textAreaButtonWrapper} ${
-          disabled ? styles.disabled : ""
-        }`}
-        onClick={onclickFunction} // Trigger modal when clicked
-        disabled={disabled}
-      >
-        <span className={styles.buttonValue}>
-          {buttonvalue ? buttonvalue : "Add task description"} {/* Button text */}
-        </span>
-        {!readOnly && (
-          <span className={styles.editIcon}>{Icons.editPencil}</span> // Edit icon (only if not read-only)
-        )}
-      </button>
+  className={`${styles.textAreaButtonWrapper} 
+    ${disabled ? styles.disabled : ""} 
+    ${!buttonvalue && error ? styles.error : ""}`}
+  onClick={onclickFunction}
+  disabled={disabled}
+>
+<span 
+  className={`${styles.buttonValue} 
+    ${!buttonvalue && error ? styles.errorPlaceholder : ""} 
+    ${!buttonvalue && !error ? styles.placeholder : ""}`}
+>
+  {buttonvalue || "Add task description"}
+</span>
+
+  {!readOnly && <span className={styles.editIcon}>{Icons.editPencil}</span>}
+</button>
+
 
       {/* Modal displaying the text area */}
       <ModalComponent
@@ -97,7 +102,8 @@ const TextAreaButton: React.FC<TextAreaButtonProps> = ({
               onChange={(e) => setTextAreaValue(e.target.value)} // Update local state on change
               readOnly={readOnly} // Disable editing if readOnly is true
             />
-            {!readOnly && <p>Maximum 200 characters.</p>} {/* Display character limit message if not read-only */}
+            {!readOnly && <p>Maximum 200 characters.</p>}{" "}
+            {/* Display character limit message if not read-only */}
             <div className={styles.actionButtons}>
               {/* Save button only visible if not read-only */}
               {!readOnly && (

@@ -1,44 +1,47 @@
 .textAreaButtonWrapper {
-    border: 1px solid var(--navigation-arrow);
-    background-color: transparent;
-    padding: 8px;
-    font-size: var(--default-font-size);
-    font-weight: var(--default-font-weight);
-    width: 155px;
-    height: 56px;
-    position: relative;
-    border-radius: 5px;
+  border: 1px solid var(--navigation-arrow);
+  background-color: transparent;
+  padding: 8px;
+  font-size: var(--default-font-size);
+  font-weight: var(--default-font-weight);
+  width: 155px;
+  height: 56px;
+  position: relative;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+
+  .buttonValue {
+    width: 100px;
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: left;
+    line-height: 20px;
+    flex: 1;
+    display: -webkit-box;
+    /* Enable the line-clamp feature */
+    -webkit-line-clamp: 2;
+    /* Number of lines to display */
+    -webkit-box-orient: vertical;
+    /* Set the box orientation for line clamping */
     overflow: hidden;
-    cursor: pointer;
+    /* Hide overflowing text */
+    text-overflow: ellipsis;
+    height: 100%;
+  }
+  .placeholder {
+    font-style: italic;
+    color: var(--navigation-arrow);
+  }
 
-    .buttonValue {
-        width: 100px;
-        white-space: normal;
-        word-wrap: break-word;
-        text-align: left;
-        line-height: 20px;
-        flex: 1;
-        display: -webkit-box;
-        /* Enable the line-clamp feature */
-        -webkit-line-clamp: 2;
-        /* Number of lines to display */
-        -webkit-box-orient: vertical;
-        /* Set the box orientation for line clamping */
-        overflow: hidden;
-        /* Hide overflowing text */
-        text-overflow: ellipsis;
-        height: 100%;
-    }
-
-    .editIcon {
-        width: 16px;
-        height: 16px;
-        position: absolute;
-        right: 8px;
-        top: 8px;
-    }
+  .editIcon {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+  }
 }
-
 
 .textAreaModal {
   display: flex;
@@ -50,7 +53,7 @@
 .textArea {
   resize: none;
   outline: none;
-  border: .5px solid var(--navigation-arrow);
+  border: 0.5px solid var(--navigation-arrow);
   border-radius: 5px;
   padding: 12px;
   font-size: var(--default-font-size);
@@ -72,8 +75,7 @@
   padding-right: 7px;
 }
 
-
-.textAreaWrapper{
+.textAreaWrapper {
   display: flex;
   flex-direction: column;
 
@@ -89,3 +91,13 @@
   }
 }
 
+.error {
+  border: 1px solid red;
+  transition: border 0.3s ease-in-out; // Smooth transition effect
+}
+
+.errorPlaceholder {
+  color: var(--danger-primary-font-color);
+  font-style: italic;
+  transition: color 0.3s ease-in-out, font-style 0.3s ease-in-out; // Smooth effect for color & style
+}

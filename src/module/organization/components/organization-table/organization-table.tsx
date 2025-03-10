@@ -38,7 +38,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [employeeData, setEmployeeData] = useState<EmployeeData>();
 
-  const { isOpen } = useSelector((state: RootState) => state.modal);
+  const { isOpen , modalType } = useSelector((state: RootState) => state.modal);
 
   const handleStatusChange = async (employee: Employee, newStatus: boolean) => {
     try {
@@ -270,7 +270,7 @@ const OrganizationTable: React.FC<OrganizationTableProps> = ({ activeTab }) => {
         />
       </div>
 
-      {isOpen && <AddEditEmployeeModal mode="add" onClose={handleCloseModal} />}
+      {isOpen && modalType === "addEmployeeModal" && <AddEditEmployeeModal mode="add" onClose={handleCloseModal} />}
       {isModalOpen && (
         <AddEditEmployeeModal
           mode="edit"

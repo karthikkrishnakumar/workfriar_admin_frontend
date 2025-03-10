@@ -13,12 +13,14 @@ import AddHolidayModal from '../add-holiday-modal/add-holiday-modal';
 import YearSelector from '../year-selector/year-selector';
 const HolidayTabs = () => {
     const [year,setYear] = useState<string>();
+    const [refetch, setRefetch] = useState(false);
     const dispatch = useDispatch();
 
 
     const { isOpen, modalType } = useSelector((state: RootState) => state.modal);
 
     const handleCloseModal = () => {
+        setRefetch(true);
         dispatch(closeModal());
       };
 
@@ -27,7 +29,7 @@ const HolidayTabs = () => {
           key: "1",
           label: <>All</>,
           content: (
-            <AllHolidays year={year!} />
+            <AllHolidays year={year!} refetch={refetch}/>
           ),
         },
         {
@@ -37,7 +39,7 @@ const HolidayTabs = () => {
               Techfriar India
             </>
           ),
-          content:<IndianHolidays year={year!}/>,
+          content:<IndianHolidays year={year!} refetch={refetch}/>,
         },
         {
           key: "3",
@@ -46,7 +48,7 @@ const HolidayTabs = () => {
               Techfriar Dubai
             </>
           ),
-          content: <DubaiHolidays year={year!}/>,
+          content: <DubaiHolidays year={year!} refetch={refetch}/>,
         },
       ];
 
@@ -56,7 +58,7 @@ const HolidayTabs = () => {
     <>
       <TabComponent  headings={tabs} subHeading={<YearSelector onChange={setYear}/>}/>
 
-      <ModalComponent isVisible={isOpen} title='Add Holiday' onClose={handleCloseModal} theme='normal' content={<AddHolidayModal/>}/>
+      <ModalComponent isVisible={isOpen} title='Add Holiday' onClose={handleCloseModal} theme='normal' content={<AddHolidayModal onClose = {handleCloseModal}/>}/>
     </>
 
   )

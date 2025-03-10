@@ -2,11 +2,15 @@
 import React, { useState } from "react";
 import styles from "./add-holiday-modal.module.scss";
 import FormField from "@/themes/components/reusable-fields/reusable-fields";
-import { Form } from "antd";
+import { Form, message } from "antd";
 import ButtonComponent from "@/themes/components/button/button";
 import UseHolidayServices from "../../services/holidays-services";
 
-const AddHolidayModal = () => {
+interface AddHolidayModalProps {
+  onClose: () => void;
+}
+
+const AddHolidayModal:React.FC<AddHolidayModalProps> = ({onClose}) => {
   const [holidayName, setHolidayName] = useState("");
   const [holidayStartDate, setHolidayStartDate] = useState<Date | null>(null);
   const [holidayEndDate, setHolidayEndDate] = useState<Date | null>(null);
@@ -45,9 +49,19 @@ const AddHolidayModal = () => {
     try{
       const response = await UseHolidayServices().addHolidays(holidayName,holidayType,holidayStartDate!,holidayEndDate!,location!);
       console.log(response);
+      if(response.status){
+        message.success(response.message || "Holiday added successfully");
+        onClose();
+      }else{
+        message.error(response.message || "Failed to add holiday");
+      }
     }catch(error){
       console.error(error);
     }
+  }
+
+  const handleClose = () => {
+    onClose();
   }
 
 
@@ -112,7 +126,7 @@ const AddHolidayModal = () => {
       </div>
       <div className={styles.modalFooter}>
         <ButtonComponent label="Save" theme="black" onClick={handleOnClick}/>
-        <ButtonComponent label="Cancel" theme="white" />
+        <ButtonComponent label="Cancel" theme="white" onClick={handleClose}/>
       </div>
     </Form>
   );

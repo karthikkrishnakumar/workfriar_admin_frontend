@@ -90,11 +90,11 @@ import jwt from "jsonwebtoken";
     try {
       const props: JSON = <JSON>(<unknown>{  email, password  });
       const { body } = await http().post(`/api/auth/login-with-password`, props);
-      
+
       return {
         status: body.status,
         message: body.message ,
-        token: body.token || null,
+        data: body.data || null,
     };
     } catch (error) {
       throw error;

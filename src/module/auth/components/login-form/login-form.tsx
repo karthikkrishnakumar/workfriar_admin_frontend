@@ -84,11 +84,11 @@ const LoginForm = () => {
 
     return (
         <div className={styles.container}>
-            {loading && (
-                <div className={styles.loaderOverlay}>
-                    <Spin size="large" className={styles.customspinner} />
-                </div>
-            )}
+                {loading && (
+                    <div className={styles.loaderOverlay}>
+                        <Spin size="large" className={styles.customspinner} />
+                    </div>
+                )}
             <div className={styles.form}>
                 {step === "email" ? (
                     <>
