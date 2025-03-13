@@ -1,6 +1,6 @@
-import React from "react";
-
+import React, { useState } from "react";
 import { Form, Select, DatePicker, Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import Icons from "@/themes/images/icons/icons";
 import styles from "./reusable-fields.module.scss"; // You'll need to create this SCSS module
@@ -70,6 +70,7 @@ const FormField: React.FC<FormFieldProps> = ({
     </div>
   );
 
+  const [isSearching, setIsSearching] = useState(false);
   // Correctly handle onChange for different field types
   const handleChange = (val: any) => {
     if (onChange) {
@@ -84,25 +85,28 @@ const FormField: React.FC<FormFieldProps> = ({
       case "select": // If the field is a select dropdown
         return (
           <Select
-            value={value}
-            onChange={handleChange}
-            suffixIcon={suffixIcon || Icons.arrowDownOutline}
-            className={`${styles.customSelect} ${className}`}
-            placeholder={placeholder}
-          >
-            {options.map((option) => (
-              <Option key={option.value} value={option.value}>
-                {option.label}
-              </Option>
-            ))}
-          </Select>
+      value={value || null}
+      onChange={onChange}
+      showSearch
+      onSearch={(val) => setIsSearching(val.length > 0)}
+      onBlur={() => setIsSearching(false)}
+      suffixIcon={isSearching ? <SearchOutlined/> : suffixIcon || Icons.arrowDownOutline}
+      className={`${styles.customSelect} ${className}`}
+      placeholder={placeholder}
+    >
+      {options.map((option) => (
+        <Option key={option.value} value={option.value}>
+          {option.label}
+        </Option>
+      ))}
+    </Select>
         );
 
       case "datepicker": // If the field is a date picker
         const formattedValue = value ? dayjs(value) : null;
         return (
           <DatePicker
-            value={formattedValue}
+            value={formattedValue || null}
             onChange={(date, dateString) => handleChange(dateString)} // Pass the formatted date string
             className={`${styles.customDatePicker} ${className}`}
             placeholder={placeholder ?? "dd/mm/yyyy"}
@@ -145,7 +149,7 @@ const FormField: React.FC<FormFieldProps> = ({
         return (
           <Input
             type={numberOnly ? "number" : "text"}
-            value={value}
+            value={value || null}
             onChange={(e) => handleChange(e.target.value)}
             placeholder={placeholder}
             className={`${styles.customInput} ${className}`}

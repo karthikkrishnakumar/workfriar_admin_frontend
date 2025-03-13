@@ -30,10 +30,10 @@ const EmployeeList: React.FC<EmployeeListProps> = ({
         />
       ) : (
         <div className={styles.employeeListWrapper}>
-          {employeeList?.length === 0 ? (
+          {!employeeList || employeeList.length ===0 ? (
             <Empty className={styles.emptyWrapper} />
           ) : (
-            employeeList.map((employee) => (
+            employeeList?.map((employee) => (
               <EmployeeCard
                 key={employee.id} // Add a key for list rendering
                 name={employee.full_name}

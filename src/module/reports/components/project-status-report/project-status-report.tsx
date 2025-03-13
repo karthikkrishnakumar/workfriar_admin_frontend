@@ -39,7 +39,7 @@ const ProjectStatusReport: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
-  const { isOpen } = useSelector((state: RootState) => state.modal);
+  const { isOpen , modalType } = useSelector((state: RootState) => state.modal);
   const [project, setProject] = useState<ReportDetails>();
 
   const columns = [
@@ -214,7 +214,7 @@ const ProjectStatusReport: React.FC = () => {
         />
       </div>
 
-      {isOpen && <AddReport mode="add" onClose={handleCloseModal} />}
+      {isOpen && modalType === "addReportModal" && <AddReport mode="add" onClose={handleCloseModal} />}
       {isEditModalVisible && (
         <AddReport
           onClose={handleCloseModal}

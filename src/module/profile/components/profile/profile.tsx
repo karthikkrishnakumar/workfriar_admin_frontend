@@ -33,7 +33,7 @@ const Profile = () => {
         if (response.status) {
           setProfile({
             ...response.data,
-            reporting_manager: response.data.reporting_manager.full_name,
+            reporting_manager: response.data.reporting_manager?.full_name,
           });
         } else {
           message.error(response.message);

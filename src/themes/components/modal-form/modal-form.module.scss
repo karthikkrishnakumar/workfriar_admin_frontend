@@ -1,11 +1,22 @@
 .formRow {
   display: flex;
   gap: 16px;
-  margin-bottom: 16px;
-  width: 610px;
-  max-height: 902px;
-  margin-left: 15px;
+  margin-bottom: 15px;
 
+   :global(.ant-select .ant-select-selector) {
+    &:hover {
+      border-color: var(--primary-golden-color-medium) !important;
+    }
+  
+    &:focus-within {
+      border-color: var(--primary-golden-color-medium) !important;
+      box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
+    }
+  }
+  
+  :global(.ant-select .ant-select-selector .ant-select-selection-wrap) {
+    height: 100%;
+  }
   &:last-child {
     margin-bottom: 0;
   }
@@ -13,19 +24,19 @@
   &.singleField {
     .formField {
       flex: 1;
-      max-width: 257px;
     }
   }
 
   &.multiField {
     .formField {
-      flex: 1;
-      max-width: 257px;
+      width: 100%;
     }
   }
+  
   .formField.extendedField {
     flex: 2;
     max-width: 530px;
+
   }
 
   .modal {
@@ -34,11 +45,21 @@
     }
   }
 
+  .checkbox{
+    background-color: var(--primary-golden-color-medium);
+    &:hover{
+      background-color: var(--primary-golden-color-medium)!important;
+    }
+  }
   .formField {
 
     :global(.ant-form-item) {
       margin-bottom: 0;
-
+    }
+    :global(.ant-form-item-explain-error) {
+      font-size: 11px !important;
+      color: #ff4d4f !important; // Optional: Customize the color
+      letter-spacing: 0.5px;
     }
 
     :global(.ant-form-item-label > label) {
@@ -54,20 +75,35 @@
     }
 
     :global(.ant-select-arrow){
-      top: 80%;
+      top: 50%;
       color: #1B1717;
     }
 
     :global(.ant-input){
       font-family: var(--font-rubik);
+      &:hover {
+        border-color: var(--primary-golden-color-medium) !important;
+      }
+    
+      &:focus-within {
+        border-color: var(--primary-golden-color-medium) !important;
+        box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
+      }
     }
 
     :global(.ant-input-outlined),
-    :global(.ant-select-selector),
+    :global(.ant-select),
     :global(.ant-picker) {
-      border: 1px solid #afabab;
       border-radius: 6px;
-      height: 48px;
+      height: 50px;
+      &:hover {
+        border-color: var(--primary-golden-color-medium) !important;
+      }
+    
+      &:focus-within {
+        border-color: var(--primary-golden-color-medium) !important;
+        box-shadow: 0 0 4px var(--primary-golden-color-medium) !important;
+      }
     }
 
     :global(.ant-input-textarea) {
@@ -75,11 +111,15 @@
       resize: none;
       border: 1px solid #afabab;
       border-radius: 6px;
+      padding-top: 10px!important;
     }
 
-  :global(.ant-form-item-additional){
-      margin-top: 15px;
-  }
+    .textarea {
+      padding-top: 12px!important;
+      height: 80px;
+
+    }
+
 
   }
 }
@@ -88,9 +128,50 @@
 .customModal :global {
   .ant-modal-content {
     border-radius: 24px !important;
+    overflow: hidden;
+    width:100%;
+    padding:0px;
+  }
+}
+.title {
+  font-size: 24px;
+  font-weight: var(--sub-heading-font-weight);
+  margin-bottom: 16px;
+  padding: 24px 24px 0px 24px;
+
+  &.normalTitle {
+    color: black;
+  }
+
+  &.dangerTitle {
+    color: red;
+  }
+
+  &.primaryTitle {
+    color: blue;
   }
 }
 
+.formContent{
+  overflow: scroll;
+  height: 400px;
+  width: 100%;
+  padding:0px 24px;
+  &::-webkit-scrollbar {
+    width: 4px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #d9d9d9;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+}
 
 .modalTitle {
   margin-bottom: 24px;
@@ -106,7 +187,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 24px;
+  padding: 24px 24px 24px 24px;
   font-size: 14px;
   font-weight: 400;
   line-height: 18.2px;

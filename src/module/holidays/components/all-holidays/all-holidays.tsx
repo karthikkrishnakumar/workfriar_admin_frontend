@@ -26,9 +26,10 @@ import SkeletonLoader from "@/themes/components/skeleton-loader/skeleton-loader"
  */
 interface AllHolidaysProps {
   year: string;
+  refetch: boolean;
 }
 
-const AllHolidays: React.FC<AllHolidaysProps> = ({ year }) => {
+const AllHolidays: React.FC<AllHolidaysProps> = ({ year ,refetch = false}) => {
   const [nationalHolidays, setNationalHolidays] = useState<Holiday[]>([]); // State to store national holidays
   const [publicHolidays, setPublicHolidays] = useState<Holiday[]>([]); // State to store public holidays
   const [restrictedHolidays, setRestrictedHolidays] = useState<Holiday[]>([]); // State to store restricted holidays
@@ -91,7 +92,7 @@ const AllHolidays: React.FC<AllHolidaysProps> = ({ year }) => {
   useEffect(() => {
     setLoading(true);
     fetchHolidays(year);
-  }, [year]);
+  }, [year , refetch]);
 
   // Column definitions for the table
   const columns = [

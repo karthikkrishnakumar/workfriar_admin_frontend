@@ -31,9 +31,16 @@
     color: var(--black);
 }
 
-.client {
+.client ,
+.clientManager {
     padding-left: 15px;
     font-size: 16px;
     color: var(--black);
     height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.clientManager {
+    padding-left: 5px;
 }

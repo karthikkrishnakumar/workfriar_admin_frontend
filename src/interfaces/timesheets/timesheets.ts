@@ -19,6 +19,7 @@ export interface TimesheetDataTable {
     total_hours?: number;
     local_id?: number;
     timesheetId?:string;
+    error?: boolean;
 }
 
 export interface WeekDaysData {

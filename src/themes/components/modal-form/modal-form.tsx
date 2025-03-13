@@ -1,8 +1,19 @@
-import { Modal, Form, Input, Select, DatePicker, Upload, Checkbox } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Upload,
+  Checkbox,
+  Empty,
+} from "antd";
 import { useState } from "react";
 import { RcFile } from "antd/es/upload";
 import styles from "./modal-form.module.scss";
 import Icons from "@/themes/images/icons/icons";
+
+import { SearchOutlined} from "@ant-design/icons";
 
 /**
  * Interface for defining a single form field's properties.
@@ -62,6 +73,8 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const projectName = initialValues.projectName || "Project";
+  const [isSearching, setIsSearching] = useState(false);
+
 
   /**
    * Handles form submission by validating fields and triggering the onPrimaryClick callback.
@@ -96,6 +109,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
             placeholder={field.placeholder}
             options={field.options}
             disabled={field.readonly}
+            suffixIcon={isSearching ? <SearchOutlined /> :  Icons.arrowDownOutline}
             showSearch
             value={
               field.options?.some(
@@ -109,86 +123,85 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
       case "checkboxSelect":
         return (
           <Select
-            mode="multiple"
-            placeholder={field.placeholder || "Select options"}
-            disabled={field.readonly}
-            options={field.options}
-            value={form.getFieldValue(field.name) || []}
-            onChange={(selectedValues) => {
-              form.setFieldValue(field.name, selectedValues);
-            }}
-            dropdownRender={(menu) => {
-              const currentValue = form.getFieldValue(field.name) || [];
-
+          mode="multiple"
+          className={styles.multipleSelect}
+          placeholder={field.placeholder || "Select options"}
+          disabled={field.readonly}
+          options={field.options}
+          value={form.getFieldValue(field.name) || []}
+          onChange={(selectedValues) => {
+            form.setFieldValue(field.name, selectedValues);
+          }}
+          onSearch={(val) => setIsSearching(val.length > 0)}
+          onBlur={() => setIsSearching(false)}
+          suffixIcon={isSearching ? <SearchOutlined /> :  Icons.arrowDownOutline}
+          maxTagCount={1}
+          dropdownRender={(menu) => {
+            const currentValue = form.getFieldValue(field.name) || [];
+    
+            if (!field.options || field.options.length === 0) {
               return (
-                <div>
-                  {field.options?.map((option) => {
-                    // Check both object format and direct value format
-                    const isSelected = currentValue.some(
-                      (item: any) =>
-                        item.id === option.value || // For object format
-                        item === option.value // For direct value format
-                    );
-
-                    return (
-                      <div
-                        key={option.value}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          padding: "5px 10px",
-                        }}
-                      >
-                        <Checkbox
-                          checked={isSelected}
-                          onChange={(e) => {
-                            const isChecked = e.target.checked;
-
-                            let newValue;
-                            if (isChecked) {
-                              // Check if the current values are in object format
-                              const isObjectFormat =
-                                currentValue.length > 0 &&
-                                typeof currentValue[0] === "object";
-
-                              if (isObjectFormat) {
-                                // Add as object format
-                                newValue = [
-                                  ...currentValue,
-                                  {
-                                    id: option.value,
-                                    name: option.label,
-                                  },
-                                ];
-                              } else {
-                                // Add as direct value
-                                newValue = [...currentValue, option.value];
-                              }
-                            } else {
-                              // Remove value checking both formats
-                              newValue = currentValue.filter(
-                                (val: any) =>
-                                  typeof val === "object"
-                                    ? val.id !== option.value // For object format
-                                    : val !== option.value // For direct value format
-                              );
-                            }
-
-                            form.setFieldValue(field.name, newValue);
-                          }}
-                          className={styles.checkbox}
-                        />
-                        <span style={{ marginLeft: "8px" }}>
-                          {option.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                <Empty
+                  style={{ padding: "0px" }}
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="No Data"
+                />
               );
-            }}
-            tagRender={() => <></>}
-          />
+            }
+    
+            return (
+              <div>
+                {field.options?.map((option) => {
+                  const isSelected = currentValue.some(
+                    (item :any) =>
+                      item.id === option.value || // Object format
+                      item === option.value // Direct value format
+                  );
+    
+                  return (
+                    <div
+                      key={option.value}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "5px 10px",
+                      }}
+                    >
+                      <Checkbox
+                        className={styles.checkbox}
+                        checked={isSelected}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          let newValue;
+    
+                          if (isChecked) {
+                            const isObjectFormat =
+                              currentValue.length > 0 &&
+                              typeof currentValue[0] === "object";
+    
+                            newValue = isObjectFormat
+                              ? [...currentValue, { id: option.value, name: option.label }]
+                              : [...currentValue, option.value];
+                          } else {
+                            newValue = currentValue.filter((val : any) =>
+                              typeof val === "object"
+                                ? val.id !== option.value
+                                : val !== option.value
+                            );
+                          }
+    
+                          form.setFieldValue(field.name, newValue);
+                        }}
+                      />
+                      <span style={{ marginLeft: "8px" }}>{option.label}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          }}
+          
+        />
         );
 
       case "date":
@@ -204,8 +217,9 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
         return (
           <Input.TextArea
             placeholder={field.placeholder}
-            rows={4}
+            rows={8}
             readOnly={field.readonly}
+            className={styles.textarea}
           />
         );
       case "image":
@@ -255,12 +269,11 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   return (
     <Modal
       open={isVisible}
-      title={<div className={styles.modalTitle}>{title}</div>}
       onCancel={handleClose}
       footer={null}
-      width={610}
       className={styles.customModal}
     >
+      <div className={`${styles.title}`}>{title}</div>
       {children && <div className={styles.modalChildren}>{children}</div>}
       <Form
         form={form}

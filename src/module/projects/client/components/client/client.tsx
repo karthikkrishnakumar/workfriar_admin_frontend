@@ -157,7 +157,7 @@ const Client: React.FC = () => {
         <span className={styles.client}>{client.billing_currency}</span>
       ),
       client_manager: (
-        <span className={styles.client}>{client.client_manager}</span>
+        <span className={styles.clientManager}>{client.client_manager}</span>
       ),
       status: (
         <StatusDropdown
