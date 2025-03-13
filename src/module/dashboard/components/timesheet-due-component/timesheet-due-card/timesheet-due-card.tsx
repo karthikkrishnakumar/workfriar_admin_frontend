@@ -28,7 +28,6 @@ const TimeSheetDueCard: React.FC = () => {
   const [totalTime, setTotalTime] = useState<string>("0");
   const [datePickerData, setDatePickerData] = useState<DatePickerData[]>([]);
 
-  console.log("date",datePickerData);
   const router = useRouter()
 
   const handleClickReview = () => {
@@ -75,7 +74,6 @@ const TimeSheetDueCard: React.FC = () => {
         const datePickerResponse: DatePickerResponse =
           await UseDashboardServices().fetchDatePickerData();
 
-          console.log("datePickerResponse",datePickerResponse);
           setDatePickerData(datePickerResponse.data);
       } catch (error) {
         console.error("Error fetching date picker data:", error);

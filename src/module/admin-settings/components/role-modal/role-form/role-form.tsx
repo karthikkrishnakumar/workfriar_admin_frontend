@@ -31,7 +31,6 @@ const RoleForm: React.FC<RoleFormProps> = ({
 
   useEffect(() => {
 
-    console.log("Role Status Value:", roleData.status);
     
     if (!hasMounted) {
       setInitialRoleData(roleData); // Set initial data only once

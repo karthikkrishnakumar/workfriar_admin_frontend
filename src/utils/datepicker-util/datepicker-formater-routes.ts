@@ -63,16 +63,13 @@ export const findCurrentWeekWithParams = (weekData: DatePickerData[]): number =>
     const normalizedStart = normalizeDate(startDateParam);
     const normalizedEnd = normalizeDate(endDateParam);
 
-    console.log("Normalized Start:", normalizedStart);
-    console.log("Normalized End:", normalizedEnd);
-
+ 
     // Normalize weekData dates before comparison
     const weekIndex = weekData.findIndex((week) => 
       normalizeDate(week.startDate) === normalizedStart &&
       normalizeDate(week.endDate) === normalizedEnd
     );
 
-    console.log("Matching Week Index:", weekIndex);
     return weekIndex !== -1 ? weekIndex : findCurrentWeek(weekData) || 0;
   }
 

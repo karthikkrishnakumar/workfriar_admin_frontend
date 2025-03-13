@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import styles from "./password-login.module.scss";
 import CustomInputField from "@/themes/components/input-field/input-field";
@@ -23,7 +21,6 @@ const PasswordLogin: React.FC<PasswordLoginProps> = ({
   clearParams,
 }) => {
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const authService = useAuthService();
   const router = useRouter();
 
@@ -33,30 +30,31 @@ const PasswordLogin: React.FC<PasswordLoginProps> = ({
       return;
     }
 
-    setLoading(true);
     onLoading(true);
     try {
       const response = await authService.EmailLogin(email, password);
-      
+
       if (response.status && response.data?.token) {
         const token = response.data.token;
         const loginResponse = await authService.handleAppLogin(token);
-        
         if (loginResponse.success) {
+          onError("");
+          onLoading(true);
           router.push("/dashboard");
         } else {
+          onLoading(false);
           onError(loginResponse.message || "Login failed.");
         }
       } else {
         onError(response.message || "Authentication failed!");
-        router.push(`/?error=${encodeURIComponent(response.message || "Authentication failed!")}`);
-      }
-    } catch (error) {
-      onError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+        
       onLoading(false);
-    }
+
+      }
+    } catch {
+      onError("Something went wrong. Please try again.");
+      onLoading(false);
+    } 
   };
 
   return (
@@ -65,17 +63,25 @@ const PasswordLogin: React.FC<PasswordLoginProps> = ({
       <p>Enter the password for {email}</p>
       <CustomInputField
         value={password}
-        onChange={setPassword}
+        onChange={(value) => {
+          setPassword(value);
+          onError(""); // Clear error when user starts typing
+          clearParams();
+        }}
         placeholder="Enter your password"
         type="password"
         className={styles.input}
-        onFocus={clearParams}
+        onFocus={() => {
+          onError(""); // Clear error when user starts typing
+          clearParams();
+        }}
+        onEnterPress={handleLogin}
+        autoFocus
       />
       <ButtonComponent
-        label={loading ? "Logging in..." : "Log In"}
+        label="Log In"
         onClick={handleLogin}
         className={styles.loginButton}
-        disabled={loading}
       />
       <p className={styles.back} onClick={onBack}>
         Back

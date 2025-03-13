@@ -142,6 +142,8 @@ const ReviewAllTimesheetsTable: React.FC<AllTimeSheetTableProps> = ({
       handleCloseConfirmationModal();
     } catch (error) {
       console.error(error);
+    }finally{
+      fetchTimesheets(startDate, endDate);
     }
   };
 

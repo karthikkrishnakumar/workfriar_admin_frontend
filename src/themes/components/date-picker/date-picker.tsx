@@ -39,7 +39,6 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     if (!weekData || weekData.length === 0) return;
 
     const current = findCurrentWeekWithParams(weekData);
-    console.log(current)
     setCurrentWeek(current);
 
     const disabled = getDisabledWeeks(weekData, dateChangeType);
