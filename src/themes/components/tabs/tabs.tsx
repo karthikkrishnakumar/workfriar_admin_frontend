@@ -13,6 +13,7 @@ interface TabComponentProps {
   onChange?: (key: string) => void;
   subHeading?: ReactNode;
   activeKey?: string;
+  className?:string;
 }
 
 /**
@@ -25,11 +26,12 @@ const TabComponent: React.FC<TabComponentProps> = ({
   onChange,
   subHeading,
   activeKey,
+  className,
 }) => {
   // Map headings into TabItems format for Ant Design
   const tabItems: TabsProps["items"] = headings.map((heading) => ({
     key: heading.key,
-    label: <div className={styles.labelWrapper}>{heading.label}</div>,
+    label: <div className={`${styles.labelWrapper} ${className}`}>{heading.label}</div>,
     children: heading.content, // Content to render inside the tab
   }));
 

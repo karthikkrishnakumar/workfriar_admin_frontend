@@ -61,7 +61,6 @@ export default function useProjectListService() {
     payload: any
   ): Promise<any> {
     const props: JSON = <JSON>(<unknown>payload);
-    console.log(payload)
     const hasFile: boolean = <boolean>true;
     try {
       // Make an HTTP POST request

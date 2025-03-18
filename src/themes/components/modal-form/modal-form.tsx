@@ -52,6 +52,7 @@ interface ModalFormProps {
   initialValues?: Record<string, any>;
   formErrors?: Record<string, any>;
   children?: React.ReactNode;
+  classForm?:string;
 }
 
 const ModalFormComponent: React.FC<ModalFormProps> = ({
@@ -66,6 +67,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
   initialValues = {},
   formErrors,
   children,
+  classForm,
 }) => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string | null>(
@@ -280,7 +282,7 @@ const ModalFormComponent: React.FC<ModalFormProps> = ({
         layout="vertical"
         initialValues={initialValues}
         requiredMark={false}
-        className={styles.formContent}
+        className={`${styles.formContent} ${classForm}`}
       >
         {formRows.map((row, rowIndex) => (
           <div

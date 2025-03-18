@@ -34,6 +34,7 @@
     "scss": "0.2.4"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "9.0.9",
     "@types/lodash": "4.17.13",
     "@types/node": "20",
     "@types/react": "18",

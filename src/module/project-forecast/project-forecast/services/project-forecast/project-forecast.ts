@@ -161,6 +161,7 @@ id: string
     const props: JSON = <JSON>(<unknown>
       payload
     );
+
     try {
       // Make an HTTP POST request
       const { body } = await http().post("/api/admin/addforecast", props);

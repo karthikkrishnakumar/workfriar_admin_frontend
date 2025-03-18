@@ -48,7 +48,6 @@ const AddHolidayModal:React.FC<AddHolidayModalProps> = ({onClose}) => {
   const handleOnClick = async() =>{
     try{
       const response = await UseHolidayServices().addHolidays(holidayName,holidayType,holidayStartDate!,holidayEndDate!,location!);
-      console.log(response);
       if(response.status){
         message.success(response.message || "Holiday added successfully");
         onClose();

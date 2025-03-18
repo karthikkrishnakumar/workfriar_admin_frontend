@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Input } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { Input, InputRef } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import styles from "./input-field.module.scss";
 
@@ -13,8 +13,11 @@ interface CustomInputProps {
   maxLength?: number;
   prefix?: React.ReactNode;
   onFocus?: () => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void; // New Prop
   error?: string;
   validateInput?: (value: string) => boolean;
+  onEnterPress?: () => void; // New Prop to handle Enter key
+  autoFocus?: boolean;
 }
 
 const CustomInputField: React.FC<CustomInputProps> = ({
@@ -27,12 +30,24 @@ const CustomInputField: React.FC<CustomInputProps> = ({
   maxLength,
   prefix,
   onFocus,
+  onKeyDown,
   error,
   validateInput,
+  onEnterPress, 
+  autoFocus = false,
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [localError, setLocalError] = useState<string | undefined>(error);
+  const inputRef = useRef<InputRef | null>(null);
 
+  
+  // Focus the input when the component mounts (only once)
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.input?.focus(); // Correct way to focus Ant Design's Input
+    }
+  }, []);
+  
   // Update local error when prop error changes
   useEffect(() => {
     setLocalError(error);
@@ -66,12 +81,24 @@ const CustomInputField: React.FC<CustomInputProps> = ({
     onFocus && onFocus();
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && onEnterPress) {
+      onEnterPress(); // Trigger action when Enter is pressed
+    }
+    if (onKeyDown) {
+      onKeyDown(event); // Preserve any other keydown behavior
+    }
+  };
+
+
   return (
     <div className={styles.inputContainer}>
       <Input
+        ref={inputRef}
         value={value}
         onChange={handleChange}
         onFocus={handleFocus}
+        onKeyDown={handleKeyDown} 
         placeholder={placeholder}
         type={type === "password" && !isPasswordVisible ? "password" : "text"}
         disabled={disabled}

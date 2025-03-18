@@ -151,7 +151,6 @@ const RejectedTimesheetsTable: React.FC<RejectedTableProps> = ({
      * @param {number} idToDelete - The index of the row to delete.
      */
     const handleDeleteRowConfirmation = async () => {
-      console.log("This function works");
       const updatedData = timesheetData.filter(
         (data) => data.local_id !== localIdToDelete
       );

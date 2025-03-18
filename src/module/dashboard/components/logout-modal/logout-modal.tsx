@@ -2,6 +2,8 @@ import ModalComponent from "@/themes/components/modal/modal";
 import styles from "./logout-modal.module.scss";
 import ButtonComponent from "@/themes/components/button/button";
 import { useAuthService } from "@/module/auth/services/auth-service/auth-service";
+import { Spin } from "antd";
+import { useState } from "react";
 
 const { 
   handleLogout
@@ -12,17 +14,37 @@ interface LogoutModalProps {
 }
 
 const LogoutModal: React.FC<LogoutModalProps> = ({ onClose }) => {
+
+  const [loading, setLoading] = useState(false);
   /**
    * Handles  logout.
    *
    */
-  const handleUserLogout = () => {
-    handleLogout(); 
+  const handleUserLogout = async () => {
+    try {
+      setLoading(true);
+      const response = await handleLogout();
+      if (response.success) {
+        window.location.href = "/";
+      }
+    }catch (error) {
+      console.error("Failed to logout user");
+    } finally {
+      onClose();
+      setLoading(false);
+    }
+    
+    
   };
 
 
   return (
     <div className={styles.LoginForm}>
+      {loading && (
+                    <div className={styles.loaderOverlay}>
+                        <Spin size="large" className={styles.customspinner} />
+                    </div>
+                )}
       <div>
         <ModalComponent
           isVisible={true}
@@ -40,6 +62,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ onClose }) => {
           }
           onClose={onClose}
           theme="danger"
+          className={styles.customModal}
         />
       </div>
     </div>

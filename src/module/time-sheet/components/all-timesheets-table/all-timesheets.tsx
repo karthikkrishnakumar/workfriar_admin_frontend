@@ -238,7 +238,6 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
    * @param {number} idToDelete - The index of the row to delete.
    */
   const handleDeleteRowConfirmation = async () => {
-    console.log("This function works");
     const updatedData = localTimesheetData.filter(
       (data) => data.local_id !== localIdToDelete
     );
@@ -289,7 +288,6 @@ const AllTimesheetsTable: React.FC<AllTimeSheettableProps> = ({
 
     }
   };
-  console.log(localTimesheetData);
   /**
    * Submits the timesheet data after saving.
    */

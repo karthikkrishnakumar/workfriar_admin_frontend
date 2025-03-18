@@ -149,7 +149,6 @@ const useRoleService = () => {
         message: body.message,
       };
 
-      console.log(permissionsResponse)
 
       return permissionsResponse; 
     } catch (error) {

@@ -12,6 +12,7 @@ import message from "antd/es/message";
 import dayjs from "dayjs";
 import useProjectTeamService from "@/module/projects/project-team/services/project-team-service";
 import { Member } from "@/interfaces/projects/projects";
+import styles from "./add-edit-forecast-modal.module.scss"
 
 const ForecastModal: React.FC<ModalProps> = ({
   isModalOpen,
@@ -376,8 +377,11 @@ const ForecastModal: React.FC<ModalProps> = ({
               headings={headings}
               onChange={handleTabChange}
               activeKey={activeTabKey}
+              className={styles.tabLabel}
+              
             />
           }
+          classForm={styles.formContent}
         />
       )}
     </div>

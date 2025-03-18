@@ -169,7 +169,6 @@ const ProjectList: React.FC = () => {
 
   // Function to map project data to RowData format for compatibility with the table
   const mapProjectData = (projects: ProjectDisplayData[]): RowData[] => {
-    console.log(projects)
     const handleStatusChange = async (projectId: string, status: string) => {
       try {
         const payload = { projectId, status };

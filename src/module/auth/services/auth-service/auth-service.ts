@@ -1,6 +1,6 @@
   import { EmailLoginResponse } from "@/interfaces/auth/auth-interfaces";
-import http from "@/utils/http";
-import jwt from "jsonwebtoken";
+  import http from "@/utils/http";
+  import jwt from "jsonwebtoken";
 
   export const useAuthService = () => {
 
@@ -73,7 +73,7 @@ import jwt from "jsonwebtoken";
 
           if (response.ok && data.success) {
             // Redirect to login page after successful logout
-            window.location.href = "/";
+            
             return { success: true, message: data.message || "Logout successful" };
           } else {
             return { success: false, message: data.message || "Logout failed" };
